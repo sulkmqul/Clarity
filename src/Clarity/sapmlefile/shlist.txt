@@ -1,0 +1,6 @@
+18
+Default,shader/shader.fx,VsDefault,PsDefault
+HitLight,shader/shader.fx,VsDefault,PsHitLight
+NoTexture,shader/shader.fx,VsDefault,PsNoTex
+TextureAnime,shader/shader.fx,VsTextureAnimation,PsDefault
+

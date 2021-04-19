@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ClarityTextureAnime root_id="90">
+  <TextureAnimeData code="TestAnimeCode" loop="Loop" next="none">
+    <Frame>TexCode,0,0,100</Frame>
+    <Frame>TexCode,1,0,100</Frame>
+    <Frame>TexCode,2,0,100</Frame>
+    <Frame>TexCode,3,0,100</Frame>
+  </TextureAnimeData>
+  <TextureAnimeData code="TestAnimeCode_02" loop="Once" next="TestAnimeCode">
+    <Frame>TexCode,0,0,100</Frame>
+    <Frame>TexCode,1,0,100</Frame>
+    <Frame>TexCode,2,0,100</Frame>
+    <Frame>TexCode,3,0,100</Frame>
+  </TextureAnimeData>
+</ClarityTextureAnime>

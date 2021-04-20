@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clarity.Vertex;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,11 @@ namespace Clarity
         /// </summary>
         public const int Vertex_Display = -1;
 
+        //////////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// 円テクスチャ
+        /// </summary>
+        public const int Texture_Circle = -1;
 
         //////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
@@ -34,5 +40,69 @@ namespace Clarity
         /// シェーダーテクスチャアニメーション
         /// </summary>
         public const int Shader_TextureAnime = -3;
+    }
+
+
+    class BuildInResource
+    {
+        /// <summary>
+        /// 頂点データの読み込み
+        /// </summary>
+        private void LoadVertexData()
+        {            
+
+            //読み込みデフォルトデータ一式(VertexCode, ファイル内容CSV文字列)
+            (int code, string csvs)[] defdatavec = {
+                (ClarityDataIndex.Vertex_Display, Properties.Resources.VD000),
+            };
+
+            foreach (var defdata in defdatavec)
+            {
+                //対象の読み込み
+                PolygonObjectFile pof = new PolygonObjectFile();
+                PolyData pol = pof.ReadCsvString(defdata.csvs);
+
+                //ADD                
+                VertexManager.Mana.AddVertexDic(defdata.code, pol);
+
+                
+
+            }
+        }
+
+
+        /// <summary>
+        /// シェーダーの読み込み
+        /// </summary>
+        private void LoadShaderData()
+        {
+        }
+
+
+        /// <summary>
+        /// テクスチャの読み込み
+        /// </summary>
+        private void LoadTextureData()
+        {
+            Texture.TextureManager.Mana.AddTexture(ClarityDataIndex.Texture_Circle, Properties.Resources.T0000, "Texture_Circle", new System.Drawing.Size(1, 1));
+
+        }
+
+        /// <summary>
+        /// リソースの読み込み
+        /// </summary>
+        public static void LoadBuildInData()
+        {
+            BuildInResource bir = new BuildInResource();
+
+            //Vertex
+            bir.LoadVertexData();
+
+            //Shader
+            bir.LoadShaderData();
+
+            //Texture
+            bir.LoadTextureData();
+        }
     }
 }

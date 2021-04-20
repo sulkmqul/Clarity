@@ -76,39 +76,7 @@ namespace Clarity
     /// <param name="aid"></param>
     public delegate void EndAnimeDelegate(int aid);
 
-    /// <summary>
-    /// Singleton基底
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class BaseClaritySingleton<T> where T : BaseClaritySingleton<T>
-    {
-        protected BaseClaritySingleton()
-        {
-
-        }
-
-
-        /// <summary>
-        /// マイナスを予約、0は使いたくなので1から
-        /// </summary>
-        protected const int CustomStartIndex = 1;
-
-        /// <summary>
-        /// 本体
-        /// </summary>
-        protected static T Instance = null;
-
-
-        public static T Mana
-        {
-            get
-            {
-                return Instance;
-            }
-        }
-
-        
-    }
+    
 
 
 

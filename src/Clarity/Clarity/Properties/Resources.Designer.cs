@@ -61,43 +61,23 @@ namespace Clarity.Properties {
         }
         
         /// <summary>
-        ///   struct VS_IN
-        ///{
-        ///	float4 pos : POSITION;
-        ///	float4 col : COLOR;
-        ///	float2 tex : TEXCOORD;
-        ///};
-        ///
-        ///
-        ///struct PS_IN
-        ///{
-        ///	float4 pos : SV_POSITION;
-        ///	float4 col : COLOR;
-        ///	float2 tex : TEXCOORD;
-        ///};
-        ///
-        ///
-        ///struct RegistData
-        ///{
-        ///	float4x4 WorldViewProj;
-        ///	float4 Col;
-        ///	float2 tex_div;
-        ///	float2 tex_offset;
-        ///
-        ///};
-        ///
-        ///RegistData RData : register(s0);
-        ///
-        /////�e�N�X�`��
-        ///Texture2D pix : register(t0);
-        ///SamplerState picsamp : register(s0);
-        ///
-        ///
-        ////////////////////////////////////////////////////////////////////////////////////// [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///   //シェーダーは未実装です
+        /////ファイルでなく文字列からコンパイルは関数があり、実現は可能みたいですが、
+        /////既存との変更が大きめかつ面倒な部分だったのでやる気がなくて保留中です。 に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string shader {
             get {
                 return ResourceManager.GetString("shader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap T0000 {
+            get {
+                object obj = ResourceManager.GetObject("T0000", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

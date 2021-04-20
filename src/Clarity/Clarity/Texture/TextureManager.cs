@@ -119,6 +119,107 @@ namespace Clarity.Texture
         /// <summary>
         /// テクスチャの読み込み
         /// </summary>
+        /// <param name="srcbit"></param>
+        /// <param name="transcol"></param>
+        /// <returns></returns>
+        protected ShaderResourceView ReadTexture(Bitmap srcbit, System.Drawing.Color? transcol)
+        {
+            ShaderResourceView ans = null;
+
+            try
+            {
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, srcbit.Width, srcbit.Height);
+
+                //指定フォーマットに変換
+                using (Bitmap bit = srcbit.Clone(rect, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+                {
+                    BitmapData bdata = bit.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, bit.PixelFormat);
+                    try
+                    {
+                        #region 透過色の設定
+                        {
+                            //作業領域作製             
+                            int bitbufsize = bit.Width * bit.Height * 4;
+                            byte[] buf = new byte[bitbufsize];
+
+                            Marshal.Copy(bdata.Scan0, buf, 0, bitbufsize);
+
+                            //透過色の設定
+                            int size = bit.Width * bit.Height;
+                            for (int i = 0; i < size; i++)
+                            {
+                                int pos = i * 4;
+
+                                //RGBの値を取得
+                                byte b = buf[pos];
+                                pos++;
+
+                                byte g = buf[pos];
+                                pos++;
+
+                                byte r = buf[pos];
+                                pos++;
+
+                                if (transcol != null)
+                                {
+                                    System.Drawing.Color tcol = transcol.Value;
+                                    //透過色なら透明にする
+                                    if (r == tcol.R && g == tcol.G && b == tcol.B)
+                                    {
+                                        buf[pos] = 0;
+                                    }
+                                }
+                            }
+
+                            //元へ戻す。
+                            Marshal.Copy(buf, 0, bdata.Scan0, bitbufsize);
+                        }
+                        #endregion
+
+                        //画像DataBox作製
+                        DataBox[] databox = new DataBox[] { new DataBox(bdata.Scan0, bit.Width * 4, bit.Height) };
+
+
+                        Texture2DDescription depdec = new Texture2DDescription();
+                        #region TextureDescriptionの作製
+                        depdec.Format = Format.B8G8R8A8_UNorm;    //バッファフォーマット　8bitRGBA
+                        depdec.ArraySize = 1;       //テクスチャの数
+                        depdec.MipLevels = 1;       //ミップレベル 基本1
+
+                        depdec.Width = bit.Width;     //テクスチャサイズＷ
+                        depdec.Height = bit.Height;   //テクスチャサイズH
+                        depdec.SampleDescription = new SampleDescription(1, 0); //マルチサンプリングの値、count=1pixelあたりのサンプル数、quality=クオリティ0～  CheckMultiSampleQualityLevels  - 1まで
+                        depdec.Usage = ResourceUsage.Default;   //使い方：基本default
+                        depdec.BindFlags = BindFlags.ShaderResource;      //ShaderResourceとしての使用
+                        depdec.CpuAccessFlags = CpuAccessFlags.None;    //許可するCPUアクセス、基本none
+                        depdec.OptionFlags = ResourceOptionFlags.None;  //基本none
+                        #endregion
+
+                        //Texture作製
+                        using (Texture2D tex = new Texture2D(DxManager.Mana.DxDevice, depdec, databox))
+                        {
+                            ans = new ShaderResourceView(DxManager.Mana.DxDevice, tex);
+                        }
+
+                    }
+                    finally
+                    {
+                        bit.UnlockBits(bdata);
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return ans;
+        }
+
+        /// <summary>
+        /// テクスチャの読み込み
+        /// </summary>
         /// <param name="filename">読み込みファイル名</param>
         /// <param name="transcol">透過色</param>
         /// <returns></returns>
@@ -131,86 +232,7 @@ namespace Clarity.Texture
                 //ファイル読み込み
                 using (Bitmap srcbit = new Bitmap(filename))
                 {
-                    System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, srcbit.Width, srcbit.Height);
-
-                    //指定フォーマットに変換
-                    using (Bitmap bit = srcbit.Clone(rect, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
-                    {
-                        BitmapData bdata = bit.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, bit.PixelFormat);
-                        try
-                        {
-                            #region 透過色の設定
-                            {
-                                //作業領域作製             
-                                int bitbufsize = bit.Width * bit.Height * 4;
-                                byte[] buf = new byte[bitbufsize];
-
-                                Marshal.Copy(bdata.Scan0, buf, 0, bitbufsize);
-
-                                //透過色の設定
-                                int size = bit.Width * bit.Height;
-                                for (int i = 0; i < size; i++)
-                                {
-                                    int pos = i * 4;
-
-                                    //RGBの値を取得
-                                    byte b = buf[pos];
-                                    pos++;
-
-                                    byte g = buf[pos];
-                                    pos++;
-
-                                    byte r = buf[pos];
-                                    pos++;
-
-                                    if (transcol != null)
-                                    {
-                                        System.Drawing.Color tcol = transcol.Value;
-                                        //透過色なら透明にする
-                                        if (r == tcol.R && g == tcol.G && b == tcol.B)
-                                        {
-                                            buf[pos] = 0;
-                                        }
-                                    }
-                                }
-
-                                //元へ戻す。
-                                Marshal.Copy(buf, 0, bdata.Scan0, bitbufsize);
-                            }
-                            #endregion
-
-                            //画像DataBox作製
-                            DataBox[] databox = new DataBox[] { new DataBox(bdata.Scan0, bit.Width * 4, bit.Height) };
-
-
-
-                            Texture2DDescription depdec = new Texture2DDescription();
-                            #region TextureDescriptionの作製
-                            depdec.Format = Format.B8G8R8A8_UNorm;    //バッファフォーマット　8bitRGBA
-                            depdec.ArraySize = 1;       //テクスチャの数
-                            depdec.MipLevels = 1;       //ミップレベル 基本1
-
-                            depdec.Width = bit.Width;     //テクスチャサイズＷ
-                            depdec.Height = bit.Height;   //テクスチャサイズH
-                            depdec.SampleDescription = new SampleDescription(1, 0); //マルチサンプリングの値、count=1pixelあたりのサンプル数、quality=クオリティ0～  CheckMultiSampleQualityLevels  - 1まで
-                            depdec.Usage = ResourceUsage.Default;   //使い方：基本default
-                            depdec.BindFlags = BindFlags.ShaderResource;      //ShaderResourceとしての使用
-                            depdec.CpuAccessFlags = CpuAccessFlags.None;    //許可するCPUアクセス、基本none
-                            depdec.OptionFlags = ResourceOptionFlags.None;  //基本none
-                            #endregion
-
-                            //Texture作製
-                            using (Texture2D tex = new Texture2D(DxManager.Mana.DxDevice, depdec, databox))
-                            {
-                                ans = new ShaderResourceView(DxManager.Mana.DxDevice, tex);
-                            }
-
-                        }
-                        finally
-                        {
-                            bit.UnlockBits(bdata);
-                        }
-                    }
+                    ans = this.ReadTexture(srcbit, transcol);
                 }
             }
             catch (Exception e)
@@ -315,6 +337,31 @@ namespace Clarity.Texture
             TextureManageData td = new TextureManageData() { Srv = sr, IndexDiv = new Vector2(dx, dy), Code = texcode };
             this.TexDic.Add(texid, td);
         }
+
+
+        /// <summary>
+        /// テクスチャの読み込み　Bitmap直版
+        /// </summary>
+        /// <param name="texid">addtexture id</param>
+        /// <param name="bit">画像</param>
+        /// <param name="texcode">識別名</param>
+        /// <param name="index_size">indexサイズ</param>
+        internal void AddTexture(int texid, Bitmap bit, string texcode, Size index_size)
+        {
+            //重複チェック
+            bool ret = this.TexDic.ContainsKey(texid);
+            if (ret == true)
+            {
+                throw new Exception("ID is Already Exists!");
+            }
+
+            float dx = 1.0f / (float)index_size.Width;
+            float dy = 1.0f / (float)index_size.Height;
+            ShaderResourceView sr = this.ReadTexture(bit, null);
+            TextureManageData td = new TextureManageData() { Srv = sr, IndexDiv = new Vector2(dx, dy), Code = texcode };
+            this.TexDic.Add(texid, td);
+        }
+
 
 
 

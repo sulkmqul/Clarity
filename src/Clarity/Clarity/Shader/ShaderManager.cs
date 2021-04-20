@@ -55,7 +55,7 @@ namespace Clarity.Shader
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <remarks>これは継承先ではsingletonにすること</remarks>
-    internal class ShaderManager : BaseClaritySingleton<ShaderManager>, IDisposable
+    internal class ShaderManager : BaseClarityFactroy<ShaderManager, ShaderManageData>
     {
         private ShaderManager()
         {
@@ -67,10 +67,7 @@ namespace Clarity.Shader
         }
 
 
-        /// <summary>
-        /// シェーダー管理Dic
-        /// </summary>
-        protected Dictionary<int, ShaderManageData> ShaderDic = new Dictionary<int, ShaderManageData>();
+        
         //==========================================================================================
 
 
@@ -146,50 +143,7 @@ namespace Clarity.Shader
         }
 
 
-
-
-        /// <summary>
-        /// ユーザー定義のクリア
-        /// </summary>
-        private void ClearUserData()
-        {
-            int[] keyvec = this.ShaderDic.Keys.ToArray();
-            foreach (int key in keyvec)
-            {
-                //デフォルトデータだった
-                if (key < ShaderManager.CustomStartIndex)
-                {
-                    continue;
-                }
-
-                this.ShaderDic[key].Dispose();
-                this.ShaderDic.Remove(key);
-            }
-        }
-
-        /// <summary>
-        /// Shader管理データのクリア
-        /// </summary>
-        /// <param name="cf">デフォルトデータクリア可否  true=デフォルトデータのクリア</param>
-        private void ClearShaderDic(bool cf = false)
-        {
-            if (cf == false)
-            {
-                this.ClearUserData();
-                return;
-            }
-
-
-            //全データクリア
-            foreach (ShaderManageData sdata in this.ShaderDic.Values)
-            {
-                sdata.Dispose();
-            }
-
-            this.ShaderDic.Clear();
-            this.ShaderDic = null;
-        }
-
+        
 
         /// <summary>
         /// Shaderデータ一つの作成
@@ -275,7 +229,7 @@ namespace Clarity.Shader
 
                         //--------------------------------------
                         //ADD
-                        this.ShaderDic.Add(index, data);
+                        this.ManaDic.Add(index, data);
 
                         index++;
                     }
@@ -293,24 +247,9 @@ namespace Clarity.Shader
         /// </summary>
         public void ClearData()
         {
-            this.ClearShaderDic();
+            this.ClearManageDic();
         }
 
-
-
-
-        /// <summary>
-        /// データの開放
-        /// </summary>
-        public void Dispose()
-        {
-            if (this.ShaderDic == null)
-            {
-                return;
-            }
-
-            this.ClearShaderDic(true);
-        }
 
         ////////////////////////////////////////////////////////////////////////////////
         /// <summary>
@@ -323,7 +262,7 @@ namespace Clarity.Shader
         {
             //設定データ取得
             DeviceContext cont = DxManager.Mana.DxDevice.ImmediateContext;
-            ShaderManageData smana = ShaderManager.Mana.ShaderDic[sid];
+            ShaderManageData smana = ShaderManager.Mana.ManaDic[sid];
 
             //レイアウトの設定
             cont.InputAssembler.InputLayout = smana.Layout;

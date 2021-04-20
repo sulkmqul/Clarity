@@ -13,7 +13,7 @@ namespace Clarity.Texture
     /// オブジェクト生成の度にテクスチャアニメファイルを読みに行くわけにはいかないため、
     /// 必要なものはこのクラスに保持、提供を行う。
     /// </remarks>
-    internal class TextureAnimeFactory : BaseClaritySingleton<TextureAnimeFactory>
+    internal class TextureAnimeFactory : BaseClarityFactroy<TextureAnimeFactory, TextureAnimeData>
     {
         private TextureAnimeFactory()
         {
@@ -56,11 +56,7 @@ namespace Clarity.Texture
             public TextureAnimeFileDataElement FileData = null;
         }
 
-        /// <summary>
-        /// テクスチャアニメ保存場所[AnimeID][アニメ情報]
-        /// </summary>
-        private Dictionary<int, TextureAnimeData> AnimeDic = new Dictionary<int, TextureAnimeData>();
-
+        
         //************************************************************************************************
 
         /// <summary>
@@ -267,7 +263,7 @@ namespace Clarity.Texture
                 });
 
                 //管理データの作成
-                this.AnimeDic = this.CreateAnimeDic(ralist);
+                this.ManaDic = this.CreateAnimeDic(ralist);
 
             }
             catch (Exception e)
@@ -277,14 +273,7 @@ namespace Clarity.Texture
         }
 
 
-        /// <summary>
-        /// 既存データのクリア
-        /// </summary>
-        public void Clear()
-        {
-            this.AnimeDic.Clear();
-        }
-
+   
 
         /// <summary>
         /// アニメ情報の取得
@@ -293,7 +282,7 @@ namespace Clarity.Texture
         /// <returns></returns>
         public static TextureAnimeData GetAnime(int aid)
         {
-            TextureAnimeData ans = TextureAnimeFactory.Mana.AnimeDic[aid];
+            TextureAnimeData ans = TextureAnimeFactory.Mana.ManaDic[aid];
             return ans;
         }
 

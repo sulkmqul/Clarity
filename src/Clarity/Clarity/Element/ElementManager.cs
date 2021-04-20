@@ -9,7 +9,7 @@ namespace Clarity.Element
     
 
     /// <summary>
-    /// ゲームObject管理クラス
+    /// ゲームObject管理クラス・・・これは特殊なためBaseClarityFactoryの継承は一時保留
     /// </summary>
     internal class ElementManager : BaseClaritySingleton<ElementManager>
     {

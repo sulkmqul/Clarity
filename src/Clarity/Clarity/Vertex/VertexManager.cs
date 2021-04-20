@@ -13,50 +13,39 @@ using SharpDX.D3DCompiler;
 
 namespace Clarity.Vertex
 {
+
+    /// <summary>
+    /// 頂点管理データ
+    /// </summary>
+    internal class VertexManageData : IDisposable
+    {
+        /// <summary>
+        /// 頂点数
+        /// </summary>
+        public int Count = 0;
+
+        /// <summary>
+        /// 頂点バッファ
+        /// </summary>
+        public SharpDX.Direct3D11.Buffer VertexBuffer;
+
+        /// <summary>
+        /// indexバッファ
+        /// </summary>
+        public SharpDX.Direct3D11.Buffer IndexBuffer;
+
+        public void Dispose()
+        {
+            this.VertexBuffer.Dispose();
+            this.IndexBuffer.Dispose();
+        }
+    }
+
     /// <summary>
     /// 頂点情報管理
     /// </summary>
-    internal class VertexManager : BaseClaritySingleton<VertexManager>, IDisposable
-    {
-        
-
-        #region 型
-
-        /// <summary>
-        /// 頂点管理データ
-        /// </summary>
-        protected class VertexManageData : IDisposable
-        {
-            /// <summary>
-            /// 頂点数
-            /// </summary>
-            public int Count = 0;
-
-            /// <summary>
-            /// 頂点バッファ
-            /// </summary>
-            public SharpDX.Direct3D11.Buffer VertexBuffer;
-
-            /// <summary>
-            /// indexバッファ
-            /// </summary>
-            public SharpDX.Direct3D11.Buffer IndexBuffer;
-
-            public void Dispose()
-            {
-                this.VertexBuffer.Dispose();
-                this.IndexBuffer.Dispose();
-            }
-        }
-        #endregion
-
-        #region メンバ変数
-        /// <summary>
-        /// データ管理
-        /// </summary>
-        protected Dictionary<int, VertexManageData> VertexDic = new Dictionary<int, VertexManageData>();
-
-        #endregion
+    internal class VertexManager : BaseClarityFactroy<VertexManager, VertexManageData>
+    {   
 
 
         /// <summary>
@@ -66,77 +55,11 @@ namespace Clarity.Vertex
         {
             Instance = new VertexManager();
 
-            //デフォルトデータの読み込み
-            Instance.LoadBuildInVertex();
-
         }
 
         //---------------------------------------------------------------------------------
-        /// <summary>
-        /// ビルドインのデフォルトデータの読み込み
-        /// </summary>
-        private void LoadBuildInVertex()
-        {
-            //読み込みデフォルトデータ一式(VertexCode, ファイル内容CSV文字列)
-            (int code, string csvs)[] defdatavec = {
-                (ClarityDataIndex.Vertex_Display, Properties.Resources.VD000),
-            };
+        
 
-            foreach (var defdata in defdatavec)
-            {
-                //対象の読み込み
-                PolygonObjectFile pof = new PolygonObjectFile();
-                PolyData pol = pof.ReadCsvString(defdata.csvs);
-
-                //ADD
-                this.AddVertexDic(defdata.code, pol);
-            }
-
-        }
-
-
-
-        /// <summary>
-        /// ユーザー定義データのクリア
-        /// </summary>
-        private void ClearUserData()
-        {
-            int[] indexvec = this.VertexDic.Keys.ToArray();
-            foreach (int index in indexvec)
-            {
-                if (index < CustomStartIndex)
-                {
-                    continue;
-                }
-
-                this.VertexDic[index].Dispose();
-                this.VertexDic.Remove(index);
-            }
-            
-            
-        }
-
-        /// <summary>
-        /// 読み込んだデータの開放
-        /// </summary>
-        /// <param name="cf">デフォルトデータのクリア可否 true=デフォルトデータまでクリアする</param>
-        protected void ClearVertexDic(bool cf = false)
-        {
-            //ユーザー定義だけクリア
-            if (cf == false)
-            {
-                this.ClearUserData();
-                return;
-            }
-
-            //完全クリア
-            foreach (VertexManageData mdata in this.VertexDic.Values)
-            {
-                mdata.Dispose();
-                
-            }
-            this.VertexDic.Clear();
-        }
 
 
         /// <summary>
@@ -144,7 +67,7 @@ namespace Clarity.Vertex
         /// </summary>
         /// <param name="vno">管理番号</param>
         /// <param name="pdata">対象データ</param>
-        protected void AddVertexDic(int vno, PolyData pdata)
+        internal void AddVertexDic(int vno, PolyData pdata)
         {
 
             //頂点バッファの作製
@@ -162,7 +85,7 @@ namespace Clarity.Vertex
                 mdata.Count = pdata.IndexList.Count;
 
             }
-            this.VertexDic.Add(vno, mdata);
+            this.ManaDic.Add(vno, mdata);
         }
 
 
@@ -177,6 +100,7 @@ namespace Clarity.Vertex
             List<string> flist = new List<string>() { listfilepath };
             this.CreateResource(flist);
         }
+
         /// <summary>
         /// データの読み込み
         /// </summary>
@@ -186,7 +110,7 @@ namespace Clarity.Vertex
             try
             {
                 //解放
-                this.ClearVertexDic();
+                this.ClearManageDic();
 
                 List<PolygonListFileDataRoot> rdatalist = new List<PolygonListFileDataRoot>();
 
@@ -232,7 +156,7 @@ namespace Clarity.Vertex
         public void AddResource(int index, string cpofilepath)
         {
             //キーの重複チェック
-            bool ret = this.VertexDic.ContainsKey(index);
+            bool ret = this.ManaDic.ContainsKey(index);
             if (ret == true)
             {
                 throw new Exception("Already Add Key");
@@ -261,7 +185,7 @@ namespace Clarity.Vertex
         /// </summary>
         public void ReleaseResource()
         {
-            this.ClearVertexDic();
+            this.ClearManageDic();
         }
 
 
@@ -274,8 +198,8 @@ namespace Clarity.Vertex
         {
             DeviceContext cont = DxManager.Mana.DxDevice.ImmediateContext;
 
-            //対象の取得
-            VertexManageData mdata = VertexManager.Instance.VertexDic[vid];
+            //対象の取得            
+            VertexManageData mdata = VertexManager.Instance.ManaDic[vid];
 
             //対象の頂点データ設定
             cont.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(mdata.VertexBuffer, Utilities.SizeOf<VertexInfo>(), 0));
@@ -290,14 +214,5 @@ namespace Clarity.Vertex
             return true;
         }
 
-
-
-        /// <summary>
-        /// 開放時
-        /// </summary>
-        public void Dispose()
-        {
-            this.ClearVertexDic(true);
-        }
     }
 }

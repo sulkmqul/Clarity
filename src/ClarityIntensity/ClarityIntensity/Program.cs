@@ -31,9 +31,8 @@ namespace ClarityIntensity
                 Clarity.ClarityEngine.Init(mf, setop);
 
                 //実行開始
-                IntensityMain im = new IntensityMain();                
-                EngineRunOption runop = new EngineRunOption();
-                Clarity.ClarityEngine.Run(im, runop);
+                IntensityMain im = new IntensityMain();                                
+                Clarity.ClarityEngine.Run(im);
                 
                 
             }

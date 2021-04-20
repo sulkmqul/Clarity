@@ -28,6 +28,11 @@ namespace Clarity
         /// </summary>
         public Size RenderingViewSize = new Size(800, 600);
 
-        
+
+        /// <summary>
+        /// 処理と描画時間の合計が時間を超えた場合、次のフレームの描画をスキップする限界時間(ms)
+        /// </summary>
+        public long LimitTime = Int64.MaxValue;
+
     }
 }

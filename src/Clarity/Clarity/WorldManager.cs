@@ -12,7 +12,7 @@ namespace Clarity
     /// <summary>
     /// 世界管理データ
     /// </summary>
-    public class WorldData
+    public class WorldData : IDisposable
     {
         /// <summary>
         /// カメラ行列[viewport index]
@@ -61,6 +61,14 @@ namespace Clarity
             this.CamProjectionMat = Matrix.Multiply(this.CameraMatVec[ci], this.ProjectionMat);
         }
 
+
+        /// <summary>
+        /// 解放処理
+        /// </summary>
+        public void Dispose()
+        {
+            
+        }
     }
 
     /// <summary>
@@ -76,7 +84,7 @@ namespace Clarity
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <remarks>camera projなど描画世界の単位をまとめて管理する 何個も世界管理があるとは思えないので継承させず、単一の管理クラスとして作成してしまう</remarks>
-    internal class WorldManager : BaseClaritySingleton<WorldManager>
+    internal class WorldManager : BaseClarityFactroy<WorldManager, WorldData>
     {
         private WorldManager()
         {
@@ -94,11 +102,6 @@ namespace Clarity
         protected ViewPortData[] ViewPortVec = null;
 
         
-        /// <summary>
-        /// データ管理
-        /// </summary>
-        protected Dictionary<int, WorldData> WorldDic = new Dictionary<int, WorldData>();
-
         /// <summary>
         /// 作成
         /// </summary>
@@ -155,7 +158,7 @@ namespace Clarity
         /// <returns></returns>
         public WorldData Get(int n)
         {
-            return this.WorldDic[n];
+            return this.ManaDic[n];
         }
 
         /// <summary>
@@ -185,7 +188,7 @@ namespace Clarity
         /// <param name="wdata"></param>
         public void Set(int wid, WorldData wdata)
         {
-            this.WorldDic[wid] = wdata;
+            this.ManaDic[wid] = wdata;
         }
 
         /// <summary>
@@ -195,8 +198,8 @@ namespace Clarity
         /// <param name="c"></param>
         public void SetCamera(int n, Matrix c, int ci = 0)
         {
-            this.WorldDic[n].CameraMatVec[ci] = c;
-            this.WorldDic[n].ReCalcu();
+            this.ManaDic[n].CameraMatVec[ci] = c;
+            this.ManaDic[n].ReCalcu();
         }
         /// <summary>
         /// プロジェクションの設定
@@ -205,8 +208,8 @@ namespace Clarity
         /// <param name="pro"></param>
         public void SetProjection(int n, Matrix pro)
         {
-            this.WorldDic[n].ProjectionMat = pro;
-            this.WorldDic[n].ReCalcu();
+            this.ManaDic[n].ProjectionMat = pro;
+            this.ManaDic[n].ReCalcu();
         }
 
     }

@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Clarity.Sound
 {
-    class SoundManager
+    class SoundData : IDisposable
+    {
+        public void Dispose()
+        {
+            
+        }
+    }
+
+    class SoundManager : BaseClarityFactroy<SoundManager, SoundData>
     {
     }
 }

@@ -29,13 +29,15 @@ namespace ClarityIntensity
             //オブジェクトの登録
             Clarity.Element.ClarityObject data = new Clarity.Element.ClarityObject(1);
             data.VertexID = ClarityDataIndex.Vertex_Display;
-            data.ShaderID = 4;
-            data.TextureID = 2;
+            data.ShaderID = 1;
+            data.TextureID = ClarityDataIndex.Texture_Circle;
+            data.Color = new Vector4(1.0f, 1.0f, 1.0f, 0.2f);
             data.TransSet.WorldID = 0;
             data.TransSet.Pos = new Vector3(0.0f, -0.0f, 0.0f);
-            data.TransSet.Scale = new Vector3(128.0f, 192.0f, 1.0f);            
+            
+            data.TransSet.Scale = new Vector3(192.0f, 192.0f, 1.0f);            
             data.TextureAnimationEnabled = false;
-            data.AnimeID = 3;
+            data.AnimeID = 1;
             ClarityEngine.AddElement(data);
 
             this.TData = data;

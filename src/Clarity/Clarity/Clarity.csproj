@@ -68,7 +68,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseClaritySingleton.cs" />
     <Compile Include="BuildInResource.cs" />
+    <Compile Include="ClarityEngine.publish.cs" />
+    <Compile Include="ClarityEngineExtension.cs" />
     <Compile Include="ClarityEngineSetting.cs" />
     <Compile Include="ClarityLog.cs" />
     <Compile Include="Core\ClarityCore.cs" />
@@ -78,6 +81,7 @@
     <Compile Include="ClarityEngine.cs" />
     <Compile Include="common.cs" />
     <Compile Include="Element\BaseClarityProcessor.cs" />
+    <Compile Include="Element\Collider\ColliderManager.cs" />
     <Compile Include="Sound\SoundManager.cs" />
     <Compile Include="Texture\TextureAnimeData.cs" />
     <Compile Include="InputManager.cs" />
@@ -106,7 +110,6 @@
     <Compile Include="Vertex\VertexManager.cs" />
     <Compile Include="WorldManager.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -119,6 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shader.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\T0000.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

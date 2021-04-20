@@ -89,10 +89,6 @@ namespace Clarity.Core
         /// </summary>
         private EngineSetupOption SetupOption = null;
 
-        /// <summary>
-        /// 実行オプション
-        /// </summary>
-        private EngineRunOption RunOption = null;
 
         /// <summary>
         /// 拡張実行一式
@@ -115,18 +111,18 @@ namespace Clarity.Core
 
             //エンジン管理クラスたちの作成
             this.CreateEngineManagers();
+
+
         }
 
 
         /// <summary>
         /// エンジンメイン処理
         /// </summary>
-        /// <param name="ice"></param>
-        /// <param name="op"></param>
-        public void StartClarity(ClarityEngineExtension ice, EngineRunOption op)
+        /// <param name="ice"></param>        
+        public void StartClarity(ClarityEngineExtension ice)
         {
-            this.Proc = ice;
-            this.RunOption = op;
+            this.Proc = ice;            
 
             ClarityInitParam iparam = new ClarityInitParam();
             iparam.Con = this.ManaCon;
@@ -300,8 +296,8 @@ namespace Clarity.Core
                 //今フレームの処理時間を計測
                 frametime = ClarityTimeManager.StopMeasure();
                 //基底時間を超えているなら次の描画をキャンセルしてクオリティを保つ
-                nextskip = (frametime <= this.RunOption.LimitTime);
-
+                nextskip = (frametime <= ClarityEngine.Setting.LimitTime);
+                
 
                 //FPS計算                
                 long fpsspanmili = ClarityTimeManager.TotalMilliseconds - fpsdata.PrevCalcuMs;

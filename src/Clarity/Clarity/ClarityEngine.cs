@@ -10,34 +10,6 @@ using Clarity.Element;
 
 namespace Clarity
 {
-    /// <summary>
-    /// Clarityエンジン基本IF
-    /// </summary>
-    public class ClarityEngineExtension : IDisposable
-    {
-        /// <summary>
-        /// 初期化動作を定義する
-        /// </summary>
-        public virtual void Init(ClarityInitParam pdata) { }
-
-        /// <summary>
-        /// 周回処理動作を定義する
-        /// </summary>
-        public virtual void CyclingProc(ClarityCyclingProcParam pdata) { }
-
-        /// <summary>
-        /// 関数
-        /// </summary>
-        public virtual void Dispose() { }
-
-        /// <summary>
-        /// Viewのサイズ変更処理
-        /// </summary>
-        public virtual void ResizeView()
-        {
-            ClarityEngine.ResetView();
-        }
-    }
 
     /// <summary>
     /// ClarityEngine初期化設定オプション
@@ -51,17 +23,7 @@ namespace Clarity
         
     }
 
-    /// <summary>
-    /// ClarityEngine実行オプション
-    /// </summary>
-    public class EngineRunOption
-    {
-        /// <summary>
-        /// 処理と描画時間の合計が時間を超えた場合、次のフレームの描画をスキップする限界時間(ms)
-        /// </summary>
-        public long LimitTime = Int64.MaxValue;
-    }
-
+ 
 
     /// <summary>
     /// パラメータ基底・・・共通の外だしともいう
@@ -98,7 +60,7 @@ namespace Clarity
     /// ClarityEngine入り口クラス
     /// これを介してClarityに関する情報に触れることができる
     /// </summary>
-    public class ClarityEngine
+    public partial class ClarityEngine
     {
         /// <summary>
         /// 無効ID値
@@ -198,6 +160,9 @@ namespace Clarity
             //コアエンジン初期化
             core = new Core.ClarityCore();
             core.Init(con, op);
+
+            //ビルドインデータの読み込み
+            BuildInResource.LoadBuildInData();
             
             return true;
         }
@@ -208,10 +173,10 @@ namespace Clarity
         /// </summary>
         /// <param name="ice">実行関数</param>
         /// <param name="op">実行オプション</param>
-        public static void Run(ClarityEngineExtension ice, EngineRunOption op)
+        public static void Run(ClarityEngineExtension ice)
         {
             //処理開始
-            core.StartClarity(ice, op);
+            core.StartClarity(ice);
 
             //解放
             core.Dispose();
@@ -228,44 +193,6 @@ namespace Clarity
             core.ResizeView();
         }
 
-        
-
-        /*###########################################################################################################*/
-        /*###########################################################################################################*/
-        /*###########################################################################################################*/
-        /*###########################################################################################################*/
-        /*###########################################################################################################*/
-        //管理定義各種
-        /// <summary>
-        /// 世界の設定
-        /// </summary>
-        /// <param name="wid"></param>
-        /// <param name="wdata"></param>
-        public static void SetWorld(int wid, WorldData wdata)
-        {
-            WorldManager.Mana.Set(wid, wdata);
-        }
-
-        /// <summary>
-        /// Element管理への登録
-        /// </summary>
-        /// <param name="ele"></param>
-        public static void AddElement(BaseElement ele)
-        {
-            ElementManager.Mana.AddRequest(ele);
-        }
-
-        /// <summary>
-        /// Element管理の削除
-        /// </summary>
-        /// <param name="ele"></param>
-        public static void RemoveElement(BaseElement ele)
-        {
-            ElementManager.Mana.RemoveRequest(ele);
-
-        }
-
-        
 
     }
 }

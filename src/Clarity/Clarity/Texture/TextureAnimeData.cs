@@ -49,7 +49,7 @@ namespace Clarity.Texture
     /// テクスチャアニメーションデータ
     /// </summary>
     /// <remarks>このクラス一つが一個のアニメーションを表す</remarks>
-    public class TextureAnimeData
+    public class TextureAnimeData : IDisposable
     {
         /// <summary>
         /// これの一意文字列
@@ -71,6 +71,14 @@ namespace Clarity.Texture
         /// </summary>
         public List<TextureAnimeFrameInfo> FrameList = new List<TextureAnimeFrameInfo>();
 
+        //-------------------------------------------------------------------------
+        /// <summary>
+        /// 解放処理
+        /// </summary>
+        public void Dispose()
+        {
+            
+        }
     }
 
 

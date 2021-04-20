@@ -210,7 +210,22 @@ namespace Clarity.Element
             {
                 this.RenderSet.ShaderID = value;
             }
-        }        
+        }    
+        
+        /// <summary>
+        /// 色の設定
+        /// </summary>
+        public SharpDX.Vector4 Color
+        {
+            get
+            {
+                return this.RenderSet.Color;
+            }
+            set
+            {
+                this.RenderSet.Color = value;
+            }
+        }
         #endregion
 
 
@@ -224,7 +239,9 @@ namespace Clarity.Element
 
         protected abstract void InitElement();
         protected abstract void ProcElement();
-        protected virtual void RenderElement() { }
+        protected virtual void RenderElement() {
+            this.RenderDefault();
+        }
 
 
         /// <summary>

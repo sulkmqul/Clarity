@@ -93,8 +93,7 @@ namespace Clarity
             Texture.TextureManager.Mana.AddTexture(2, @"F:\作業領域\Game\Clarity\src\ClarityIntensity\testdata\eff_000.bmp", new Size(8, 1));
             Texture.TextureManager.Mana.AddTexture(3, @"F:\作業領域\Game\Clarity\src\ClarityIntensity\testdata\plj_000.png", new Size(8, 1));
 
-            //シェーダー・・・欲を言うならビルドインに移行したいがしばらくは保留予定
-            Shader.ShaderManager.Mana.CreateResource("shader/shlist.txt");
+            
 
 
             {

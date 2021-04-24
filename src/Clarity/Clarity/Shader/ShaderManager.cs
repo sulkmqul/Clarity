@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,24 +62,61 @@ namespace Clarity.Shader
         {
         }
 
+        /// <summary>
+        /// 頂点Shader
+        /// </summary>
+        private string VertexShaderProfile = "";
+
+        /// <summary>
+        /// PixelShader
+        /// </summary>
+        private string PixelShaderProfile = "";
+        
+
+        /// <summary>
+        /// 作成関数
+        /// </summary>
         public static void Create()
         {
             Instance = new ShaderManager();
+
+            //必要な情報の取得
+            Instance.VertexShaderProfile = ClarityEngine.Setting.VertexShaderVersioon;
+            Instance.PixelShaderProfile = ClarityEngine.Setting.PixelShaderVersioon;
         }
 
 
-        
+
         //==========================================================================================
+        /// <summary>
+        /// 対象ソースファイルの全行を読み込む
+        /// </summary>
+        /// <param name="filepath">読み込みファイルパス</param>
+        /// <returns></returns>
+        private string LoadSrcFileAll(string filepath)
+        {
+            string srccode = "";
+            //ShaderFileの読み込み
+            using (FileStream fp = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader sr = new StreamReader(fp))
+                {
+                    srccode = sr.ReadToEnd();
+                }
+            }
+            return srccode;
+        }
 
 
         /// <summary>
-        /// VertexShaderのコンパイル
+        /// VertexShaderのコンパイル(文字列から)
         /// </summary>
-        /// <param name="filename">シェーダーファイル名</param>
-        /// <param name="funcname">関数名</param>
-        /// <param name="ipl">頂点レイアウト</param>
+        /// <param name="srcode"></param>
+        /// <param name="funcname"></param>
+        /// <param name="ipevec"></param>
+        /// <param name="ipl"></param>
         /// <returns></returns>
-        protected VertexShader CompileVertexShaderFile(string filename, string funcname, InputElement[] ipevec, out InputLayout ipl)
+        protected VertexShader CompileVertexShader(string srcode, string funcname, InputElement[] ipevec, out InputLayout ipl)
         {
             VertexShader ans = null;
 
@@ -86,7 +124,7 @@ namespace Clarity.Shader
             try
             {
                 //コンパイル                
-                var code = ShaderBytecode.CompileFromFile(filename, funcname, "vs_4_0");
+                var code = ShaderBytecode.Compile(srcode, funcname, this.VertexShaderProfile);
                 if (code == null)
                 {
                     throw new Exception("CompileFromFile NULL");
@@ -113,18 +151,47 @@ namespace Clarity.Shader
         }
 
         /// <summary>
+        /// VertexShaderのコンパイル(ファイルから)
+        /// </summary>
+        /// <param name="filepath">シェーダーファイル名</param>
+        /// <param name="funcname">関数名</param>
+        /// <param name="ipl">頂点レイアウト</param>
+        /// <returns></returns>
+        protected VertexShader CompileVertexShaderFile(string filepath, string funcname, InputElement[] ipevec, out InputLayout ipl)
+        {
+            VertexShader ans = null;
+
+            try
+            {
+                //ソースファイルの読み込み
+                string srccode = this.LoadSrcFileAll(filepath);
+
+                ans = this.CompileVertexShader(srccode, funcname, ipevec, out ipl);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("CompileVertexShaderFile filepath=" + filepath, e);
+            }
+            
+            return ans;
+        }
+
+
+
+
+        /// <summary>
         /// PixelShaderのコンパイル
         /// </summary>
-        /// <param name="filename">シェーダーファイル名</param>
-        /// <param name="funcname">関数名</param>
+        /// <param name="srccode"></param>
+        /// <param name="funcname"></param>
         /// <returns></returns>
-        protected PixelShader CompilePixelShaderFile(string filename, string funcname)
+        protected PixelShader CompilePixelShader(string srccode, string funcname)
         {
             PixelShader ans = null;
             try
             {
                 //コンパイル                
-                var code = ShaderBytecode.CompileFromFile(filename, funcname, "ps_4_0");
+                var code = ShaderBytecode.Compile(srccode, funcname, this.PixelShaderProfile);
                 if (code == null)
                 {
                     throw new Exception(code.Message);
@@ -137,6 +204,32 @@ namespace Clarity.Shader
             catch (Exception e)
             {
                 throw e;
+            }
+
+            return ans;
+        }
+
+        /// <summary>
+        /// PixelShaderのコンパイル
+        /// </summary>
+        /// <param name="filepath">シェーダーファイル名</param>
+        /// <param name="funcname">関数名</param>
+        /// <returns></returns>
+        protected PixelShader CompilePixelShaderFile(string filepath, string funcname)
+        {
+            PixelShader ans = null;
+            try
+            {
+                //Shaderソース読みおｋ美
+                string srccode = this.LoadSrcFileAll(filepath);
+
+                //読み込み
+                ans = this.CompilePixelShader(srccode, funcname);
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("CompilePixelShaderFile path=" + filepath, e);
             }
 
             return ans;
@@ -174,6 +267,72 @@ namespace Clarity.Shader
             data.ConstantBuffer = new SharpDX.Direct3D11.Buffer(DxManager.Mana.DxDevice, Utilities.SizeOf<T>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
 
             return data;
+        }
+
+
+
+        /// <summary>
+        /// Shaderデータ一つの作成
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sd"></param>
+        /// <param name="ipevec"></param>
+        /// <returns></returns>
+        private ShaderManageData CreateShaderManageData<T>(string srcode, string vs_name, string ps_name, InputElement[] ipevec) where T : struct
+        {
+            ShaderManageData data = new ShaderManageData();
+
+            //VertexShader
+            data.Vs = this.CompileVertexShader(srcode, vs_name, ipevec, out data.Layout);
+            if (data.Vs == null)
+            {
+                throw new Exception("CompileVertexShader Exception");
+            }
+
+            //PixelShader
+            data.Ps = this.CompilePixelShader(srcode, ps_name);
+            if (data.Ps == null)
+            {
+                throw new Exception("CompilePixelShader Exception");
+            }
+
+            //コンスタントバッファ
+            data.ConstantBuffer = new SharpDX.Direct3D11.Buffer(DxManager.Mana.DxDevice, Utilities.SizeOf<T>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
+
+            return data;
+        }
+
+        /// <summary>
+        /// 一つのShaderListFileデータの読み込み
+        /// </summary>
+        /// <param name="rdata">読み込みデータ</param>
+        private void LoadShaderListFileData<T>(ShaderListFileDataRoot rdata, InputElement[] ipevec) where T : struct
+        {
+            //シェーダーのcompileと読み込み
+            int index = rdata.RootID;
+            foreach (ShaderListData sd in rdata.ShaderList)
+            {
+
+                //一つのデータの読みこみ
+                ShaderManageData data = null;
+
+                if (sd.EnabledFilePath)
+                {
+                    data = this.CreateShaderManageData<T>(sd, ipevec);
+                }
+                else
+                {
+                    string s = Properties.Resources.shader;
+                    data = this.CreateShaderManageData<T>(s, sd.VsName, sd.PsName, ipevec);
+
+                }
+
+                //--------------------------------------
+                //ADD
+                this.ManaDic.Add(index, data);
+
+                index++;
+            }
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
@@ -220,25 +379,28 @@ namespace Clarity.Shader
 
                 foreach (ShaderListFileDataRoot rdata in rdatalist)
                 {
-                    //シェーダーのcompileと読み込み
-                    int index = rdata.RootID;
-                    foreach (ShaderListData sd in rdata.ShaderList)
-                    {
-                        //一つのデータの読みこみ
-                        ShaderManageData data = this.CreateShaderManageData<T>(sd, ipevec);
-
-                        //--------------------------------------
-                        //ADD
-                        this.ManaDic.Add(index, data);
-
-                        index++;
-                    }
+                    this.LoadShaderListFileData<T>(rdata, ipevec);
                 }
             }
             catch (Exception e)
             {
                 throw new Exception("ShaderManager CreateResource Exception", e);
             }
+        }
+
+
+
+        internal void CreateResource(string srcode, ShaderListFileDataRoot rdata)
+        {
+            //頂点レイアウト
+            //3Dではないので法線は不要。これは将来的に拡張が必要と思われるため、shaderlistfileのオプション化を検討する
+            InputElement[] ipevec = {
+                                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                        new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
+                                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0),
+                                    };
+
+            this.LoadShaderListFileData<ShaderDataDefault>(rdata, ipevec);
         }
 
 

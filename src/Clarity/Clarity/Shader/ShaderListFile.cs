@@ -44,6 +44,23 @@ namespace Clarity.Shader
         /// PixelShader名
         /// </summary>
         public string PsName;
+
+
+        /// <summary>
+        /// ファイルパスが有効化否か(ここがfalseの場合、DefaultShaderファイルを読む)
+        /// </summary>
+        public bool EnabledFilePath
+        {
+            get
+            {
+                if (this.FilePath.Length <= 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
     }
 
     //ファイル仕様
@@ -56,23 +73,16 @@ namespace Clarity.Shader
     /// </summary>
     public class ShaderListFile : BaseCsvFile
     {
-        /// <summary>
-        /// 一覧ファイルの読み込み
-        /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns></returns>
-        public ShaderListFileDataRoot ReadFile(string filepath)
-        {
-            //csvの読み込み
-            List<string[]> datalist = this.ReadCsvFile(filepath);
 
+        private ShaderListFileDataRoot ReadCsvString(List<string[]> datalist)
+        {
             ShaderListFileDataRoot ans = new ShaderListFileDataRoot();
 
             //一行目のRootIDを読みこみ
             ans.RootID = Convert.ToInt32(datalist[0][0]);
 
             //特にコンマなしの予定なので0番目を読む込む
-            for( int i=1; i<datalist.Count; i++)
+            for (int i = 1; i < datalist.Count; i++)
             {
                 string[] data = datalist[i];
 
@@ -102,6 +112,44 @@ namespace Clarity.Shader
 
                 ans.ShaderList.Add(sdata);
             }
+
+            return ans;
+        }
+
+        /// <summary>
+        /// 一覧ファイルの読み込み
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        public ShaderListFileDataRoot ReadFile(string filepath)
+        {
+            //csvファイルの読み込み
+            List<string[]> datalist = this.ReadCsvFile(filepath);
+
+            //読み込み
+            ShaderListFileDataRoot ans = this.ReadCsvString(datalist);
+
+            return ans;
+        }
+
+
+        /// <summary>
+        /// 一覧文字列の読み込み
+        /// </summary>
+        /// <param name="csv"></param>
+        /// <returns></returns>
+        public ShaderListFileDataRoot ReadCsvString(string csv)
+        {
+            List<string[]> datalist = new List<string[]>();
+
+            //csvの読み込み
+            using (System.IO.MemoryStream mst = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(csv)))
+            {
+                datalist = this.ReadCsvStream(mst);
+            }
+
+            //読み込み
+            ShaderListFileDataRoot ans = this.ReadCsvString(datalist);
 
             return ans;
         }

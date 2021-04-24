@@ -381,7 +381,7 @@ namespace Clarity.Core
             data.WorldViewProjMat = wm * wdata.CamProjectionMat;
             data.WorldViewProjMat.Transpose();
             data.Color = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-            ShaderManager.SetShaderDataDefault(data, 1);
+            ShaderManager.SetShaderDataDefault(data, ClarityDataIndex.Shader_Default);
 
             ShaderResourceView srvt = DxManager.Mana.RenderingTextureResource;
             Texture.TextureManager.SetTexture(srvt);

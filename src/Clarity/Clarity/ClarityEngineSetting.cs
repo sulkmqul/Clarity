@@ -34,5 +34,16 @@ namespace Clarity
         /// </summary>
         public long LimitTime = Int64.MaxValue;
 
+
+        /// <summary>
+        /// VertexShaderバージョン
+        /// </summary>
+        public string VertexShaderVersioon = "vs_4_0";
+
+        /// <summary>
+        /// PixelShaderのバージョンバージョン
+        /// </summary>
+        public string PixelShaderVersioon = "ps_4_0";
+
     }
 }

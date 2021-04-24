@@ -31,15 +31,19 @@ namespace Clarity
         /// <summary>
         /// シェーダーデフォルト表示
         /// </summary>
-        public const int Shader_Default = -1;
+        public const int Shader_Default = -100;
         /// <summary>
         /// シェーダーテクスチャなし表示
         /// </summary>
-        public const int Shader_NoTexture = -2;
+        public const int Shader_HitLight = -99;
+        /// <summary>
+        /// シェーダーテクスチャなし表示
+        /// </summary>
+        public const int Shader_NoTexture = -98;
         /// <summary>
         /// シェーダーテクスチャアニメーション
         /// </summary>
-        public const int Shader_TextureAnime = -3;
+        public const int Shader_TextureAnime = -97;
     }
 
 
@@ -76,6 +80,12 @@ namespace Clarity
         /// </summary>
         private void LoadShaderData()
         {
+            //Buildin Shader Listの読み込み
+            Shader.ShaderListFile shlist = new Shader.ShaderListFile();
+            Shader.ShaderListFileDataRoot rdata = shlist.ReadCsvString(Properties.Resources.shlist);
+
+
+            Shader.ShaderManager.Mana.CreateResource(Properties.Resources.shader, rdata);
         }
 
 

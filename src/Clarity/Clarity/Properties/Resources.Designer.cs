@@ -72,6 +72,21 @@ namespace Clarity.Properties {
         }
         
         /// <summary>
+        ///   1
+        ///Default,shader/shader.fx,VsDefault,PsDefault
+        ///HitLight,shader/shader.fx,VsDefault,PsHitLight
+        ///NoTexture,shader/shader.fx,VsDefault,PsNoTex
+        ///TextureAnime,shader/shader.fx,VsTextureAnimation,PsDefault
+        ///
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string shlist {
+            get {
+                return ResourceManager.GetString("shlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         internal static System.Drawing.Bitmap T0000 {

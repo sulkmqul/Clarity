@@ -29,7 +29,7 @@ namespace ClarityIntensity
             //オブジェクトの登録
             Clarity.Element.ClarityObject data = new Clarity.Element.ClarityObject(1);
             data.VertexID = ClarityDataIndex.Vertex_Display;
-            data.ShaderID = 1;
+            data.ShaderID = -100;
             data.TextureID = ClarityDataIndex.Texture_Circle;
             data.Color = new Vector4(1.0f, 1.0f, 1.0f, 0.2f);
             data.TransSet.WorldID = 0;

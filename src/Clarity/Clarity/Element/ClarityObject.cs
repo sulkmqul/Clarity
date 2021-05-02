@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Clarity.Texture;
+using Clarity.Element.Collider;
 
 namespace Clarity.Element
 {
@@ -17,7 +18,7 @@ namespace Clarity.Element
     /// 単発ならこのまま使うもよし、継承してカスタムするもよしなクラス。
     /// 必要要素の全部入りをする。
     /// </remarks>
-    public class ClarityObject : BaseElement
+    public class ClarityObject : BaseElement, ICollider
     {
         public ClarityObject(long code) : base(code)
         {
@@ -68,6 +69,11 @@ namespace Clarity.Element
                 this.AnimeCon.ChangeAnime(value);
             }
         }
+
+        /// <summary>
+        /// 当たり判定情報
+        /// </summary>
+        public ColliderInfo ColInfo { get; set; } = null;
 
         #endregion
 
@@ -157,6 +163,15 @@ namespace Clarity.Element
             {
                 this.RenderDefault();
             }
+        }
+
+        /// <summary>
+        /// 当たり判定処理
+        /// </summary>
+        /// <param name="obj"></param>
+        public virtual void ColliderCallback(ICollider obj)
+        {
+            
         }
     }
 

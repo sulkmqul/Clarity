@@ -98,9 +98,6 @@ float4 PsHitLight(PS_IN psin) : SV_TARGET
 
 
 
-
-
-
 	return col;
 }
 
@@ -113,6 +110,19 @@ float4 PsNoTex(PS_IN psin) : SV_TARGET
 	//return float4(0.5f, 0.5f, 1.0f, 1.0f);
 	float4 col = psin.col;
 
+
+	return col;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+float4 PsTextureAlphaOnlyBind(PS_IN psin) : SV_TARGET
+{
+	//return float4(0.5f, 0.5f, 1.0f, 1.0f);
+	float4 col = pix.Sample(picsamp, psin.tex);
+
+	col.x = psin.col.x;
+	col.y = psin.col.y;
+	col.z = psin.col.z;
 
 	return col;
 }

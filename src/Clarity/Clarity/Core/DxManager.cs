@@ -80,10 +80,7 @@ namespace Clarity.Core
         /// </summary>
         protected SwapChain SwapChain = null;
 
-        /// <summary>
-        /// Direct3D11デバイス
-        /// </summary>
-        public SharpDX.Direct3D11.Device DxDevice = null;
+        
 
 
         /// <summary>
@@ -144,7 +141,10 @@ namespace Clarity.Core
 
         #endregion
 
-
+        /// <summary>
+        /// Direct3D11デバイス
+        /// </summary>
+        public SharpDX.Direct3D11.Device DxDevice = null;
 
         //-----------------------------------------------------------------------------------------------------------------------------
         /// <summary>
@@ -211,7 +211,7 @@ namespace Clarity.Core
                 //デバイス取得
                 //スワップチェイン取得                            
                 SharpDX.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, swc, out this.DxDevice, out this.SwapChain);
-
+                
 
                 //イベントを無効にする
                 //DirectXはAlt + Enterで自動でフルスクリーンにする機能がある。これで無効化できる。フルスクリーンの方法が見つかったら消すこと。
@@ -234,7 +234,7 @@ namespace Clarity.Core
 
                 //三角ポリンゴンの描画
                 this.DxDevice.ImmediateContext.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
-
+                
 
                 //アルファブレンドの初期化
                 this.InitAlphaBlend();

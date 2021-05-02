@@ -86,40 +86,17 @@ namespace Clarity
         /// </summary>
         public static void TestSpaceInit()
         {
-            //データ読み込み
-            //Vertex.VertexManager.Mana.AddResource(1, @"F:\作業領域\Game\Stellamaris\data\Poly\V001.cpo");
+            string dpath = @"F:\作業領域\Game\Clarity\src\ClarityIntensity\testdata\";
+            
             //テクスチャ
-            Texture.TextureManager.Mana.AddTexture(1, @"F:\作業領域\Game\Clarity\src\ClarityIntensity\testdata\bul_000.png", new Size(4, 1));
-            Texture.TextureManager.Mana.AddTexture(2, @"F:\作業領域\Game\Clarity\src\ClarityIntensity\testdata\eff_000.bmp", new Size(8, 1));
-            Texture.TextureManager.Mana.AddTexture(3, @"F:\作業領域\Game\Clarity\src\ClarityIntensity\testdata\plj_000.png", new Size(8, 1));
+            Texture.TextureManager.Mana.AddTexture(1, dpath + "bul_000.png", new Size(4, 1));
+            Texture.TextureManager.Mana.AddTexture(2, dpath + "eff_000.bmp", new Size(8, 1));
+            Texture.TextureManager.Mana.AddTexture(3, dpath + "plj_000.png", new Size(8, 1));
 
             
 
-
-            {
-                /*
-                //暫定テクスチャアニメファイル書き込み
-                Texture.TextureAnimeFileDataRoot rdata = new Texture.TextureAnimeFileDataRoot();
-                rdata.RootID = 5;
-                rdata.AnimeDataList = new List<Texture.TextureAnimeFileDataElement>()
-                {
-                    new Texture.TextureAnimeFileDataElement(){ 
-                        AnimeCode="test", 
-                        Kind=Texture.ETextureAnimationKind.Loop, 
-                        NextAnimeCode="", 
-                        FrameData = new List<string>(){ "bul_000T,0,0,100" } 
-                    }
-                };
-                Texture.TextureAnimeFile.WriteFile("testanime.txt", rdata);
-                */
-            }
-
             //テクスチャアニメファイルの読み込み
-            Texture.TextureAnimeFactory.Mana.ReadTextureAnimeFile(@"F:\作業領域\Game\Clarity\src\ClarityIntensity\testdata\texanime.txt");
-
-
-
-
+            Texture.TextureAnimeFactory.Mana.ReadTextureAnimeFile(dpath + @"texanime.txt");
 
         }
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Clarity.Element.Collider;
+
 
 namespace Clarity.Element
 {
@@ -56,6 +58,11 @@ namespace Clarity.Element
         /// 削除申請一式
         /// </summary>
         protected Queue<ReqData> RemoveReqQue = new Queue<ReqData>();
+
+        /// <summary>
+        /// 衝突判定管理
+        /// </summary>
+        private ColliderManager ColMana = new ColliderManager();
         #endregion
 
         /// <summary>
@@ -64,6 +71,33 @@ namespace Clarity.Element
         protected void Init()
         {
             
+        }
+
+        /// <summary>
+        /// 当たり判定への追加
+        /// </summary>
+        /// <param name="ele"></param>
+        private void AddColliderManager(BaseElement ele)
+        {
+            ICollider ic = ele as ICollider;
+            if (ic == null)
+            {
+                return;
+            }
+            this.ColMana.AddCollider(ic);
+        }
+        /// <summary>
+        /// 当たり判定から削除
+        /// </summary>
+        /// <param name="ele"></param>
+        private void RemoveColliderManager(BaseElement ele)
+        {
+            ICollider ic = ele as ICollider;
+            if (ic == null)
+            {
+                return;
+            }
+            this.ColMana.RemoveCollider(ic);
         }
 
         /// <summary>
@@ -87,8 +121,13 @@ namespace Clarity.Element
                     this.ElementDic.Add(req.ID, new List<BaseElement>());
                 }
 
+                //管理登録
                 req.Ele.Init(frame_time);
                 this.ElementDic[req.ID].Add(req.Ele);
+
+                //当たり判定登録
+                this.AddColliderManager(req.Ele);
+
 
             }
 
@@ -108,6 +147,9 @@ namespace Clarity.Element
 
                 ReqData req = this.RemoveReqQue.Dequeue();
                 this.ElementDic[req.ID].Remove(req.Ele);
+
+                //当たり判定削除
+                this.RemoveColliderManager(req.Ele);
             }
         }
 
@@ -133,6 +175,9 @@ namespace Clarity.Element
                     index++;
                 }
             }
+
+            //全ての処理が終わったら衝突判定を実行する
+            this.ColMana.ExecuteCollision();
         }
 
         /// <summary>
@@ -145,14 +190,21 @@ namespace Clarity.Element
             foreach (List<BaseElement> olist in this.ElementDic.Values)
             {
                 int index = 0;
-                foreach (BaseElement obj in olist)
+                olist.ForEach(obj =>
                 {
-
                     FrameRenderParam rparam = new FrameRenderParam() { ViewIndex = vindex, RenderIndex = index };
                     obj.Render(rparam);
                     index++;
-                }
+                });                
             }
+
+
+            //当たり判定の描画を行う？
+            if (ClarityEngine.Setting.Debug.RenderColliderFlag)
+            {
+                this.ColMana.RenderCollider(vindex);
+            }
+
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////

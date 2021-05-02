@@ -16,23 +16,27 @@ namespace Clarity.Element
     /// 毎フレーム自動で更新される情報
     /// </summary>
     public class ElementFrameInfo
-    {
+    {   
 
         #region 処理関係・・・分かり易くProcを接頭語に
         /// <summary>
         /// 今回の処理順番
         /// </summary>
         public int ProcIndex = 0;
-
         /// <summary>
         /// 今回の処理実行時間(ms)
         /// </summary>
         public long ProcFrameTime = 0;
-
         /// <summary>
         /// 前回の実行時間(ms)
         /// </summary>
         public long PrevProcFrameTime = 0;
+
+        /// <summary>
+        /// 処理レート
+        /// </summary>
+        public float ProcBaseRate = 1.0f;
+
         /// <summary>
         /// 処理間の経過時間
         /// </summary>
@@ -243,6 +247,7 @@ namespace Clarity.Element
             this.RenderDefault();
         }
 
+        
 
         /// <summary>
         /// 初期化関数
@@ -261,11 +266,15 @@ namespace Clarity.Element
         internal void Proc(FrameProcParam fparam)
         {
             #region フレーム情報更新処理
-
-            //フレーム基準情報の初期化
-            this.FrameInfo.ProcIndex = fparam.ProcIndex;
-            this.FrameInfo.ProcFrameTime = fparam.FrameTime;
-            this.FrameInfo.PrevProcFrameTime = fparam.ProcIndex;
+            if (fparam != null)
+            {
+                //フレーム基準情報の初期化
+                this.FrameInfo.ProcIndex = fparam.ProcIndex;
+                this.FrameInfo.ProcFrameTime = fparam.FrameTime;
+                this.FrameInfo.PrevProcFrameTime = fparam.ProcIndex;
+                this.FrameInfo.ProcBaseRate = fparam.FrameBaseRate;
+                
+            }
 
             //今回の処理フレーム初期化
             this.FrameSpeed = new SpeedSet();
@@ -280,15 +289,16 @@ namespace Clarity.Element
             {
                 this.CurrentCoroutine = null;
             }
-
+            
             //追加処理の実行
             this.AdditionalProc?.Invoke();
 
 
             //作成した値を加算・・・ここはフレームを考慮する            
-            this.TransSet.Pos += this.FrameSpeed.Pos * fparam.FrameBaseRate;
-            this.TransSet.Rot += this.FrameSpeed.Rot * fparam.FrameBaseRate;
-            this.TransSet.Scale += this.FrameSpeed.Scale * fparam.FrameBaseRate;
+            this.TransSet.Pos += this.FrameSpeed.Pos * this.FrameInfo.ProcBaseRate;
+            this.TransSet.Rot += this.FrameSpeed.Rot * this.FrameInfo.ProcBaseRate;
+            this.TransSet.Scale += this.FrameSpeed.Scale * this.FrameInfo.ProcBaseRate;
+            this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate * this.FrameInfo.ProcBaseRate;
 
         }
 

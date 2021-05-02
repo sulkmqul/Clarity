@@ -27,20 +27,28 @@ namespace ClarityIntensity
             ClarityEngine.TestSpaceInit();
 
             //オブジェクトの登録
-            Clarity.Element.ClarityObject data = new Clarity.Element.ClarityObject(1);
-            data.VertexID = ClarityDataIndex.Vertex_Display;
-            data.ShaderID = -100;
+            /*Clarity.Element.ClarityObject data = new Clarity.Element.ClarityObject(1);
+            data.VertexID = ClarityDataIndex.Vertex_Display;           
+
+            data.ShaderID = ClarityDataIndex.Shader_OnlyAlpha;
             data.TextureID = ClarityDataIndex.Texture_Circle;
-            data.Color = new Vector4(1.0f, 1.0f, 1.0f, 0.2f);
+            data.Color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
             data.TransSet.WorldID = 0;
             data.TransSet.Pos = new Vector3(0.0f, -0.0f, 0.0f);
             
-            data.TransSet.Scale = new Vector3(192.0f, 192.0f, 1.0f);            
+            data.TransSet.Scale = new Vector3(30.0f, 30.0f, 1.0f);            
             data.TextureAnimationEnabled = false;
             data.AnimeID = 1;
             ClarityEngine.AddElement(data);
 
-            this.TData = data;
+            this.TData = data;*/
+
+            this.TData = new TestObject();
+            ClarityEngine.AddElement(this.TData);
+
+
+            TestEnemy te = new TestEnemy();
+            ClarityEngine.AddElement(te);
 
         }
 

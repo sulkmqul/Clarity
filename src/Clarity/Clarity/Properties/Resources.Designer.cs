@@ -61,9 +61,39 @@ namespace Clarity.Properties {
         }
         
         /// <summary>
-        ///   //シェーダーは未実装です
-        /////ファイルでなく文字列からコンパイルは関数があり、実現は可能みたいですが、
-        /////既存との変更が大きめかつ面倒な部分だったのでやる気がなくて保留中です。 に類似しているローカライズされた文字列を検索します。
+        ///   struct VS_IN
+        ///{
+        ///	float4 pos : POSITION;
+        ///	float4 col : COLOR;
+        ///	float2 tex : TEXCOORD;
+        ///};
+        ///
+        ///
+        ///struct PS_IN
+        ///{
+        ///	float4 pos : SV_POSITION;
+        ///	float4 col : COLOR;
+        ///	float2 tex : TEXCOORD;
+        ///};
+        ///
+        ///
+        ///struct RegistData
+        ///{
+        ///	float4x4 WorldViewProj;
+        ///	float4 Col;
+        ///	float2 tex_div;
+        ///	float2 tex_offset;
+        ///
+        ///};
+        ///
+        ///RegistData RData : register(s0);
+        ///
+        /////�e�N�X�`��
+        ///Texture2D pix : register(t0);
+        ///SamplerState picsamp : register(s0);
+        ///
+        ///
+        ////////////////////////////////////////////////////////////////////////////////////// [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string shader {
             get {
@@ -72,11 +102,13 @@ namespace Clarity.Properties {
         }
         
         /// <summary>
-        ///   1
-        ///Default,shader/shader.fx,VsDefault,PsDefault
-        ///HitLight,shader/shader.fx,VsDefault,PsHitLight
-        ///NoTexture,shader/shader.fx,VsDefault,PsNoTex
-        ///TextureAnime,shader/shader.fx,VsTextureAnimation,PsDefault
+        ///   -100
+        ///Default,,VsDefault,PsDefault
+        ///HitLight,,VsDefault,PsHitLight
+        ///NoTexture,,VsDefault,PsNoTex
+        ///TextureAnime,,VsTextureAnimation,PsDefault
+        ///OnlyAlpha,,VsDefault,PsTextureAlphaOnlyBind
+        ///
         ///
         /// に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -111,6 +143,24 @@ namespace Clarity.Properties {
         internal static string VD000 {
             get {
                 return ResourceManager.GetString("VD000", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   V3C3T2
+        ///4
+        ///-0.5,	1.0,	0.0,	1.0,	1.0,	1.0,	0.0,	0.0
+        ///0.5,	1.0,	0.0,	1.0,	1.0,	1.0,	1.0,	0.0
+        ///0.5,	0.0,	0.0,	1.0,	1.0,	1.0,	1.0,	20.0
+        ///-0.5,	0.0,	0.0,	1.0,	1.0,	1.0,	0.0,	20.0
+        ///2
+        ///2,1,0
+        ///3,2,0
+        /// に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string VD001 {
+            get {
+                return ResourceManager.GetString("VD001", resourceCulture);
             }
         }
     }

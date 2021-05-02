@@ -143,6 +143,7 @@ namespace Clarity
             this.KeyboardDic.Add(User32.VK_Z, GameKey.Button1);
             this.KeyboardDic.Add(User32.VK_X, GameKey.Button2);
             this.KeyboardDic.Add(User32.VK_C, GameKey.Button3);
+            this.KeyboardDic.Add(User32.VK_V, GameKey.Button4);
 
 
             this.KeyboardDic.Add(User32.VK_Q, GameKey.Button7);

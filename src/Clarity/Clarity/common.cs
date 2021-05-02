@@ -157,13 +157,16 @@ namespace Clarity
         /// 速度倍率情報・・・こちらはフレームというよりはよりゲーム的な利用を想定しています
         /// </summary>
         public float Rate = 1.0f;
+
+
+        public float ScaleRate = 0.0f;
     }
 
 
     /// <summary>
     /// 位置、回転、拡縮セット
     /// </summary>
-    public class TransposeSet
+    public class TransposeSet : Vector3Set
     {
         /// <summary>
         /// コンストラクタ
@@ -183,24 +186,12 @@ namespace Clarity
         /// </summary>
         public int WorldID = 0;
 
-        /// <summary>
-        /// 位置
-        /// </summary>
-        public Vector3 Pos = new Vector3(0.0f);
-        /// <summary>
-        /// 回転
-        /// </summary>
-        public Vector3 Rot = new Vector3(0.0f);
-
-        /// <summary>
-        /// 拡縮
-        /// </summary>
-        public Vector3 Scale = new Vector3(1.0f);
+        
 
         /// <summary>
         /// 拡大倍率
         /// </summary>
-        public float ScaleeRate = 1.0f;
+        public float ScaleRate = 1.0f;
 
         /// <summary>
         /// 回転のみの行列を作成
@@ -227,7 +218,7 @@ namespace Clarity
         {
 
             Matrix scm = Matrix.Scaling(this.Scale);
-            Matrix wmrate = Matrix.Scaling(this.ScaleeRate);
+            Matrix wmrate = Matrix.Scaling(this.ScaleRate);
 
             Matrix rxm = Matrix.RotationZ(this.Rot.X);
             Matrix rym = Matrix.RotationZ(this.Rot.Y);
@@ -248,10 +239,10 @@ namespace Clarity
 
             Matrix tm = Matrix.Translation(this.Pos);
             Matrix wm = Matrix.Scaling(this.Scale);
-            Matrix wmrate = Matrix.Scaling(this.ScaleeRate);
+            Matrix wmrate = Matrix.Scaling(this.ScaleRate);
             Matrix rmat = this.CreateTransposeRotationMat();
             Matrix ans = wm * wmrate * rmat * tm * wdata.CamProjectionMat;
-            //ans.Transpose();
+            ans.Transpose();
 
             return ans;
         }

@@ -21,6 +21,11 @@ namespace Clarity
         /// </summary>
         public const int Vertex_Display = -1;
 
+        /// <summary>
+        /// 直線表示用データ
+        /// </summary>
+        public const int Vertex_Line = -2;
+
         //////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// 円テクスチャ
@@ -41,9 +46,14 @@ namespace Clarity
         /// </summary>
         public const int Shader_NoTexture = -98;
         /// <summary>
-        /// シェーダーテクスチャアニメーション
+        /// Textureアニメ
         /// </summary>
         public const int Shader_TextureAnime = -97;
+        /// <summary>
+        /// <summary>
+        /// テクスチャのalpha値のみ有効にする物体
+        /// </summary>
+        public const int Shader_OnlyAlpha = -96;
     }
 
 
@@ -58,6 +68,7 @@ namespace Clarity
             //読み込みデフォルトデータ一式(VertexCode, ファイル内容CSV文字列)
             (int code, string csvs)[] defdatavec = {
                 (ClarityDataIndex.Vertex_Display, Properties.Resources.VD000),
+                (ClarityDataIndex.Vertex_Line, Properties.Resources.VD001),
             };
 
             foreach (var defdata in defdatavec)

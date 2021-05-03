@@ -16,7 +16,7 @@ namespace Clarity.Element.Collider
         /// コンストラクタ
         /// </summary>
         /// <param name="spos">開始点</param>
-        /// <param name="dir">終了点</param>
+        /// <param name="dir">方向(現時点Y軸に長さだけを設定し、回転で方向を変えることを前提にしています。そのうち任意方向を実装予定です)</param>
         public ColliderLine(Vector3 spos, Vector3 dir) : base(EColMode.Line)
         {
             this.StartPos = spos;
@@ -61,11 +61,12 @@ namespace Clarity.Element.Collider
             //基本色の指定                        
             this.ShaderID = ClarityDataIndex.Shader_NoTexture;
             this.Color = ClarityEngine.Setting.Debug.ColliderDefaultColor;
+            this.VertexID = ClarityDataIndex.Vertex_Line;
 
             //変形後のデータから情報を作成する
             this.TransSet.Pos = this.StartPos;
             this.TransSet.Rot = this.ParentRot;
-            this.TransSet.Scale = new Vector3(0.0f, 1000.0f, 1.0f);
+            this.TransSet.Scale = new Vector3(1.0f, this.Dir.Length(), 1.0f);
 
         }
 

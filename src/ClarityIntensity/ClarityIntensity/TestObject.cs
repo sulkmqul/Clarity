@@ -116,8 +116,16 @@ namespace ClarityIntensity
                 this.ColInfo.ColType = 4;
                 this.ColInfo.TargetColType = 1;
 
-                this.ColInfo.SrcColliderList.Add(new ColliderCircle(new Vector3(0.0f, 0.0f, 0.0f), 80.0f) { ColiderTransposeMode = EColiderTransposeMode.Translation | EColiderTransposeMode.Scaling });
+                //this.ColInfo.SrcColliderList.Add(new ColliderCircle(new Vector3(0.0f, 0.0f, 0.0f), 80.0f) { ColiderTransposeMode = EColiderTransposeMode.Translation | EColiderTransposeMode.Scaling });
+                //this.ColInfo.SrcColliderList.Add(new ColliderLine(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 100.0f, 0.0f)) { ColiderTransposeMode = EColiderTransposeMode.ALL });
+
+                this.ColInfo.SrcColliderList.Add(new ColliderDot(new Vector3(0.0f, 80.0f, 0.0f)) { ColiderTransposeMode = EColiderTransposeMode.ALL });
             }
+        }
+
+        protected override void ProcElement()
+        {
+            this.FrameSpeed.RotZ = 1;
         }
     }
 }

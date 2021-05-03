@@ -84,6 +84,7 @@
     <Compile Include="Element\Collider\BaseCollider.cs" />
     <Compile Include="Element\Collider\ColliderCircle.cs" />
     <Compile Include="Element\Collider\ColliderCore.cs" />
+    <Compile Include="Element\Collider\ColliderDot.cs" />
     <Compile Include="Element\Collider\ColliderInfo.cs" />
     <Compile Include="Element\Collider\ColliderLine.cs" />
     <Compile Include="Element\Collider\ColliderManager.cs" />

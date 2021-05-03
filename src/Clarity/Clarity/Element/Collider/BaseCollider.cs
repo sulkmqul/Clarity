@@ -12,6 +12,7 @@ namespace Clarity.Element.Collider
     /// </summary>
     public enum EColMode
     {
+        Dot,
         Circle,
         Line,
 

@@ -142,7 +142,7 @@ namespace Clarity
 
 
     /// <summary>
-    /// 速度データ
+    /// 速度情報データ
     /// </summary>
     public class SpeedSet : Vector3Set
     {
@@ -158,8 +158,29 @@ namespace Clarity
         /// </summary>
         public float Rate = 1.0f;
 
-
+        /// <summary>
+        /// 速度レート
+        /// </summary>
         public float ScaleRate = 0.0f;
+
+        /// <summary>
+        /// 色
+        /// </summary>
+        public Vector4 Color = new Vector4();
+
+
+        /// <summary>
+        /// Rateを適応する
+        /// </summary>
+        /// <param name="proc_rate"></param>
+        public void ApplyRate(float proc_rate)
+        {
+            this.Pos *= proc_rate;
+            this.Rot *= proc_rate;
+            this.Scale *= proc_rate;
+            this.ScaleRate *= proc_rate;
+            this.Color *= proc_rate;
+        }
     }
 
 

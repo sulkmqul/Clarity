@@ -74,7 +74,7 @@ namespace Clarity.Texture
                 throw new Exception("ConvertFrameInfo InValid TextureCode:" + fdata.TextureCode);
             }
             //管理データの取得
-            TextureManager.TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);
+            TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);
             #endregion
 
             //フレーム情報の変換

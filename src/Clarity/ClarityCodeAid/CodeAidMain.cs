@@ -19,6 +19,8 @@ namespace ClarityCodeAid
         ImageMerge,
         TexAnime,
 
+        ClaritySetting,
+
         Max,
     }
 
@@ -30,8 +32,8 @@ namespace ClarityCodeAid
     public class CodeAidMain
     {
 
-        
 
+        
 
         /// <summary>
         /// 処理本体
@@ -44,6 +46,7 @@ namespace ClarityCodeAid
                 //起動引数解析
                 InputParam idata = new InputParam();
                 idata.AnalyzeParam(args);
+                
 
 
                 Dictionary<EAidMode, Type> procmap = new Dictionary<EAidMode, Type>();
@@ -53,6 +56,7 @@ namespace ClarityCodeAid
                 procmap.Add(EAidMode.Sound, typeof(SoundCodeGenerator));
                 procmap.Add(EAidMode.ImageMerge, typeof(ImageMerger));
                 procmap.Add(EAidMode.TexAnime, typeof(TexAnimeCodeGenerator));
+                procmap.Add(EAidMode.ClaritySetting, typeof(ClarityEngineSettingCreator));
 
 
                 //起動コード取得

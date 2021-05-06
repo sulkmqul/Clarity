@@ -28,9 +28,9 @@ namespace ClarityCodeAid
         public List<string> ExtKeyList = new List<string>();
 
         /// <summary>
-        /// 出力フォルダ
+        /// 出力パス
         /// </summary>
-        public string OutputDirectory = "";
+        public string OutputPath = "";
 
 
         /// <summary>
@@ -49,32 +49,7 @@ namespace ClarityCodeAid
         /// <returns></returns>
         public List<string> CreateInputFileList()
         {
-            List<string> anslist = new List<string>();
-
-            this.InputList.ForEach(s =>
-            {
-                //これはディレクトリ？
-                bool fr = this.CheckDirectory(s);
-                if (fr == true)
-                {
-                    //ディレクトリだった
-                    List<string> flist = new List<string>();
-                    foreach (string extkey in this.ExtKeyList)
-                    {
-                        string[] filevec = Directory.GetFiles(s, extkey);
-                        flist.AddRange(filevec);
-                    }
-
-                    //全部追加
-                    anslist.AddRange(flist);
-                }
-                else
-                {
-                    //ファイルだった
-                    anslist.Add(s);
-                }
-            });
-
+            List<string> anslist = Clarity.Util.ClarityUtil.ListupSpecifiedFiles(this.InputList, this.ExtKeyList);
 
             return anslist;
 
@@ -94,8 +69,14 @@ namespace ClarityCodeAid
             (string key, int index)[] analyzelist = {
                 ("i", 0),
                 ("k", 1),
-                ("o", 2),
+                ("o", 2),                
             };
+
+            //初期化をしておく
+            foreach (var ids in analyzelist)
+            {
+                paramdic.Add(ids.index, new List<string>());
+            }
 
 
             //AidModeの読み込み
@@ -145,12 +126,13 @@ namespace ClarityCodeAid
 
             }
 
+
             try
             {
                 //入力要素の適応
                 this.InputList = paramdic[0];
                 this.ExtKeyList = paramdic[1];
-                this.OutputDirectory = paramdic[2][0];
+                this.OutputPath = paramdic[2][0];
             }
             catch (Exception exx)
             {
@@ -197,6 +179,7 @@ namespace ClarityCodeAid
                 ("so", EAidMode.Sound),
                 ("ta", EAidMode.TexAnime),
                 ("im", EAidMode.ImageMerge),
+                ("cs", EAidMode.ClaritySetting),
             };
 
 

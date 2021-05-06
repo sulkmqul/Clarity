@@ -40,7 +40,7 @@ namespace ClarityCodeAid.AidProcess
         {
             string datestr = DateTime.Now.ToString("yyyyMMdd_hhmmssfff");
             string fname = string.Format("merge_{0}.png", datestr);
-            string ans = param.OutputDirectory + System.IO.Path.AltDirectorySeparatorChar + fname;
+            string ans = param.OutputPath + System.IO.Path.AltDirectorySeparatorChar + fname;
             return ans;
         }
 

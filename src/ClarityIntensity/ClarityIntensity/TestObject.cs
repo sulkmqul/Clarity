@@ -27,7 +27,7 @@ namespace ClarityIntensity
             this.ObjectID = Clarity.ClarityDataIndex.Vertex_Display;
 
             this.TransSet.Scale = new SharpDX.Vector3(128.0f, 192.0f, 1.0f);
-            this.TransSet.ScaleRate = 1.0f;
+            this.TransSet.ScaleRate = 2.0f;
 
             //当たり判定設定
             {
@@ -78,13 +78,21 @@ namespace ClarityIntensity
             }
 
 
+            
+
             if (ClarityEngine.TestKey(GameKey.Button3))
             {
-                this.FrameSpeed.ScaleRate = rspeed;
+                //this.FrameSpeed.ScaleRate = rspeed;
+                ClarityFadeObject obj = new ClarityFadeObject(1.0f);
+                ClarityEngine.AddElement(obj);
             }
             if (ClarityEngine.TestKey(GameKey.Button4))
             {
-                this.FrameSpeed.ScaleRate = -rspeed;
+                //this.FrameSpeed.ScaleRate = -rspeed;
+
+                ClarityFadeObject obj = new ClarityFadeObject(-1.0f);
+                ClarityEngine.AddElement(obj);
+                
             }
         }
         
@@ -104,7 +112,7 @@ namespace ClarityIntensity
             this.Color = new Vector4(0.0f, 1.0f, 1.0f, 1.0f);
             this.ObjectID = Clarity.ClarityDataIndex.Vertex_Display;
 
-            this.TransSet.Pos = new Vector3(100.0f, 200.0f, 0.0f);
+            this.TransSet.Pos = new Vector3(100.0f, 200.0f, 1.0f);
 
             this.TransSet.Scale = new SharpDX.Vector3(192.0f, 192.0f, 1.0f);
             this.TransSet.ScaleRate = 1.0f;

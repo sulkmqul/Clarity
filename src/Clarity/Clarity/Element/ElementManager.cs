@@ -8,6 +8,7 @@ using Clarity.Element.Collider;
 
 namespace Clarity.Element
 {
+
     
 
     /// <summary>
@@ -24,6 +25,11 @@ namespace Clarity.Element
             Instance = new ElementManager();
             Instance.Init();
         }
+
+        /// <summary>
+        /// 管理者特殊オブジェクトの定数　管理者には当たり判定は存在しない。
+        /// </summary>
+        public static readonly long AdminObjectID = -999;
 
         /// <summary>
         /// 追加情報クラス
@@ -44,7 +50,11 @@ namespace Clarity.Element
             public bool ColFlag;
         }
 
+
         #region メンバ変数
+
+
+
         /// <summary>
         /// 管理オブジェクト一式[object id, manage object list]
         /// </summary>
@@ -63,6 +73,8 @@ namespace Clarity.Element
         /// 衝突判定管理
         /// </summary>
         private ColliderManager ColMana = new ColliderManager();
+
+
         #endregion
 
         /// <summary>
@@ -122,7 +134,7 @@ namespace Clarity.Element
                 }
 
                 //管理登録
-                req.Ele.Init(frame_time);
+                req.Ele.CreateTime = frame_time;
                 this.ElementDic[req.ID].Add(req.Ele);
 
                 //当たり判定登録
@@ -146,7 +158,10 @@ namespace Clarity.Element
                 }
 
                 ReqData req = this.RemoveReqQue.Dequeue();
-                this.ElementDic[req.ID].Remove(req.Ele);
+                
+                //破棄呼び出し
+                req.Ele.Remove();                
+                this.ElementDic[req.ID].Remove(req.Ele);                
 
                 //当たり判定削除
                 this.RemoveColliderManager(req.Ele);
@@ -176,8 +191,6 @@ namespace Clarity.Element
                 }
             }
 
-            //全ての処理が終わったら衝突判定を実行する
-            this.ColMana.ExecuteCollision();
         }
 
         /// <summary>
@@ -207,20 +220,70 @@ namespace Clarity.Element
 
         }
 
+
+
+        /// <summary>
+        /// 管理者以外のデータをクリアする
+        /// </summary>
+        protected void ClearWithoutAdmin()
+        {
+            foreach(var k in this.ElementDic.Keys)
+            {
+                if (k < 0)
+                {
+                    continue;
+                }
+                this.ElementDic.Remove(k);
+            }
+        }
         //////////////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// データクリア
         /// </summary>
-        public void Clear()
+        /// <param name="f">管理者削除可否 true=管理者削除</param>
+        public void Clear(bool f = false)
         {
-            this.ElementDic.Clear();
+            if (f == true)
+            {
+                this.ElementDic.Clear();
+            }
+            else
+            {
+                this.ClearWithoutAdmin();
+            }
+            
 
-            //当たり判定関係の削除？
+            //当たり判定関係の削除
+            this.ColMana.ClearCollider();            
 
             //申請のクリア
             this.AddReqQue.Clear();
             this.RemoveReqQue.Clear();
         }
+
+        /// <summary>
+        /// 全データのクリアリクエスト
+        /// </summary>
+        /// <param name="f"></param>
+        public void ClearRequest(bool f = false)
+        {
+            foreach (var k in this.ElementDic.Keys)
+            {
+                if (k < 0 && f == true)
+                {
+                    continue;
+                }
+
+                //対象のオブジェクトをすべて破棄申請する。
+                List<BaseElement> dlist = this.ElementDic[k];
+                dlist.ForEach(rdata =>
+                {
+                    this.RemoveRequest(rdata);
+                });
+            }
+
+        }
+
 
         /// <summary>
         /// 処理の実行
@@ -235,7 +298,7 @@ namespace Clarity.Element
             this.ProcManageObject(fparam);
 
             //当たり判定処理
-
+            this.ColMana.ExecuteCollision(fparam);
 
             //削除申請の処理
             this.RemoveObject();
@@ -262,6 +325,9 @@ namespace Clarity.Element
             data.Ele = ele;
             data.ColFlag = false;
 
+            //初期化関数を呼ぶ
+            data.Ele.Init();
+
             this.AddReqQue.Enqueue(data);
 
         }
@@ -278,5 +344,8 @@ namespace Clarity.Element
 
             this.RemoveReqQue.Enqueue(data);
         }
+
+
+        
     }
 }

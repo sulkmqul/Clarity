@@ -546,6 +546,7 @@ namespace Clarity.Core
 
             this.ReleaseRenderTarget();
             this.SwapChain.ResizeBuffers(1, w, h, Format.R8G8B8A8_UNorm, SwapChainFlags.None);
+            
             this.InitRenderTarget();
         }
 

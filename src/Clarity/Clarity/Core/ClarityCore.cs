@@ -146,7 +146,32 @@ namespace Clarity.Core
         /// </summary>
         public void Dispose()
         {
+            //使用物の解放
 
+            //オブジェクト管理
+            Element.ElementManager.Mana.Clear(true);
+
+            //世界管理
+            WorldManager.Mana.Dispose();
+            
+            //入力管理
+            InputManager.Mana.Dispose();
+            
+            //テクスチャアニメーション
+            Texture.TextureAnimeFactory.Mana.Dispose();
+            //テクスチャ
+            Texture.TextureManager.Mana.Dispose();
+            
+            //頂点
+            Vertex.VertexManager.Mana.Dispose();
+            
+            //Shader管理
+            Shader.ShaderManager.Mana.Dispose();
+            
+            //DirectX
+            DxManager.Mana.Dispose();
+
+            
         }
 
         /// <summary>
@@ -192,8 +217,12 @@ namespace Clarity.Core
 
             //object管理の作成
             Element.ElementManager.Create();
+
+            //シーン管理
+            Element.Scene.SceneManager.Manager = new Element.Scene.SceneManager();
+            Element.ElementManager.Mana.AddRequest(Element.Scene.SceneManager.Manager);
             #endregion
-                        
+
             this.CreateDefaultWorld();
         }
 
@@ -211,7 +240,7 @@ namespace Clarity.Core
 
             //デフォルト世界の登録
             WorldData wdata = new WorldData();
-            wdata.DefaultCameraMat = Matrix.LookAtLH(new Vector3(0.0f, 0.0f, -5000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
+            wdata.DefaultCameraMat = Matrix.LookAtLH(new Vector3(0.0f, 0.0f, 5000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
             wdata.ProjectionMat = Matrix.OrthoLH(this.DisplaySize.Width, this.DisplaySize.Height, 1.0f, 15000.0f);
             wdata.ReCalcu();
             WorldManager.Mana.Set(0, wdata);
@@ -316,7 +345,14 @@ namespace Clarity.Core
 
                 }
 
+                ClarityTimeManager.StartMeasure();
+
                 System.Threading.Thread.Sleep(1);
+
+                long ms = ClarityTimeManager.StopMeasure();
+                ClarityLog.WriteDebug("SleepMs = " + ms.ToString());
+
+
             });
 
 
@@ -373,7 +409,7 @@ namespace Clarity.Core
             ShaderDataDefault data = new ShaderDataDefault();
 
             //画面いっぱいのサイズ
-            Matrix wm = Matrix.Scaling(this.DisplaySize.Width-20, this.DisplaySize.Height-20, 1);            
+            Matrix wm = Matrix.Scaling(this.DisplaySize.Width, this.DisplaySize.Height, 1);            
             //Matrix wm = Matrix.Scaling(800.0f, 600.0f, 1);
 
             //位置は現状保留・・・そのうち
@@ -397,7 +433,16 @@ namespace Clarity.Core
         /// <param name="o"></param>
         /// <param name="e"></param>
         public void ResizeViewEvent(object o, EventArgs e)
-        {   
+        {
+            //最小化対策 WindowState判定でもよいが、Size=0の方が汎用性がある気がする。
+            Control con = o as Control;
+            if (con?.ClientSize.Width <= 0 || con?.ClientSize.Height <= 0)
+            {
+                ClarityLog.WriteDebug("最小化された");
+                return;
+            }
+
+            
 
             //スワップチェインのリサイズ
             Clarity.Core.DxManager.Mana.ResizeSwapChain();

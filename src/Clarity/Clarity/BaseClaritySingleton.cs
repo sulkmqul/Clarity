@@ -19,11 +19,6 @@ namespace Clarity
 
 
         /// <summary>
-        /// マイナスを予約、0は使いたくなので1から
-        /// </summary>
-        //protected const int CustomStartIndex = 1;
-
-        /// <summary>
         /// 本体
         /// </summary>
         protected static T Instance = null;
@@ -66,7 +61,7 @@ namespace Clarity
         /// <summary>
         /// ユーザー定義データのクリア
         /// </summary>
-        protected void ClearUserData()
+        internal void ClearUserData()
         {
             int[] indexvec = this.ManaDic.Keys.ToArray();
             foreach (int index in indexvec)

@@ -15,7 +15,13 @@ namespace Clarity.Element
         {
             
         }
-        
+
+
+        protected sealed override void RenderElement()
+        {
+            
+        }
+
 
         /// <summary>
         /// 処理者の描画を無効化する。

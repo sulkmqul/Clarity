@@ -144,7 +144,7 @@ namespace Clarity
 
             //デフォルト世界の登録
             WorldData wdata = new WorldData();
-            wdata.DefaultCameraMat = Matrix.LookAtLH(new Vector3(0.0f, 0.0f, -10000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
+            wdata.DefaultCameraMat = Matrix.LookAtLH(new Vector3(0.0f, 0.0f, 10000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
             wdata.ProjectionMat = Matrix.OrthoLH(width, height, 1.0f, 15000.0f);
             wdata.ReCalcu();
             WorldManager.Mana.Set(-1, wdata);

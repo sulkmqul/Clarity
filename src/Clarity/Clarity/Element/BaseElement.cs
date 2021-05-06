@@ -102,7 +102,7 @@ namespace Clarity.Element
         /// <summary>
         /// 今回の処理順番
         /// </summary>
-        protected int ProcIndex
+        public int ProcIndex
         {
             get
             {
@@ -112,7 +112,7 @@ namespace Clarity.Element
         /// <summary>
         /// 今回フレームの基準時間
         /// </summary>
-        protected long FrameTime
+        public long FrameTime
         {
             get
             {
@@ -122,7 +122,7 @@ namespace Clarity.Element
         /// <summary>
         /// 前回の基準時間
         /// </summary>
-        protected long PrevFrameTime
+        public long PrevFrameTime
         {
             get
             {
@@ -132,7 +132,7 @@ namespace Clarity.Element
         /// <summary>
         /// 今回と前回の差分時間
         /// </summary>
-        protected long FrameSpan
+        public long FrameSpan
         {
             get
             {
@@ -155,7 +155,7 @@ namespace Clarity.Element
         /// <summary>
         /// これの作成時間
         /// </summary>        
-        public long CreateTime = 0;
+        public long CreateTime { get; internal set; }
 
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace Clarity.Element
             {
                 this.RenderSet.ShaderID = value;
             }
-        }    
+        }
         
         /// <summary>
         /// 色の設定
@@ -239,6 +239,11 @@ namespace Clarity.Element
         public BaseElement ParentObj = null;
 
 
+        /// <summary>
+        /// イベント送付対象
+        /// </summary>
+        private List<IClarityElementEvent> EventSenderList = new List<IClarityElementEvent>();
+
         #endregion
 
         protected abstract void InitElement();
@@ -252,9 +257,9 @@ namespace Clarity.Element
         /// <summary>
         /// 初期化関数
         /// </summary>
-        internal void Init(long frame_time)            
+        internal void Init()
         {
-            this.CreateTime = frame_time;
+            this.ShaderID = ClarityDataIndex.Shader_Default;
 
             this.InitElement();
         }
@@ -294,11 +299,19 @@ namespace Clarity.Element
             this.AdditionalProc?.Invoke();
 
 
-            //作成した値を加算・・・ここはフレームを考慮する            
-            this.TransSet.Pos += this.FrameSpeed.Pos * this.FrameInfo.ProcBaseRate;
-            this.TransSet.Rot += this.FrameSpeed.Rot * this.FrameInfo.ProcBaseRate;
-            this.TransSet.Scale += this.FrameSpeed.Scale * this.FrameInfo.ProcBaseRate;
-            this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate * this.FrameInfo.ProcBaseRate;
+            //作成した値を加算・・・ここはフレームを考慮する                        
+            //this.TransSet.Pos += this.FrameSpeed.Pos * this.FrameInfo.ProcBaseRate;
+            //this.TransSet.Rot += this.FrameSpeed.Rot * this.FrameInfo.ProcBaseRate;
+            //this.TransSet.Scale += this.FrameSpeed.Scale * this.FrameInfo.ProcBaseRate;
+            //this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate * this.FrameInfo.ProcBaseRate;
+
+            this.FrameSpeed.ApplyRate(this.FrameInfo.ProcBaseRate);
+            this.TransSet.Pos += this.FrameSpeed.Pos;
+            this.TransSet.Rot += this.FrameSpeed.Rot;
+            this.TransSet.Scale += this.FrameSpeed.Scale;
+            this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate;
+            this.Color += this.FrameSpeed.Color;
+
 
         }
 
@@ -338,5 +351,45 @@ namespace Clarity.Element
 
         }
 
+        /// <summary>
+        /// オブジェクトが破棄
+        /// </summary>
+        internal virtual void Remove()
+        {
+            //削除イベント送付
+            this.SendEvent(ClarityElementEventID.Destroy);
+        }
+
+
+
+        /// <summary>
+        /// イベントの送付
+        /// </summary>
+        /// <param name="eid">送付イベントID</param>
+        public void SendEvent(int eid)
+        {
+            this.EventSenderList.ForEach(x =>
+            {
+                x.EventCallback(eid, this);
+            });
+        }
+
+        /// <summary>
+        /// イベント送付対象のクリア
+        /// </summary>
+        public void ClearEventSenderList()
+        {
+            this.EventSenderList.Clear();
+        }
+
+
+        /// <summary>
+        /// イベント送付対象への追加
+        /// </summary>
+        /// <param name="iee"></param>
+        public void AddEventSenderList(IClarityElementEvent iee)
+        {
+            this.EventSenderList.Add(iee);
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace Clarity.Element.Collider
     }
 
     /// <summary>
-    /// 衝突判定情報
+    /// 衝突判定情報の一式
     /// </summary>
     public class ColliderInfo
     {
@@ -60,7 +60,7 @@ namespace Clarity.Element.Collider
         public long ColliderSerialCode { get; private set; }
 
         /// <summary>
-        /// これの判定後の無敵付与時間
+        /// これの判定後の無敵付与時間(ms)
         /// </summary>
         public long GrantInvincibleTime = long.MinValue;
 
@@ -84,7 +84,8 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 当たり判定の更新 TempInfoの情報を初期化し書き換える。
         /// </summary>        
-        internal void UpdateTempInfo()
+        /// <param name="frametime">今回のフレーム処理時間</param>
+        internal void UpdateTempInfo(long frametime)
         {
             //フラグの初期化
             this.TempInfo.TargetColType = this.TargetColType;
@@ -102,10 +103,16 @@ namespace Clarity.Element.Collider
 
             });
 
-
-
-
             
+            //[そのうちつくります]
+            //ここで無敵時間関係の更新をせよ。
+            //将来的にはColliderSerialCodeと当たった時間、無敵時間を一覧で覚えておいて
+            //無敵リストに入れる。
+            //そして対象のserialcodeの無敵時間中は判定をとらない、として多段ヒット的にする予定。
+            //そして、ここで無敵時間リストの更新をするべし。
+            //すなわち、時間をチェックして無敵時間が過ぎている物を無敵リストから外すべし
+
+
         }
 
 

@@ -31,7 +31,8 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 当たり判定の情報を更新する
         /// </summary>
-        private void UpdateCollisonTranspose()
+        /// <param name="frametime">今回のフレーム処理時間</param>
+        private void UpdateCollisonInfomation(long frametime)
         {
             foreach (int key in this.ColliderDic.Keys)
             {
@@ -40,7 +41,7 @@ namespace Clarity.Element.Collider
                 List<ICollider> iclist = this.ColliderDic[key];
                 Parallel.ForEach(iclist, ic =>
                 {
-                    ic.ColInfo.UpdateTempInfo();                    
+                    ic.ColInfo.UpdateTempInfo(frametime);                    
                 });
             }
 
@@ -74,7 +75,7 @@ namespace Clarity.Element.Collider
                     co.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
                     tar.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
 
-                    //当たったら双方のコールバックを呼び出してreturnする
+                    return true;
                 }
             }
 
@@ -85,9 +86,10 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 対象のオブジェクトの当たり判定を取る
         /// </summary>
+        /// <param name="frametime">処理基準時間</param>
         /// <param name="coi">今回の比較対象</param>
         /// <param name="lastflag">最後の場合、相手のフラグを落としたい true=対象のフラグもoffにする</param>
-        private void ProcCollisionElement(ICollider coi, bool lastflag)
+        private void ProcCollisionElement(long frametime, ICollider coi, bool lastflag)
         {
             ColliderInfo cinfo = coi.ColInfo;
             ColliderTempInfo temp = cinfo.TempInfo;
@@ -106,7 +108,16 @@ namespace Clarity.Element.Collider
                 {
 
                     //coiとtargetの判定
-                    this.Collider(coi, target);
+                    bool cret = this.Collider(coi, target);
+                    if (cret == true)
+                    {
+                        //必要ならここで無敵リストへADDせよ
+
+                        //判定コールバック
+                        coi.ColliderCallback(target);
+                        target.ColliderCallback(coi);
+                    }
+
 
                     //最後の場合、当たった先の当たり判定を下し、二重判定を阻止する。
                     if (lastflag == true)
@@ -124,7 +135,8 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 当たり判定本体
         /// </summary>
-        private void ProcCollision()
+        /// <param name="frametime">処理基準時間</param>
+        private void ProcCollision(long frametime)
         {
             foreach (List<ICollider> coilist in this.ColliderDic.Values)
             {
@@ -138,7 +150,7 @@ namespace Clarity.Element.Collider
 
                     //個別判定
                     bool f = coilist.Last() == coi;
-                    this.ProcCollisionElement(coi, f);
+                    this.ProcCollisionElement(frametime, coi, f);
                 });
 
                 
@@ -152,13 +164,15 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 衝突判定の実行
         /// </summary>
-        public void ExecuteCollision()
-        {
+        /// <param name="fparam"></param>
+        public void ExecuteCollision(FrameProcParam fparam)
+        {   
+
             //当たり判定情報の変形
-            this.UpdateCollisonTranspose();
+            this.UpdateCollisonInfomation(fparam.FrameTime);
 
             //判定処理
-            this.ProcCollision();
+            this.ProcCollision(fparam.FrameTime);
         
         }
 
@@ -240,6 +254,15 @@ namespace Clarity.Element.Collider
             this.ColliderDic[info.ColType].Remove(ic);
         }
 
+
+        /// <summary>
+        /// 当たり判定の全クリア
+        /// </summary>
+        public void ClearCollider()
+        {
+            this.ColliderDic.Clear();
+
+        }
         #endregion
 
 

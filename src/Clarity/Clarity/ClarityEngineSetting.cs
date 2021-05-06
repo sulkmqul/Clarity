@@ -17,7 +17,7 @@ namespace Clarity
         /// <summary>
         /// 当たり判定描画可否
         /// </summary>
-        public bool RenderColliderFlag = true;
+        public bool RenderColliderFlag = false;
 
         /// <summary>
         /// 当たり判定描画基本色
@@ -37,6 +37,11 @@ namespace Clarity
     [Serializable]
     public class ClarityEngineSetting
     {
+        /// <summary>
+        /// ファイルバージョン(現状意味なし)
+        /// </summary>
+        public string FileVersion = "1.0.0.0";
+
         /// <summary>
         /// ログレベル
         /// </summary>

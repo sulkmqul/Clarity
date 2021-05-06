@@ -18,23 +18,25 @@ namespace ClarityCodeAid
         {
             string help = @"
 Usage:
-    ClarityCodeAid [mode] -i [InputPath]... -k [SearhKey] -o [OutputDirectory]
+    ClarityCodeAid [mode] -i [InputPath...] -k [SearhKey] -o [OutputPath]
     -i : Input File Pathes or File Directory
     -k : Search Extension Key
     -o : Output Directory 
 
     [mode]
-        te = Generate Texture Code.
+        te = Generate Texture Code.            
         ve = Generate Vetex Code.
         sh = Generate Shader Code.
         so = Generate Sound Code.
         ta = Generate Texture Anime Code.
-        im = Image Merge.
+        im = Merge Images.
+        cs = Craete Clarity Engine Setting File
+            only use -o Option. Create cs.xml
 ";
             Console.Write(help);
         }
 
-        
+
         /// <summary>
         /// エントリポイント
         /// </summary>
@@ -44,16 +46,16 @@ Usage:
 
             //デバッグでないなら起動引数が渡される
 #if DEBUG
-            /*string[] testarg = {
+            string[] testarg = {
                 "te",
                 "-i",
-                @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\TextureListFile.txt",                
+                @"F:\作業領域\Game\Stellamaris\data\img\texlist.txt",
                 "-k",
                 "*.txt",
                 "-o",
                 @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile",
                 
-            };*/
+            };
             /*
             string[] testarg = {
                 "ta",
@@ -65,7 +67,7 @@ Usage:
                 @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile",
 
             };*/
-            string[] testarg = {
+            /*string[] testarg = {
                 "im",
                 "-i",
                 @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\",
@@ -74,7 +76,15 @@ Usage:
                 "-o",
                 @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile",
 
-            };
+            };*/
+
+            /*
+            string[] testarg = {
+                "cs",
+                "-o",
+                @"F:\作業領域\Game\Stellamaris\src\bat",
+
+            };*/
 
             args = testarg;
 
@@ -94,7 +104,14 @@ Usage:
             }
             catch (Exception e)
             {
+#if DEBUG
                 Console.WriteLine(string.Format("Aid Process Exception mes={0}", e.InnerException.Message));
+
+#else
+                DisplayHelp();
+                return;
+#endif
+
             }
 
             Console.WriteLine("Aid Process End. result=" + ret.ToString());

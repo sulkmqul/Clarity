@@ -11,6 +11,7 @@ using Clarity.Element;
 namespace Clarity
 {
 
+
     /// <summary>
     /// ClarityEngine初期化設定オプション
     /// </summary>

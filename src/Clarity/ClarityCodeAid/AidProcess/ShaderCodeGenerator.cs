@@ -22,7 +22,7 @@ namespace ClarityCodeAid.AidProcess
         private string CreateWriteFilePath(InputParam param)
         {
             string fname = "EShaderCode.cs";
-            string ans = param.OutputDirectory + System.IO.Path.AltDirectorySeparatorChar + fname;
+            string ans = param.OutputPath + System.IO.Path.AltDirectorySeparatorChar + fname;
             return ans;
         }
 

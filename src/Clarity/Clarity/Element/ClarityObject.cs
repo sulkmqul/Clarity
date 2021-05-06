@@ -20,7 +20,7 @@ namespace Clarity.Element
     /// </remarks>
     public class ClarityObject : BaseElement, ICollider
     {
-        public ClarityObject(long code) : base(code)
+        public ClarityObject(long id) : base(id)
         {
             //テクスチャアニメーション実行追加関数
             this.AdditionalProc += this.ProcTextureAnimation;                        
@@ -116,7 +116,7 @@ namespace Clarity.Element
         /// <summary>
         /// テクスチャアニメーションの位置データが終了した
         /// </summary>
-        /// <param name="aid"></param>
+        /// <param name="aid">終わったアニメーションID</param>
         /// <remarks>Loop、Once問わず発生します。Loop時は巻き戻った時、onceは最後まで行ったときに発生します</remarks>
         protected virtual void EndTextureAnimation(int aid)
         {

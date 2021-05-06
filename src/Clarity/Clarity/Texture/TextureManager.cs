@@ -17,41 +17,43 @@ using Clarity.Core;
 namespace Clarity.Texture
 {
     /// <summary>
+    /// テクスチャ管理データ
+    /// </summary>
+    internal class TextureManageData : IDisposable
+    {
+        /// <summary>
+        /// これのリソース
+        /// </summary>
+        public ShaderResourceView Srv = null;
+
+        /// <summary>
+        /// これの識別名・基本的にはファイル名となる。
+        /// </summary>
+        public string Code;
+
+        /// <summary>
+        /// 画像分割サイズ(アニメ用で例えば一つの画像に4つのアニメがある場合、1/4=0.25が設定される)
+        /// </summary>
+        public Vector2 IndexDiv = new Vector2(1.0f);
+
+        public void Dispose()
+        {
+            this.Srv.Dispose();
+            this.Srv = null;
+        }
+    }
+
+    /// <summary>
     /// テクスチャ管理クラス
     /// </summary>
-    internal class TextureManager : BaseClaritySingleton<TextureManager>, IDisposable
+    internal class TextureManager : BaseClarityFactroy<TextureManager, TextureManageData>, IDisposable
     {
         private TextureManager()
         {
         }
 
 
-        /// <summary>
-        /// テクスチャ管理データ
-        /// </summary>
-        internal class TextureManageData : IDisposable
-        {
-            /// <summary>
-            /// これのリソース
-            /// </summary>
-            public ShaderResourceView Srv = null;
-
-            /// <summary>
-            /// これの識別名・基本的にはファイル名となる。
-            /// </summary>
-            public string Code;
-
-            /// <summary>
-            /// 画像分割サイズ(アニメ用で例えば一つの画像に4つのアニメがある場合、1/4=0.25が設定される)
-            /// </summary>
-            public Vector2 IndexDiv = new Vector2(1.0f);
-
-            public void Dispose()
-            {
-                this.Srv.Dispose();
-                this.Srv = null;
-            }
-        }
+        
 
 
         #region メンバ変数
@@ -60,11 +62,7 @@ namespace Clarity.Texture
         /// サンプラー。切り替える機会もないと思われるため
         /// </summary>
         public SamplerState TexSampler = null;
-
-        /// <summary>
-        /// テクスチャ管理Dic
-        /// </summary>
-        private Dictionary<int, TextureManageData> TexDic = new Dictionary<int, TextureManageData>();
+   
         #endregion
 
 
@@ -266,7 +264,7 @@ namespace Clarity.Texture
             try
             {
                 //既存の物を開放
-                this.ClearTexture();
+                this.ClearUserData();
 
                 //TextureSamplerの作成
                 if (this.TexSampler == null)
@@ -298,7 +296,7 @@ namespace Clarity.Texture
                         float dx = 1.0f / (float)tdata.IndexSize.Width;
                         float dy = 1.0f / (float)tdata.IndexSize.Height;
                         TextureManageData tex = new TextureManageData() { Srv = srv, IndexDiv = new Vector2(dx, dy), Code = tdata.Filename };
-                        this.TexDic.Add(code, tex);
+                        this.ManaDic.Add(code, tex);
                         code++;
 
                     }
@@ -321,7 +319,7 @@ namespace Clarity.Texture
         public void AddTexture(int texid, string filepath, Size index_size)
         {
             //重複チェック
-            bool ret = this.TexDic.ContainsKey(texid);
+            bool ret = this.ManaDic.ContainsKey(texid);
             if (ret == true)
             {
                 throw new Exception("ID is Already Exists!");
@@ -335,7 +333,7 @@ namespace Clarity.Texture
             float dy = 1.0f / (float)index_size.Height;
             ShaderResourceView sr = this.ReadTexture(filepath, null);
             TextureManageData td = new TextureManageData() { Srv = sr, IndexDiv = new Vector2(dx, dy), Code = texcode };
-            this.TexDic.Add(texid, td);
+            this.ManaDic.Add(texid, td);
         }
 
 
@@ -349,7 +347,7 @@ namespace Clarity.Texture
         internal void AddTexture(int texid, Bitmap bit, string texcode, Size index_size)
         {
             //重複チェック
-            bool ret = this.TexDic.ContainsKey(texid);
+            bool ret = this.ManaDic.ContainsKey(texid);
             if (ret == true)
             {
                 throw new Exception("ID is Already Exists!");
@@ -359,24 +357,11 @@ namespace Clarity.Texture
             float dy = 1.0f / (float)index_size.Height;
             ShaderResourceView sr = this.ReadTexture(bit, null);
             TextureManageData td = new TextureManageData() { Srv = sr, IndexDiv = new Vector2(dx, dy), Code = texcode };
-            this.TexDic.Add(texid, td);
+            this.ManaDic.Add(texid, td);
         }
 
 
 
-
-        /// <summary>
-        /// 現在読み込まれているテクスチャの開放
-        /// </summary>
-        public void ClearTexture()
-        {
-            //開放
-            foreach (TextureManageData td in this.TexDic.Values)
-            {
-                td.Dispose();
-            }
-            this.TexDic.Clear();
-        }
 
         /// <summary>
         /// テクスチャIDの検索 なし=int.MinVal
@@ -386,7 +371,7 @@ namespace Clarity.Texture
         internal int SearchTextureID(string texcode)
         {
             //要素の取得
-            var d = this.TexDic.FirstOrDefault(x =>
+            var d = this.ManaDic.FirstOrDefault(x =>
             {
                 return (x.Value.Code == texcode);
             });
@@ -406,7 +391,7 @@ namespace Clarity.Texture
         /// <returns></returns>
         internal TextureManageData GetTextureManageData(int tid)
         {
-            return this.TexDic[tid];
+            return this.ManaDic[tid];
         }
 
         //==============================================================================================================
@@ -419,7 +404,7 @@ namespace Clarity.Texture
         {
             DeviceContext cont = DxManager.Mana.DxDevice.ImmediateContext;
 
-            TextureManageData td = TextureManager.Mana.TexDic[texid];
+            TextureManageData td = TextureManager.Mana.ManaDic[texid];
 
             //今回の対象データ取得
             SamplerState texst = TextureManager.Mana.TexSampler;
@@ -454,22 +439,5 @@ namespace Clarity.Texture
             cont.PixelShader.SetShaderResource(0, sr);
         }
 
-
-        
-
-
-
-        /// <summary>
-        /// 削除
-        /// </summary>
-        public void Dispose()
-        {
-            //テクスチャクリア
-            this.ClearTexture();
-
-            //サンプラクリア
-            this.TexSampler?.Dispose();
-            this.TexSampler = null;
-        }
     }
 }

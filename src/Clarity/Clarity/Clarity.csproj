@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SharpDX">
@@ -80,7 +80,10 @@
     <Compile Include="DLL\User32.cs" />
     <Compile Include="ClarityEngine.cs" />
     <Compile Include="common.cs" />
+    <Compile Include="Element\BaseClarityAdminObject.cs" />
     <Compile Include="Element\BaseClarityProcessor.cs" />
+    <Compile Include="Element\ClarityFadeObject.cs" />
+    <Compile Include="Element\IClarityElementEvent.cs" />
     <Compile Include="Element\Collider\BaseCollider.cs" />
     <Compile Include="Element\Collider\ColliderCircle.cs" />
     <Compile Include="Element\Collider\ColliderCore.cs" />
@@ -90,6 +93,8 @@
     <Compile Include="Element\Collider\ColliderManager.cs" />
     <Compile Include="Element\Collider\ColliderSerialCodeGenerator.cs" />
     <Compile Include="Element\Collider\ICollider.cs" />
+    <Compile Include="Element\Scene\BaseScene.cs" />
+    <Compile Include="Element\Scene\SceneManager.cs" />
     <Compile Include="Sound\SoundManager.cs" />
     <Compile Include="Texture\TextureAnimeData.cs" />
     <Compile Include="InputManager.cs" />
@@ -111,6 +116,7 @@
     <Compile Include="Texture\TextureAnimeFile.cs" />
     <Compile Include="Texture\TextureListFile.cs" />
     <Compile Include="Texture\TextureManager.cs" />
+    <Compile Include="Util\ClarityUtil.cs" />
     <Compile Include="Util\RandomMaker.cs" />
     <Compile Include="Vertex\PolygonListFile.cs" />
     <Compile Include="Vertex\PolygonObjectFile.cs" />
@@ -138,5 +144,6 @@
   <ItemGroup>
     <None Include="Resources\shlist.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

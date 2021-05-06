@@ -12,7 +12,7 @@ namespace Clarity.File
     /// <summary>
     /// エンジン設定ファイルの読み込み
     /// </summary>
-    internal class ClarityEngineSettingFile
+    public class ClarityEngineSettingFile
     {
         /// <summary>
         /// 設定の読み込み
@@ -21,6 +21,20 @@ namespace Clarity.File
         public static ClarityEngineSetting ReadSetting(string filepath)
         {
             ClarityEngineSetting ans = null;
+
+            try
+            {
+                XmlSerializer xml = new XmlSerializer(typeof(ClarityEngineSetting));
+                using (FileStream fp = new FileStream(filepath, FileMode.Open))
+                {
+                    ans = (ClarityEngineSetting)xml.Deserialize(fp);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("ClarityEngineSetting ReadSetting", e);
+            }
+            
 
             return ans;
         }

@@ -199,9 +199,15 @@ namespace Clarity.Element
         /// <param name="vindex">描画viewIndex</param>
         protected void RenderManageObject(int vindex)
         {
-            //全データの処理
-            foreach (List<BaseElement> olist in this.ElementDic.Values)
+            //この処理はAddが発生した時だけやれば良いのでここでやるのは危険か？
+            var klist = this.ElementDic.Keys.OrderBy((x) => { return x; });
+
+            
+            //全データの処理            
+            foreach(long ekey in klist)
             {
+                List<BaseElement> olist = this.ElementDic[ekey];
+
                 int index = 0;
                 olist.ForEach(obj =>
                 {

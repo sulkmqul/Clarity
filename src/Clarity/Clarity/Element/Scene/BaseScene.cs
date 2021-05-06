@@ -40,7 +40,7 @@ namespace Clarity.Element.Scene
         /// <summary>
         /// シーンの初期化
         /// </summary>
-        public virtual void Init()
+        internal virtual void Init()
         {
             //解放は下でやるべきかは検討が必要。
             //管理以外の解放
@@ -57,7 +57,7 @@ namespace Clarity.Element.Scene
         /// <summary>
         /// シーンの実行
         /// </summary>
-        public virtual void Proc()
+        internal virtual void Proc()
         {
             this.ProcScene();
         }
@@ -66,7 +66,7 @@ namespace Clarity.Element.Scene
         /// <summary>
         /// シーンの解放
         /// </summary>
-        public virtual void Release()
+        internal virtual void Release()
         {
         }
 

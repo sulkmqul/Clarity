@@ -17,7 +17,7 @@ namespace Clarity.Element
         /// コンストラクタ
         /// </summary>
         /// <param name="alspeed">1sにおけるアルファ色減衰速度(マイナス値ならフェードイン 正ならフェードアウトと判断)</param>
-        public FadeObject(float alspeed) : base(10000)
+        public FadeObject(float alspeed) : base(100000)
         {
             
             this.AlphaSpeed = alspeed;

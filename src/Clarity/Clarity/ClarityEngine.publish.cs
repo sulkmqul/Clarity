@@ -64,7 +64,29 @@ namespace Clarity
         /// <param name="scene"></param>
         public static void AddScene(BaseScene scene)
         {
+            SceneManager.Manager.AddScene(scene);
         }
+
+
+        /// <summary>
+        /// シーン変更リクエスト
+        /// </summary>
+        /// <param name="sno"></param>
+        public static void ChangeSceneRequest(int sno)
+        {
+            SceneManager.Manager.ChangeSceneRequest(sno);
+        }
+
+        /// <summary>
+        /// Scene実行開始
+        /// </summary>
+        /// <param name="sno"></param>
+        public static void ExecuteScene(int sno)
+        {
+            SceneManager.Manager.ExecuteScene(sno);
+        }
+
+
 
         /// <summary>
         /// シーンの削除

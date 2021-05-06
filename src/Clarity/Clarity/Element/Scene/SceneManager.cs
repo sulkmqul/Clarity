@@ -17,6 +17,12 @@ namespace Clarity.Element.Scene
         /// </summary>
         internal static SceneManager Manager = null;
 
+
+        /// <summary>
+        /// フェードイン、アウトの速度
+        /// </summary>
+        private float FadeSpeed = 1.0f;
+
         #region メンバ変数
 
         /// <summary>
@@ -36,6 +42,26 @@ namespace Clarity.Element.Scene
         protected Dictionary<int, BaseScene> SceneDic = new Dictionary<int, BaseScene>();
 
         #endregion
+
+
+        /// <summary>
+        /// フェードのAdd
+        /// </summary>
+        /// <param name="f">true=フェードイン false=フェードアウト</param>
+        /// <param name="addevent">Event追加可否</param>
+        protected void AddFadeObject(bool f, bool addevent = false)
+        {
+            float fspeed = (f == true) ? -this.FadeSpeed : this.FadeSpeed;
+
+            FadeObject fo = new FadeObject(fspeed);
+            if (addevent == true)
+            {
+                fo.AddEventSenderList(this);
+            }
+
+            ElementManager.Mana.AddRequest(fo);
+        }
+
 
         /// <summary>
         /// 現在の実行シーンの取得
@@ -122,7 +148,7 @@ namespace Clarity.Element.Scene
             //必要ならここでLoadシーンの実行初期化を行い、遷移せよ。Load後、再構築される
             
             
-            this.CurrentScene.Release();
+            this.CurrentScene?.Release();
 
             this.SceneNo = this.NextRequestSceneNo;
             this.NextRequestSceneNo = ClarityEngine.INVALID_ID;
@@ -130,7 +156,9 @@ namespace Clarity.Element.Scene
             //シーンの初期化
             this.CurrentScene.Init();
 
-            //フェードインオブジェクトをADDせよ。
+            //FadeのADD
+            this.AddFadeObject(true);
+            
         }
 
 
@@ -143,10 +171,32 @@ namespace Clarity.Element.Scene
             this.NextRequestSceneNo = nsno;
 
 
-            //フェードオブジェクトのADDとEvent通知設定処理
-            
+            //フェード処理
+            this.AddFadeObject(false, true);
         }
 
+
+        /// <summary>
+        /// シーン管理へ追加
+        /// </summary>
+        /// <param name="sc"></param>
+        public void AddScene(BaseScene sc)
+        {
+            this.SceneDic.Add(sc.SceneNo, sc);
+        }
+
+
+        /// <summary>
+        /// シーン実行開始
+        /// </summary>
+        /// <param name="sno"></param>
+        public virtual void ExecuteScene(int sno)
+        {
+            this.AddFadeObject(true);
+
+            this.SceneNo = sno;
+            this.CurrentScene.Init();
+        }
         
     }
 }

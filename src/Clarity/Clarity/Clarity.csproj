@@ -77,12 +77,13 @@
     <Compile Include="Core\ClarityCore.cs" />
     <Compile Include="Core\ClarityTimeManager.cs" />
     <Compile Include="Core\DxManager.cs" />
+    <Compile Include="Core\SystemView.cs" />
     <Compile Include="DLL\User32.cs" />
     <Compile Include="ClarityEngine.cs" />
     <Compile Include="common.cs" />
     <Compile Include="Element\BaseClarityAdminObject.cs" />
     <Compile Include="Element\BaseClarityProcessor.cs" />
-    <Compile Include="Element\ClarityFadeObject.cs" />
+    <Compile Include="Element\FadeObject.cs" />
     <Compile Include="Element\IClarityElementEvent.cs" />
     <Compile Include="Element\Collider\BaseCollider.cs" />
     <Compile Include="Element\Collider\ColliderCircle.cs" />

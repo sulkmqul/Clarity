@@ -83,14 +83,14 @@ namespace ClarityIntensity
             if (ClarityEngine.TestKey(GameKey.Button3))
             {
                 //this.FrameSpeed.ScaleRate = rspeed;
-                ClarityFadeObject obj = new ClarityFadeObject(1.0f);
+                FadeObject obj = new FadeObject(1.0f);
                 ClarityEngine.AddElement(obj);
             }
             if (ClarityEngine.TestKey(GameKey.Button4))
             {
                 //this.FrameSpeed.ScaleRate = -rspeed;
 
-                ClarityFadeObject obj = new ClarityFadeObject(-1.0f);
+                FadeObject obj = new FadeObject(-1.0f);
                 ClarityEngine.AddElement(obj);
                 
             }

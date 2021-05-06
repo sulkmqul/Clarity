@@ -162,14 +162,6 @@ namespace Clarity
 
 
 
-        /// <summary>
-        /// Viewのリサイズ処理
-        /// </summary>
-        public static void ResetView()
-        {
-            core.ResizeView();
-        }
-
 
     }
 }

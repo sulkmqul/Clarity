@@ -37,7 +37,7 @@ namespace Clarity.Core
         /// <summary>
         /// ゲーム解像度
         /// </summary>
-        public Size2 GameSize
+        public Size GameSize
         {
             get;
             protected set;
@@ -150,7 +150,7 @@ namespace Clarity.Core
         /// <summary>
         /// SharpDXの初期化
         /// </summary>
-        /// <param name="mc"></param>
+        /// <param name="mc"></param>        
         private void InitDX(Control mc)
         {
             try
@@ -425,7 +425,7 @@ namespace Clarity.Core
         /// </summary>
         /// <param name="mc">親画面</param>
         /// <param name="gsize">ゲーム解像度</param>
-        public static void Init(Control mc, Size2 gsize)
+        public static void Init(Control mc, Size gsize)
         {
             try
             {
@@ -545,6 +545,7 @@ namespace Clarity.Core
             int h = this.WindowSize.Height;
 
             this.ReleaseRenderTarget();
+
             this.SwapChain.ResizeBuffers(1, w, h, Format.R8G8B8A8_UNorm, SwapChainFlags.None);
             
             this.InitRenderTarget();

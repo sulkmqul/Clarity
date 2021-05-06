@@ -11,13 +11,13 @@ namespace Clarity.Element
     /// <summary>
     /// フェードイン、フェードアウトオブジェクト1
     /// </summary>
-    public class ClarityFadeObject : ClarityObject
+    public class FadeObject : ClarityObject
     {
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="alspeed">1sにおけるアルファ色減衰速度(マイナス値ならフェードイン 正ならフェードアウトと判断)</param>
-        public ClarityFadeObject(float alspeed) : base(10000)
+        public FadeObject(float alspeed) : base(10000)
         {
             
             this.AlphaSpeed = alspeed;
@@ -52,7 +52,7 @@ namespace Clarity.Element
                 this.Color = new Vector4(this.DefaultColor, 1.0f);
             }
 
-            this.TransSet.Scale2D = new Vector2(Core.DxManager.Mana.WindowSize.Width, Core.DxManager.Mana.WindowSize.Height);
+            this.TransSet.Scale2D = new Vector2(ClarityEngine.Setting.RenderingViewSize.Width, ClarityEngine.Setting.RenderingViewSize.Height);
 
 
         }

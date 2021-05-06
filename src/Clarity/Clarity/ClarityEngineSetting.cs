@@ -53,11 +53,10 @@ namespace Clarity
         public bool MultiViewPort = false;
 
         /// <summary>
-        /// 描画Viewのサイズ(画面サイズではない)
+        /// 描画Viewのサイズ(画面サイズではなくRenderingTextureのサイズ)
         /// </summary>
-        public Size RenderingViewSize = new Size(800, 600);
-
-        /// <summary>
+        public Size RenderingViewSize = new Size(800, 450);
+                /// <summary>
         /// 処理と描画時間の合計が時間を超えた場合、次のフレームの描画をスキップする限界時間(ms)
         /// </summary>
         public long LimitTime = Int64.MaxValue;

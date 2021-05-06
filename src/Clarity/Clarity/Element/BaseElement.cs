@@ -329,7 +329,6 @@ namespace Clarity.Element
             data.Color = rset.Color;
 
             ShaderManager.SetShaderDataDefault(data, rset.ShaderID);
-            
 
             //描画
             TextureManager.SetTexture(rset.TextureID);

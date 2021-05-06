@@ -92,16 +92,23 @@ namespace Clarity
         }
 
         /// <summary>
+        /// 基本View(RenderingTextureを描画するSystemViewのID)
+        /// </summary>
+        public static readonly int SystemViewID = -1;
+
+        /// <summary>
         /// 最大ViewPort数（Defaultの一つを含む）
         /// </summary>
-        public const int MaxViewPort = 5;
+        public static readonly int MaxViewPort = 5;
 
         /// <summary>
         /// ViewPort管理・・・これはもう増えることもないし、露骨にいえば画面分割数ぐらい。あらかじめ固定配列で良いと思われる
         /// </summary>
         protected ViewPortData[] ViewPortVec = null;
 
-        
+
+        protected ViewPortData SystemViewPort = null;
+
         /// <summary>
         /// 作成
         /// </summary>
@@ -131,15 +138,15 @@ namespace Clarity
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
-        /// デフォルトの作成
+        /// SysteViewWolrdの作成
         /// </summary>
         /// <param name="width">画面横幅</param>
         /// <param name="height">画面縦幅</param>
-        public void CreateDefault(int width, int height)
+        public void CreateSystemViewWorld(int width, int height)
         {
             //ViewPortの作成と登録
             Viewport vp = new Viewport(0, 0, width, height, 0.0f, 1.0f);
-            WorldManager.Mana.SetViewPort(vp);
+            this.SystemViewPort = new ViewPortData() { VPort = vp };
 
 
             //デフォルト世界の登録
@@ -147,7 +154,8 @@ namespace Clarity
             wdata.DefaultCameraMat = Matrix.LookAtLH(new Vector3(0.0f, 0.0f, 10000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
             wdata.ProjectionMat = Matrix.OrthoLH(width, height, 1.0f, 15000.0f);
             wdata.ReCalcu();
-            WorldManager.Mana.Set(-1, wdata);
+
+            WorldManager.Mana.Set(WorldManager.SystemViewID, wdata);
 
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,6 +167,15 @@ namespace Clarity
         public WorldData Get(int n)
         {
             return this.ManaDic[n];
+        }
+
+        /// <summary>
+        /// SystemViewの取得
+        /// </summary>
+        /// <returns></returns>
+        public WorldData GetSystemViewWorld()
+        {
+            return this.Get(WorldManager.SystemViewID);
         }
 
         /// <summary>
@@ -179,6 +196,15 @@ namespace Clarity
         public Viewport GetViewPort(int index)
         {
             return this.ViewPortVec[index].VPort;
+        }
+
+        /// <summary>
+        /// SystemViewportの取得
+        /// </summary>
+        /// <returns></returns>
+        public Viewport GetSystemViewPort()
+        {
+            return this.SystemViewPort.VPort;
         }
 
         /// <summary>

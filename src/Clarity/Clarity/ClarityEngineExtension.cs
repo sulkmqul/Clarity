@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +30,9 @@ namespace Clarity
         /// <summary>
         /// Viewのサイズ変更処理
         /// </summary>
-        public virtual void ResizeView()
+        public virtual void ResizeView(Size ns)
         {
-            ClarityEngine.ResetView();
+            
         }
     }
 }

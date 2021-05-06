@@ -94,6 +94,12 @@ namespace Clarity.Core
         /// 拡張実行一式
         /// </summary>
         private ClarityEngineExtension Proc = null;
+
+
+        /// <summary>
+        /// SystemView管理
+        /// </summary>
+        private SystemView SView = null;
         #endregion
 
 
@@ -108,10 +114,14 @@ namespace Clarity.Core
         {
             this.SetupOption = op;
             this.ManaCon = con;
+                       
 
             //エンジン管理クラスたちの作成
             this.CreateEngineManagers();
 
+
+            //Viewの作成
+            this.SView = new SystemView();
 
         }
 
@@ -174,13 +184,6 @@ namespace Clarity.Core
             
         }
 
-        /// <summary>
-        /// Viewサイズの変更処理
-        /// </summary>
-        public void ResizeView()
-        {
-            //デフォルト世界の再作成
-        }
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +195,7 @@ namespace Clarity.Core
         {
             #region エンジン管理クラスの作成
             //DirectXの初期化
-            DxManager.Init(this.ManaCon, new Size2(this.ManaCon.ClientSize.Width, this.ManaCon.ClientSize.Height));
+            DxManager.Init(this.ManaCon, ClarityEngine.Setting.RenderingViewSize);
 
             //時間管理
             ClarityTimeManager.Create();
@@ -223,31 +226,37 @@ namespace Clarity.Core
             Element.ElementManager.Mana.AddRequest(Element.Scene.SceneManager.Manager);
             #endregion
 
+            //全体デフォルト
+            WorldManager.Mana.CreateSystemViewWorld(this.DisplaySize.Width, this.DisplaySize.Height);
+
+            //基本世界の作成
             this.CreateDefaultWorld();
         }
 
 
 
         /// <summary>
-        /// デフォルト世界の作成
+        /// デフォルト世界の作成(RenderingTexture内ゲームのデフォルト)
         /// </summary>
         private void CreateDefaultWorld()
         {
+            Size vsize = ClarityEngine.Setting.RenderingViewSize;
+
             //ViewPortの作成と登録
-            Viewport vp = new Viewport(0, 0, this.DisplaySize.Width, this.DisplaySize.Height, 0.0f, 1.0f);
+            Viewport vp = new Viewport(0, 0, vsize.Width, vsize.Height, 0.0f, 1.0f);
             WorldManager.Mana.SetViewPort(vp);
 
 
             //デフォルト世界の登録
             WorldData wdata = new WorldData();
             wdata.DefaultCameraMat = Matrix.LookAtLH(new Vector3(0.0f, 0.0f, 5000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
-            wdata.ProjectionMat = Matrix.OrthoLH(this.DisplaySize.Width, this.DisplaySize.Height, 1.0f, 15000.0f);
+            wdata.ProjectionMat = Matrix.OrthoLH(vsize.Width, vsize.Height, 1.0f, 15000.0f);
             wdata.ReCalcu();
+
             WorldManager.Mana.Set(0, wdata);
 
 
-            //全体デフォルト
-            WorldManager.Mana.CreateDefault(this.DisplaySize.Width, this.DisplaySize.Height);
+            
         }
 
 
@@ -345,12 +354,7 @@ namespace Clarity.Core
 
                 }
 
-                ClarityTimeManager.StartMeasure();
-
                 System.Threading.Thread.Sleep(1);
-
-                long ms = ClarityTimeManager.StopMeasure();
-                ClarityLog.WriteDebug("SleepMs = " + ms.ToString());
 
 
             });
@@ -375,7 +379,7 @@ namespace Clarity.Core
             int vpcount = (ClarityEngine.Setting.MultiViewPort) ? WorldManager.MaxViewPort : 1;
             for (int i = 0; i < vpcount; i++)
             {
-                Viewport vp = WorldManager.Mana.GetViewPort(i);                
+                Viewport vp = WorldManager.Mana.GetViewPort(i);
                 DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
 
                 //描画処理
@@ -393,35 +397,27 @@ namespace Clarity.Core
             //ゲーム要素すべてを描画
             this.RenderRenderingTexture();
 
-
+            
             //システム描画
             DxManager.Mana.DisabledAlphaBlend();
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);            
             DxManager.Mana.ClearTargetView(new Color4(1.0f, 0.0f, 0.0f, 1.0f));
 
 
-            Viewport vp = WorldManager.Mana.GetViewPort(0);
+            Viewport vp = WorldManager.Mana.GetSystemViewPort();
             DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
 
-            //デフォルト物の取得
-            WorldData wdata = WorldManager.Mana.Get(-1);
-
-            ShaderDataDefault data = new ShaderDataDefault();
-
-            //画面いっぱいのサイズ
-            Matrix wm = Matrix.Scaling(this.DisplaySize.Width, this.DisplaySize.Height, 1);            
-            //Matrix wm = Matrix.Scaling(800.0f, 600.0f, 1);
-
-            //位置は現状保留・・・そのうち
-
-            data.WorldViewProjMat = wm * wdata.CamProjectionMat;
-            data.WorldViewProjMat.Transpose();
-            data.Color = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-            ShaderManager.SetShaderDataDefault(data, ClarityDataIndex.Shader_Default);
+            
+            SystemView sv = this.SView;
+            
+            //RenderingTextureのサイズのまま
+            sv.TransSet.Scale2D = new Vector2(ClarityEngine.Setting.RenderingViewSize.Width, ClarityEngine.Setting.RenderingViewSize.Height);
+            
+            //画面サイズの合わせる・・・比を維持したいならここのサイズを計算してだすこと
+            //sv.TransSet.Scale2D = new Vector2(this.DisplaySize.Width, this.DisplaySize.Height);
 
             ShaderResourceView srvt = DxManager.Mana.RenderingTextureResource;
-            Texture.TextureManager.SetTexture(srvt);
-            Vertex.VertexManager.RenderData(ClarityDataIndex.Vertex_Display);
+            sv.Render(srvt);
 
             //更新処理
             DxManager.Mana.SwapChainPresent();
@@ -442,16 +438,15 @@ namespace Clarity.Core
                 return;
             }
 
-            
 
             //スワップチェインのリサイズ
             Clarity.Core.DxManager.Mana.ResizeSwapChain();
 
-            //Renderingテクスチャサイズのリサイズ
-            this.CreateDefaultWorld();
+            //SystemViewの作り直し
+            WorldManager.Mana.CreateSystemViewWorld(this.DisplaySize.Width, this.DisplaySize.Height);
 
             //リサイズ関数
-            this.Proc?.ResizeView();
+            this.Proc?.ResizeView(this.DisplaySize);
         }
     }
 }

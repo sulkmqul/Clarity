@@ -96,6 +96,7 @@
     <Compile Include="Element\Collider\ICollider.cs" />
     <Compile Include="Element\Scene\BaseScene.cs" />
     <Compile Include="Element\Scene\SceneManager.cs" />
+    <Compile Include="RendererStatement.cs" />
     <Compile Include="Sound\SoundManager.cs" />
     <Compile Include="Texture\TextureAnimeData.cs" />
     <Compile Include="InputManager.cs" />

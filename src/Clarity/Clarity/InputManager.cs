@@ -417,7 +417,7 @@ namespace Clarity
         /// <returns></returns>
         public static bool TestKey(int gamekey)
         {
-            if ((InputManager.Mana.KeyFlag & gamekey) == gamekey)
+            if ((InputManager.Mana.KeyFlag & gamekey) != 0)
             {
                 return true;
             }
@@ -432,7 +432,7 @@ namespace Clarity
         /// <returns></returns>
         public static bool TestKeyEdge(int gamekey)
         {
-            if ((InputManager.Mana.KeyEdgeFlag & gamekey) == gamekey)
+            if ((InputManager.Mana.KeyEdgeFlag & gamekey) != 0)
             {
                 return true;
             }
@@ -448,7 +448,7 @@ namespace Clarity
         /// <returns></returns>
         public static bool TestKeyReleaseEdge(int gamekey)
         {
-            if ((InputManager.Mana.KeyReleaseEdgeFlag & gamekey) == gamekey)
+            if ((InputManager.Mana.KeyReleaseEdgeFlag & gamekey) != 0)
             {
                 return true;
             }

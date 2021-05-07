@@ -73,14 +73,9 @@ namespace Clarity.Element.Collider
         /// </summary>
         protected override void RenderElement()
         {
-            try
+            using (DepthStencilDisabledState des = new DepthStencilDisabledState())
             {
-                Core.DxManager.Mana.DisabledDepthStencil();
                 base.RenderElement();
-            }
-            finally
-            {
-                Core.DxManager.Mana.EnabledDepthStencil();
             }
         }
 

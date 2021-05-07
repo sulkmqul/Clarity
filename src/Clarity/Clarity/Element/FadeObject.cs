@@ -77,9 +77,10 @@ namespace Clarity.Element
         /// </summary>
         protected override void RenderElement()
         {
-            Core.DxManager.Mana.DisabledDepthStencil();
-            base.RenderElement();
-            Core.DxManager.Mana.EnabledDepthStencil();
+            using (DepthStencilDisabledState des = new DepthStencilDisabledState())
+            {
+                base.RenderElement();
+            }
         }
     }
 }

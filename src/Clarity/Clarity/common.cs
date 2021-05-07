@@ -287,6 +287,21 @@ namespace Clarity
             return ans;
         }
 
+
+
+        /// <summary>
+        /// このデータの境界線情報を作成する
+        /// </summary>
+        /// <returns></returns>
+        public RectangleF CreateBolderRect2D()
+        {
+            float hl = this.Scale.X * 0.5f;
+            float ht = this.Scale.Y * 0.5f;
+
+            RectangleF ans = new RectangleF(this.Pos.X - hl, this.Pos.Y - ht, this.Scale.X, this.Scale.Y);
+            
+            return ans;
+        }
     }
 
 

@@ -85,6 +85,12 @@ namespace Clarity.File
                         continue;
                     }
 
+                    //空白行はスキップする
+                    if (sline.Trim().Length <= 0)
+                    {
+                        continue;
+                    }
+
                     //ADD
                     string[] ss = sline.Split(DevChar);
                     anslist.Add(ss);

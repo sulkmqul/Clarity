@@ -81,6 +81,7 @@
     <Compile Include="DLL\User32.cs" />
     <Compile Include="ClarityEngine.cs" />
     <Compile Include="common.cs" />
+    <Compile Include="DLL\Winmm.cs" />
     <Compile Include="Element\BaseClarityAdminObject.cs" />
     <Compile Include="Element\BaseClarityProcessor.cs" />
     <Compile Include="Element\FadeObject.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Element\Collider\ICollider.cs" />
     <Compile Include="Element\Scene\BaseScene.cs" />
     <Compile Include="Element\Scene\SceneManager.cs" />
+    <Compile Include="File\ClarityUserSetting.cs" />
     <Compile Include="RendererStatement.cs" />
     <Compile Include="Sound\SoundManager.cs" />
     <Compile Include="Texture\TextureAnimeData.cs" />

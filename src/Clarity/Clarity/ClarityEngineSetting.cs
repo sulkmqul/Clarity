@@ -12,7 +12,7 @@ namespace Clarity
     /// エンジンデバッグ用設定
     /// </summary>
     [Serializable]
-    public class ClarityEngineSettingDebug
+    internal class ClarityEngineSettingDebug
     {
         /// <summary>
         /// 当たり判定描画可否
@@ -35,7 +35,7 @@ namespace Clarity
     /// エンジン設定ファイルデータ
     /// </summary>
     [Serializable]
-    public class ClarityEngineSetting
+    internal class ClarityEngineSetting
     {
         /// <summary>
         /// ファイルバージョン(現状意味なし)

@@ -51,7 +51,7 @@ namespace Clarity.Element
 
         #region プロパティ
         /// <summary>
-        /// テクスチャアニメーション可否 trueの場合 設定したTextureIDは無視され、AnimeIDを優先した動作となる
+        /// テクスチャアニメーション可否 trueの場合 設定したTextureIDおよびShaderIDは無視され、AnimeIDを優先した動作となる
         /// </summary>
         public bool TextureAnimationEnabled { get; set; }
 
@@ -143,7 +143,7 @@ namespace Clarity.Element
 
             data.TextureOffset = this.AnimeCon.CurrentFrameInfo.TextureOffset;
             
-            ShaderManager.SetShaderDataDefault(data, rset.ShaderID);
+            ShaderManager.SetShaderDataDefault(data, ClarityDataIndex.Shader_TextureAnime);
             
 
             //描画            

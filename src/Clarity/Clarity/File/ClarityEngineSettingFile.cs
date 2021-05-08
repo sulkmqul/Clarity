@@ -12,7 +12,7 @@ namespace Clarity.File
     /// <summary>
     /// エンジン設定ファイルの読み込み
     /// </summary>
-    public class ClarityEngineSettingFile
+    internal class ClarityEngineSettingFile
     {
         /// <summary>
         /// 設定の読み込み

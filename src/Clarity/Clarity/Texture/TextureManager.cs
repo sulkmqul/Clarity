@@ -32,6 +32,11 @@ namespace Clarity.Texture
         public string Code;
 
         /// <summary>
+        /// これの画像サイズ
+        /// </summary>
+        public Vector2 ImageSize = new Vector2(0.0f);
+
+        /// <summary>
         /// 画像分割サイズ(アニメ用で例えば一つの画像に4つのアニメがある場合、1/4=0.25が設定される)
         /// </summary>
         public Vector2 IndexDiv = new Vector2(1.0f);
@@ -221,16 +226,19 @@ namespace Clarity.Texture
         /// <param name="filename">読み込みファイル名</param>
         /// <param name="transcol">透過色</param>
         /// <returns></returns>
-        protected ShaderResourceView ReadTexture(string filename, System.Drawing.Color? transcol)
+        protected ShaderResourceView ReadTexture(string filename, System.Drawing.Color? transcol, ref Vector2 tsize)
         {
             ShaderResourceView ans = null;
-
+            tsize = new Vector2(0.0f);
             try
             {
                 //ファイル読み込み
                 using (Bitmap srcbit = new Bitmap(filename))
                 {
                     ans = this.ReadTexture(srcbit, transcol);
+                    tsize = new Vector2(srcbit.Width, srcbit.Height);
+
+
                 }
             }
             catch (Exception e)
@@ -291,11 +299,12 @@ namespace Clarity.Texture
                     int code = rdata.RootID;
                     foreach (TextureListFileData tdata in rdata.TextureList)
                     {
-                        ShaderResourceView srv = this.ReadTexture(tdata.FilePath, tdata.Color);
+                        Vector2 tsize = new Vector2();
+                        ShaderResourceView srv = this.ReadTexture(tdata.FilePath, tdata.Color, ref tsize);
 
                         float dx = 1.0f / (float)tdata.IndexSize.Width;
                         float dy = 1.0f / (float)tdata.IndexSize.Height;
-                        TextureManageData tex = new TextureManageData() { Srv = srv, IndexDiv = new Vector2(dx, dy), Code = tdata.Filename };
+                        TextureManageData tex = new TextureManageData() { Srv = srv, IndexDiv = new Vector2(dx, dy), Code = tdata.Filename, ImageSize = tsize };
                         this.ManaDic.Add(code, tex);
                         code++;
 
@@ -328,11 +337,11 @@ namespace Clarity.Texture
             //内部識別名の作成
             string texcode = System.IO.Path.GetFileNameWithoutExtension(filepath);
 
-
+            Vector2 tsize = new Vector2();
             float dx = 1.0f / (float)index_size.Width;
             float dy = 1.0f / (float)index_size.Height;
-            ShaderResourceView sr = this.ReadTexture(filepath, null);
-            TextureManageData td = new TextureManageData() { Srv = sr, IndexDiv = new Vector2(dx, dy), Code = texcode };
+            ShaderResourceView sr = this.ReadTexture(filepath, null, ref tsize);
+            TextureManageData td = new TextureManageData() { Srv = sr, IndexDiv = new Vector2(dx, dy), Code = texcode, ImageSize = tsize };
             this.ManaDic.Add(texid, td);
         }
 
@@ -439,5 +448,23 @@ namespace Clarity.Texture
             cont.PixelShader.SetShaderResource(0, sr);
         }
 
+        /// <summary>
+        /// 対象テクスチャのサイズを取得
+        /// </summary>
+        /// <param name="tid">テクスチャID</param>
+        /// <param name="f">trueの時は実サイズ、falseの時は実際に使用される分割サイズを返却</param>
+        /// <returns></returns>
+        public static Vector2 GetTextureSize(int tid, bool f = false)
+        {
+            TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);
+            if (f == true)            
+            {
+                return mdata.ImageSize;
+            }
+
+            Vector2 ans = new Vector2(mdata.ImageSize.X * mdata.IndexDiv.X, mdata.ImageSize.Y * mdata.IndexDiv.Y);
+            return ans;
+            
+        }
     }
 }

@@ -130,6 +130,9 @@ namespace Clarity
             //外からもアクセスできる全体関数の初期化
             //ログの作成
             ClarityLog.Init(Setting.LogLevel);
+
+            //Timer間隔の設定
+            DLL.Winmm.timeBeginPeriod(1);
             
             //乱数ライブラリの初期化
             Util.RandomMaker.Init();

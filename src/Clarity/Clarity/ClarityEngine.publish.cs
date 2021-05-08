@@ -16,8 +16,17 @@ namespace Clarity
     /// </summary>
     public partial class ClarityEngine
     {
-        
 
+        /// <summary>
+        /// ClarityEngine設定のデフォルト設定の書き出し
+        /// </summary>
+        /// <param name="filepath"></param>
+        public static void WriteDefaultEngineSetting(string filepath)
+        {
+            //データの書き出し
+            ClarityEngineSetting cdata = new ClarityEngineSetting();
+            Clarity.File.ClarityEngineSettingFile.WriteSetting(filepath, cdata);
+        }
 
 
 
@@ -123,6 +132,16 @@ namespace Clarity
         public static void LoadTextureAnimeFile(List<string> filepathlist)
         {
             Texture.TextureAnimeFactory.Mana.ReadTextureAnimeFile(filepathlist);
+        }
+
+        /// <summary>
+        /// テクスチャサイズの取得
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <returns></returns>
+        public static Vector2 GetTextureSize(int tid)
+        {
+            return Texture.TextureManager.GetTextureSize(tid);
         }
 
         #endregion

@@ -35,8 +35,9 @@ namespace ClarityCodeAid.AidProcess
             string writepath = this.CreateWriteFilePath(param);
 
             //データの書き出し
-            ClarityEngineSetting cdata = new ClarityEngineSetting();
-            Clarity.File.ClarityEngineSettingFile.WriteSetting(writepath, cdata);
+            //ClarityEngineSetting cdata = new ClarityEngineSetting();
+            //Clarity.File.ClarityEngineSettingFile.WriteSetting(writepath, cdata);
+            ClarityEngine.WriteDefaultEngineSetting(writepath);
             
 
         }

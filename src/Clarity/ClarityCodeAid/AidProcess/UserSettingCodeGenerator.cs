@@ -13,7 +13,7 @@ namespace ClarityCodeAid.AidProcess
     /// </summary>
     public class UserSettingCodeGenerator : IAidProcess
     {
-        static readonly string TypeName = "EUserSettingCode";
+        static readonly string TypeName = "ESettingCode";
 
         /// <summary>
         /// 出力ファイル名の作成

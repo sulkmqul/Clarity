@@ -4,21 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Clarity.Aid.Support;
 
 namespace ClarityCodeAid
 {
-    public class IdData
-    {
-        /// <summary>
-        /// ID名
-        /// </summary>
-        public string IDName = "";
-
-        /// <summary>
-        /// ID値
-        /// </summary>
-        public int Id = Clarity.ClarityEngine.INVALID_ID;
-    }
+    
 
 
     /// <summary>

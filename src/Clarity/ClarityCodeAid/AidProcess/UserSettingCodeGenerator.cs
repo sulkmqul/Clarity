@@ -9,11 +9,11 @@ using Clarity.Aid.Support;
 namespace ClarityCodeAid.AidProcess
 {
     /// <summary>
-    /// テクスチャコードの生成
+    /// ユーザー設定コードの書き出し
     /// </summary>
-    public class TexCodeGenerator : IAidProcess
+    public class UserSettingCodeGenerator : IAidProcess
     {
-        static readonly string TypeName = "ETexCode";
+        static readonly string TypeName = "EUserSettingCode";
 
         /// <summary>
         /// 出力ファイル名の作成
@@ -28,26 +28,29 @@ namespace ClarityCodeAid.AidProcess
         }
 
 
-
         /// <summary>
-        /// テクスチャコードの生成
+        /// 生成
         /// </summary>
         /// <param name="param"></param>
         public void Proc(InputParam param)
         {
             List<string> inputfilelist = param.CreateInputFileList();
-            ClarityLog.WriteInfo("Generate TexCode Start Input File Count", inputfilelist.Count);
+            ClarityLog.WriteInfo("Generate UserSettingCode Start");
+
+            //処理対象ファイルの読み込み
+            string filepath = inputfilelist[0];
+
 
             //Code一覧の作成
-            List<IdData> idlist = CodeAidSupport.CreateTextureCodeList(inputfilelist);
+            List<IdData> idlist = CodeAidSupport.CreateUserSettinfCodeList(filepath);
 
 
             //ファイルへの書き込み
             CodeClassFile fp = new CodeClassFile();
             string outfilepath = this.CreateWriteFilePath(param);
-            fp.Write(outfilepath, TypeName, idlist, "Texture Code");
+            fp.Write(outfilepath, TypeName, idlist, "User Setting Code");
 
-            ClarityLog.WriteInfo("Generate TexCode Complete!!");
+            ClarityLog.WriteInfo("Generate UserSetting Complete!!");
         }
     }
 }

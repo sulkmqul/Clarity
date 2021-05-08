@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Clarity;
 using Clarity.Shader;
+using Clarity.Aid.Support;
 
 namespace ClarityCodeAid.AidProcess
 {

@@ -23,7 +23,7 @@ namespace Clarity.File
         MAX,
     }
 
-    class ClarityUserSettingData
+    internal class ClarityUserSettingData
     {
         /// <summary>
         /// データID
@@ -56,7 +56,7 @@ namespace Clarity.File
         /// <summary>
         /// 管理データ
         /// </summary>
-        private Dictionary<int, ClarityUserSettingData> DataDic = null;
+        internal Dictionary<int, ClarityUserSettingData> DataDic = null;
 
         /// <summary>
         /// Codeの重複チェック

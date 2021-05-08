@@ -180,6 +180,7 @@ namespace ClarityCodeAid
                 ("ta", EAidMode.TexAnime),
                 ("im", EAidMode.ImageMerge),
                 ("cs", EAidMode.ClaritySetting),
+                ("ug", EAidMode.UserSetting),
             };
 
 

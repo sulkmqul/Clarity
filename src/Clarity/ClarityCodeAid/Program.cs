@@ -29,8 +29,11 @@ Usage:
         sh = Generate Shader Code.
         so = Generate Sound Code.
         ta = Generate Texture Anime Code.
-        im = Merge Images.
-        cs = Craete Clarity Engine Setting File
+        ug = Generate User Setting Code.
+            -i option is one filepath only. 
+            -k option is invalid.
+        im = Merge Images.            
+        cs = Craete Clarity Engine Setting File.
             only use -o Option. Create cs.xml
 ";
             Console.Write(help);
@@ -46,10 +49,11 @@ Usage:
 
             //デバッグでないなら起動引数が渡される
 #if DEBUG
+            
             string[] testarg = {
                 "te",
                 "-i",
-                @"F:\作業領域\Game\Stellamaris\data\img\texlist.txt",
+                @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\TextureListFile.txt",
                 "-k",
                 "*.txt",
                 "-o",
@@ -83,6 +87,15 @@ Usage:
                 "cs",
                 "-o",
                 @"F:\作業領域\Game\Stellamaris\src\bat",
+
+            };*/
+
+            /*string[] testarg = {
+                "ug",
+                "-i",
+                @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\UserSetting.txt",
+                "-o",
+                @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile",
 
             };*/
 

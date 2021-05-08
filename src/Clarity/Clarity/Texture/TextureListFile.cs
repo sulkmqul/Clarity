@@ -13,7 +13,7 @@ namespace Clarity.Texture
     //[ファイルパス],[透過色：マイナスで透過無し],[画像数X],[画像数Y]
     //パス無し拡張子無しのファイル名が中での識別名になる予定
 
-    public class TextureListFileDataRoot
+    internal class TextureListFileDataRoot
     {
         /// <summary>
         /// このファイルのRootID
@@ -31,7 +31,7 @@ namespace Clarity.Texture
     /// <summary>
     /// テクスチャファイルデータ一覧名
     /// </summary>
-    public class TextureListFileData
+    internal class TextureListFileData
     {   
         /// <summary>
         /// テクスチャファイルパス
@@ -84,7 +84,7 @@ namespace Clarity.Texture
     /// <summary>
     /// テクスチャデータ一覧ファイル
     /// </summary>
-    public class TextureListFile : BaseCsvFile
+    internal class TextureListFile : BaseCsvFile
     {
 
 

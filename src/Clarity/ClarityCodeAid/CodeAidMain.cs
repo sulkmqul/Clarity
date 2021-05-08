@@ -15,12 +15,14 @@ namespace ClarityCodeAid
         Texture,
         Vertex,
         Shader,
-        Sound,
+        Sound,        
         ImageMerge,
         TexAnime,
-
         ClaritySetting,
+        UserSetting,
 
+
+        //-----------
         Max,
     }
 
@@ -57,6 +59,7 @@ namespace ClarityCodeAid
                 procmap.Add(EAidMode.ImageMerge, typeof(ImageMerger));
                 procmap.Add(EAidMode.TexAnime, typeof(TexAnimeCodeGenerator));
                 procmap.Add(EAidMode.ClaritySetting, typeof(ClarityEngineSettingCreator));
+                procmap.Add(EAidMode.UserSetting, typeof(UserSettingCodeGenerator));
 
 
                 //起動コード取得

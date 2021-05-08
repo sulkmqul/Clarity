@@ -262,11 +262,13 @@ namespace Clarity.Texture
             this.CreateResource(flist);
         }
 
+
         /// <summary>
         /// リソースの作成
         /// </summary>
-        /// <param name="filepath">読み込みリストファイルパス一覧</param>
-        public void CreateResource(List<string> filepathlist)
+        /// <param name="filepathlist">読み込みリストファイルパス一覧</param>
+        /// <param name="create_flag">実際にShaderResourceViewを作成するか true=作成する</param>
+        public void CreateResource(List<string> filepathlist, bool create_flag = true)
         {
 
             try
@@ -275,7 +277,7 @@ namespace Clarity.Texture
                 this.ClearUserData();
 
                 //TextureSamplerの作成
-                if (this.TexSampler == null)
+                if (this.TexSampler == null && create_flag == true)
                 {
                     this.TexSampler = this.CreateTextureSampler();
                 }
@@ -300,7 +302,12 @@ namespace Clarity.Texture
                     foreach (TextureListFileData tdata in rdata.TextureList)
                     {
                         Vector2 tsize = new Vector2();
-                        ShaderResourceView srv = this.ReadTexture(tdata.FilePath, tdata.Color, ref tsize);
+                        ShaderResourceView srv = null;
+
+                        if (create_flag == true)
+                        {
+                            srv = this.ReadTexture(tdata.FilePath, tdata.Color, ref tsize);
+                        }
 
                         float dx = 1.0f / (float)tdata.IndexSize.Width;
                         float dy = 1.0f / (float)tdata.IndexSize.Height;

@@ -52,6 +52,7 @@
     <Compile Include="AidProcess\SoundCodeGenerator.cs" />
     <Compile Include="AidProcess\TexAnimeCodeGenerator.cs" />
     <Compile Include="AidProcess\TexCodeGenerator.cs" />
+    <Compile Include="AidProcess\UserSettingCodeGenerator.cs" />
     <Compile Include="AidProcess\VertexCodeGenerator.cs" />
     <Compile Include="CodeAidMain.cs" />
     <Compile Include="CodeClassFile.cs" />

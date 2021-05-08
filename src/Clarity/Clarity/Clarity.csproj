@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aid\CodeAidSupport.cs" />
     <Compile Include="BaseClaritySingleton.cs" />
     <Compile Include="BuildInResource.cs" />
     <Compile Include="ClarityEngine.publish.cs" />

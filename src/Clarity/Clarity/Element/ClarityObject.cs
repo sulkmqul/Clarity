@@ -23,8 +23,9 @@ namespace Clarity.Element
         public ClarityObject(long id) : base(id)
         {
             //テクスチャアニメーション実行追加関数
-            this.AdditionalProc += this.ProcTextureAnimation;                        
-            this.AnimeCon.EndAnimeDelegateProc = this.EndTextureAnimation;
+            this.AdditionalProc += this.ProcTextureAnimation;
+            //this.AnimeCon.EndAnimeDelegateProc = this.EndTextureAnimation;
+            this.AnimeCon.EndAnimeDelegateProc = this.EndAnimation;
 
             //3Dならborneでも追加でもだが当分？永劫？ないはず
         }
@@ -123,7 +124,17 @@ namespace Clarity.Element
             //ClarityLog.WriteDebug("EndAnime", aid);
         }
 
-        
+
+        /// <summary>
+        /// テクスチャアニメの終了
+        /// </summary>
+        /// <param name="aid"></param>
+        private void EndAnimation(int aid)
+        {
+            this.SendEvent(ClarityElementEventID.AnimeEnd);
+            this.EndTextureAnimation(aid);
+        }
+
 
         /// <summary>
         ///テクスチャアニメーション描画

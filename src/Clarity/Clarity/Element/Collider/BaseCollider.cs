@@ -55,7 +55,7 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 当たり判定変形モード  EColiderTransposeModeをor指定し、親の影響を判断せよ
         /// </summary>
-        public int ColiderTransposeMode = EColiderTransposeMode.Translation | EColiderTransposeMode.Scaling;
+        public int ColiderTransposeMode = EColiderTransposeMode.ALL;
 
 
 

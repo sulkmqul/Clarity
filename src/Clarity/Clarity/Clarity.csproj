@@ -123,6 +123,7 @@
     <Compile Include="Texture\TextureManager.cs" />
     <Compile Include="Util\ClarityUtil.cs" />
     <Compile Include="Util\RandomMaker.cs" />
+    <Compile Include="VectorSet.cs" />
     <Compile Include="Vertex\PolygonListFile.cs" />
     <Compile Include="Vertex\PolygonObjectFile.cs" />
     <Compile Include="Vertex\VertexInfo.cs" />

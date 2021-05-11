@@ -8,6 +8,13 @@ using Clarity.Element.Collider;
 
 namespace Clarity.Element
 {
+    /// <summary>
+    /// 拡張イベント関数
+    /// </summary>
+    public interface IElementExtraEvent
+    {
+        void ExtraElementProc(int eno);
+    }
 
     
 
@@ -44,10 +51,7 @@ namespace Clarity.Element
             /// 追加データ本体
             /// </summary>
             public BaseElement Ele;
-            /// <summary>
-            /// 当たり判定可否
-            /// </summary>
-            public bool ColFlag;
+
         }
 
 
@@ -230,15 +234,16 @@ namespace Clarity.Element
 
         /// <summary>
         /// 管理者以外のデータをクリアする
-        /// </summary>
+        /// </summary>        
         protected void ClearWithoutAdmin()
         {
-            foreach(var k in this.ElementDic.Keys)
+            foreach (var k in this.ElementDic.Keys)
             {
                 if (k < 0)
                 {
                     continue;
                 }
+
                 this.ElementDic.Remove(k);
             }
         }
@@ -270,12 +275,13 @@ namespace Clarity.Element
         /// <summary>
         /// 全データのクリアリクエスト
         /// </summary>
-        /// <param name="f"></param>
+        /// <param name="f">管理者削除可否 true=管理者削除</param>
         public void ClearRequest(bool f = false)
         {
             foreach (var k in this.ElementDic.Keys)
             {
-                if (k < 0 && f == true)
+                //管理者削除許可でている？
+                if (k < 0 && f == false)
                 {
                     continue;
                 }
@@ -329,7 +335,6 @@ namespace Clarity.Element
             ReqData data = new ReqData();
             data.ID = ele.ObjectID;
             data.Ele = ele;
-            data.ColFlag = false;
 
             //初期化関数を呼ぶ
             data.Ele.Init();
@@ -345,6 +350,7 @@ namespace Clarity.Element
         public void RemoveRequest(BaseElement ele)
         {
             ReqData data = new ReqData();
+            ele.Enabled = false;
             data.ID = ele.ObjectID;
             data.Ele = ele;            
 
@@ -352,6 +358,38 @@ namespace Clarity.Element
         }
 
 
-        
+
+        /// <summary>
+        /// 拡張イベント発行
+        /// </summary>
+        /// <param name="eno">イベント番号</param>
+        /// <param name="oidlist">対象ObjectID nullでAdmin以外のすべて</param>
+        public void ExecuteElementExtraEvent(int eno, List<long> oidlist)
+        {
+            //nullの場合対象すべてをAdd
+            if (oidlist == null)
+            {
+                var nl = from f in this.ElementDic.Keys where f >= 0 select f;
+                oidlist = nl.ToList();
+            }
+            //対象Keyのみ
+            oidlist.ForEach(oid =>
+            {
+                var elist = this.ElementDic[oid];
+                elist.ForEach(ele =>
+                {
+                    //拡張イベントに対応しているものだけを対象とする
+                    IElementExtraEvent iee = ele as IElementExtraEvent;
+                    if (iee == null)
+                    {
+                        return;
+                    }
+                    iee.ExtraElementProc(eno);
+                });
+
+            });
+        }
+
+
     }
 }

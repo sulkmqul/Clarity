@@ -42,11 +42,10 @@ namespace Clarity.Element.Scene
         /// </summary>
         internal virtual void Init()
         {
-            //解放は下でやるべきかは検討が必要。
+            //解放はここでやるべきかは検討が必要。つまり全Elementを解放するべきかは疑問が残る？
             //管理以外の解放
-            //ElementManager.Mana.Clear();
+            ElementManager.Mana.ClearRequest();
 
-            
 
             //リソースがきつい場合はリソース解放関係を入れる。必要なら汎用ロードシーンを作成せよ
 

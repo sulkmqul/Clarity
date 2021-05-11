@@ -64,9 +64,9 @@ namespace Clarity.Element.Collider
             this.VertexID = ClarityDataIndex.Vertex_Line;
 
             //変形後のデータから情報を作成する
-            this.TransSet.Pos = this.StartPos;
+            this.TransSet.Pos3D = this.StartPos;
             this.TransSet.Rot = this.ParentRot;
-            this.TransSet.Scale = new Vector3(1.0f, this.Dir.Length(), 1.0f);
+            this.TransSet.Scale3D = new Vector3(1.0f, this.Dir.Length(), 1.0f);
 
         }
 
@@ -100,7 +100,7 @@ namespace Clarity.Element.Collider
         /// <param name="tset">親の遷移情報</param>
         protected override void TranslateCollider(TransposeSet tset)
         {
-            this.StartPos += tset.Pos;
+            this.StartPos += tset.Pos3D;
         }
 
 

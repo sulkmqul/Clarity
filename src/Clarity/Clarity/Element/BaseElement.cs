@@ -230,6 +230,20 @@ namespace Clarity.Element
                 this.RenderSet.Color = value;
             }
         }
+        /// <summary>
+        /// 透明色の設定
+        /// </summary>
+        public float ColorAlpha
+        {
+            get
+            {
+                return this.RenderSet.Color.W;
+            }
+            set
+            {
+                this.RenderSet.Color.W = value;
+            }
+        }
         #endregion
 
 
@@ -306,9 +320,9 @@ namespace Clarity.Element
             //this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate * this.FrameInfo.ProcBaseRate;
 
             this.FrameSpeed.ApplyRate(this.FrameInfo.ProcBaseRate);
-            this.TransSet.Pos += this.FrameSpeed.Pos;
+            this.TransSet.Pos3D += this.FrameSpeed.Pos3D;
             this.TransSet.Rot += this.FrameSpeed.Rot;
-            this.TransSet.Scale += this.FrameSpeed.Scale;
+            this.TransSet.Scale3D += this.FrameSpeed.Scale3D;
             this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate;
             this.Color += this.FrameSpeed.Color;
 

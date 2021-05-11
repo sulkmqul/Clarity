@@ -103,6 +103,17 @@ namespace Clarity
         public static void ClearScene()
         {
         }
+
+
+        /// <summary>
+        /// 拡張関数を起動する
+        /// </summary>        
+        /// <param name="eno">イベント番号</param>
+        /// <param name="oidlist">発行対象 nullで全オブジェクト</param>
+        public static void ExecuteElementExtraEventProc<T>(int eno, List<long> oidlist)
+        {
+            ElementManager.Mana.ExecuteElementExtraEvent(eno, oidlist);
+        }
         #endregion
 
         #region Texture  TextureAnime
@@ -144,6 +155,20 @@ namespace Clarity
             return Texture.TextureManager.GetTextureSize(tid);
         }
 
+
+        /// <summary>
+        /// テクスチャサイズの取得 Anime版
+        /// </summary>
+        /// <param name="aid">アニメID</param>
+        /// <param name="aindex">アニメIndex</param>
+        /// <returns></returns>
+        public static Vector2 GetTextureSize(int aid, int aindex)
+        {
+            var adata = Texture.TextureAnimeFactory.GetAnime(aid);
+            int tid = adata.FrameList[aindex].TextureID;
+
+            return ClarityEngine.GetTextureSize(tid);
+        }
         #endregion
 
         #region Input

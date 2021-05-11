@@ -125,7 +125,7 @@ namespace Clarity.Texture
         /**************************************************************************************/
 
         /// <summary>
-        /// アニメ処理本体 trueで今回のアニメが終了した    
+        /// アニメ処理本体   
         /// </summary>
         /// <param name="frametime">実行時間</param>
         public void Anime(long frametime)
@@ -157,9 +157,8 @@ namespace Clarity.Texture
 
             //ここまで来ていたら次のアニメ
             this.CurrentAnimeFrameIndex += 1;
+            
             //表示時間が経過したと判断
-            //本来ならこちらが正しいが、処理が行われない場合溜まり続けて良くない。解消方法はいろいろ思いつくが
-            //ここは多少の誤差を許容して、現在時間をstart timeとする
             //this.CurrentAnimeStartTime += finfo.FrameTime;
             this.CurrentAnimeStartTime = frametime;
 

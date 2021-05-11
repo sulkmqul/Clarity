@@ -80,71 +80,13 @@ namespace Clarity
 
 
 
-    /// <summary>
-    /// 位置、回転、拡縮のセット
-    /// </summary>
-    public class Vector3Set
-    {
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public Vector3Set()
-        {
-        }
-        public Vector3Set(float f)
-        {
-            this.Pos = new Vector3(f);
-            this.Rot = new Vector3(f);
-            this.Scale = new Vector3(f);
-        }
-
-        /// <summary>
-        /// 位置
-        /// </summary>
-        public Vector3 Pos = new Vector3(0.0f);
-        /// <summary>
-        /// 回転
-        /// </summary>
-        public Vector3 Rot = new Vector3(0.0f);
-
-        /// <summary>
-        /// 拡縮
-        /// </summary>
-        public Vector3 Scale = new Vector3(1.0f);
-
-
-        #region 2D IF        
-        public Vector2 Pos2D
-        {
-            set
-            {
-                this.Pos.X = value.X;
-                this.Pos.Y = value.Y;
-            }
-        }
-        public float RotZ
-        {
-            set
-            {
-                this.Rot.Z = value;
-            }
-        }
-        public Vector2 Scale2D
-        {
-            set
-            {
-                this.Scale.X = value.X;
-                this.Scale.Y = value.Y;
-            }
-        }
-        #endregion
-    }
+    
 
 
     /// <summary>
     /// 速度情報データ
     /// </summary>
-    public class SpeedSet : Vector3Set
+    public class SpeedSet : VectorSet
     {
         /// <summary>
         /// コンストラクタ
@@ -175,9 +117,9 @@ namespace Clarity
         /// <param name="proc_rate"></param>
         public void ApplyRate(float proc_rate)
         {
-            this.Pos *= proc_rate;
+            this.Pos3D *= proc_rate;
             this.Rot *= proc_rate;
-            this.Scale *= proc_rate;
+            this.Scale3D *= proc_rate;
             this.ScaleRate *= proc_rate;
             this.Color *= proc_rate;
         }
@@ -187,7 +129,7 @@ namespace Clarity
     /// <summary>
     /// 位置、回転、拡縮セット
     /// </summary>
-    public class TransposeSet : Vector3Set
+    public class TransposeSet : VectorSet
     {
         /// <summary>
         /// コンストラクタ
@@ -197,9 +139,9 @@ namespace Clarity
         }
         public TransposeSet(float f)
         {
-            this.Pos = new Vector3(f);
+            this.Pos3D = new Vector3(f);
             this.Rot = new Vector3(f);
-            this.Scale = new Vector3(f);
+            this.Scale3D = new Vector3(f);
         }
 
         /// <summary>
@@ -238,7 +180,7 @@ namespace Clarity
         public Matrix CreateTransposeSizeRotationMat()
         {
 
-            Matrix scm = Matrix.Scaling(this.Scale);
+            Matrix scm = Matrix.Scaling(this.Scale3D);
             Matrix wmrate = Matrix.Scaling(this.ScaleRate);
 
             Matrix rxm = Matrix.RotationZ(this.Rot.X);
@@ -258,8 +200,8 @@ namespace Clarity
         {
             WorldData wdata = WorldManager.Mana.Get(this.WorldID);
 
-            Matrix tm = Matrix.Translation(this.Pos);
-            Matrix wm = Matrix.Scaling(this.Scale);
+            Matrix tm = Matrix.Translation(this.Pos3D);
+            Matrix wm = Matrix.Scaling(this.Scale3D);
             Matrix wmrate = Matrix.Scaling(this.ScaleRate);
             Matrix rmat = this.CreateTransposeRotationMat();
             Matrix ans = wm * wmrate * rmat * tm * wdata.CamProjectionMat;
@@ -277,8 +219,8 @@ namespace Clarity
         {
             WorldData wdata = WorldManager.Mana.Get(this.WorldID);
 
-            Matrix tm = Matrix.Translation(this.Pos);
-            Matrix wm = Matrix.Scaling(this.Scale);
+            Matrix tm = Matrix.Translation(this.Pos3D);
+            Matrix wm = Matrix.Scaling(this.Scale3D);
             Matrix wmrate = Matrix.Scaling(scalerate);
             Matrix rmat = this.CreateTransposeRotationMat();
             Matrix ans = wm * wmrate * rmat * tm * wdata.CamProjectionMat;
@@ -295,10 +237,10 @@ namespace Clarity
         /// <returns></returns>
         public RectangleF CreateBolderRect2D()
         {
-            float hl = this.Scale.X * 0.5f;
-            float ht = this.Scale.Y * 0.5f;
+            float hl = this.Scale3D.X * 0.5f;
+            float ht = this.Scale3D.Y * 0.5f;
 
-            RectangleF ans = new RectangleF(this.Pos.X - hl, this.Pos.Y - ht, this.Scale.X, this.Scale.Y);
+            RectangleF ans = new RectangleF(this.Pos3D.X - hl, this.Pos3D.Y - ht, this.Scale3D.X, this.Scale3D.Y);
             
             return ans;
         }

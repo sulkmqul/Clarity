@@ -79,10 +79,10 @@ namespace Clarity.Element.Collider
             this.Color = ClarityEngine.Setting.Debug.ColliderDefaultColor;
 
             //変形後のデータから情報を作成する
-            this.TransSet.Pos = this.Center;
+            this.TransSet.Pos3D = this.Center;
 
             float dia = this.Radius * 2.0f;
-            this.TransSet.Scale = new Vector3(dia, dia, 1.0f);
+            this.TransSet.Scale3D = new Vector3(dia, dia, 1.0f);
 
         }
 
@@ -115,7 +115,7 @@ namespace Clarity.Element.Collider
         /// <param name="tset">親の遷移情報</param>
         protected override void TranslateCollider(TransposeSet tset)
         {
-            this.Center += tset.Pos;
+            this.Center += tset.Pos3D;
         }
 
         /// <summary>

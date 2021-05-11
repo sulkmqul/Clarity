@@ -16,6 +16,11 @@ namespace Clarity.Element
         /// </summary>
         public static readonly int Destroy = 1;
 
+        /// <summary>
+        /// アニメの終了
+        /// </summary>
+        public static readonly int AnimeEnd = 2;
+
     }
 
     /// <summary>

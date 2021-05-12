@@ -123,6 +123,17 @@ namespace Clarity
             this.ScaleRate *= proc_rate;
             this.Color *= proc_rate;
         }
+
+        public void ApplyRate(float proc_rate, out SpeedSet oset)
+        {
+            oset = new SpeedSet();
+            oset.Pos3D = this.Pos3D;
+            oset.Rot = this.Rot;
+            oset.Scale3D = this.Scale3D;
+            oset.ScaleRate = this.ScaleRate;
+            oset.Color = this.Color;
+            oset.ApplyRate(proc_rate);
+        }
     }
 
 

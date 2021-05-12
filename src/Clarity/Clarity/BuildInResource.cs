@@ -38,7 +38,7 @@ namespace Clarity
         /// </summary>
         public const int Shader_Default = -100;
         /// <summary>
-        /// シェーダーテクスチャなし表示
+        /// 発光表示
         /// </summary>
         public const int Shader_HitLight = -99;
         /// <summary>
@@ -49,11 +49,16 @@ namespace Clarity
         /// Textureアニメ
         /// </summary>
         public const int Shader_TextureAnime = -97;
+
+        /// <summary>
+        /// Textureアニメ発光表示
+        /// </summary>
+        public static readonly int Shader_HitLightTextureAnime = -96;
         /// <summary>
         /// <summary>
         /// テクスチャのalpha値のみ有効にする物体
         /// </summary>
-        public const int Shader_OnlyAlpha = -96;
+        public const int Shader_OnlyAlpha = -95;
     }
 
 

@@ -44,20 +44,6 @@ namespace ClarityIntensity
             this.TData = data;*/
 
 
-
-            {
-                Clarity.File.ClarityUserSetting fs = new Clarity.File.ClarityUserSetting();
-                string testpath = @"F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\UserSetting.txt";
-                fs.LoadSetting(testpath);
-
-
-                int a = fs.GetInteger(1);
-                Vector2[] v = fs.GetVec2Array(5);
-
-
-                
-            }
-
             this.TData = new TestObject();
             ClarityEngine.AddElement(this.TData);
 

@@ -319,12 +319,13 @@ namespace Clarity.Element
             //this.TransSet.Scale += this.FrameSpeed.Scale * this.FrameInfo.ProcBaseRate;
             //this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate * this.FrameInfo.ProcBaseRate;
 
-            this.FrameSpeed.ApplyRate(this.FrameInfo.ProcBaseRate);
-            this.TransSet.Pos3D += this.FrameSpeed.Pos3D;
-            this.TransSet.Rot += this.FrameSpeed.Rot;
-            this.TransSet.Scale3D += this.FrameSpeed.Scale3D;
-            this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate;
-            this.Color += this.FrameSpeed.Color;
+            SpeedSet frate = null;
+            this.FrameSpeed.ApplyRate(this.FrameInfo.ProcBaseRate, out frate);
+            this.TransSet.Pos3D += frate.Pos3D;
+            this.TransSet.Rot += frate.Rot;
+            this.TransSet.Scale3D += frate.Scale3D;
+            this.TransSet.ScaleRate += frate.ScaleRate;
+            this.Color += frate.Color;
 
 
         }

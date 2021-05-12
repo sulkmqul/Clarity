@@ -322,10 +322,9 @@ namespace Clarity.Core
 
                 #region フレーム描画
                 //描画処理
-                if (nextskip == true)
+                if (nextskip == false)
                 {
                     this.RenderFrame();
-
                     fpsdata.RenderCount += 1;
                 }
                 #endregion
@@ -334,8 +333,8 @@ namespace Clarity.Core
                 //今フレームの処理時間を計測
                 frametime = ClarityTimeManager.StopMeasure();
                 //基底時間を超えているなら次の描画をキャンセルしてクオリティを保つ
-                nextskip = (frametime <= ClarityEngine.Setting.LimitTime);
-                
+                nextskip = (frametime >= ClarityEngine.Setting.LimitTime);
+
 
                 //FPS計算                
                 long fpsspanmili = ClarityTimeManager.TotalMilliseconds - fpsdata.PrevCalcuMs;
@@ -354,7 +353,12 @@ namespace Clarity.Core
 
                 }
 
-                System.Threading.Thread.Sleep(1);
+
+                if (nextskip == false)
+                {
+                    //スキップしないならちょい待ち処理を入れる
+                    System.Threading.Thread.Sleep(1);
+                }
 
 
             });
@@ -374,6 +378,7 @@ namespace Clarity.Core
 
             //クリア
             DxManager.Mana.ClearTargetView(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
+            //DxManager.Mana.ClearTargetView(new Color4(0.5f, 0.0f, 0.5f, 1.0f));
 
             //ViewPort数を取得
             int vpcount = (ClarityEngine.Setting.MultiViewPort) ? WorldManager.MaxViewPort : 1;

@@ -3,6 +3,7 @@ Default,,VsDefault,PsDefault
 HitLight,,VsDefault,PsHitLight
 NoTexture,,VsDefault,PsNoTex
 TextureAnime,,VsTextureAnimation,PsDefault
+HitLightTextureAnime,,VsTextureAnimation,PsHitLight
 OnlyAlpha,,VsDefault,PsTextureAlphaOnlyBind
 
 

@@ -26,7 +26,7 @@ namespace ClarityIntensity
             this.ShaderID = Clarity.ClarityDataIndex.Shader_TextureAnime;
             this.ObjectID = Clarity.ClarityDataIndex.Vertex_Display;
 
-            this.TransSet.Scale = new SharpDX.Vector3(128.0f, 192.0f, 1.0f);
+            this.TransSet.Scale3D = new SharpDX.Vector3(128.0f, 192.0f, 1.0f);
             this.TransSet.ScaleRate = 2.0f;
 
             //当たり判定設定
@@ -51,20 +51,20 @@ namespace ClarityIntensity
             float rspeed = 2.0f;
             if (ClarityEngine.TestKey(GameKey.Left))
             {
-                this.FrameSpeed.Pos.X = -speed;
+                this.FrameSpeed.PosX = -speed;
             }
             if (ClarityEngine.TestKey(GameKey.Right))
             {
-                this.FrameSpeed.Pos.X = speed;
+                this.FrameSpeed.PosX = speed;
             }
 
             if (ClarityEngine.TestKey(GameKey.Up))
             {
-                this.FrameSpeed.Pos.Y = speed;
+                this.FrameSpeed.PosY = speed;
             }
             if (ClarityEngine.TestKey(GameKey.Down))
             {
-                this.FrameSpeed.Pos.Y = -speed;
+                this.FrameSpeed.PosY = -speed;
             }
 
 
@@ -112,9 +112,9 @@ namespace ClarityIntensity
             this.Color = new Vector4(0.0f, 1.0f, 1.0f, 1.0f);
             this.ObjectID = Clarity.ClarityDataIndex.Vertex_Display;
 
-            this.TransSet.Pos = new Vector3(100.0f, 200.0f, 1.0f);
+            this.TransSet.Pos3D = new Vector3(100.0f, 200.0f, 1.0f);
 
-            this.TransSet.Scale = new SharpDX.Vector3(192.0f, 192.0f, 1.0f);
+            this.TransSet.Scale3D = new SharpDX.Vector3(192.0f, 192.0f, 1.0f);
             this.TransSet.ScaleRate = 1.0f;
 
             //当たり判定設定

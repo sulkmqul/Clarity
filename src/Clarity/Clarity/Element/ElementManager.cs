@@ -350,7 +350,7 @@ namespace Clarity.Element
         public void RemoveRequest(BaseElement ele)
         {
             ReqData data = new ReqData();
-            ele.Enabled = false;
+            ele.Enabled = false;    //自身の無効化
             data.ID = ele.ObjectID;
             data.Ele = ele;            
 

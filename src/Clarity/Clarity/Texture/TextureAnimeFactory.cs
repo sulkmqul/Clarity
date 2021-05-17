@@ -73,18 +73,15 @@ namespace Clarity.Texture
             {
                 throw new Exception("ConvertFrameInfo InValid TextureCode:" + fdata.TextureCode);
             }
-            //管理データの取得
-            TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);
+            
             #endregion
 
             //フレーム情報の変換
             TextureAnimeFrameInfo ans = new TextureAnimeFrameInfo();
             ans.TextureID = tid;
-            
-            //インデックス情報
-            float tox = (float)fdata.IndexX * mdata.IndexDiv.X;
-            float toy = (float)fdata.IndexY * mdata.IndexDiv.Y;
-            ans.TextureOffset = new SharpDX.Vector2(tox, toy);
+
+            //インデックスオフセットの設定            
+            ans.TextureOffset = ClarityEngine.GetTextureOffset(tid, fdata.IndexX, fdata.IndexY);
 
             ans.FrameTime = fdata.FrameTime;
 

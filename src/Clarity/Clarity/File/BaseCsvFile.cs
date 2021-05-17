@@ -65,9 +65,10 @@ namespace Clarity.File
         /// CSV読み込み本体
         /// </summary>
         /// <param name="st">読み込みStream</param>
+        /// <param name="dels">削除文字空文字=削除なし</param>
         /// <param name="commentskip">コメントスキップ可否 true=コメント読み込まない false=読みこむ</param>
         /// <returns></returns>
-        protected List<string[]> ReadCsvStream(Stream st, bool commentskip = true)
+        protected List<string[]> ReadCsvStream(Stream st, string dels = "", bool commentskip = true)
         {
             List<string[]> anslist = new List<string[]>();
 
@@ -91,6 +92,12 @@ namespace Clarity.File
                         continue;
                     }
 
+                    //削除文字列の削除
+                    foreach (char c in dels)
+                    {
+                        sline = sline.Replace(c.ToString(), "");
+                    }
+
                     //ADD
                     string[] ss = sline.Split(DevChar);
                     anslist.Add(ss);
@@ -106,9 +113,10 @@ namespace Clarity.File
         /// Csvファイル読み込み 失敗=NULL
         /// </summary>
         /// <param name="filepath">読み込みファイル名</param>
+        /// <param name="dels">削除する文字一式 空文字＝削除しない 文字列ではなく単品の文字として解釈abと指定した場合、aとbを削除する。</param>
         /// <param name="commentskip">コメント読み込みを行うか否か  true=コメント読み込まない false=読みこむ</param>
         /// <returns>作成物</returns>
-        protected List<string[]> ReadCsvFile(string filepath, bool commentskip = true)
+        protected List<string[]> ReadCsvFile(string filepath, string dels = "", bool commentskip = true)
         {
             List<string[]> anslist = new List<string[]>();
 
@@ -117,7 +125,7 @@ namespace Clarity.File
                 //ファイルを読み込み、
                 using (FileStream fp = new FileStream(filepath, FileMode.Open, FileAccess.Read))
                 {
-                    anslist = this.ReadCsvStream(fp, commentskip);
+                    anslist = this.ReadCsvStream(fp, dels, commentskip);
                 }
             }
             catch (Exception e)

@@ -123,7 +123,7 @@ namespace Clarity.Element.Scene
         public void EventCallback(int eid, BaseElement data)
         {
             //削除処理でない
-            if (eid != ClarityElementEventID.Destroy)
+            if (eid != ClarityElementEventID.Remove)
             {
                 return;
             }

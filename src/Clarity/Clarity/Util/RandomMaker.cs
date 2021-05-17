@@ -65,7 +65,7 @@ namespace Clarity.Util
         /// <param name="rad">中心角度(rad)</param>
         /// <param name="range">発射のランダムの範囲(rad)</param>
         /// <returns></returns>
-        public static Vector2 GetRandomVector(float rad, float range)
+        public static Vector2 GetRandomVector(float rad = 0.0f, float range = (float)(Math.PI * 2))
         {
             //角度を取得
             float a = GetSingle(rad - range, rad + range);

@@ -1,6 +1,7 @@
 ﻿using Clarity.Shader;
 using Clarity.Texture;
 using Clarity.Vertex;
+using SharpDX;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -244,6 +245,21 @@ namespace Clarity.Element
                 this.RenderSet.Color.W = value;
             }
         }
+
+        /// <summary>
+        /// TextureOffset < 1.0
+        /// </summary>
+        public Vector2 TextureOffset
+        {
+            get
+            {
+                return this.RenderSet.TextureOffset;
+            }
+            set
+            {
+                this.RenderSet.TextureOffset = value;
+            }
+        }
         #endregion
 
 
@@ -338,15 +354,22 @@ namespace Clarity.Element
         {
             RendererSet rset = this.RenderSet;
 
+            //テクスチャの設定
+            Vector2 tdiv = Texture.TextureManager.SetTexture(rset.TextureID);
+
             //Shaderに対する設定
             ShaderDataDefault data = new ShaderDataDefault();
             data.WorldViewProjMat = this.TransSet.CreateTransposeMat();
             data.Color = rset.Color;
 
+            data.TexDiv = tdiv;
+
+            data.TextureOffset = this.TextureOffset;
+
+
             ShaderManager.SetShaderDataDefault(data, rset.ShaderID);
 
             //描画
-            TextureManager.SetTexture(rset.TextureID);
             VertexManager.RenderData(rset.VertexID);
         }
 
@@ -371,7 +394,7 @@ namespace Clarity.Element
         internal virtual void Remove()
         {
             //削除イベント送付
-            this.SendEvent(ClarityElementEventID.Destroy);
+            this.SendEvent(ClarityElementEventID.Remove);
         }
 
 

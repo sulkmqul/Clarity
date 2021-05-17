@@ -272,7 +272,7 @@ namespace Clarity.File
             try
             {
                 //CSVの読み込み
-                List<string[]> datalist = this.ReadCsvFile(filepath);
+                List<string[]> datalist = this.ReadCsvFile(filepath, "()");
 
                 int id = 1;
                 datalist.ForEach(line =>

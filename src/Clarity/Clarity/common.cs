@@ -299,6 +299,11 @@ namespace Clarity
         /// これの色
         /// </summary>
         public Vector4 Color = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+
+        /// <summary>
+        /// テクスチャ < 1.0f
+        /// </summary>
+        public Vector2 TextureOffset = new Vector2(0.0f);
     }
 
 }

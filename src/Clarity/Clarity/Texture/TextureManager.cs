@@ -405,7 +405,7 @@ namespace Clarity.Texture
         /// </summary>
         /// <param name="tid">texture id</param>
         /// <returns></returns>
-        internal TextureManageData GetTextureManageData(int tid)
+        private TextureManageData GetTextureManageData(int tid)
         {
             return this.ManaDic[tid];
         }
@@ -471,7 +471,18 @@ namespace Clarity.Texture
 
             Vector2 ans = new Vector2(mdata.ImageSize.X * mdata.IndexDiv.X, mdata.ImageSize.Y * mdata.IndexDiv.Y);
             return ans;
-            
+        }
+
+
+        /// <summary>
+        /// テクスチャ分割サイズの取得
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <returns></returns>
+        public static Vector2 GetTextureDivSize(int tid)
+        {
+            TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);            
+            return mdata.IndexDiv;
         }
     }
 }

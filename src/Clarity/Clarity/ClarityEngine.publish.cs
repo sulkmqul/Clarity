@@ -169,6 +169,27 @@ namespace Clarity
 
             return ClarityEngine.GetTextureSize(tid);
         }
+
+
+        /// <summary>
+        /// 対象テクスチャindexのoffsetを取得する
+        /// </summary>
+        /// <param name="tid">texture id</param>
+        /// <param name="tix">index x</param>
+        /// <param name="tiy">index y</param>
+        /// <returns></returns>
+        public static Vector2 GetTextureOffset(int tid, int tix, int tiy = 0)
+        {
+            Vector2 tsize = Texture.TextureManager.GetTextureDivSize(tid);
+
+            Vector2 ans = new Vector2();
+            ans.X = tsize.X * (float)tix;
+            ans.Y = tsize.Y * (float)tiy;
+
+            return ans;
+
+        }
+
         #endregion
 
         #region Input

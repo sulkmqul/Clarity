@@ -14,7 +14,7 @@ namespace Clarity.Element
         /// <summary>
         /// 対象オブジェクトが破棄された
         /// </summary>
-        public static readonly int Destroy = 1;
+        public static readonly int Remove = 1;
 
         /// <summary>
         /// アニメの終了

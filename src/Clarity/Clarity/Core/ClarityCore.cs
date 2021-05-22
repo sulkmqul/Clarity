@@ -377,7 +377,7 @@ namespace Clarity.Core
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
 
             //クリア
-            DxManager.Mana.ClearTargetView(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
+            DxManager.Mana.ClearTargetView(new Color4(0.3f, 0.3f, 0.3f, 1.0f));
             //DxManager.Mana.ClearTargetView(new Color4(0.5f, 0.0f, 0.5f, 1.0f));
 
             //ViewPort数を取得

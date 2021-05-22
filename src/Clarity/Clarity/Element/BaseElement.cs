@@ -140,6 +140,17 @@ namespace Clarity.Element
                 return this.FrameInfo.Span;
             }
         }
+
+        /// <summary>
+        /// 描画index
+        /// </summary>
+        public int RenderIndex
+        {
+            get
+            {
+                return this.FrameInfo.RenderIndex;
+            }
+        }
         #endregion
 
 

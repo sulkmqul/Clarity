@@ -64,11 +64,11 @@ namespace Clarity.Element
             set
             {
                 this._TextureAnimationEnabled = value;
-                this.ShaderID = ClarityDataIndex.Shader_Default;
-                if (this._TextureAnimationEnabled == true)
-                {
-                    this.ShaderID = ClarityDataIndex.Shader_TextureAnime;
-                }
+                this.ShaderID = ClarityDataIndex.Shader_TextureAnime;
+                //if (this._TextureAnimationEnabled == true)
+                //{
+                //    this.ShaderID = ClarityDataIndex.Shader_TextureAnime;
+                //}
                 
             }
         }

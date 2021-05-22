@@ -340,8 +340,8 @@ namespace Clarity.Element
             data.Ele.Init();
 
             this.AddReqQue.Enqueue(data);
-
         }
+
 
         /// <summary>
         /// 管理削除申請

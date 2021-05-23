@@ -27,7 +27,7 @@ RegistData RData : register(s0);
 
 //�e�N�X�`��
 Texture2D pix : register(t0);
-SamplerState picsamp : register(s0);
+SamplerState picsamp : register(s1);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

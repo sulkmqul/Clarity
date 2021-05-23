@@ -170,5 +170,49 @@ namespace Clarity
             }
 
         }
+
+        /// <summary>
+        /// ScaleX値
+        /// </summary>
+        public float ScaleX
+        {
+            get
+            {
+                return this._Scale3D.X;
+            }
+            set
+            {
+                this._Scale3D.X = this._Scale2D.X = value;                
+            }
+        }
+        /// <summary>
+        /// ScaleY値
+        /// </summary>
+        public float ScaleY
+        {
+            get
+            {
+                return this._Scale3D.Y;
+            }
+            set
+            {
+                this._Scale3D.Y = this._Scale2D.Y = value;
+            }
+        }
+
+        /// <summary>
+        /// ScaleZ値
+        /// </summary>
+        public float ScaleZ
+        {
+            get
+            {
+                return this._Scale3D.Z;
+            }
+            set
+            {
+                this._Scale3D.Z = value;
+            }
+        }
     }
 }

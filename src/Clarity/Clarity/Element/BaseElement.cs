@@ -279,6 +279,11 @@ namespace Clarity.Element
         /// </summary>
         public BaseElement ParentObj = null;
 
+        /// <summary>
+        /// 自身の配下のobject ここに登録したものは通常の描画からは外れ、このobject内で描画が行われる。AddElementはしてはいけない。
+        /// また処理は親objectの実行後行われる。
+        /// </summary>
+        private List<BaseElement> DominateList = new List<BaseElement>();
 
         /// <summary>
         /// イベント送付対象
@@ -354,7 +359,11 @@ namespace Clarity.Element
             this.TransSet.ScaleRate += frate.ScaleRate;
             this.Color += frate.Color;
 
-
+            //配下の処理
+            this.DominateList?.ForEach(x =>
+            {
+                x.Proc(fparam);
+            });
         }
 
 
@@ -397,6 +406,12 @@ namespace Clarity.Element
 
             this.RenderElement();
 
+            //配下の処理
+            this.DominateList?.ForEach(x =>
+            {
+                x.Render(rparam);
+            });
+
         }
 
         /// <summary>
@@ -438,6 +453,46 @@ namespace Clarity.Element
         public void AddEventSenderList(IClarityElementEvent iee)
         {
             this.EventSenderList.Add(iee);
+        }
+
+
+        /// <summary>
+        /// 自身の配下リストへAdd
+        /// </summary>
+        /// <param name="de"></param>
+        protected void AddDominateList(BaseElement de)
+        {
+            de.Init();
+            this.DominateList.Add(de);
+        }
+        /// <summary>
+        /// 配下リストの削除
+        /// </summary>
+        /// <param name="de"></param>
+        protected void RemoveDominateList(BaseElement de)
+        {
+            de.Enabled = false;
+            this.DominateList.Remove(de);
+        }
+        /// <summary>
+        /// 配下登録のクリア
+        /// </summary>
+        protected void ClearDominateList()
+        {
+            this.DominateList.Clear();
+        }
+        /// <summary>
+        /// 配下リスト処理
+        /// </summary>
+        /// <param name="ac">index、対象</param>
+        protected void ProcDominateList(Action<int, BaseElement> ac)
+        {
+            int i = 0;
+            this.DominateList.ForEach((x)=>
+            {
+                ac.Invoke(i, x);
+                i++;
+            });
         }
     }
 }

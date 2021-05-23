@@ -23,13 +23,12 @@ namespace Clarity.Element
         }
 
 
-        /// <summary>
-        /// 処理者の描画を無効化する。
-        /// </summary>
-        /// <param name="rparam"></param>
         internal sealed override void Render(FrameRenderParam rparam)
         {
-            
+            base.Render(rparam);
         }
+
+
+
     }
 }

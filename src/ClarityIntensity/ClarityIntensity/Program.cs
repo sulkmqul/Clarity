@@ -23,8 +23,7 @@ namespace ClarityIntensity
         {
             try
             {
-                MainForm mf = new MainForm();                
-                
+                MainForm mf = new MainForm();
                 
                 //エンジン初期化
                 EngineSetupOption setop = new EngineSetupOption();

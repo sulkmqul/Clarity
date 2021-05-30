@@ -47,6 +47,8 @@ namespace Clarity.Element
             /// 追加データID
             /// </summary>
             public long ID;
+
+
             /// <summary>
             /// 追加データ本体
             /// </summary>
@@ -60,7 +62,7 @@ namespace Clarity.Element
 
 
         /// <summary>
-        /// 管理オブジェクト一式[object id, manage object list]
+        /// 管理オブジェクト一式[object id, manage object list] 特に指定がない場合、こちらに登録される。
         /// </summary>
         private Dictionary<long, List<BaseElement>> ElementDic = new Dictionary<long, List<BaseElement>>();
 
@@ -144,7 +146,6 @@ namespace Clarity.Element
                 //当たり判定登録
                 this.AddColliderManager(req.Ele);
 
-
             }
 
         }
@@ -179,8 +180,8 @@ namespace Clarity.Element
         /// <param name="frame_time"></param>
         /// <param name="prev_frame_time"></param>
         protected void ProcManageObject(FrameProcParam fparam)
-        {   
-
+        {
+            
             //全データの処理
             foreach (List<BaseElement> olist in this.ElementDic.Values)
             {
@@ -205,20 +206,22 @@ namespace Clarity.Element
         {
             //この処理はAddが発生した時だけやれば良いのでここでやるのは危険か？
             var klist = this.ElementDic.Keys.OrderBy((x) => { return x; });
-
             
+            //今回の描画Targetを取得
+            var crt = Core.DxManager.Mana.CurrentTarget2D;
+
             //全データの処理            
             foreach(long ekey in klist)
             {
-                List<BaseElement> olist = this.ElementDic[ekey];
-
+                List<BaseElement> olist = this.ElementDic[ekey];                
                 int index = 0;
                 olist.ForEach(obj =>
                 {
-                    FrameRenderParam rparam = new FrameRenderParam() { ViewIndex = vindex, RenderIndex = index };
+                    FrameRenderParam rparam = new FrameRenderParam() { ViewIndex = vindex, RenderIndex = index, Crt = crt };
                     obj.Render(rparam);
                     index++;
-                });                
+                });
+                                
             }
 
 
@@ -335,6 +338,7 @@ namespace Clarity.Element
             ReqData data = new ReqData();
             data.ID = ele.ObjectID;
             data.Ele = ele;
+
 
             //初期化関数を呼ぶ
             data.Ele.Init();

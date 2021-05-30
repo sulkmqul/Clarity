@@ -43,6 +43,10 @@
     <Reference Include="SharpDX.Desktop">
       <HintPath>..\..\Clarity\Lib\SharpDX4200_net45\SharpDX.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Clarity\Lib\SharpDX4200_net45\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX.Direct3D11, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Clarity\Lib\SharpDX4200_net45\SharpDX.Direct3D11.dll</HintPath>

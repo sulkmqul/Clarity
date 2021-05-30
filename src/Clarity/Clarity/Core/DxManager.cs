@@ -13,6 +13,8 @@ using System.Drawing;
 
 namespace Clarity.Core
 {
+
+
     /// <summary>
     /// DirectX管理コア
     /// </summary>
@@ -26,6 +28,32 @@ namespace Clarity.Core
             SwapChain = 0,
             RenderingTexture,
         }
+
+
+        /// <summary>
+        /// 描画ターゲットデータ
+        /// </summary>
+        class RenderTargetSet : IDisposable
+        {
+            /// <summary>
+            /// Direct3D RenderTarget
+            /// </summary>
+            public SharpDX.Direct3D11.RenderTargetView Target3D = null;
+            /// <summary>
+            /// Direct2D Write RenderTarget
+            /// </summary>
+            public SharpDX.Direct2D1.RenderTarget Target2D = null;
+
+            public void Dispose()
+            {
+                this.Target3D?.Dispose();
+                this.Target3D = null;
+
+                this.Target2D?.Dispose();
+                this.Target2D = null;
+            }
+        }
+
 
         #region メンバ変数
 
@@ -63,7 +91,7 @@ namespace Clarity.Core
         /// <summary>
         /// 現在の選択RenderTargetを取得
         /// </summary>
-        protected RenderTargetView CurrentRenderTargetView
+        private RenderTargetSet CurrentRenderTarget
         {
             get
             {
@@ -79,14 +107,13 @@ namespace Clarity.Core
         /// スワップチェイン設定
         /// </summary>
         protected SwapChain SwapChain = null;
-
-        
+                
 
 
         /// <summary>
         /// RenderTarget一式
         /// </summary>
-        protected List<RenderTargetView> RenderTargetList = new List<RenderTargetView>();
+        private List<RenderTargetSet> RenderTargetList = new List<RenderTargetSet>();
 
 
         /// <summary>
@@ -144,8 +171,40 @@ namespace Clarity.Core
         /// <summary>
         /// Direct3D11デバイス
         /// </summary>
-        public SharpDX.Direct3D11.Device DxDevice = null;
+        private SharpDX.Direct3D11.Device _DxDevice = null;
+        /// <summary>
+        /// Direct3D11デバイス
+        /// </summary>
+        public SharpDX.Direct3D11.Device DxDevice
+        {
+            get
+            {
+                return this._DxDevice;
+            }
+            
+        }
 
+        /// <summary>
+        /// Direct2D1管理
+        /// </summary>
+        private Dx2D D2DMana = null;
+
+
+        public SharpDX.DirectWrite.Factory FactDWrite
+        {
+            get
+            {
+                return this.D2DMana.FactDWrite;
+            }
+        }
+
+        public SharpDX.Direct2D1.RenderTarget CurrentTarget2D
+        {
+            get
+            {
+                return this.CurrentRenderTarget.Target2D;
+            }
+        }
         //-----------------------------------------------------------------------------------------------------------------------------
         /// <summary>
         /// SharpDXの初期化
@@ -202,15 +261,14 @@ namespace Clarity.Core
                 }
 
                 #endregion
-
-
+                                
                 //デバイス作成
                 //作成するデバイスの種類
-                //有効にするランタイムレイアリスト
+                //有効にするランタイムレイアリスト DirectWriteも有効にするにはNoneではなくBgraSupportを指定する
                 //スワップチェイン設定
                 //デバイス取得
                 //スワップチェイン取得                            
-                SharpDX.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, swc, out this.DxDevice, out this.SwapChain);
+                SharpDX.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.BgraSupport, swc, out this._DxDevice, out this.SwapChain);
                 
 
                 //イベントを無効にする
@@ -219,12 +277,18 @@ namespace Clarity.Core
                 Factory fac = this.SwapChain.GetParent<Factory>();
                 fac.MakeWindowAssociation(this.MCont.Handle, WindowAssociationFlags.IgnoreAll);
 
+
+                //2D描画の初期化
+                this.D2DMana = new Dx2D();
+                this.D2DMana.InitDirect2D();
+
+
                 //描画領域の初期化
                 this.InitRenderTarget();
 
                 //ラスタライズ方式初期化            
                 RasterizerStateDescription rastdec = new RasterizerStateDescription();
-                rastdec.CullMode = CullMode.Front;   //カリング可否（裏描画可否）
+                rastdec.CullMode = CullMode.None;   //カリング可否（裏描画可否）
                 rastdec.FillMode = FillMode.Solid;  //塗りつぶすか、ワイヤー表示か。
                 rastdec.IsDepthClipEnabled = true;  //Ｚクリップ有効
 
@@ -241,6 +305,10 @@ namespace Clarity.Core
 
                 //Zバッファの初期化
                 this.InitDepthStencilState();
+
+                
+
+
             }
             catch (Exception e)
             {
@@ -262,9 +330,14 @@ namespace Clarity.Core
             //描画バッファの初期化
             using (Texture2D backbuf = Texture2D.FromSwapChain<Texture2D>(this.SwapChain, 0))
             {
+                RenderTargetSet tset = new RenderTargetSet();
+
                 RenderTargetView swapchainview = new RenderTargetView(this.DxDevice, backbuf);
+                tset.Target3D = swapchainview;
+                tset.Target2D = this.D2DMana.CreateRenderTarget2D(backbuf);
+
                 //ADD
-                this.RenderTargetList.Add(swapchainview);
+                this.RenderTargetList.Add(tset);
             }
 
             //////////////////////////////////////////////////////////////////////////////////////////
@@ -319,12 +392,13 @@ namespace Clarity.Core
                 //Texture作製
                 using (Texture2D tex = new Texture2D(this.DxDevice, rentexdec))
                 {
-
+                    RenderTargetSet tset = new RenderTargetSet();
                     //レンダーターゲットの生成
-                    RenderTargetView rentexrt = new RenderTargetView(this.DxDevice, tex);
-                    //ADD
-                    this.RenderTargetList.Add(rentexrt);
+                    tset.Target3D = new RenderTargetView(this.DxDevice, tex);                    
+                    tset.Target2D = this.D2DMana.CreateRenderTarget2D(tex);
 
+                    //ADD
+                    this.RenderTargetList.Add(tset);
 
                     //テクスチャの生成
                     this.RenderingTextureResource = new ShaderResourceView(this.DxDevice, tex);
@@ -335,7 +409,7 @@ namespace Clarity.Core
 
 
             //初期切り替え
-            this.DxDevice.ImmediateContext.OutputMerger.SetTargets(this.DepthView, this.RenderTargetList[0]);
+            this.ChangeRenderTarget(ERenderTargetNo.SwapChain);
 
         }
 
@@ -346,10 +420,7 @@ namespace Clarity.Core
         private void ReleaseRenderTarget()
         {
             //開放
-            foreach (RenderTargetView tv in this.RenderTargetList)
-            {
-                tv.Dispose();
-            }
+            this.RenderTargetList.ForEach(x => x.Dispose());
             this.RenderTargetList.Clear();
 
             //DepthView開放
@@ -466,23 +537,34 @@ namespace Clarity.Core
         {
             //保存して切り替え
             this.RenderTargetNo = tno;
-            this.DxDevice.ImmediateContext.OutputMerger.SetTargets(this.DepthView, this.CurrentRenderTargetView);
+            RenderTargetSet cset = this.CurrentRenderTarget;
+            this.DxDevice.ImmediateContext.OutputMerger.SetTargets(this.DepthView, cset.Target3D);
         }
 
 
         /// <summary>
-        /// 描画Viewのクリア
+        /// 描画の開始
         /// </summary>
         /// <param name="col">クリア色</param>
-        /// <returns>性交可否</returns>
-        public void ClearTargetView(Color4 col)
+        /// <returns>成功可否</returns>
+        public void BeginRendering(Color4 col)
         {
             DeviceContext cont = this.DxDevice.ImmediateContext;
 
+            RenderTargetSet cset = this.CurrentRenderTarget;
+
             //ターゲットクリア
             cont.ClearDepthStencilView(this.DepthView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
-            cont.ClearRenderTargetView(this.CurrentRenderTargetView, col);
+            cont.ClearRenderTargetView(cset.Target3D, col);            
+        }
 
+        /// <summary>
+        /// 描画の終了
+        /// </summary>
+        public void EndRendering()
+        {
+            RenderTargetSet cset = this.CurrentRenderTarget;
+            //cset.Target2D.EndDraw();
         }
 
 
@@ -544,28 +626,28 @@ namespace Clarity.Core
             int w = this.WindowSize.Width;
             int h = this.WindowSize.Height;
 
+            //SwapChainを使用しているViewを解放
             this.ReleaseRenderTarget();
-
+            
+            //SwapChainのリサイズ
             this.SwapChain.ResizeBuffers(1, w, h, Format.R8G8B8A8_UNorm, SwapChainFlags.None);
             
+            //Viewの再作成
             this.InitRenderTarget();
+            
         }
+
 
         /// <summary>
         /// 破棄されるとき
         /// </summary>
         public void Dispose()
         {
-            //レンダリングテクスチャリソース
-            this.RenderingTextureResource?.Dispose();
+            //2Dの初期化
+            this.D2DMana?.Dispose();
 
-            //RenderTargetの開放
-            foreach (RenderTargetView tv in this.RenderTargetList)
-            {
-                tv.Dispose();
-            }
-            this.RenderTargetList.Clear();
-
+            //RenderTarget関連の解放
+            this.ReleaseRenderTarget();
 
             //ステート
             this.RastState?.Dispose();
@@ -575,7 +657,6 @@ namespace Clarity.Core
 
             //Device
             this.DxDevice?.Dispose();
-
 
             //解放
             DxManager.Instance = null;

@@ -12,7 +12,7 @@ namespace ClarityIntensity
 {
     public class TestObject :  ClarityObject
     {
-        public TestObject() : base(0)
+        public TestObject() : base(10)
         {
         }
 
@@ -51,11 +51,11 @@ namespace ClarityIntensity
             float rspeed = 2.0f;
             if (ClarityEngine.TestKey(GameKey.Left))
             {
-                this.FrameSpeed.PosX = -speed;
+                this.FrameSpeed.PosX = speed;
             }
             if (ClarityEngine.TestKey(GameKey.Right))
             {
-                this.FrameSpeed.PosX = speed;
+                this.FrameSpeed.PosX = -speed;
             }
 
             if (ClarityEngine.TestKey(GameKey.Up))
@@ -112,9 +112,9 @@ namespace ClarityIntensity
             this.Color = new Vector4(0.0f, 1.0f, 1.0f, 1.0f);
             this.ObjectID = Clarity.ClarityDataIndex.Vertex_Display;
 
-            this.TransSet.Pos3D = new Vector3(100.0f, 200.0f, 1.0f);
+            this.TransSet.Pos3D = new Vector3(00.0f, 00.0f, 1.0f);
 
-            this.TransSet.Scale3D = new SharpDX.Vector3(192.0f, 192.0f, 1.0f);
+            this.TransSet.Scale3D = new SharpDX.Vector3(50.0f, 400.0f, 1.0f);
             this.TransSet.ScaleRate = 1.0f;
 
             //当たり判定設定

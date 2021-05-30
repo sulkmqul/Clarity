@@ -106,7 +106,9 @@ namespace Clarity
         /// </summary>
         protected ViewPortData[] ViewPortVec = null;
 
-
+        /// <summary>
+        /// レンダリングテクスチャ描画用。
+        /// </summary>
         protected ViewPortData SystemViewPort = null;
 
         /// <summary>

@@ -66,6 +66,12 @@ namespace Clarity
         /// 描画Index
         /// </summary>
         public int RenderIndex;
+
+        /// <summary>
+        /// CurrentRenderTarget
+        /// </summary>
+        public SharpDX.Direct2D1.RenderTarget Crt = null;
+
     }
 
 

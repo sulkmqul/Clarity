@@ -98,7 +98,7 @@ namespace Clarity.Element
         /// <summary>
         /// フレーム情報データ(毎フレーム情報が更新される情報たち)
         /// </summary>
-        private ElementFrameInfo FrameInfo = new ElementFrameInfo();
+        protected internal ElementFrameInfo FrameInfo = new ElementFrameInfo();
         #region 基本データプロパティ
         /// <summary>
         /// 今回の処理順番
@@ -294,9 +294,7 @@ namespace Clarity.Element
 
         protected abstract void InitElement();
         protected abstract void ProcElement();
-        protected virtual void RenderElement() {
-            this.RenderDefault();
-        }
+        protected abstract void RenderElement();
 
         
 
@@ -367,32 +365,7 @@ namespace Clarity.Element
         }
 
 
-        /// <summary>
-        /// デフォルト描画関数
-        /// </summary>
-        protected void RenderDefault()
-        {
-            RendererSet rset = this.RenderSet;
-
-            //テクスチャの設定
-            Vector2 tdiv = Texture.TextureManager.SetTexture(rset.TextureID);
-
-            //Shaderに対する設定
-            ShaderDataDefault data = new ShaderDataDefault();
-            data.WorldViewProjMat = this.TransSet.CreateTransposeMat();
-            data.Color = rset.Color;
-
-            data.TexDiv = tdiv;
-
-            data.TextureOffset = this.TextureOffset;
-
-
-            ShaderManager.SetShaderDataDefault(data, rset.ShaderID);
-
-            //描画
-            VertexManager.RenderData(rset.VertexID);
-        }
-
+        
 
         /// <summary>
         /// 描画
@@ -404,6 +377,8 @@ namespace Clarity.Element
             this.FrameInfo.RenderViewIndex = rparam.ViewIndex;
             this.FrameInfo.RenderIndex = rparam.RenderIndex;            
 
+            
+            
             this.RenderElement();
 
             //配下の処理

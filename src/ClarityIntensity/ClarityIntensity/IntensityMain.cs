@@ -43,9 +43,20 @@ namespace ClarityIntensity
 
             this.TData = data;*/
 
+            TextObject tx = new TextObject("ABCDEFGhijklmn", 1, "Pristina", 80);
+            tx.Pos2D = new Vector2(150.0f, 150.0f);
+            tx.Color = SharpDX.Color.Pink;
+            ClarityEngine.AddElement(tx);
+
+            tx = new TextObject("いろはにほへとちりぬるを", 100);
+            tx.Pos2D = new Vector2(300.0f, 250.0f);
+            tx.Color = SharpDX.Color.BlueViolet;
+            
+
+            ClarityEngine.AddElement(tx);
 
             this.TData = new TestObject();
-            ClarityEngine.AddElement(this.TData);
+            //ClarityEngine.AddElement(this.TData);
 
 
             TestEnemy te = new TestEnemy();

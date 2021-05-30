@@ -28,6 +28,28 @@ namespace Clarity
         /// 当たり判定描画接触色
         /// </summary>
         public Vector4 ColliderContactColor = new Vector4(1.0f, 1.0f, 0.0f, 1.0f);
+
+
+        /// <summary>
+        /// システム文字描画可否
+        /// </summary>
+        public bool RenderSystemTextFlag = false;
+
+        /// <summary>
+        /// システム文字位置
+        /// </summary>
+        public Vector2 SystemTextPos = new Vector2(0.0f, 0.0f);
+
+        /// <summary>
+        /// システム文字サイズ
+        /// </summary>
+        public float SystemTextSize = 20.0f;
+
+        /// <summary>
+        /// システム文字色
+        /// </summary>
+        public SharpDX.Color SystemTextColor = SharpDX.Color.Brown;
+
     }
 
 
@@ -73,7 +95,7 @@ namespace Clarity
 
 
         /// <summary>
-        /// 描画スレッド数
+        /// 描画スレッド数(現状意味なし)
         /// </summary>
         public int RenderingThreadCount = 1;
 

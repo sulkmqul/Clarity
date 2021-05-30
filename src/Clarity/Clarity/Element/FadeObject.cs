@@ -56,7 +56,7 @@ namespace Clarity.Element
 
 
         }
-
+        
         /// <summary>
         /// 処理
         /// </summary>

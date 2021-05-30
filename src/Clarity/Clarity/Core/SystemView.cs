@@ -14,7 +14,7 @@ namespace Clarity.Core
     /// <summary>
     /// RenderingTextureの描画 かなり変則的なことをしていますが、汎用Viewでもないのでまぁｾｰﾌとしたい。
     /// </summary>
-    class SystemView : BaseElement
+    class SystemView : BaseElementD3D
     {
         public SystemView() : base(0)
         {

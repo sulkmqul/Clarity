@@ -12,13 +12,65 @@ using Clarity.Element.Collider;
 namespace Clarity.Element
 {
     /// <summary>
+    /// Direct3D管理のElement基底
+    /// </summary>
+    public abstract class BaseElementD3D : BaseElement
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="oid"></param>
+        public BaseElementD3D(long oid) : base(oid)
+        {
+        }
+
+
+        /// <summary>
+        /// 描画
+        /// </summary>
+        protected override void RenderElement()
+        {
+            this.RenderDefault();
+        }
+
+        /// <summary>
+        /// デフォルト描画関数
+        /// </summary>
+        protected void RenderDefault()
+        {
+            RendererSet rset = this.RenderSet;
+
+            //テクスチャの設定
+            Vector2 tdiv = Texture.TextureManager.SetTexture(rset.TextureID);
+
+            //Shaderに対する設定
+            ShaderDataDefault data = new ShaderDataDefault();
+            data.WorldViewProjMat = this.TransSet.CreateTransposeMat();
+            data.Color = rset.Color;
+
+            data.TexDiv = tdiv;
+
+            data.TextureOffset = this.TextureOffset;
+
+
+            ShaderManager.SetShaderDataDefault(data, rset.ShaderID);
+
+            //描画
+            Vertex.VertexManager.RenderData(rset.VertexID);
+        }
+
+    }
+
+
+
+    /// <summary>
     /// 汎用オブジェクトクラス
     /// </summary>
     /// <remarks>
     /// 単発ならこのまま使うもよし、継承してカスタムするもよしなクラス。
     /// 必要要素の全部入りをする。
     /// </remarks>
-    public class ClarityObject : BaseElement, ICollider
+    public class ClarityObject : BaseElementD3D, ICollider
     {
         public ClarityObject(long id) : base(id)
         {
@@ -102,7 +154,7 @@ namespace Clarity.Element
         {
             
         }
-
+        
 
         
                 

@@ -41,6 +41,9 @@
     <Reference Include="SharpDX.Desktop">
       <HintPath>..\Lib\SharpDX4200_net45\SharpDX.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.Direct2D1">
+      <HintPath>..\Lib\SharpDX4200_net45\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX.Direct3D11">
       <HintPath>..\Lib\SharpDX4200_net45\SharpDX.Direct3D11.dll</HintPath>
     </Reference>
@@ -77,7 +80,9 @@
     <Compile Include="ClarityLog.cs" />
     <Compile Include="Core\ClarityCore.cs" />
     <Compile Include="Core\ClarityTimeManager.cs" />
+    <Compile Include="Core\Dx2D.cs" />
     <Compile Include="Core\DxManager.cs" />
+    <Compile Include="Core\SystemText.cs" />
     <Compile Include="Core\SystemView.cs" />
     <Compile Include="DLL\User32.cs" />
     <Compile Include="ClarityEngine.cs" />
@@ -98,6 +103,7 @@
     <Compile Include="Element\Collider\ICollider.cs" />
     <Compile Include="Element\Scene\BaseScene.cs" />
     <Compile Include="Element\Scene\SceneManager.cs" />
+    <Compile Include="Element\TextObject.cs" />
     <Compile Include="File\ClarityUserSetting.cs" />
     <Compile Include="RendererStatement.cs" />
     <Compile Include="Sound\SoundManager.cs" />

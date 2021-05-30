@@ -36,7 +36,7 @@ namespace Clarity.Element.Collider
     /// <summary>
     /// 当たり判定オブジェクト基底
     /// </summary>
-    public abstract class BaseCollider : BaseElement, ICloneable
+    public abstract class BaseCollider : BaseElementD3D, ICloneable
     {
         /// <summary>
         /// コンストラクタ

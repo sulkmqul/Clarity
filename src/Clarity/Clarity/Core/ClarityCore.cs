@@ -100,6 +100,11 @@ namespace Clarity.Core
         /// SystemView管理
         /// </summary>
         private SystemView SView = null;
+
+        /// <summary>
+        /// System文字
+        /// </summary>
+        private SystemText SText = null;
         #endregion
 
 
@@ -122,6 +127,12 @@ namespace Clarity.Core
 
             //Viewの作成
             this.SView = new SystemView();
+
+            {
+                //描画文字列の定義                
+                this.SText = new SystemText(ClarityEngine.Setting.Debug.SystemTextSize, ClarityEngine.Setting.Debug.SystemTextColor, 1);                
+                this.SText.Pos2D = ClarityEngine.Setting.Debug.SystemTextPos;
+            }
 
         }
 
@@ -347,6 +358,7 @@ namespace Clarity.Core
                     //FPSの表示
                     string fpsstring = string.Format("Proc:{0:F} Render:{1:F}", fps.proc, fps.render);
                     ClarityLog.WriteInfo(fpsstring);
+                    this.SText.SetFPS(fpsstring);
 
                     //初期化
                     fpsdata = new FrameRateCalcuData() { PrevCalcuMs = calcutime, ProcCount = 0, RenderCount = 0 };
@@ -376,20 +388,23 @@ namespace Clarity.Core
             DxManager.Mana.EnabledAlphaBlendNormal();
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
 
-            //クリア
-            //DxManager.Mana.ClearTargetView(new Color4(0.3f, 0.3f, 0.3f, 1.0f));
-            DxManager.Mana.ClearTargetView(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
-
+            //描画開始
+            DxManager.Mana.BeginRendering(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
+            
             //ViewPort数を取得
             int vpcount = (ClarityEngine.Setting.MultiViewPort) ? WorldManager.MaxViewPort : 1;
             for (int i = 0; i < vpcount; i++)
-            {
+            {   
+
                 Viewport vp = WorldManager.Mana.GetViewPort(i);
                 DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
 
                 //描画処理
                 Element.ElementManager.Mana.RenderObject(i);
             }
+            
+            DxManager.Mana.EndRendering();
+            
         }
 
 
@@ -398,16 +413,18 @@ namespace Clarity.Core
         /// </summary>
         private void RenderFrame()
         {
+
             
+
             //ゲーム要素すべてを描画
             this.RenderRenderingTexture();
 
             
-            //システム描画
-            DxManager.Mana.DisabledAlphaBlend();
-            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);            
-            DxManager.Mana.ClearTargetView(new Color4(1.0f, 0.0f, 0.0f, 1.0f));
 
+            //システム描画の開始
+            DxManager.Mana.DisabledAlphaBlend();
+            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);
+            DxManager.Mana.BeginRendering(new Color4(1.0f, 0.0f, 0.0f, 1.0f));
 
             Viewport vp = WorldManager.Mana.GetSystemViewPort();
             DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
@@ -423,6 +440,17 @@ namespace Clarity.Core
 
             ShaderResourceView srvt = DxManager.Mana.RenderingTextureResource;
             sv.Render(srvt);
+
+
+            //システム文字描画
+            if (ClarityEngine.Setting.Debug.RenderSystemTextFlag == true)
+            {
+                this.SText.Render(new FrameRenderParam() { Crt = DxManager.Mana.CurrentTarget2D });
+            }
+
+            //システム描画の終了
+            DxManager.Mana.EndRendering();
+            //------------------------------------------------------
 
             //更新処理
             DxManager.Mana.SwapChainPresent();

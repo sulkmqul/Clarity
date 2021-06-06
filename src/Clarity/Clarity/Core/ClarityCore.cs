@@ -130,8 +130,8 @@ namespace Clarity.Core
 
             {
                 //描画文字列の定義                
-                this.SText = new SystemText(ClarityEngine.Setting.Debug.SystemTextSize, ClarityEngine.Setting.Debug.SystemTextColor, 1);                
-                this.SText.Pos2D = ClarityEngine.Setting.Debug.SystemTextPos;
+                this.SText = new SystemText(ClarityEngine.Setting.Debug.SystemText.SystemTextSize, ClarityEngine.Setting.Debug.SystemText.SystemTextColor, 2);                
+                this.SText.Pos2D = ClarityEngine.Setting.Debug.SystemText.SystemTextPos;
             }
 
         }
@@ -287,11 +287,12 @@ namespace Clarity.Core
             ClarityCyclingProcParam cparam = new ClarityCyclingProcParam();
             cparam.Con = this.ManaCon;
 
+            long debug_ectime = 0;
 
             long frametime = 0;
+            
             //カウント開始
             ClarityTimeManager.Mana.Start();
-
 
             //フレーム情報
             FrameProcParam frame_info = new FrameProcParam();
@@ -349,7 +350,7 @@ namespace Clarity.Core
 
                 //FPS計算                
                 long fpsspanmili = ClarityTimeManager.TotalMilliseconds - fpsdata.PrevCalcuMs;
-                if (fpsspanmili > 1000)
+                if (fpsspanmili > 500)
                 {
                     //フレームレートの計算
                     long calcutime = ClarityTimeManager.TotalMilliseconds;
@@ -357,13 +358,32 @@ namespace Clarity.Core
 
                     //FPSの表示
                     string fpsstring = string.Format("Proc:{0:F} Render:{1:F}", fps.proc, fps.render);
-                    ClarityLog.WriteInfo(fpsstring);
+                    ClarityLog.WriteDebug(fpsstring);
                     this.SText.SetFPS(fpsstring);
 
                     //初期化
                     fpsdata = new FrameRateCalcuData() { PrevCalcuMs = calcutime, ProcCount = 0, RenderCount = 0 };
 
                 }
+
+                //デバッグ用登録Element数の表示                
+                {
+                    //時間たった？
+                    long ecspms = ClarityTimeManager.TotalMilliseconds - debug_ectime;
+                    if (ecspms > ClarityEngine.Setting.Debug.SystemText.ElementCountRefreshMs)
+                    {
+                        //要素数の算出
+                        int ecount = Element.ElementManager.Mana.CountManagementElement();
+
+                        string ecstr = string.Format("Count={0}", ecount);
+                        this.SText.SetElementCount(ecstr);
+
+                        debug_ectime = ClarityTimeManager.TotalMilliseconds;
+                    }
+
+
+                }
+
 
 
                 if (nextskip == false)
@@ -443,7 +463,7 @@ namespace Clarity.Core
 
 
             //システム文字描画
-            if (ClarityEngine.Setting.Debug.RenderSystemTextFlag == true)
+            if (ClarityEngine.Setting.Debug.SystemText.RenderSystemTextFlag == true)
             {
                 this.SText.Render(new FrameRenderParam() { Crt = DxManager.Mana.CurrentTarget2D });
             }

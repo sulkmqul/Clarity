@@ -9,9 +9,10 @@ namespace Clarity.Core
     /// <summary>
     /// システム文字描画
     /// </summary>
-    internal class SystemText : Element.TextObject
+    internal class SystemText : Element.MultiTextObject
     {
         public static readonly int SlotFPS = 0;
+        public static readonly int SlotElementCount = 1;
 
         /// <summary>
         /// コンストラクタ
@@ -19,54 +20,12 @@ namespace Clarity.Core
         /// <param name="fontsize">文字サイズ</param>
         /// <param name="col">文字色</param>
         /// <param name="lines">文字行数</param>
-        public SystemText(float fontsize, SharpDX.Color col, int lines = 1) : base("", 0, "Arial", fontsize)
+        public SystemText(float fontsize, SharpDX.Color col, int lines = 1) : base(fontsize, col, lines)
         {
-            this.Color = col;
-            this.DataList = new List<string>();
-            for (int i = 0; i < lines; i++)
-            {
-                this.DataList.Add("");
-            }
-
-            //サイズ設定
-            int w = ClarityEngine.Setting.RenderingViewSize.Width;
-            int h = ClarityEngine.Setting.RenderingViewSize.Height;
-            this.ClipSize = new System.Drawing.Size(w, h);
+            
         }
 
-        /// <summary>
-        /// 行数管理用
-        /// </summary>
-        List<string> DataList = new List<string>();
-
-        /// <summary>
-        /// 描画文字列の取得
-        /// </summary>
-        public override string Text
-        {
-            get
-            {
-                string ans = "";
-                this.DataList.ForEach(x =>
-                {
-                    ans += x;
-                    //ans += System.Environment.NewLine;
-                });
-                return ans;
-            }
-               
-        }
-
-
-        /// <summary>
-        /// 値の設定
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <param name="s"></param>
-        public void SetText(int slot, string s)
-        {
-            this.DataList[slot] = s;
-        }
+        
 
         /// <summary>
         /// FPSの設定
@@ -77,9 +36,13 @@ namespace Clarity.Core
             this.SetText(SlotFPS, s);
         }
 
-        protected override void RenderElement()
+        /// <summary>
+        /// 管理Element数の設定
+        /// </summary>
+        /// <param name="s"></param>
+        public void SetElementCount(string s)
         {
-            base.RenderElement();
+            this.SetText(SlotElementCount, s);
         }
     }
 }

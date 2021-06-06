@@ -12,7 +12,11 @@ namespace Clarity.File
         /// <summary>
         /// 区切り文字列定義
         /// </summary>
-        public const char DevChar = ',';
+        public virtual char DevChar
+        {
+            get; protected set;
+
+        } = ',';
 
         /// <summary>
         /// コメント行を示すもの (先頭にこの文字列があった場合、対象行は無視される)
@@ -79,23 +83,26 @@ namespace Clarity.File
                 {
                     string sline = sr.ReadLine();
 
+                    //空白は無きものとする
+                    sline = sline.Trim();
+
                     //コメントチェック
                     bool ckcom = this.CheckComment(sline);
                     if (ckcom == true && commentskip == true)
                     {
                         continue;
-                    }
+                    }                                        
 
-                    //空白行はスキップする
-                    if (sline.Trim().Length <= 0)
-                    {
-                        continue;
-                    }
-
-                    //削除文字列の削除
+                    //削除文字の削除
                     foreach (char c in dels)
                     {
                         sline = sline.Replace(c.ToString(), "");
+                    }
+
+                    //空行はスキップする
+                    if (sline.Length <= 0)
+                    {
+                        continue;
                     }
 
                     //ADD
@@ -150,7 +157,6 @@ namespace Clarity.File
                 //ファイルOpen
                 using (FileStream fp = new FileStream(filepath, FileMode.Create, FileAccess.ReadWrite))
                 {
-
                     using (StreamWriter sw = new StreamWriter(fp))
                     {
                         //データを書き込み

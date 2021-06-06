@@ -395,5 +395,19 @@ namespace Clarity.Element
         }
 
 
+        /// <summary>
+        /// 登録されているElement数を返却する
+        /// </summary>
+        /// <returns></returns>
+        public int CountManagementElement()
+        {
+            int ans = 0;
+
+            var n = from f in this.ElementDic.Values select f.Count;
+            ans = n.ToList().Sum();
+
+            return ans;
+        }
+
     }
 }

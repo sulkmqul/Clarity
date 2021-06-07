@@ -415,8 +415,10 @@ namespace Clarity.Texture
         /// テクスチャの設定 設定テクスチャの分割サイズを返却
         /// </summary>
         /// <param name="texid">テクスチャ番号</param>
+        /// <param name="tslot">テクスチャスロット</param>
+        /// <param name="sslot">サンプラースロット</param>
         /// <returns></returns>
-        public static Vector2 SetTexture(int texid)
+        public static Vector2 SetTexture(int texid, int tslot = 0, int sslot = 0)
         {
             DeviceContext cont = DxManager.Mana.DxDevice.ImmediateContext;
 
@@ -427,10 +429,10 @@ namespace Clarity.Texture
             ShaderResourceView sr = td.Srv;
 
             //テクスチャサンプラ設定
-            cont.PixelShader.SetSampler(0, texst);
+            cont.PixelShader.SetSampler(sslot, texst);
 
             //テクスチャ設定
-            cont.PixelShader.SetShaderResource(0, sr);
+            cont.PixelShader.SetShaderResource(tslot, sr);
 
             return td.IndexDiv;
         }

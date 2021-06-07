@@ -116,6 +116,61 @@ namespace Clarity
         }
         #endregion
 
+        #region ShaderVertex
+
+        /// <summary>
+        /// Shader管理へ追加
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="slistpath">対象ShaderListファイル</param>
+        /// <param name="ipevec">頂点配置 nullでデフォルト</param>
+        public static void AddShader<T>(string slistpath, SharpDX.Direct3D11.InputElement[] ipevec = null) where T : struct
+        {
+            List<string> slist = new List<string>() { slistpath };
+            Shader.ShaderManager.Mana.AddResource<T>(slist, ipevec);
+        }
+
+        /// <summary>
+        /// Shaderへ追加
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="filepathlist"></param>
+        /// <param name="ipevec"></param>
+        public static void AddShader<T>(List<string> filepathlist, SharpDX.Direct3D11.InputElement[] ipevec = null) where T : struct
+        {
+            Shader.ShaderManager.Mana.AddResource<T>(filepathlist, ipevec);
+        }
+
+        /// <summary>
+        /// 追加データのクリア
+        /// </summary>
+        public static void ClearShader()
+        {
+            Shader.ShaderManager.Mana.ClearData();
+        }
+
+
+        /// <summary>
+        /// Shaderデータの設定
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="sid"></param>
+        public static void SetShaderData<T>(T data, int sid) where T : struct
+        {
+            Shader.ShaderManager.SetShaderData<T>(data, sid);
+        }
+
+        /// <summary>
+        /// 頂点の設定
+        /// </summary>
+        /// <param name="vid"></param>
+        public static void SetVertex(int vid)
+        {
+            Vertex.VertexManager.RenderData(vid);
+        }
+        #endregion
+
         #region Texture  TextureAnime
 
         /// <summary>
@@ -188,6 +243,18 @@ namespace Clarity
 
             return ans;
 
+        }
+
+        /// <summary>
+        /// Shaderの設定
+        /// </summary>
+        /// <param name="texid"></param>
+        /// <param name="tslot"></param>
+        /// <param name="sslot"></param>
+        /// <returns></returns>
+        public static void SetTexture(int texid, int tslot = 0, int sslot = 0)
+        {
+            Texture.TextureManager.SetTexture(texid, tslot, sslot);
         }
 
         #endregion

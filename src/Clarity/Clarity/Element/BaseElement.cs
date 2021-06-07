@@ -182,7 +182,6 @@ namespace Clarity.Element
         /// 描画情報・・・これの直接アクセスは良くない。必要に応じてアクセサを定義せよ
         /// </summary>
         internal RendererSet RenderSet = new RendererSet();
-
                 
         #region RendererSetアクセサ
         /// <summary>

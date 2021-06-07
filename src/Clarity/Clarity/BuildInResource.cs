@@ -101,7 +101,7 @@ namespace Clarity
             Shader.ShaderListFileDataRoot rdata = shlist.ReadCsvString(Properties.Resources.shlist);
 
 
-            Shader.ShaderManager.Mana.CreateResource(Properties.Resources.shader, rdata);
+            Shader.ShaderManager.Mana.CreateDefaultResource(rdata);
         }
 
 

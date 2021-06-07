@@ -17,7 +17,7 @@ namespace Clarity.Shader
     /// <summary>
     /// シェーダーデータ
     /// </summary>
-    public class ShaderManageData : IDisposable
+    internal class ShaderManageData : IDisposable
     {
         /// <summary>
         /// VertexShaer
@@ -315,7 +315,7 @@ namespace Clarity.Shader
 
                 //一つのデータの読みこみ
                 ShaderManageData data = null;
-
+                
                 if (sd.EnabledFilePath)
                 {
                     data = this.CreateShaderManageData<T>(sd, ipevec);
@@ -334,6 +334,42 @@ namespace Clarity.Shader
                 index++;
             }
         }
+
+
+        /// <summary>
+        /// 一つのデータ追加
+        /// </summary>
+        /// <typeparam name="T">Shader Data</typeparam>
+        /// <param name="index">追加shader id</param>
+        /// <param name="sd">読み込みShader情報</param>
+        /// <param name="ipevec">頂点情報 null=デフォルト</param>
+        private void AddShaderData<T>(int index, ShaderListData sd, InputElement[] ipevec = null) where T : struct
+        {            
+
+            //一つのデータの読みこみ
+            ShaderManageData data = null;
+
+            data = this.CreateShaderManageData<T>(sd, ipevec);
+
+            //--------------------------------------
+            //ADD
+            this.ManaDic.Add(index, data);
+        }
+
+
+        /// <summary>
+        /// デフォルト頂点配置の作成
+        /// </summary>
+        /// <returns></returns>
+        private InputElement[] CreateDefailtVertexElement()
+        {
+            InputElement[] ipevec = {
+                                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                        new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
+                                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0),
+                                    };
+            return ipevec;
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// 読み込みと初期化
@@ -343,12 +379,13 @@ namespace Clarity.Shader
         {
             //頂点レイアウト
             //3Dではないので法線は不要。これは将来的に拡張が必要と思われるため、shaderlistfileのオプション化を検討する
-            InputElement[] ipevec = {
+            /*InputElement[] ipevec = {
                                         new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
                                         new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
                                         new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0),
-                                    };
+                                    };*/
 
+            InputElement[] ipevec = this.CreateDefailtVertexElement();
             List<string> flist = new List<string>() { filepath };
             this.CreateResource<ShaderDataDefault>(flist, ipevec);
         }
@@ -356,7 +393,7 @@ namespace Clarity.Shader
         /// <summary>
         /// リソースの作成
         /// </summary>
-        /// <param name="filepath">入力バッファ</param>
+        /// <param name="filepath">入力ShdaerListファイルパス一式</param>
         /// <param name="ipevec">頂点定義</param>
         /// <typeparam name="T">Shader Constant Data</typeparam>
         public void CreateResource<T>(List<string> filepathlist, InputElement[] ipevec) where T : struct
@@ -365,6 +402,69 @@ namespace Clarity.Shader
             {
                 this.ClearData();
 
+
+                this.AddResource<T>(filepathlist, ipevec);
+
+                /*
+                //シェーダーリストの読み込み
+                List<ShaderListFileDataRoot> rdatalist = new List<ShaderListFileDataRoot>();
+
+                filepathlist.ForEach(fpath =>
+                {
+                    ShaderListFile sfp = new ShaderListFile();
+                    ShaderListFileDataRoot rdata = sfp.ReadFile(fpath);
+                    rdatalist.Add(rdata);
+                });
+
+
+                foreach (ShaderListFileDataRoot rdata in rdatalist)
+                {                    
+                    this.LoadShaderListFileData<T>(rdata, ipevec);
+                }*/
+            }
+            catch (Exception e)
+            {
+                throw new Exception("ShaderManager CreateResource Exception", e);
+            }
+        }
+
+
+        /// <summary>
+        /// デフォルトShaderの読み込みと作成
+        /// </summary>
+        /// <param name="srcode"></param>
+        /// <param name="rdata"></param>
+        internal void CreateDefaultResource( ShaderListFileDataRoot rdata)
+        {
+            InputElement[] ipevec = this.CreateDefailtVertexElement();
+            this.LoadShaderListFileData<ShaderDataDefault>(rdata, ipevec);
+        }
+
+
+        /// <summary>
+        /// データクリア
+        /// </summary>
+        public void ClearData()
+        {
+            this.ClearManageDic();
+        }
+
+
+
+        /// <summary>
+        /// 追加
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="filepathlist"></param>
+        /// <param name="ipevec"></param>
+        public void AddResource<T>(List<string> filepathlist, InputElement[] ipevec = null) where T : struct
+        {
+            try
+            {
+                if (ipevec == null)
+                {
+                    ipevec = this.CreateDefailtVertexElement();
+                }
 
                 //シェーダーリストの読み込み
                 List<ShaderListFileDataRoot> rdatalist = new List<ShaderListFileDataRoot>();
@@ -384,34 +484,9 @@ namespace Clarity.Shader
             }
             catch (Exception e)
             {
-                throw new Exception("ShaderManager CreateResource Exception", e);
+                throw new Exception("ShaderManager AddResource", e);
             }
         }
-
-
-
-        internal void CreateResource(string srcode, ShaderListFileDataRoot rdata)
-        {
-            //頂点レイアウト
-            //3Dではないので法線は不要。これは将来的に拡張が必要と思われるため、shaderlistfileのオプション化を検討する
-            InputElement[] ipevec = {
-                                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                        new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
-                                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0),
-                                    };
-
-            this.LoadShaderListFileData<ShaderDataDefault>(rdata, ipevec);
-        }
-
-
-        /// <summary>
-        /// データクリア
-        /// </summary>
-        public void ClearData()
-        {
-            this.ClearManageDic();
-        }
-
 
         ////////////////////////////////////////////////////////////////////////////////
         /// <summary>

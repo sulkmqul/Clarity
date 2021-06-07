@@ -25,23 +25,16 @@ namespace Clarity.Element
         }
 
 
-        /// <summary>
-        /// 描画
-        /// </summary>
-        protected override void RenderElement()
-        {
-            this.RenderDefault();
-        }
 
         /// <summary>
         /// デフォルト描画関数
         /// </summary>
-        protected void RenderDefault()
+        protected virtual void RenderSetShaderData()
         {
             RendererSet rset = this.RenderSet;
 
             //テクスチャの設定
-            Vector2 tdiv = Texture.TextureManager.SetTexture(rset.TextureID);
+            Vector2 tdiv = Texture.TextureManager.GetTextureDivSize(rset.TextureID);
 
             //Shaderに対する設定
             ShaderDataDefault data = new ShaderDataDefault();
@@ -55,8 +48,44 @@ namespace Clarity.Element
 
             ShaderManager.SetShaderDataDefault(data, rset.ShaderID);
 
-            //描画
-            Vertex.VertexManager.RenderData(rset.VertexID);
+        }
+
+
+        /// <summary>
+        /// 描画テクスチャの設定
+        /// </summary>
+        protected virtual void RenderSetTexture()
+        {
+            int index = 0;
+            foreach (int texid in this.RenderSet.TextureIdList)
+            {
+                Texture.TextureManager.SetTexture(texid, index);
+                index++;
+            }
+        }
+
+        /// <summary>
+        /// 頂点の設定と描画
+        /// </summary>
+        protected virtual void RenderSetVertex()
+        {
+            Vertex.VertexManager.RenderData(this.RenderSet.VertexID);
+        }
+
+
+        /// <summary>
+        /// 描画処理
+        /// </summary>
+        protected override void RenderElement()
+        {
+            //テクスチャ設定
+            this.RenderSetTexture();
+
+            //シェーダー処理の設定
+            this.RenderSetShaderData();
+
+            //描画頂点設定
+            this.RenderSetVertex();
         }
 
     }
@@ -212,8 +241,8 @@ namespace Clarity.Element
         {
             RendererSet rset = this.RenderSet;
 
-            //テクスチャの設定
-            Vector2 tdiv = Texture.TextureManager.SetTexture(rset.TextureID);
+            //テクスチャのサイズ取得            
+            Vector2 tdiv = TextureManager.GetTextureDivSize(rset.TextureID);
 
             //Shaderに対する設定
             ShaderDataDefault data = new ShaderDataDefault();
@@ -224,16 +253,14 @@ namespace Clarity.Element
             data.TextureOffset = this.AnimeCon.CurrentFrameInfo.TextureOffset;
             
             ShaderManager.SetShaderDataDefault(data, this.ShaderID);
-            
 
-            //描画            
-            Vertex.VertexManager.RenderData(rset.VertexID);
         }
 
+
         /// <summary>
-        /// 描画処理
+        /// Shader処理の設定
         /// </summary>
-        protected override void RenderElement()
+        protected override void RenderSetShaderData()
         {
             if (this.TextureAnimationEnabled == true)
             {
@@ -241,9 +268,11 @@ namespace Clarity.Element
             }
             else
             {
-                this.RenderDefault();
+                base.RenderSetShaderData();
             }
         }
+
+        
 
         /// <summary>
         /// 当たり判定処理

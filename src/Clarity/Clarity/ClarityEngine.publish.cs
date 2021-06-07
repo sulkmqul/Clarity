@@ -161,6 +161,7 @@ namespace Clarity
             Shader.ShaderManager.SetShaderData<T>(data, sid);
         }
 
+        /*
         /// <summary>
         /// 頂点の設定
         /// </summary>
@@ -168,7 +169,7 @@ namespace Clarity
         public static void SetVertex(int vid)
         {
             Vertex.VertexManager.RenderData(vid);
-        }
+        }*/
         #endregion
 
         #region Texture  TextureAnime

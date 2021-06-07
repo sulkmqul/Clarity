@@ -293,9 +293,24 @@ namespace Clarity
         /// </summary>
         public int VertexID = -1;
         /// <summary>
-        /// 使用するTextureID
+        /// 使用するTextureID一覧
+        /// </summary>        
+        public List<int> TextureIdList = new List<int>() { -1 };
+        /// <summary>
+        /// テクスチャID
         /// </summary>
-        public int TextureID = -1;
+        public int TextureID
+        {
+            get
+            {
+                return this.TextureIdList[0];
+            }
+            set
+            {
+                this.SetTextureId(0, value);
+            }
+        }
+
         /// <summary>
         /// 使用するシェーダーID
         /// </summary>
@@ -310,6 +325,28 @@ namespace Clarity
         /// テクスチャ < 1.0f
         /// </summary>
         public Vector2 TextureOffset = new Vector2(0.0f);
+
+
+        /// <summary>
+        /// TextureID値の追加
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <param name="texid"></param>
+        public void SetTextureId(int slot, int texid)
+        {
+            //Slot以内？
+            int c = (this.TextureIdList.Count - 1) - slot;
+            if (c < 0)
+            {
+                c = Math.Abs(c);
+                for (int i = 0; i < c; i++)
+                {
+                    this.TextureIdList.Add(-1);
+                }
+            }
+
+            this.TextureIdList[slot] = texid;
+        }
     }
 
 }

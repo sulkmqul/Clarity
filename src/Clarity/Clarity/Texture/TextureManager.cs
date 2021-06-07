@@ -418,7 +418,7 @@ namespace Clarity.Texture
         /// <param name="tslot">テクスチャスロット</param>
         /// <param name="sslot">サンプラースロット</param>
         /// <returns></returns>
-        public static Vector2 SetTexture(int texid, int tslot = 0, int sslot = 0)
+        public static void SetTexture(int texid, int tslot = 0, int sslot = 0)
         {
             DeviceContext cont = DxManager.Mana.DxDevice.ImmediateContext;
 
@@ -434,7 +434,7 @@ namespace Clarity.Texture
             //テクスチャ設定
             cont.PixelShader.SetShaderResource(tslot, sr);
 
-            return td.IndexDiv;
+            
         }
 
         

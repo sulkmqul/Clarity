@@ -270,6 +270,26 @@ namespace Clarity.Element
                 this.RenderSet.TextureOffset = value;
             }
         }
+
+        /// <summary>
+        /// TextureIDの設定
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <param name="texid"></param>
+        public void SetTextureID(int slot, int texid)
+        {
+            this.RenderSet.SetTextureId(slot, texid);
+        }
+
+        /// <summary>
+        /// TextureID値の取得
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        public int GetTextureID(int slot)
+        {
+            return this.RenderSet.TextureIdList[slot];
+        }
         #endregion
 
 

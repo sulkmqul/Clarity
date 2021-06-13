@@ -12,11 +12,23 @@ using Clarity;
 
 namespace ClarityCodeAid.AidProcess
 {
+    public enum EImageMergeMode
+    {
+        Horizontal,
+        Vertical,
+    }
+
     /// <summary>
     /// 画像の結合
     /// </summary>
-    public class ImageMerger : IAidProcess
+    public abstract class ImageMerger : IAidProcess
     {
+        public ImageMerger()
+        {
+            this.Mode = EImageMergeMode.Horizontal;
+        }
+
+
         private class MergeInfo
         {
             /// <summary>
@@ -30,6 +42,8 @@ namespace ClarityCodeAid.AidProcess
             public Size MergeSize;
         }
 
+        //連結モード
+        protected EImageMergeMode Mode = EImageMergeMode.Horizontal;
 
         /// <summary>
         /// 出力ファイル名の作成
@@ -62,7 +76,7 @@ namespace ClarityCodeAid.AidProcess
             }
 
             //連結処理
-            Image ans = this.CreateMergeImage(inputlist);
+            Image ans = this.CreateMergeImage(inputlist, this.Mode);
 
             //保存処理
             string outfilepath = this.CreateWriteFilePath(param);
@@ -78,9 +92,9 @@ namespace ClarityCodeAid.AidProcess
         /// <summary>
         /// 結合情報の作成
         /// </summary>
-        /// <param name="inputlist">処理対象ファイルパス一覧</param>
+        /// <param name="inputlist">処理対象ファイルパス一覧</param>        
         /// <returns></returns>
-        private MergeInfo CreateMeregeInfo(List<string> inputlist)
+        private MergeInfo CreateMeregeInfo(List<string> inputlist, EImageMergeMode mode)
         {
             MergeInfo ans = new MergeInfo();
 
@@ -103,10 +117,11 @@ namespace ClarityCodeAid.AidProcess
         /// 連結画像の作成本体
         /// </summary>
         /// <param name="inputlist">入力ファイル一覧</param>
+        /// <param name="mode">モード true=横連結 false=縦連結</param>
         /// <returns></returns>
-        private Image CreateMergeImage(List<string> inputlist)
+        private Image CreateMergeImage(List<string> inputlist, EImageMergeMode mode)
         {
-            MergeInfo minfo = this.CreateMeregeInfo(inputlist);
+            MergeInfo minfo = this.CreateMeregeInfo(inputlist, mode);
 
             Bitmap ans = new Bitmap(minfo.MergeSize.Width, minfo.MergeSize.Height, PixelFormat.Format32bppArgb);
 
@@ -126,6 +141,24 @@ namespace ClarityCodeAid.AidProcess
                 }
             }
             return ans;
+        }
+    }
+
+
+
+    public class ImageMergerH : ImageMerger
+    {
+        public ImageMergerH()
+        {
+            this.Mode = EImageMergeMode.Horizontal;
+        }
+    }
+
+    public class ImageMergerV : ImageMerger
+    {
+        public ImageMergerV()
+        {
+            this.Mode = EImageMergeMode.Vertical;
         }
     }
 }

@@ -98,6 +98,8 @@ namespace Clarity
             Texture.TextureManager.Mana.AddTexture(101, dpath + "tbk2.png", new Size(1, 1));
             Texture.TextureManager.Mana.AddTexture(102, dpath + "tbk3.png", new Size(1, 1));
 
+            Texture.TextureManager.Mana.AddTexture(105, dpath + "tbk4.png", new Size(1, 6));
+
 
             //テクスチャアニメファイルの読み込み
             Texture.TextureAnimeFactory.Mana.ReadTextureAnimeFile(dpath + @"texanime.txt");

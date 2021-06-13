@@ -327,6 +327,19 @@ namespace Clarity.Element
             this.InitElement();
         }
 
+
+        private SpeedSet ApplayFrameRate(SpeedSet src)
+        {
+            SpeedSet ans = new SpeedSet();
+            ans.Pos3D = this.ApplayFrameRate(src.Pos3D);
+            ans.Rot = this.ApplayFrameRate(src.Rot);
+            ans.Scale3D = this.ApplayFrameRate(src.Scale3D);
+            ans.ScaleRate = this.ApplayFrameRate(src.ScaleRate);
+            ans.Color = this.ApplayFrameRate(src.Color);
+
+            return ans;
+        }
+
         /// <summary>
         /// 処理関数
         /// </summary>        
@@ -340,13 +353,12 @@ namespace Clarity.Element
                 this.FrameInfo.ProcIndex = fparam.ProcIndex;
                 this.FrameInfo.ProcFrameTime = fparam.FrameTime;
                 this.FrameInfo.PrevProcFrameTime = fparam.ProcIndex;
-                this.FrameInfo.ProcBaseRate = fparam.FrameBaseRate;
-                
+                this.FrameInfo.ProcBaseRate = fparam.FrameBaseRate;                
             }
-
+            #endregion
+            
             //今回の処理フレーム初期化
             this.FrameSpeed = new SpeedSet();
-            #endregion
 
 
             //通常処理
@@ -362,14 +374,9 @@ namespace Clarity.Element
             this.AdditionalProc?.Invoke();
 
 
-            //作成した値を加算・・・ここはフレームを考慮する                        
-            //this.TransSet.Pos += this.FrameSpeed.Pos * this.FrameInfo.ProcBaseRate;
-            //this.TransSet.Rot += this.FrameSpeed.Rot * this.FrameInfo.ProcBaseRate;
-            //this.TransSet.Scale += this.FrameSpeed.Scale * this.FrameInfo.ProcBaseRate;
-            //this.TransSet.ScaleRate += this.FrameSpeed.ScaleRate * this.FrameInfo.ProcBaseRate;
+            //フレームレートを考慮した値へ変換
+            SpeedSet frate = this.ApplayFrameRate(this.FrameSpeed);
 
-            SpeedSet frate = null;
-            this.FrameSpeed.ApplyRate(this.FrameInfo.ProcBaseRate, out frate);
             this.TransSet.Pos3D += frate.Pos3D;
             this.TransSet.Rot += frate.Rot;
             this.TransSet.Scale3D += frate.Scale3D;
@@ -384,7 +391,49 @@ namespace Clarity.Element
         }
 
 
-        
+        /// <summary>
+        /// フレームレートを勘定した値にする。float
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        protected float ApplayFrameRate(float v)
+        {
+            float ans = v * this.FrameInfo.ProcBaseRate;
+            return ans;
+        }
+
+
+        /// <summary>
+        /// フレームレートを勘定した値にする vector4
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        protected Vector4 ApplayFrameRate(Vector4 v)
+        {
+            Vector4 ans = v * this.FrameInfo.ProcBaseRate;
+            return ans;
+        }
+        /// <summary>
+        /// フレームレートを勘定した値にする Vector3
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        protected Vector3 ApplayFrameRate(Vector3 v)
+        {
+            Vector3 ans = v * this.FrameInfo.ProcBaseRate;
+            return ans;
+        }
+        /// <summary>
+        /// フレームレートを勘定した値にする Vector2
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        protected Vector2 ApplayFrameRate(Vector2 v)
+        {
+            Vector2 ans = v * this.FrameInfo.ProcBaseRate;
+            return ans;
+        }
+
 
         /// <summary>
         /// 描画
@@ -488,5 +537,8 @@ namespace Clarity.Element
                 i++;
             });
         }
+
+        
+
     }
 }

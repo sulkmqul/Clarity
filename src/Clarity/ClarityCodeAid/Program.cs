@@ -32,7 +32,7 @@ Usage:
         ug = Generate User Setting Code.
             -i option is one filepath only. 
             -k option is invalid.
-        im = Merge Images.            
+        im = Merge Images. Horizon.
         cs = Craete Clarity Engine Setting File.
             only use -o Option. Create cs.xml
 ";

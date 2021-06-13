@@ -16,7 +16,8 @@ namespace ClarityCodeAid
         Vertex,
         Shader,
         Sound,        
-        ImageMerge,
+        ImageMergeH,
+        ImageMergeV,
         TexAnime,
         ClaritySetting,
         UserSetting,
@@ -56,7 +57,8 @@ namespace ClarityCodeAid
                 procmap.Add(EAidMode.Vertex, typeof(VertexCodeGenerator));
                 procmap.Add(EAidMode.Shader, typeof(ShaderCodeGenerator));
                 procmap.Add(EAidMode.Sound, typeof(SoundCodeGenerator));
-                procmap.Add(EAidMode.ImageMerge, typeof(ImageMerger));
+                procmap.Add(EAidMode.ImageMergeH, typeof(ImageMergerH));
+                procmap.Add(EAidMode.ImageMergeV, typeof(ImageMergerV));
                 procmap.Add(EAidMode.TexAnime, typeof(TexAnimeCodeGenerator));
                 procmap.Add(EAidMode.ClaritySetting, typeof(ClarityEngineSettingCreator));
                 procmap.Add(EAidMode.UserSetting, typeof(UserSettingCodeGenerator));

@@ -116,30 +116,7 @@ namespace Clarity
         /// </summary>
         public Vector4 Color = new Vector4();
 
-
-        /// <summary>
-        /// Rateを適応する
-        /// </summary>
-        /// <param name="proc_rate"></param>
-        public void ApplyRate(float proc_rate)
-        {
-            this.Pos3D *= proc_rate;
-            this.Rot *= proc_rate;
-            this.Scale3D *= proc_rate;
-            this.ScaleRate *= proc_rate;
-            this.Color *= proc_rate;
-        }
-
-        public void ApplyRate(float proc_rate, out SpeedSet oset)
-        {
-            oset = new SpeedSet();
-            oset.Pos3D = this.Pos3D;
-            oset.Rot = this.Rot;
-            oset.Scale3D = this.Scale3D;
-            oset.ScaleRate = this.ScaleRate;
-            oset.Color = this.Color;
-            oset.ApplyRate(proc_rate);
-        }
+        
     }
 
 
@@ -165,8 +142,6 @@ namespace Clarity
         /// これの属する世界
         /// </summary>
         public int WorldID = 0;
-
-        
 
         /// <summary>
         /// 拡大倍率

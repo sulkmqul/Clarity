@@ -178,7 +178,8 @@ namespace ClarityCodeAid
                 ("sh", EAidMode.Shader),
                 ("so", EAidMode.Sound),
                 ("ta", EAidMode.TexAnime),
-                ("im", EAidMode.ImageMerge),
+                ("im", EAidMode.ImageMergeH),
+                ("imv", EAidMode.ImageMergeV),
                 ("cs", EAidMode.ClaritySetting),
                 ("ug", EAidMode.UserSetting),
             };

@@ -211,6 +211,15 @@ namespace Clarity
             return Texture.TextureManager.GetTextureSize(tid);
         }
 
+        /// <summary>
+        /// テクスチャの画像サイズを取得(分割数を考慮しない実サイズ)
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <returns></returns>
+        public static Vector2 GetTextureOriginalSize(int tid)
+        {
+            return Texture.TextureManager.GetTextureSize(tid,  true);
+        }
 
         /// <summary>
         /// テクスチャサイズの取得 Anime版
@@ -256,6 +265,20 @@ namespace Clarity
         public static void SetTexture(int texid, int tslot = 0, int sslot = 0)
         {
             Texture.TextureManager.SetTexture(texid, tslot, sslot);
+        }
+
+
+        /// <summary>
+        /// テクスチャ分割数の取得
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <returns></returns>
+        public static Vector2 GetTextureDivSize(int tid)
+        {
+            Vector2 tsize = Texture.TextureManager.GetTextureDivSize(tid);
+
+            return tsize;
+
         }
 
         #endregion

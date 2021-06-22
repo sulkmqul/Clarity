@@ -281,6 +281,23 @@ namespace Clarity
 
         }
 
+
+        /// <summary>
+        /// テクスチャコードのからIDの検索
+        /// </summary>
+        /// <param name="tcode"></param>
+        /// <returns></returns>
+        public static int SearchTextureID(string tcode)
+        {
+            int ans = Texture.TextureManager.Mana.SearchTextureID(tcode);
+            if (ans == int.MinValue)
+            {
+                throw new Exception("SearchTextureID Invalid Texture Code code=" + tcode);
+            }
+            return ans;
+        }
+
+
         #endregion
 
         #region Input

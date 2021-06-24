@@ -21,7 +21,7 @@ namespace Clarity.Element
         /// </summary>
         /// <param name="oid"></param>
         public BaseElementD3D(long oid) : base(oid)
-        {
+        {            
         }
 
 

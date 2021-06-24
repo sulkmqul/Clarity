@@ -78,6 +78,7 @@
     <Compile Include="ClarityEngineExtension.cs" />
     <Compile Include="ClarityEngineSetting.cs" />
     <Compile Include="ClarityLog.cs" />
+    <Compile Include="CommonLogic.cs" />
     <Compile Include="Core\ClarityCore.cs" />
     <Compile Include="Core\ClarityTimeManager.cs" />
     <Compile Include="Core\Dx2D.cs" />

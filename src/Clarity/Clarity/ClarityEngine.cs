@@ -10,6 +10,14 @@ using Clarity.Element;
 
 namespace Clarity
 {
+    /// <summary>
+    /// 動作モード
+    /// </summary>
+    public enum EEngineMode
+    {
+        D2D,
+        D3D,
+    }
 
 
     /// <summary>
@@ -77,6 +85,7 @@ namespace Clarity
         /// エンジン設定
         /// </summary>
         internal static ClarityEngineSetting Setting = null;
+                
         #endregion
 
 
@@ -143,7 +152,12 @@ namespace Clarity
             Util.RandomMaker.Init();
 
             //コアエンジン初期化
-            core = new Core.ClarityCore();
+            core = new Core.ClarityCore2D();
+            if (Setting.EngineMode == EEngineMode.D3D)
+            {
+                core = new Core.ClarityCore3D();
+                
+            }
             core.Init(con, op);
 
             //ビルドインデータの読み込み

@@ -8,6 +8,7 @@ using SharpDX;
 
 namespace Clarity
 {
+
     /// <summary>
     /// エンジンデバッグ文字描画設定
     /// </summary>
@@ -84,6 +85,11 @@ namespace Clarity
         /// ファイルバージョン(現状意味なし)
         /// </summary>
         public string FileVersion = "1.0.0.0";
+
+        /// <summary>
+        /// エンジン動作モード
+        /// </summary>
+        public EEngineMode EngineMode = EEngineMode.D3D;
 
         /// <summary>
         /// ログレベル

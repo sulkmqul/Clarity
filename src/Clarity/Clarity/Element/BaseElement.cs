@@ -327,7 +327,11 @@ namespace Clarity.Element
             this.InitElement();
         }
 
-
+        /// <summary>
+        /// Speedのフレームレート処理
+        /// </summary>
+        /// <param name="src"></param>
+        /// <returns></returns>
         private SpeedSet ApplayFrameRate(SpeedSet src)
         {
             SpeedSet ans = new SpeedSet();
@@ -390,7 +394,7 @@ namespace Clarity.Element
             });
         }
 
-
+        #region フレームレート処理
         /// <summary>
         /// フレームレートを勘定した値にする。float
         /// </summary>
@@ -434,6 +438,7 @@ namespace Clarity.Element
             return ans;
         }
 
+        #endregion
 
         /// <summary>
         /// 描画

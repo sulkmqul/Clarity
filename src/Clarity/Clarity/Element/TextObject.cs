@@ -19,7 +19,7 @@ namespace Clarity.Element
         /// <summary>
         /// 描画対象
         /// </summary>
-        protected internal SharpDX.Direct2D1.RenderTarget CurrentRenderTarget = null;
+        protected internal SharpDX.Direct2D1.RenderTarget CurrentRenderTarget { get; private set; } = null;
 
 
         public SharpDX.Vector2 Pos2D

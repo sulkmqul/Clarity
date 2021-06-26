@@ -27,6 +27,7 @@ namespace ClarityIntensity
                 
                 //エンジン初期化
                 EngineSetupOption setop = new EngineSetupOption();
+                setop.EngineSettingFilePath = "cs.xml";                
                 Clarity.ClarityEngine.Init(mf, setop);
 
                 //実行開始

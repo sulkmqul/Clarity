@@ -18,6 +18,7 @@ namespace ClarityIntensity
     {
         ClarityObject TData = null;
 
+        TestScrollObject TS = null;
         /// <summary>
         /// 初期化関数
         /// </summary>
@@ -26,41 +27,31 @@ namespace ClarityIntensity
             //テスト
             ClarityEngine.TestSpaceInit();
 
-            //オブジェクトの登録
-            /*Clarity.Element.ClarityObject data = new Clarity.Element.ClarityObject(1);
-            data.VertexID = ClarityDataIndex.Vertex_Display;           
+            //追加Shaderの読み込み
+            ClarityEngine.ClearShader();
+            ClarityEngine.AddShader<ShaderDataScroll>("shader/shlist.txt");
 
-            data.ShaderID = ClarityDataIndex.Shader_OnlyAlpha;
-            data.TextureID = ClarityDataIndex.Texture_Circle;
-            data.Color = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-            data.TransSet.WorldID = 0;
-            data.TransSet.Pos = new Vector3(0.0f, -0.0f, 0.0f);
-            
-            data.TransSet.Scale = new Vector3(30.0f, 30.0f, 1.0f);            
-            data.TextureAnimationEnabled = false;
-            data.AnimeID = 1;
-            ClarityEngine.AddElement(data);
 
-            this.TData = data;*/
-
-            TextObject tx = new TextObject("ABCDEFGhijklmn", 1, "Pristina", 80);
-            tx.Pos2D = new Vector2(150.0f, 150.0f);
-            tx.Color = SharpDX.Color.Pink;
-            ClarityEngine.AddElement(tx);
-
-            tx = new TextObject("いろはにほへとちりぬるを", 100);
-            tx.Pos2D = new Vector2(300.0f, 250.0f);
-            tx.Color = SharpDX.Color.BlueViolet;
-            
-
-            ClarityEngine.AddElement(tx);
 
             this.TData = new TestObject();
             //ClarityEngine.AddElement(this.TData);
 
 
             TestEnemy te = new TestEnemy();
-            ClarityEngine.AddElement(te);
+            //ClarityEngine.AddElement(te);
+
+            TestScrollObject ts = new TestScrollObject();
+            ClarityEngine.AddElement(ts);
+            //this.TS = ts;
+
+
+            TextObject t = new TextObject("abc");
+            t.Pos2D = new Vector2(200, 200);
+            ClarityEngine.AddElement(t);
+
+
+            ClarityEngine.SetClearColor(new Color4(0.5f));
+
 
         }
 
@@ -71,6 +62,25 @@ namespace ClarityIntensity
         {
             //this.TData.FrameSpeed.Pos2D = new Vector2(0.0f, 100.0f);
             //System.Threading.Thread.Sleep(200);
+
+            if (ClarityEngine.TestKey(GameKey.Up))
+            {
+                this.TS.OffsetY += 0.01f;
+            }
+            if (ClarityEngine.TestKey(GameKey.Down))
+            {
+                this.TS.OffsetY -= 0.01f;
+            }
+
+
+            if (ClarityEngine.TestKey(GameKey.Button1))
+            {
+                this.TS.Change(101, 102);
+            }
+            if (ClarityEngine.TestKey(GameKey.Button2))
+            {
+                this.TS.Change(101, 100);
+            }
         }
 
         /// <summary>

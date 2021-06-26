@@ -54,30 +54,32 @@ namespace Clarity.Core
         }
     }
 
+
     /// <summary>
-    /// ゲームエンジンコア
+    /// ゲームエンジンコア処理
     /// </summary>
-    internal class ClarityCore : IDisposable
+    internal abstract class ClarityCore : IDisposable
     {
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
         public ClarityCore()
         {
-
+        
         }
 
+        /// <summary>
+        /// クリア色
+        /// </summary>
+        public Color4 ClearColor = new Color4(0.0f);
 
         #region メンバ変数
 
         /// <summary>
         /// 管理コントロール
         /// </summary>
-        private Control ManaCon = null;
+        protected Control ManaCon = null;
         /// <summary>
         /// 表示領域のサイズ
         /// </summary>
-        private Size DisplaySize
+        protected Size DisplaySize
         {
             get
             {
@@ -87,28 +89,25 @@ namespace Clarity.Core
         /// <summary>
         /// 起動オプション
         /// </summary>
-        private EngineSetupOption SetupOption = null;
+        protected EngineSetupOption SetupOption = null;
 
 
         /// <summary>
         /// 拡張実行一式
         /// </summary>
-        private ClarityEngineExtension Proc = null;
+        protected ClarityEngineExtension Proc = null;
 
 
         /// <summary>
         /// SystemView管理
         /// </summary>
-        private SystemView SView = null;
+        protected SystemView SView = null;
 
         /// <summary>
         /// System文字
         /// </summary>
-        private SystemText SText = null;
+        protected SystemText SText = null;
         #endregion
-
-
-
 
         /// <summary>
         /// エンジンコア初期化
@@ -119,7 +118,7 @@ namespace Clarity.Core
         {
             this.SetupOption = op;
             this.ManaCon = con;
-                       
+
 
             //エンジン管理クラスたちの作成
             this.CreateEngineManagers();
@@ -130,7 +129,7 @@ namespace Clarity.Core
 
             {
                 //描画文字列の定義                
-                this.SText = new SystemText(ClarityEngine.Setting.Debug.SystemText.SystemTextSize, ClarityEngine.Setting.Debug.SystemText.SystemTextColor, 2);                
+                this.SText = new SystemText(ClarityEngine.Setting.Debug.SystemText.SystemTextSize, ClarityEngine.Setting.Debug.SystemText.SystemTextColor, 2);
                 this.SText.Pos2D = ClarityEngine.Setting.Debug.SystemText.SystemTextPos;
             }
 
@@ -143,7 +142,7 @@ namespace Clarity.Core
         /// <param name="ice"></param>        
         public void StartClarity(ClarityEngineExtension ice)
         {
-            this.Proc = ice;            
+            this.Proc = ice;
 
             ClarityInitParam iparam = new ClarityInitParam();
             iparam.Con = this.ManaCon;
@@ -162,45 +161,66 @@ namespace Clarity.Core
         }
 
 
-        /// <summary>
-        /// 解放されるとき
-        /// </summary>
+
         public void Dispose()
         {
-            //使用物の解放
-
             //オブジェクト管理
             Element.ElementManager.Mana.Clear(true);
 
             //世界管理
             WorldManager.Mana.Dispose();
-            
+
             //入力管理
             InputManager.Mana.Dispose();
-            
+
             //テクスチャアニメーション
             Texture.TextureAnimeFactory.Mana.Dispose();
             //テクスチャ
             Texture.TextureManager.Mana.Dispose();
-            
+
             //頂点
             Vertex.VertexManager.Mana.Dispose();
-            
+
             //Shader管理
             Shader.ShaderManager.Mana.Dispose();
-            
+
             //DirectX
             DxManager.Mana.Dispose();
-
-            
         }
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// エンジン管理クラスの作成
+        /// 画面リサイズイベント
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="e"></param>
+        public virtual void ResizeViewEvent(object o, EventArgs e)
+        {
+            //最小化対策 WindowState判定でもよいが、Size=0の方が汎用性がある気がする。
+            Control con = o as Control;
+            if (con?.ClientSize.Width <= 0 || con?.ClientSize.Height <= 0)
+            {
+                ClarityLog.WriteDebug("最小化された");
+                return;
+            }
+
+
+            //スワップチェインのリサイズ
+            Clarity.Core.DxManager.Mana.ResizeSwapChain();
+
+            //SystemViewの作り直し
+            WorldManager.Mana.CreateSystemViewWorld(this.DisplaySize.Width, this.DisplaySize.Height);
+
+            //リサイズ関数
+            this.Proc?.ResizeView(this.DisplaySize);
+        }
+
+
+        protected abstract void RenderFrame();
+
+
+        /// <summary>
+        /// 管理クラスの作成
         /// </summary>
         private void CreateEngineManagers()
         {
@@ -235,6 +255,7 @@ namespace Clarity.Core
             //シーン管理
             Element.Scene.SceneManager.Manager = new Element.Scene.SceneManager();
             Element.ElementManager.Mana.AddRequest(Element.Scene.SceneManager.Manager);
+
             #endregion
 
             //全体デフォルト
@@ -242,9 +263,8 @@ namespace Clarity.Core
 
             //基本世界の作成
             this.CreateDefaultWorld();
+
         }
-
-
 
         /// <summary>
         /// デフォルト世界の作成(RenderingTexture内ゲームのデフォルト)
@@ -267,7 +287,7 @@ namespace Clarity.Core
             WorldManager.Mana.Set(0, wdata);
 
 
-            
+
         }
 
 
@@ -290,7 +310,7 @@ namespace Clarity.Core
             long debug_ectime = 0;
 
             long frametime = 0;
-            
+
             //カウント開始
             ClarityTimeManager.Mana.Start();
 
@@ -309,7 +329,7 @@ namespace Clarity.Core
                 //今回の基準実行時間を取得
                 frame_info.FrameTime = ClarityTimeManager.TotalMilliseconds;
                 frame_info.CalcuFrameBaseRate();
-                
+
 
                 #region フレーム処理
                 {
@@ -381,9 +401,7 @@ namespace Clarity.Core
                         debug_ectime = ClarityTimeManager.TotalMilliseconds;
                     }
 
-
                 }
-
 
 
                 if (nextskip == false)
@@ -398,6 +416,74 @@ namespace Clarity.Core
 
         }
 
+    }
+
+
+
+    /// <summary>
+    /// ゲームエンジンコア 2D用
+    /// </summary>
+    internal class ClarityCore2D : ClarityCore
+
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ClarityCore2D()
+        {
+
+        }
+
+        /// <summary>
+        /// フレーム描画処理
+        /// </summary>
+        protected override void RenderFrame()
+        {
+            //システム描画の開始            
+            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);
+            DxManager.Mana.BeginRendering(this.ClearColor);
+
+
+            //ViewPort数を取得
+            int vpcount = 1;
+            for (int i = 0; i < vpcount; i++)
+            {
+                //描画処理
+                Element.ElementManager.Mana.RenderObject(i);
+            }
+
+
+            //システム文字描画
+            if (ClarityEngine.Setting.Debug.SystemText.RenderSystemTextFlag == true)
+            {
+                this.SText.Render(new FrameRenderParam() { Crt = DxManager.Mana.CurrentTarget2D });
+            }
+
+            //システム描画の終了
+            DxManager.Mana.EndRendering();
+            //------------------------------------------------------
+
+            //更新処理
+            DxManager.Mana.SwapChainPresent();
+        }
+
+    }
+
+    /// <summary>
+    /// ゲームエンジンコア 3D
+    /// </summary>
+    internal class ClarityCore3D : ClarityCore
+
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ClarityCore3D()
+        {
+
+        }
+
+
 
         /// <summary>
         /// RenderingTextureへの画面描画
@@ -409,12 +495,12 @@ namespace Clarity.Core
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
 
             //描画開始
-            DxManager.Mana.BeginRendering(new Color4(0.5f, 0.5f, 0.5f, 1.0f));
-            
+            DxManager.Mana.BeginRendering(this.ClearColor);
+
             //ViewPort数を取得
             int vpcount = (ClarityEngine.Setting.MultiViewPort) ? WorldManager.MaxViewPort : 1;
             for (int i = 0; i < vpcount; i++)
-            {   
+            {
 
                 Viewport vp = WorldManager.Mana.GetViewPort(i);
                 DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
@@ -422,39 +508,39 @@ namespace Clarity.Core
                 //描画処理
                 Element.ElementManager.Mana.RenderObject(i);
             }
-            
+
             DxManager.Mana.EndRendering();
-            
+
         }
 
 
         /// <summary>
         /// フレーム描画処理
         /// </summary>
-        private void RenderFrame()
+        protected override void RenderFrame()
         {
 
-            
+
 
             //ゲーム要素すべてを描画
             this.RenderRenderingTexture();
 
-            
+
 
             //システム描画の開始
             DxManager.Mana.DisabledAlphaBlend();
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);
-            DxManager.Mana.BeginRendering(new Color4(1.0f, 0.0f, 0.0f, 1.0f));
+            DxManager.Mana.BeginRendering(this.ClearColor);
 
             Viewport vp = WorldManager.Mana.GetSystemViewPort();
             DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
 
-            
+
             SystemView sv = this.SView;
-            
+
             //RenderingTextureのサイズのまま
             sv.TransSet.Scale2D = new Vector2(ClarityEngine.Setting.RenderingViewSize.Width, ClarityEngine.Setting.RenderingViewSize.Height);
-            
+
             //画面サイズの合わせる・・・比を維持したいならここのサイズを計算してだすこと
             //sv.TransSet.Scale2D = new Vector2(this.DisplaySize.Width, this.DisplaySize.Height);
 
@@ -476,30 +562,5 @@ namespace Clarity.Core
             DxManager.Mana.SwapChainPresent();
         }
 
-        /// <summary>
-        /// 画面リサイズイベント
-        /// </summary>
-        /// <param name="o"></param>
-        /// <param name="e"></param>
-        public void ResizeViewEvent(object o, EventArgs e)
-        {
-            //最小化対策 WindowState判定でもよいが、Size=0の方が汎用性がある気がする。
-            Control con = o as Control;
-            if (con?.ClientSize.Width <= 0 || con?.ClientSize.Height <= 0)
-            {
-                ClarityLog.WriteDebug("最小化された");
-                return;
-            }
-
-
-            //スワップチェインのリサイズ
-            Clarity.Core.DxManager.Mana.ResizeSwapChain();
-
-            //SystemViewの作り直し
-            WorldManager.Mana.CreateSystemViewWorld(this.DisplaySize.Width, this.DisplaySize.Height);
-
-            //リサイズ関数
-            this.Proc?.ResizeView(this.DisplaySize);
-        }
     }
 }

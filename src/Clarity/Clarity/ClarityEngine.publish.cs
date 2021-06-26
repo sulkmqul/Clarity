@@ -29,6 +29,15 @@ namespace Clarity
         }
 
 
+        /// <summary>
+        /// クリア色の設定
+        /// </summary>
+        /// <param name="col"></param>
+        public static void SetClearColor(Color4 col)
+        {
+            core.ClearColor = col;
+        }
+
 
         #region World
 
@@ -53,6 +62,16 @@ namespace Clarity
         /// <param name="ele"></param>
         public static void AddElement(BaseElement ele)
         {
+            if (ClarityEngine.Setting.EngineMode == EEngineMode.D2D)
+            {
+                BaseElementD3D oth = ele as BaseElementD3D;
+                if (oth != null)
+                {
+                    throw new Exception("Invalid Manage Object. EngineMode=2D");
+                }
+
+            }
+
             ElementManager.Mana.AddRequest(ele);
         }
 

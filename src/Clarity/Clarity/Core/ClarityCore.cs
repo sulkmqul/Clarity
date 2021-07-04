@@ -539,7 +539,8 @@ namespace Clarity.Core
             SystemView sv = this.SView;
 
             //RenderingTextureのサイズのまま
-            sv.TransSet.Scale2D = new Vector2(ClarityEngine.Setting.RenderingViewSize.Width, ClarityEngine.Setting.RenderingViewSize.Height);
+            sv.TransSet.Scale2D = new Vector2(ClarityEngine.Setting.DisplayViewSize.Width, ClarityEngine.Setting.DisplayViewSize.Height);
+            
 
             //画面サイズの合わせる・・・比を維持したいならここのサイズを計算してだすこと
             //sv.TransSet.Scale2D = new Vector2(this.DisplaySize.Width, this.DisplaySize.Height);

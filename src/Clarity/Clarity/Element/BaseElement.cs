@@ -156,7 +156,7 @@ namespace Clarity.Element
         /// <summary>
         /// 有効可否
         /// </summary>
-        public bool Enabled = true;
+        public bool Enabled { get; internal set; } = true;
 
         /// <summary>
         /// これの作成時間
@@ -316,8 +316,7 @@ namespace Clarity.Element
         /// </summary>
         internal void Init()
         {
-            this.ShaderID = ClarityDataIndex.Shader_Default;
-
+            this.ShaderID = ClarityDataIndex.Shader_Default;            
             this.InitElement();
         }
 

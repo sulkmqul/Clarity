@@ -28,6 +28,9 @@ namespace Clarity
         /// 処理index
         /// </summary>
         public int ProcIndex;
+
+        
+
         /// <summary>
         /// 今回のフレーム基準時間
         /// </summary>
@@ -43,12 +46,24 @@ namespace Clarity
         public float FrameBaseRate { get; private set; }
 
         /// <summary>
+        /// フレーム間の差分時間
+        /// </summary>
+        public long Span
+        {
+            get
+            {
+                long span = this.FrameTime - this.PrevFrameTime;
+                return span;
+            }
+        }
+
+        /// <summary>
         /// 倍率の計算
         /// </summary>
         public void CalcuFrameBaseRate()
         {
             //可変時間を算出
-            long span = this.FrameTime - this.PrevFrameTime;
+            long span = this.Span;
             this.FrameBaseRate = (float)span / 1000.0f;
         }
     }

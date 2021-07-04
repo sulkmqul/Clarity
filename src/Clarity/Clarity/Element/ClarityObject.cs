@@ -206,7 +206,7 @@ namespace Clarity.Element
                 return;
             }
 
-            this.AnimeCon.Anime(this.FrameTime);
+            this.AnimeCon.Anime(this.ElementTime);
             this.RenderSet.TextureID = this.AnimeCon.CurrentFrameInfo.TextureID;
             
         }

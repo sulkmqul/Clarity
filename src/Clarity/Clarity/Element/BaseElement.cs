@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Clarity.Element
 {
-  
+
 
     /// <summary>
     /// 毎フレーム自動で更新される情報
     /// </summary>
-    public class ElementFrameInfo
+    internal class ElementFrameInfo
     {   
 
         #region 処理関係・・・分かり易くProcを接頭語に
@@ -24,6 +24,13 @@ namespace Clarity.Element
         /// 今回の処理順番
         /// </summary>
         public int ProcIndex = 0;
+
+
+        /// <summary>
+        /// 個別実行時間総計・・・個々の物体はこれを使用する
+        /// </summary>
+        public long ElementTime = 0;
+
         /// <summary>
         /// 今回の処理実行時間(ms)
         /// </summary>
@@ -33,6 +40,8 @@ namespace Clarity.Element
         /// </summary>
         public long PrevProcFrameTime = 0;
 
+
+
         /// <summary>
         /// 処理レート
         /// </summary>
@@ -41,13 +50,7 @@ namespace Clarity.Element
         /// <summary>
         /// 処理間の経過時間
         /// </summary>
-        public long Span
-        {
-            get
-            {
-                return this.ProcFrameTime - this.PrevProcFrameTime;
-            }
-        }
+        public long FrameSpan = 0;
         #endregion
 
 
@@ -98,12 +101,12 @@ namespace Clarity.Element
         /// <summary>
         /// フレーム情報データ(毎フレーム情報が更新される情報たち)
         /// </summary>
-        protected internal ElementFrameInfo FrameInfo = new ElementFrameInfo();
+        internal ElementFrameInfo FrameInfo = new ElementFrameInfo();
         #region 基本データプロパティ
         /// <summary>
         /// 今回の処理順番
         /// </summary>
-        public int ProcIndex
+        internal int ProcIndex
         {
             get
             {
@@ -111,25 +114,16 @@ namespace Clarity.Element
             }
         }
         /// <summary>
-        /// 今回フレームの基準時間
+        /// フレームの基準時間
         /// </summary>
-        public long FrameTime
+        public long ElementTime
         {
             get
             {
-                return this.FrameInfo.ProcFrameTime;
+                return this.FrameInfo.ElementTime;
             }
         }
-        /// <summary>
-        /// 前回の基準時間
-        /// </summary>
-        public long PrevFrameTime
-        {
-            get
-            {
-                return this.FrameInfo.PrevProcFrameTime;
-            }
-        }
+        
         /// <summary>
         /// 今回と前回の差分時間
         /// </summary>
@@ -137,14 +131,14 @@ namespace Clarity.Element
         {
             get
             {
-                return this.FrameInfo.Span;
+                return this.FrameInfo.FrameSpan;
             }
         }
 
         /// <summary>
         /// 描画index
         /// </summary>
-        public int RenderIndex
+        internal int RenderIndex
         {
             get
             {
@@ -167,7 +161,7 @@ namespace Clarity.Element
         /// <summary>
         /// これの作成時間
         /// </summary>        
-        public long CreateTime { get; internal set; }
+        internal long CreateTime { get; set; }
 
 
         /// <summary>
@@ -355,9 +349,17 @@ namespace Clarity.Element
             {
                 //フレーム基準情報の初期化
                 this.FrameInfo.ProcIndex = fparam.ProcIndex;
+
+                //処理total時間に加算
+                this.FrameInfo.ElementTime += fparam.Span;
+                
+                //計算済みフレームレート情報の保存
+                this.FrameInfo.FrameSpan = fparam.Span;                
+                this.FrameInfo.ProcBaseRate = fparam.FrameBaseRate;
+
+                //一応設定するがこれは使用するべきではないためほぼ意味なし
                 this.FrameInfo.ProcFrameTime = fparam.FrameTime;
-                this.FrameInfo.PrevProcFrameTime = fparam.ProcIndex;
-                this.FrameInfo.ProcBaseRate = fparam.FrameBaseRate;                
+                this.FrameInfo.PrevProcFrameTime = fparam.PrevFrameTime;
             }
             #endregion
             

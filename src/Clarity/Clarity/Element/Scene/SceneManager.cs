@@ -120,7 +120,8 @@ namespace Clarity.Element.Scene
         /// </summary>
         /// <param name="eid"></param>
         /// <param name="data"></param>
-        public void EventCallback(int eid, BaseElement data)
+        //public void EventCallback(int eid, BaseElement data)
+        public override void EventCallback(int eid, BaseElement data)
         {
             //削除処理でない
             if (eid != ClarityElementEventID.Remove)

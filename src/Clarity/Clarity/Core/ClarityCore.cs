@@ -378,7 +378,7 @@ namespace Clarity.Core
 
                     //FPSの表示
                     string fpsstring = string.Format("Proc:{0:F} Render:{1:F}", fps.proc, fps.render);
-                    ClarityLog.WriteDebug(fpsstring);
+                    //ClarityLog.WriteDebug(fpsstring);
                     this.SText.SetFPS(fpsstring);
 
                     //初期化

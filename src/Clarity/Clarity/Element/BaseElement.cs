@@ -70,7 +70,7 @@ namespace Clarity.Element
     /// <summary>
     /// エレメントクラス基底
     /// </summary>
-    public abstract class BaseElement
+    public abstract class BaseElement : IClarityElementEvent
     {
         /// <summary>
         /// コンストラクタ
@@ -480,6 +480,9 @@ namespace Clarity.Element
         /// <param name="eid">送付イベントID</param>
         public void SendEvent(int eid)
         {
+            //自分には必ず送付
+            this.EventCallback(eid, this);
+
             this.EventSenderList.ForEach(x =>
             {
                 x.EventCallback(eid, this);
@@ -544,7 +547,14 @@ namespace Clarity.Element
             });
         }
 
-        
-
+        /// <summary>
+        /// イベント処理
+        /// </summary>
+        /// <param name="eid"></param>
+        /// <param name="data"></param>
+        public virtual void EventCallback(int eid, BaseElement data)
+        {
+            
+        }
     }
 }

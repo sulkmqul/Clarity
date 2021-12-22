@@ -93,7 +93,9 @@ namespace Clarity.Element
             this.FrameInfo.RenderIndex = rparam.RenderIndex;
             this.CurrentRenderTarget = rparam.Crt;
 
+            Core.DxManager.Mana.CurrentTarget2D.BeginDraw();
             this.RenderElement();
+            Core.DxManager.Mana.CurrentTarget2D.EndDraw();
         }
     }
 
@@ -117,6 +119,7 @@ namespace Clarity.Element
             this.Text = s;
             this.TFormat = new SharpDX.DirectWrite.TextFormat(Clarity.Core.DxManager.Mana.FactDWrite, fontname, size);
             this.Color = SharpDX.Color.Black;
+                        
         }
 
 
@@ -161,14 +164,15 @@ namespace Clarity.Element
         /// </summary>
         protected override void RenderElement()
         {
-            Core.DxManager.Mana.CurrentTarget2D.BeginDraw();
+            
             using (SharpDX.Direct2D1.SolidColorBrush sol = new SharpDX.Direct2D1.SolidColorBrush(this.CurrentRenderTarget, this.Color))
             {
                 
                 Core.DxManager.Mana.CurrentTarget2D.DrawText(this.Text, this.TFormat, new SharpDX.Mathematics.Interop.RawRectangleF(this.TransSet.PosX, this.TransSet.PosY, this.ClipSize.Width, this.ClipSize.Height), sol);
                 
-            }
-            Core.DxManager.Mana.CurrentTarget2D.EndDraw();
+            }            
+            
+            
         }
 
         

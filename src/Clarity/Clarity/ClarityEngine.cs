@@ -10,15 +10,6 @@ using Clarity.Element;
 
 namespace Clarity
 {
-    /// <summary>
-    /// 動作モード
-    /// </summary>
-    public enum EEngineMode
-    {
-        D2D,
-        D3D,
-    }
-
 
     /// <summary>
     /// ClarityEngine初期化設定オプション
@@ -113,6 +104,27 @@ namespace Clarity
             //テクスチャアニメファイルの読み込み
             Texture.TextureAnimeFactory.Mana.ReadTextureAnimeFile(dpath + @"texanime.txt");
 
+
+
+            List<ClarityObject> abc = new List<ClarityObject>();
+            for (int i = 0; i < 10000; i++)
+            {
+                abc.Add(new ClarityObject(i));
+                abc.Add(new ClarityObject(i));
+            }
+
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            int dataindex = abc.FindIndex(x => x.ObjectID < 7823);
+
+            sw.Stop();
+
+            Console.WriteLine($"span={sw.ElapsedMilliseconds} index={dataindex}");
+
+            sw.Restart();
+            abc.Insert(dataindex+1, new ClarityObject(99999999));
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
 
@@ -152,12 +164,7 @@ namespace Clarity
             Util.RandomMaker.Init();
 
             //コアエンジン初期化
-            core = new Core.ClarityCore2D();
-            if (Setting.EngineMode == EEngineMode.D3D)
-            {
-                core = new Core.ClarityCore3D();
-                
-            }
+            core = new Core.ClarityCore();
             core.Init(con, op);
 
             //ビルドインデータの読み込み

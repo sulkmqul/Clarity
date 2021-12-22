@@ -58,7 +58,7 @@ namespace Clarity.Core
     /// <summary>
     /// ゲームエンジンコア処理
     /// </summary>
-    internal abstract class ClarityCore : IDisposable
+    internal class ClarityCore : IDisposable
     {
         public ClarityCore()
         {
@@ -215,8 +215,80 @@ namespace Clarity.Core
             this.Proc?.ResizeView(this.DisplaySize);
         }
 
+        /// <summary>
+        /// RenderingTextureへの画面描画
+        /// </summary>
+        private void RenderRenderingTexture()
+        {
+            //基本描画設定
+            DxManager.Mana.EnabledAlphaBlendNormal();
+            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
 
-        protected abstract void RenderFrame();
+            //描画開始
+            DxManager.Mana.BeginRendering(this.ClearColor);
+
+            //ViewPort数を取得
+            int vpcount = (ClarityEngine.Setting.MultiViewPort) ? WorldManager.MaxViewPort : 1;
+            for (int i = 0; i < vpcount; i++)
+            {
+
+                Viewport vp = WorldManager.Mana.GetViewPort(i);
+                DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
+
+                //描画処理
+                Element.ElementManager.Mana.RenderObject(i);
+            }
+
+            DxManager.Mana.EndRendering();
+
+        }
+
+
+        /// <summary>
+        /// フレーム描画処理
+        /// </summary>
+        protected void RenderFrame()
+        {
+            {
+                //ゲーム要素すべてを描画
+                this.RenderRenderingTexture();
+            }
+
+            //システム描画の開始
+            DxManager.Mana.DisabledAlphaBlend();
+            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);
+            DxManager.Mana.BeginRendering(this.ClearColor);
+
+            Viewport vp = WorldManager.Mana.GetSystemViewPort();
+            DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
+
+
+            SystemView sv = this.SView;
+
+            //RenderingTextureのサイズのまま
+            sv.TransSet.Scale2D = new Vector2(ClarityEngine.Setting.DisplayViewSize.Width, ClarityEngine.Setting.DisplayViewSize.Height);
+
+
+            //画面サイズの合わせる・・・比を維持したいならここのサイズを計算してだすこと
+            //sv.TransSet.Scale2D = new Vector2(this.DisplaySize.Width, this.DisplaySize.Height);
+
+            ShaderResourceView srvt = DxManager.Mana.RenderingTextureResource;
+            sv.Render(srvt);
+
+
+            //システム文字描画
+            if (ClarityEngine.Setting.Debug.SystemText.RenderSystemTextFlag == true)
+            {
+                this.SText.Render(new FrameRenderParam() { Crt = DxManager.Mana.CurrentTarget2D });
+            }
+
+            //システム描画の終了
+            DxManager.Mana.EndRendering();
+            //------------------------------------------------------
+
+            //更新処理
+            DxManager.Mana.SwapChainPresent();
+        }
 
 
         /// <summary>
@@ -418,150 +490,4 @@ namespace Clarity.Core
 
     }
 
-
-
-    /// <summary>
-    /// ゲームエンジンコア 2D用
-    /// </summary>
-    internal class ClarityCore2D : ClarityCore
-
-    {
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public ClarityCore2D()
-        {
-
-        }
-
-        /// <summary>
-        /// フレーム描画処理
-        /// </summary>
-        protected override void RenderFrame()
-        {
-            //システム描画の開始            
-            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);
-            DxManager.Mana.BeginRendering(this.ClearColor);
-
-
-            //ViewPort数を取得
-            int vpcount = 1;
-            for (int i = 0; i < vpcount; i++)
-            {
-                //描画処理
-                Element.ElementManager.Mana.RenderObject(i);
-            }
-
-
-            //システム文字描画
-            if (ClarityEngine.Setting.Debug.SystemText.RenderSystemTextFlag == true)
-            {
-                this.SText.Render(new FrameRenderParam() { Crt = DxManager.Mana.CurrentTarget2D });
-            }
-
-            //システム描画の終了
-            DxManager.Mana.EndRendering();
-            //------------------------------------------------------
-
-            //更新処理
-            DxManager.Mana.SwapChainPresent();
-        }
-
-    }
-
-    /// <summary>
-    /// ゲームエンジンコア 3D
-    /// </summary>
-    internal class ClarityCore3D : ClarityCore
-
-    {
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public ClarityCore3D()
-        {
-
-        }
-
-
-
-        /// <summary>
-        /// RenderingTextureへの画面描画
-        /// </summary>
-        private void RenderRenderingTexture()
-        {
-            //基本描画設定
-            DxManager.Mana.EnabledAlphaBlendNormal();
-            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
-
-            //描画開始
-            DxManager.Mana.BeginRendering(this.ClearColor);
-
-            //ViewPort数を取得
-            int vpcount = (ClarityEngine.Setting.MultiViewPort) ? WorldManager.MaxViewPort : 1;
-            for (int i = 0; i < vpcount; i++)
-            {
-
-                Viewport vp = WorldManager.Mana.GetViewPort(i);
-                DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
-
-                //描画処理
-                Element.ElementManager.Mana.RenderObject(i);
-            }
-
-            DxManager.Mana.EndRendering();
-
-        }
-
-
-        /// <summary>
-        /// フレーム描画処理
-        /// </summary>
-        protected override void RenderFrame()
-        {
-
-
-
-            //ゲーム要素すべてを描画
-            this.RenderRenderingTexture();
-
-
-
-            //システム描画の開始
-            DxManager.Mana.DisabledAlphaBlend();
-            DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);
-            DxManager.Mana.BeginRendering(this.ClearColor);
-
-            Viewport vp = WorldManager.Mana.GetSystemViewPort();
-            DxManager.Mana.DxDevice.ImmediateContext.Rasterizer.SetViewport(vp);
-
-
-            SystemView sv = this.SView;
-
-            //RenderingTextureのサイズのまま
-            sv.TransSet.Scale2D = new Vector2(ClarityEngine.Setting.DisplayViewSize.Width, ClarityEngine.Setting.DisplayViewSize.Height);
-            
-
-            //画面サイズの合わせる・・・比を維持したいならここのサイズを計算してだすこと
-            //sv.TransSet.Scale2D = new Vector2(this.DisplaySize.Width, this.DisplaySize.Height);
-
-            ShaderResourceView srvt = DxManager.Mana.RenderingTextureResource;
-            sv.Render(srvt);
-
-
-            //システム文字描画
-            if (ClarityEngine.Setting.Debug.SystemText.RenderSystemTextFlag == true)
-            {
-                this.SText.Render(new FrameRenderParam() { Crt = DxManager.Mana.CurrentTarget2D });
-            }
-
-            //システム描画の終了
-            DxManager.Mana.EndRendering();
-            //------------------------------------------------------
-
-            //更新処理
-            DxManager.Mana.SwapChainPresent();
-        }
-
-    }
 }

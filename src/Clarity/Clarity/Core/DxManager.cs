@@ -335,7 +335,7 @@ namespace Clarity.Core
                 RenderTargetView swapchainview = new RenderTargetView(this.DxDevice, backbuf);
                 tset.Target3D = swapchainview;
                 tset.Target2D = this.D2DMana.CreateRenderTarget2D(backbuf);
-
+                
                 //ADD
                 this.RenderTargetList.Add(tset);
             }
@@ -369,7 +369,7 @@ namespace Clarity.Core
                 dsdes.Texture2D.MipSlice = 0;
 
                 //Z View作成
-                this.DepthView = new DepthStencilView(this.DxDevice, depbuf, dsdes);
+                this.DepthView = new DepthStencilView(this.DxDevice, depbuf, dsdes);                
             }
 
             #region レンダリングテクスチャの作成
@@ -395,19 +395,19 @@ namespace Clarity.Core
                     RenderTargetSet tset = new RenderTargetSet();
                     //レンダーターゲットの生成
                     tset.Target3D = new RenderTargetView(this.DxDevice, tex);                    
-                    tset.Target2D = this.D2DMana.CreateRenderTarget2D(tex);
-
+                    tset.Target2D = this.D2DMana.CreateRenderTarget2D(tex);                    
                     //ADD
                     this.RenderTargetList.Add(tset);
 
                     //テクスチャの生成
                     this.RenderingTextureResource = new ShaderResourceView(this.DxDevice, tex);
+                    
                 }
+                
 
             }
             #endregion
-
-
+            
             //初期切り替え
             this.ChangeRenderTarget(ERenderTargetNo.SwapChain);
 
@@ -524,7 +524,7 @@ namespace Clarity.Core
             {
                 throw new Exception("DXManager Initialize Exception", e);
 
-            }
+            }            
         }
 
 
@@ -573,7 +573,7 @@ namespace Clarity.Core
         /// </summary>
         public void SwapChainPresent()
         {
-            this.SwapChain.Present(0, PresentFlags.None);
+            this.SwapChain.Present(0, PresentFlags.None);            
         }
 
 

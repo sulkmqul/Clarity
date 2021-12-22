@@ -62,16 +62,6 @@ namespace Clarity
         /// <param name="ele"></param>
         public static void AddElement(BaseElement ele)
         {
-            if (ClarityEngine.Setting.EngineMode == EEngineMode.D2D)
-            {
-                BaseElementD3D oth = ele as BaseElementD3D;
-                if (oth != null)
-                {
-                    throw new Exception("Invalid Manage Object. EngineMode=2D");
-                }
-
-            }
-
             ElementManager.Mana.AddRequest(ele);
         }
 

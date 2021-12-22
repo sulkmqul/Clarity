@@ -91,7 +91,7 @@ namespace Clarity.Core
 
             //テキストのアンチエイリアスモード(D2D1_TEXT_ANTIALIAS_MODE )
             ans.TextAntialiasMode = TextAntialiasMode.Cleartype;
-
+            
             return ans;
         }
 

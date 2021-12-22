@@ -87,11 +87,6 @@ namespace Clarity
         public string FileVersion = "1.0.0.0";
 
         /// <summary>
-        /// エンジン動作モード
-        /// </summary>
-        public EEngineMode EngineMode = EEngineMode.D3D;
-
-        /// <summary>
         /// ログレベル
         /// </summary>
         public EClarityLogLevel LogLevel = EClarityLogLevel.ALL;

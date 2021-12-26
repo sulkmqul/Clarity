@@ -24,6 +24,7 @@ namespace ClarityIntensity
         /// </summary>
         public override void Init(ClarityInitParam pdata)
         {
+
             //テスト
             ClarityEngine.TestSpaceInit();
 
@@ -87,8 +88,7 @@ namespace ClarityIntensity
         /// 解放
         /// </summary>
         public override void Dispose()
-        {
-            
+        {   
         }
 
 

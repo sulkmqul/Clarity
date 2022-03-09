@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
+using System.Numerics;
 
 namespace Clarity.Element.Collider
 {
@@ -53,23 +53,7 @@ namespace Clarity.Element.Collider
         private Vector3 ParentRot = new Vector3();
 
 
-        /// <summary>
-        /// 処理関数
-        /// </summary>
-        protected override void ProcElement()
-        {
-            //基本色の指定                        
-            this.ShaderID = ClarityDataIndex.Shader_NoTexture;
-            this.Color = ClarityEngine.Setting.Debug.ColliderDefaultColor;
-            this.VertexID = ClarityDataIndex.Vertex_Line;
-
-            //変形後のデータから情報を作成する
-            this.TransSet.Pos3D = this.StartPos;
-            this.TransSet.Rot = this.ParentRot;
-            this.TransSet.Scale3D = new Vector3(1.0f, this.Dir.Length(), 1.0f);
-
-        }
-
+        
         /// <summary>
         /// 判定の回転処理
         /// </summary>
@@ -78,9 +62,9 @@ namespace Clarity.Element.Collider
         {
             this.ParentRot = tset.Rot;
 
-            Matrix rmat = tset.CreateTransposeRotationMat();
-            this.StartPos = Vector3.Transform(this.StartPos, (Matrix3x3)rmat);
-            this.Dir = Vector3.Transform(this.Dir, (Matrix3x3)rmat);
+            Matrix4x4 rmat = tset.CreateTransposeRotationMat();
+            this.StartPos = Vector3.Transform(this.StartPos, rmat);
+            this.Dir = Vector3.Transform(this.Dir, rmat);
 
             
         }

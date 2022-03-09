@@ -17,11 +17,6 @@ namespace ClarityIntensity
             InitializeComponent();
         }
 
-        /// <summary>
-        /// キーが押された時
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)

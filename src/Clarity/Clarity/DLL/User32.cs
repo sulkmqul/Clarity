@@ -7,10 +7,34 @@ using System.Threading.Tasks;
 
 namespace Clarity.DLL
 {
-    public class User32
+    [StructLayout(LayoutKind.Sequential)]
+    public struct tagPOINT
+    {
+        public long x;
+        public long y;
+    }
+
+    /// <summary>
+    /// winuser.h tagMSG 
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct tagMSG
+    {
+        public IntPtr hwnd;
+        public uint message;
+        public IntPtr wParam;
+        public IntPtr lParam;
+        public int time;
+        public tagPOINT pt;
+        public int lPrivate;
+    }
+
+    /// <summary>
+    /// 仮想キーコード(winuser.h)
+    /// </summary>
+    public class VirtualKeyCode
     {
         //仮想キーコード表        
-
         public const int VK_LEFT = 0x25;
         public const int VK_UP = 0x26;
         public const int VK_RIGHT = 0x27;
@@ -55,9 +79,59 @@ namespace Clarity.DLL
         public const int VK_X = 0x58;
         public const int VK_Y = 0x59;
         public const int VK_Z = 0x5A;
+    }
+
+    /// <summary>
+    /// Windows メッセージ (winuser.h)
+    /// </summary>
+    public class WindowsMessageCode
+    {
+        public const int WM_NULL = 0x0000;
+        public const int WM_CREATE = 0x0001;
+        public const int WM_DESTROY = 0x0002;
+        public const int WM_MOVE = 0x0003;
+        public const int WM_SIZE = 0x0005;
+        public const int WM_QUIT = 0x0012;
+
+        public const int WM_NCCREATE = 0x0081;
+        public const int WM_NCDESTROY = 0x0082;
+        public const int WM_NCCALCSIZE = 0x0083;
+        public const int WM_NCHITTEST = 0x0084;
+        public const int WM_NCPAINT = 0x0085;
+        public const int WM_NCACTIVATE = 0x0086;
+        public const int WM_GETDLGCODE = 0x0087;
+    }
 
 
-        [DllImport("user32.dll", SetLastError = true)]
+    /// <summary>
+    /// user32.dll
+    /// </summary>
+    public class User32
+    {
+        /// <summary>
+        /// 読み込みDLLパス
+        /// </summary>
+        private const string DllPath = "user32.dll";
+
+
+        public const int PM_NOREMOVE = 0x0000;
+        public const int PM_REMOVE = 0x0001;
+
+        [DllImport(DllPath)]
         public static extern Int16 GetAsyncKeyState(int vKey);
+
+        [DllImport(DllPath)]
+        public static extern int PeekMessage(out tagMSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
+
+        [DllImport(DllPath)]
+        public static extern int GetMessage(out tagMSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+        [DllImport(DllPath)]
+        public static extern int TranslateMessage(ref tagMSG lpMsg);
+
+        [DllImport(DllPath)]
+        public static extern int DispatchMessage(ref tagMSG lpMsg);
+
+
     }
 }

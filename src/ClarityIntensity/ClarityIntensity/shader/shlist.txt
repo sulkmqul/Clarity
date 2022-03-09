@@ -1,2 +1,0 @@
-1
-TextureScroll,shader/shader.fx,VsTexScroll,PsTexScroll

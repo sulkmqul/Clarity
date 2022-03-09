@@ -1,46 +1,39 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using Clarity;
 
 namespace ClarityIntensity
-
 {
-    /// <summary>
-    /// ClarityEngineテストアプリケーションです。
-    /// </summary>
     static class Program
     {
         /// <summary>
-        /// アプリケーションのメイン エントリ ポイントです。
+        ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            try
-            {
-                MainForm mf = new MainForm();
-                
-                //エンジン初期化
-                EngineSetupOption setop = new EngineSetupOption();
-                setop.EngineSettingFilePath = "cs.xml";                
-                Clarity.ClarityEngine.Init(mf, setop);
+            //Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new MainForm());
 
-                //実行開始
-                IntensityMain im = new IntensityMain();                                
-                Clarity.ClarityEngine.Run(im);
-                
-                
-            }
-            catch (Exception e)
+            /*
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            MainForm f = new MainForm();
+            ClarityLoop.Run(f, () =>
             {
-                Clarity.ClarityLog.WriteErrorException(e);
-            }
-                 
+                
+            });*/
+
+            MainForm f = new MainForm();
+            Clarity.Engine.ClarityEngine.Init(f, @"F:\��Ɨ̈�\Game\Clarity\src\Clarity\cs.xml");
+
+            Clarity.Engine.ClarityEngine.Run(new IntensityPlugin());
+
         }
     }
 }

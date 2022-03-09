@@ -54,14 +54,14 @@ namespace Clarity
         /// <summary>
         /// 管理ディクショナリ
         /// </summary>
-        internal Dictionary<int, U> ManaDic = new Dictionary<int, U>();
+        protected Dictionary<int, U> ManaDic = new Dictionary<int, U>();
 
 
 
         /// <summary>
         /// ユーザー定義データのクリア
         /// </summary>
-        internal void ClearUserData()
+        protected void ClearUserData()
         {
             int[] indexvec = this.ManaDic.Keys.ToArray();
             foreach (int index in indexvec)

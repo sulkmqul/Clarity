@@ -32,7 +32,7 @@ namespace Clarity.Element.Collider
         /// 当たり判定の情報を更新する
         /// </summary>
         /// <param name="frametime">今回のフレーム処理時間</param>
-        private void UpdateCollisonInfomation(long frametime)
+        private void UpdateCollisonInfomation()
         {
             foreach (int key in this.ColliderDic.Keys)
             {
@@ -41,7 +41,7 @@ namespace Clarity.Element.Collider
                 List<ICollider> iclist = this.ColliderDic[key];
                 Parallel.ForEach(iclist, ic =>
                 {
-                    ic.ColInfo.UpdateTempInfo(frametime);                    
+                    ic.ColInfo.UpdateTempInfo();                    
                 });
             }
 
@@ -72,8 +72,8 @@ namespace Clarity.Element.Collider
                     }
 
                     //判定色の変更
-                    co.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
-                    tar.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
+                    //co.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
+                    //tar.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
 
                     return true;
                 }
@@ -86,10 +86,9 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 対象のオブジェクトの当たり判定を取る
         /// </summary>
-        /// <param name="frametime">処理基準時間</param>
         /// <param name="coi">今回の比較対象</param>
         /// <param name="lastflag">最後の場合、相手のフラグを落としたい true=対象のフラグもoffにする</param>
-        private void ProcCollisionElement(long frametime, ICollider coi, bool lastflag)
+        private void ProcCollisionElement(ICollider coi, bool lastflag)
         {
             ColliderInfo cinfo = coi.ColInfo;
             ColliderTempInfo temp = cinfo.TempInfo;
@@ -134,9 +133,8 @@ namespace Clarity.Element.Collider
 
         /// <summary>
         /// 当たり判定本体
-        /// </summary>
-        /// <param name="frametime">処理基準時間</param>
-        private void ProcCollision(long frametime)
+        /// </summary>        
+        private void ProcCollision()
         {
             foreach (List<ICollider> coilist in this.ColliderDic.Values)
             {
@@ -150,7 +148,7 @@ namespace Clarity.Element.Collider
 
                     //個別判定
                     bool f = coilist.Last() == coi;
-                    this.ProcCollisionElement(frametime, coi, f);
+                    this.ProcCollisionElement(coi, f);
                 });
 
                 
@@ -164,15 +162,14 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 衝突判定の実行
         /// </summary>
-        /// <param name="fparam"></param>
-        public void ExecuteCollision(FrameProcParam fparam)
+        public void ExecuteCollision()
         {   
 
             //当たり判定情報の変形
-            this.UpdateCollisonInfomation(fparam.FrameTime);
+            this.UpdateCollisonInfomation();
 
             //判定処理
-            this.ProcCollision(fparam.FrameTime);
+            this.ProcCollision();
         
         }
 
@@ -184,16 +181,14 @@ namespace Clarity.Element.Collider
         /// <param name="vindex">描画ViewIndex</param>
         public void RenderCollider(int vindex)
         {
-            int rindex = 0;
             //登録判定をすべて描画する
             foreach (List<ICollider> collist in this.ColliderDic.Values)
             {
                 collist.ForEach(co =>
                 {
                     co.ColInfo.TempInfo.TempColliderList.ForEach(ele =>
-                    {
-                        FrameRenderParam frp = new FrameRenderParam() { ViewIndex = vindex, RenderIndex = rindex };
-                        ele.Render(frp);
+                    {                        
+                        ele.Render(0);
                     });
                 });
             }

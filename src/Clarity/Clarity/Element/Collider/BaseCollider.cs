@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
 namespace Clarity.Element.Collider
 {
@@ -36,7 +37,7 @@ namespace Clarity.Element.Collider
     /// <summary>
     /// 当たり判定オブジェクト基底
     /// </summary>
-    public abstract class BaseCollider : BaseElementD3D, ICloneable
+    public abstract class BaseCollider : BaseElement, ICloneable
     {
         /// <summary>
         /// コンストラクタ
@@ -64,20 +65,9 @@ namespace Clarity.Element.Collider
         /// </summary>
         protected sealed override void InitElement()
         {
-
         }
 
 
-        /// <summary>
-        /// 描画処理
-        /// </summary>
-        protected override void RenderElement()
-        {
-            using (DepthStencilDisabledState des = new DepthStencilDisabledState())
-            {
-                base.RenderElement();
-            }
-        }
 
         /// <summary>
         /// 当たり判定の変形

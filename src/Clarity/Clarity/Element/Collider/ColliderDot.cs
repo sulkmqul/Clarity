@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
+using System.Numerics;
 
 namespace Clarity.Element.Collider
 {
@@ -30,27 +30,7 @@ namespace Clarity.Element.Collider
 
 
 
-        /// <summary>
-        /// 処理関数
-        /// </summary>
-        protected override void ProcElement()
-        {
-            //基本色の指定            
-            this.TextureID = ClarityDataIndex.Texture_Circle;
-            this.ShaderID = ClarityDataIndex.Shader_OnlyAlpha;
-
-            this.Color = ClarityEngine.Setting.Debug.ColliderDefaultColor;
-
-            //変形後のデータから情報を作成する
-            this.TransSet.Pos3D = this.Center;
-
-            //適当に点を演出する
-            this.TransSet.Scale3D = new Vector3(5.0f, 5.0f, 1.0f);
-
-        }
-
-
-
+        
 
         /// <summary>
         /// 判定の回転処理
@@ -58,8 +38,8 @@ namespace Clarity.Element.Collider
         /// <param name="tset">親の遷移情報</param>
         protected override void RotationCollider(TransposeSet tset)
         {
-            Matrix rmat = tset.CreateTransposeRotationMat();
-            this.Center = Vector3.Transform(this.Center, (Matrix3x3)rmat);
+            Matrix4x4 rmat = tset.CreateTransposeRotationMat();
+            this.Center = Vector3.Transform(this.Center, rmat);
         }
 
         /// <summary>

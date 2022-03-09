@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
+using System.Numerics;
+using System.Drawing;
 
 namespace Clarity
 {
@@ -214,5 +215,88 @@ namespace Clarity
                 this._Scale3D.Z = value;
             }
         }
+    }
+
+
+    /// <summary>
+    /// 位置、回転、拡縮セット
+    /// </summary>
+    public class TransposeSet : VectorSet
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TransposeSet()
+        {
+        }
+        public TransposeSet(float f)
+        {
+            this.Pos3D = new Vector3(f);
+            this.Rot = new Vector3(f);
+            this.Scale3D = new Vector3(f);
+        }
+
+        /// <summary>
+        /// これの属する世界
+        /// </summary>
+        public int WorldID = 0;
+
+        /// <summary>
+        /// 拡大倍率
+        /// </summary>
+        public float ScaleRate = 1.0f;
+
+        /// <summary>
+        /// 回転のみの行列を作成
+        /// </summary>
+        /// <returns></returns>
+        public Matrix4x4 CreateTransposeRotationMat()
+        {
+
+
+            Matrix4x4 rxm = Matrix4x4.CreateRotationX(this.Rot.X);
+            Matrix4x4 rym = Matrix4x4.CreateRotationY(this.Rot.Y);
+            Matrix4x4 rzm = Matrix4x4.CreateRotationZ(this.Rot.Z);
+            Matrix4x4 ans = rzm * rym * rxm;
+
+            return ans;
+        }
+
+
+        /// <summary>
+        /// 拡縮回転のみの行列を作成
+        /// </summary>
+        /// <returns></returns>
+        public Matrix4x4 CreateTransposeSizeRotationMat()
+        {
+
+            Matrix4x4 scm = Matrix4x4.CreateScale(this.Scale3D);
+            Matrix4x4 wmrate = Matrix4x4.CreateScale(this.ScaleRate);
+
+            Matrix4x4 rm = this.CreateTransposeRotationMat();
+            Matrix4x4 ans = scm * wmrate * rm;
+
+            return ans;
+        }
+
+
+
+
+
+        /// <summary>
+        /// このデータの境界線情報を作成する
+        /// </summary>
+        /// <returns></returns>
+        public RectangleF CreateBolderRect2D()
+        {
+            float hl = this.Scale3D.X * 0.5f;
+            float ht = this.Scale3D.Y * 0.5f;
+
+            RectangleF ans = new RectangleF(this.Pos3D.X - hl, this.Pos3D.Y - ht, this.Scale3D.X, this.Scale3D.Y);
+
+            return ans;
+        }
+
+
     }
 }

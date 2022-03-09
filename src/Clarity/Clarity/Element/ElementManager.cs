@@ -3,126 +3,164 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Clarity.Element.Collider;
-
 
 namespace Clarity.Element
 {
     /// <summary>
-    /// 拡張イベント関数
+    /// Root要素
     /// </summary>
-    public interface IElementExtraEvent
+    internal class RootElement : BaseElement
     {
-        void ExtraElementProc(int eno);
+        
     }
 
-    
-
     /// <summary>
-    /// ゲームObject管理クラス・・・これは特殊なためBaseClarityFactoryの継承は一時保留
+    /// Element管理
     /// </summary>
-    internal class ElementManager : BaseClaritySingleton<ElementManager>
+    public class ElementManager : BaseClaritySingleton<ElementManager>
     {
         private ElementManager()
         {
         }
 
-        public static void Create()
-        {
-            Instance = new ElementManager();
-            Instance.Init();
-        }
-
         /// <summary>
-        /// 管理者特殊オブジェクトの定数　管理者には当たり判定は存在しない。
+        /// 要求オブジェクト
         /// </summary>
-        public static readonly long AdminObjectID = -999;
-
-        /// <summary>
-        /// 追加情報クラス
-        /// </summary>
-        protected class ReqData
+        class ReqData
         {
-            /// <summary>
-            /// 追加データID
-            /// </summary>
-            public long ID;
-
-
-            /// <summary>
-            /// 追加データ本体
-            /// </summary>
-            public BaseElement Ele;
-
+            public BaseElement Parent = null;
+            public BaseElement Item = null;
         }
-
 
         #region メンバ変数
-
-
+        /// <summary>
+        /// 初期ノード
+        /// </summary>
+        private BaseElement RootElement = new RootElement();
 
         /// <summary>
-        /// 管理オブジェクト一式[object id, manage object list] 特に指定がない場合、こちらに登録される。
+        /// 各Objectの処理Indexを保持する
         /// </summary>
-        private Dictionary<long, List<BaseElement>> ElementDic = new Dictionary<long, List<BaseElement>>();
+        private int ProcIndex = 0;
 
         /// <summary>
         /// 追加申請データ
         /// </summary>
-        protected Queue<ReqData> AddReqQue = new Queue<ReqData>();
+        private Queue<ReqData> AddReqQue = new Queue<ReqData>();
         /// <summary>
         /// 削除申請一式
         /// </summary>
-        protected Queue<ReqData> RemoveReqQue = new Queue<ReqData>();
-
-        /// <summary>
-        /// 衝突判定管理
-        /// </summary>
-        private ColliderManager ColMana = new ColliderManager();
-
-
+        private Queue<ReqData> RemoveReqQue = new Queue<ReqData>();
         #endregion
 
+
         /// <summary>
-        /// 初期化
+        /// Element管理の作成
         /// </summary>
-        protected void Init()
+        public static void Create()
         {
-            
+            Instance = new ElementManager();            
         }
 
         /// <summary>
-        /// 当たり判定への追加
+        /// 処理Indexの取得
         /// </summary>
-        /// <param name="ele"></param>
-        private void AddColliderManager(BaseElement ele)
+        /// <returns></returns>
+        internal static int GetProcIndex()
         {
-            ICollider ic = ele as ICollider;
-            if (ic == null)
-            {
-                return;
-            }
-            this.ColMana.AddCollider(ic);
+            Instance.ProcIndex += 1;
+            return Instance.ProcIndex;
         }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
         /// <summary>
-        /// 当たり判定から削除
+        /// Element追加申請
         /// </summary>
-        /// <param name="ele"></param>
-        private void RemoveColliderManager(BaseElement ele)
+        /// <param name="parent">追加する親</param>
+        /// <param name="ele">追加element</param>
+        public static void AddRequest(BaseElement parent, BaseElement ele)
         {
-            ICollider ic = ele as ICollider;
-            if (ic == null)
-            {
-                return;
-            }
-            this.ColMana.RemoveCollider(ic);
+            ReqData data = new ReqData();
+            data.Parent = parent;
+            data.Item = ele;
+
+            Instance.AddReqQue.Enqueue(data);
+
+            //追加
+            ele.Init();
         }
 
         /// <summary>
-        /// 申請Objectの追加処理
+        /// Element追加申請(ROOT登録)
         /// </summary>
-        /// <param name="frame_time">実行フレーム時間</param>
-        protected void AddObject(long frame_time)
+        /// <param name="ele">追加対象</param>
+        public static void AddRequest(BaseElement ele)
+        {
+            ElementManager.AddRequest(ElementManager.Instance.RootElement, ele);
+        }
+
+        /// <summary>
+        /// Element削除申請
+        /// </summary>
+        /// <param name="ele"></param>
+        public static void RemoveRequest(BaseElement ele)
+        {
+            ReqData data = new ReqData();
+            data.Parent = null;
+            data.Item = ele;
+            data.Item.Enabled = false;
+            Instance.RemoveReqQue.Enqueue(data);
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 処理実行
+        /// </summary>
+        /// <param name="finfo">フレーム情報</param>
+        public void Proc(FrameInfo finfo)
+        {
+            //処理カウントリセット
+            this.ProcIndex = 0;
+
+            //追加処理
+            this.AddElement();
+
+            //処理
+            this.RootElement.Proc(this.ProcIndex, finfo);
+
+            //当たり判定
+
+            //削除申請処理
+            this.RemoveElement();
+        }
+
+        /// <summary>
+        /// 描画処理
+        /// </summary>
+        public void Render()
+        {
+            this.ProcIndex = 0;
+
+            //描画処理の実行
+            this.RootElement.Render(this.ProcIndex);
+        }
+
+        /// <summary>
+        /// 全オブジェクトの個数を数える
+        /// </summary>
+        /// <returns></returns>
+        public int CountElement()
+        {
+            int ans = this.RootElement.CountElement();
+            return ans;
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// Element追加処理
+        /// </summary>
+        private void AddElement()
         {
             while (true)
             {
@@ -131,29 +169,23 @@ namespace Clarity.Element
                     return;
                 }
 
-                ReqData req = this.AddReqQue.Dequeue();                
+                ReqData req = this.AddReqQue.Dequeue();
 
-                //無い場合は新たに作成する・・・あらかじめ分かっている場合は事前追加の方が良いが・・・
-                if (this.ElementDic.ContainsKey(req.ID) == false)
-                {
-                    this.ElementDic.Add(req.ID, new List<BaseElement>());
-                }
+                //追加処理
+                req.Item.SystemLink.ParentElement = req.Parent;
+                req.Parent.SystemLink.ChildList.AddLast(req.Item);
 
-                //管理登録
-                req.Ele.CreateTime = frame_time;
-                this.ElementDic[req.ID].Add(req.Ele);
+                //当たり判定へ登録・・・ここは再帰的に登録する必要はない
 
-                //当たり判定登録
-                this.AddColliderManager(req.Ele);
 
             }
-
         }
 
+
         /// <summary>
-        /// 申請objectの削除
+        /// Element削除処理
         /// </summary>
-        protected void RemoveObject()
+        private void RemoveElement()
         {
             while (true)
             {
@@ -163,251 +195,15 @@ namespace Clarity.Element
                 }
 
                 ReqData req = this.RemoveReqQue.Dequeue();
-                
-                //破棄呼び出し
-                req.Ele.Remove();                
-                this.ElementDic[req.ID].Remove(req.Ele);                
 
-                //当たり判定削除
-                this.RemoveColliderManager(req.Ele);
+                //削除処理
+                BaseElement par = req.Item.SystemLink.ParentElement;
+                par.SystemLink.ChildList.Remove(req.Item);
+                req.Item.SystemLink.ParentElement = null;
+
+                //当たり判定の削除・・・自身の子供を再帰的に全て削除する必要がある
+
             }
         }
-
-
-        /// <summary>
-        /// 管理オブジェクトの処理実行
-        /// </summary>
-        /// <param name="frame_time"></param>
-        /// <param name="prev_frame_time"></param>
-        protected void ProcManageObject(FrameProcParam fparam)
-        {
-            
-            //全データの処理
-            foreach (List<BaseElement> olist in this.ElementDic.Values)
-            {
-                int index = 0;
-                foreach (BaseElement obj in olist)
-                {
-                    //一応再生成
-                    FrameProcParam fpa = new FrameProcParam(fparam);
-                    fpa.ProcIndex = index;
-                    obj.Proc(fpa);
-                    index++;
-                }
-            }
-
-        }
-
-        /// <summary>
-        /// 管理オブジェクトの描画
-        /// </summary>
-        /// <param name="vindex">描画viewIndex</param>
-        protected void RenderManageObject(int vindex)
-        {
-            //この処理はAddが発生した時だけやれば良いのでここでやるのは危険か？
-            var klist = this.ElementDic.Keys.OrderBy((x) => { return x; });
-            
-            //今回の描画Targetを取得
-            var crt = Core.DxManager.Mana.CurrentTarget2D;
-
-            //全データの処理            
-            foreach(long ekey in klist)
-            {
-                List<BaseElement> olist = this.ElementDic[ekey];                
-                int index = 0;
-                olist.ForEach(obj =>
-                {
-                    FrameRenderParam rparam = new FrameRenderParam() { ViewIndex = vindex, RenderIndex = index, Crt = crt };
-                    obj.Render(rparam);
-                    index++;
-                });
-                                
-            }
-
-
-            //当たり判定の描画を行う？
-            if (ClarityEngine.Setting.Debug.RenderColliderFlag)
-            {
-                this.ColMana.RenderCollider(vindex);
-            }
-
-        }
-
-
-
-        /// <summary>
-        /// 管理者以外のデータをクリアする
-        /// </summary>        
-        protected void ClearWithoutAdmin()
-        {
-            foreach (var k in this.ElementDic.Keys)
-            {
-                if (k < 0)
-                {
-                    continue;
-                }
-
-                this.ElementDic.Remove(k);
-            }
-        }
-        //////////////////////////////////////////////////////////////////////////////////////////////////
-        /// <summary>
-        /// データクリア
-        /// </summary>
-        /// <param name="f">管理者削除可否 true=管理者削除</param>
-        public void Clear(bool f = false)
-        {
-            if (f == true)
-            {
-                this.ElementDic.Clear();
-            }
-            else
-            {
-                this.ClearWithoutAdmin();
-            }
-            
-
-            //当たり判定関係の削除
-            this.ColMana.ClearCollider();            
-
-            //申請のクリア
-            this.AddReqQue.Clear();
-            this.RemoveReqQue.Clear();
-        }
-
-        /// <summary>
-        /// 全データのクリアリクエスト
-        /// </summary>
-        /// <param name="f">管理者削除可否 true=管理者削除</param>
-        public void ClearRequest(bool f = false)
-        {
-            foreach (var k in this.ElementDic.Keys)
-            {
-                //管理者削除許可でている？
-                if (k < 0 && f == false)
-                {
-                    continue;
-                }
-
-                //対象のオブジェクトをすべて破棄申請する。
-                List<BaseElement> dlist = this.ElementDic[k];
-                dlist.ForEach(rdata =>
-                {
-                    this.RemoveRequest(rdata);
-                });
-            }
-
-        }
-
-
-        /// <summary>
-        /// 処理の実行
-        /// </summary>
-        /// <param name="fparam">フレーム情報</param>
-        public void ProcObject(FrameProcParam fparam)
-        {
-            //追加申請の処理
-            this.AddObject(fparam.FrameTime);
-
-            //各オブジェクトの処理を実行する
-            this.ProcManageObject(fparam);
-
-            //当たり判定処理
-            this.ColMana.ExecuteCollision(fparam);
-
-            //削除申請の処理
-            this.RemoveObject();
-        }
-
-        /// <summary>
-        /// 描画の実行
-        /// </summary>
-        /// <param name="vindex">描画view index</param>
-        public void RenderObject(int vindex)
-        {
-            this.RenderManageObject(vindex);
-        }
-
-
-        /// <summary>
-        /// 管理へ追加
-        /// </summary>
-        /// <param name="ele"></param>
-        public void AddRequest(BaseElement ele)
-        {
-            ReqData data = new ReqData();
-            data.ID = ele.ObjectID;
-            data.Ele = ele;
-
-
-            //初期化関数を呼ぶ
-            data.Ele.Init();
-
-            this.AddReqQue.Enqueue(data);
-        }
-
-
-        /// <summary>
-        /// 管理削除申請
-        /// </summary>
-        /// <param name="ele"></param>
-        public void RemoveRequest(BaseElement ele)
-        {
-            ReqData data = new ReqData();
-            ele.Enabled = false;    //自身の無効化
-            data.ID = ele.ObjectID;
-            data.Ele = ele;            
-
-            this.RemoveReqQue.Enqueue(data);
-        }
-
-
-
-        /// <summary>
-        /// 拡張イベント発行
-        /// </summary>
-        /// <param name="eno">イベント番号</param>
-        /// <param name="oidlist">対象ObjectID nullでAdmin以外のすべて</param>
-        public void ExecuteElementExtraEvent(int eno, List<long> oidlist)
-        {
-            //nullの場合対象すべてをAdd
-            if (oidlist == null)
-            {
-                var nl = from f in this.ElementDic.Keys where f >= 0 select f;
-                oidlist = nl.ToList();
-            }
-            //対象Keyのみ
-            oidlist.ForEach(oid =>
-            {
-                var elist = this.ElementDic[oid];
-                elist.ForEach(ele =>
-                {
-                    //拡張イベントに対応しているものだけを対象とする
-                    IElementExtraEvent iee = ele as IElementExtraEvent;
-                    if (iee == null)
-                    {
-                        return;
-                    }
-                    iee.ExtraElementProc(eno);
-                });
-
-            });
-        }
-
-
-        /// <summary>
-        /// 登録されているElement数を返却する
-        /// </summary>
-        /// <returns></returns>
-        public int CountManagementElement()
-        {
-            int ans = 0;
-
-            var n = from f in this.ElementDic.Values select f.Count;
-            ans = n.ToList().Sum();
-
-            return ans;
-        }
-
     }
 }

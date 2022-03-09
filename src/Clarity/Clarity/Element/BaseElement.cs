@@ -1,9 +1,4 @@
-﻿using Clarity.Shader;
-using Clarity.Texture;
-using Clarity.Vertex;
-using SharpDX;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,550 +6,292 @@ using System.Threading.Tasks;
 
 namespace Clarity.Element
 {
+    /// <summary>
+    /// 根幹親子関係定義
+    /// </summary>
+    internal class ElementSystemLink
+    {
+        /// <summary>
+        /// 自分の処理上の親
+        /// </summary>
+        public BaseElement ParentElement = null;
 
+        /// <summary>
+        /// 自分の処理する子供
+        /// </summary>
+        public LinkedList<BaseElement> ChildList = new LinkedList<BaseElement>();
+
+    }
 
     /// <summary>
-    /// 毎フレーム自動で更新される情報
+    /// 要素イベント
     /// </summary>
-    internal class ElementFrameInfo
-    {   
+    /// <param name="eid">イベントID</param>
+    /// <param name="sender">イベント発生元</param>
+    public delegate void ElementEventDelegate(int eid, BaseElement sender);
 
-        #region 処理関係・・・分かり易くProcを接頭語に
+    /// <summary>
+    /// フレーム情報
+    /// </summary>
+    public class FrameInfo
+    {
         /// <summary>
-        /// 今回の処理順番
+        /// 差分時間(ms)
         /// </summary>
-        public int ProcIndex = 0;
-
-
-        /// <summary>
-        /// 個別実行時間総計・・・個々の物体はこれを使用する
-        /// </summary>
-        public long ElementTime = 0;
-
-        /// <summary>
-        /// 今回の処理実行時間(ms)
-        /// </summary>
-        public long ProcFrameTime = 0;
-        /// <summary>
-        /// 前回の実行時間(ms)
-        /// </summary>
-        public long PrevProcFrameTime = 0;
-
-
+        public long Span { init; get; }
 
         /// <summary>
-        /// 処理レート
+        /// システムでカウントしている絶対時間
         /// </summary>
-        public float ProcBaseRate = 1.0f;
-
-        /// <summary>
-        /// 処理間の経過時間
-        /// </summary>
-        public long FrameSpan = 0;
-        #endregion
-
-
-        #region 描画情報　Renderを接頭語奨励
-        /// <summary>
-        /// ViewIndex
-        /// </summary>
-        public int RenderViewIndex = 0;
-        /// <summary>
-        /// 描画Index
-        /// </summary>
-        public int RenderIndex = 0;
-        #endregion
+        public long FrameTime { init; get; }
     }
 
 
     /// <summary>
-    /// エレメントクラス基底
+    ///基底要素
     /// </summary>
-    public abstract class BaseElement : IClarityElementEvent
+    public abstract class BaseElement
     {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BaseElement(long oid)
+        public BaseElement(long oid = 0)
         {
-            this.ObjectID = oid;
-
+            this.ID = oid;
         }
 
         /// <summary>
-        /// 追加動作Delegate
+        /// ID
         /// </summary>
-        protected delegate void AdditionalProcDelegate();
-
-        /// <summary>
-        /// 追加処理イベント
-        /// </summary>
-        protected event AdditionalProcDelegate AdditionalProc;
-
-        /// <summary>
-        /// コルーチン処理、ある場合のみ、初期化時に作成せよ
-        /// </summary>
-        protected IEnumerator CurrentCoroutine = null;
+        public long ID { internal init; get; }
 
         #region メンバ変数
 
         /// <summary>
-        /// フレーム情報データ(毎フレーム情報が更新される情報たち)
+        /// 自身の有効可否
         /// </summary>
-        internal ElementFrameInfo FrameInfo = new ElementFrameInfo();
-        #region 基本データプロパティ
+        internal bool Enabled = true;
+
         /// <summary>
-        /// 今回の処理順番
+        /// 親子関係
         /// </summary>
-        internal int ProcIndex
+        internal ElementSystemLink SystemLink = new ElementSystemLink();
+
+        /// <summary>
+        /// 処理所作一式
+        /// </summary>
+        internal List<BaseBehavior> ProcBehaviorList = new List<BaseBehavior>(10);
+
+        /// <summary>
+        /// 描画所作
+        /// </summary>
+        protected BaseBehavior RenderBehavior; 
+
+        /// <summary>
+        /// Elementのイベント
+        /// </summary>
+        private event ElementEventDelegate _ElementEvent;
+
+        /// <summary>
+        /// ElementEvent
+        /// </summary>
+        public event ElementEventDelegate ElementEvent
         {
-            get
+            add
             {
-                return this.FrameInfo.ProcIndex;
+                this._ElementEvent += value;
+            }
+            remove
+            {
+                this._ElementEvent -= value;
             }
         }
+
+
+
         /// <summary>
-        /// フレームの基準時間
+        /// 処理番号
         /// </summary>
-        public long ElementTime
-        {
-            get
-            {
-                return this.FrameInfo.ElementTime;
-            }
-        }
-        
+        protected int ProcIndex = 0;
+
         /// <summary>
-        /// 今回と前回の差分時間
+        /// 今回のフレーム情報
         /// </summary>
-        public long FrameSpan
-        {
-            get
-            {
-                return this.FrameInfo.FrameSpan;
-            }
-        }
+        protected FrameInfo FrameInfo = null;
 
         /// <summary>
-        /// 描画index
-        /// </summary>
-        internal int RenderIndex
-        {
-            get
-            {
-                return this.FrameInfo.RenderIndex;
-            }
-        }
-        #endregion
-
-
-        /// <summary>
-        /// これの識別番号
-        /// </summary>
-        public long ObjectID;
-
-        /// <summary>
-        /// 有効可否
-        /// </summary>
-        public bool Enabled { get; internal set; } = true;
-
-        /// <summary>
-        /// これの作成時間
-        /// </summary>        
-        internal long CreateTime { get; set; }
-
-
-        /// <summary>
-        /// 速度 これが可変対応として拡縮され、transetに加算されます。1秒値の移動量を定義します。
-        /// </summary>
-        public SpeedSet FrameSpeed = new SpeedSet(0.0f);
-        /// <summary>
-        /// 位置、回転、拡縮
+        /// 処理情報
         /// </summary>
         public TransposeSet TransSet = new TransposeSet();
+        #endregion
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
         /// <summary>
-        /// 描画情報・・・これの直接アクセスは良くない。必要に応じてアクセサを定義せよ
+        /// 処理所作の追加
         /// </summary>
-        internal RendererSet RenderSet = new RendererSet();
-                
-        #region RendererSetアクセサ
-        /// <summary>
-        /// 頂点ID
-        /// </summary>
-        public int VertexID
+        /// <param name="bh">追加所作</param>
+        public void AddProcBehavior(BaseBehavior bh)
         {
-            get
-            {
-                return this.RenderSet.VertexID;
-            }
-            set
-            {
-                this.RenderSet.VertexID = value;
-            }
+            this.ProcBehaviorList.Add(bh);            
+            
         }
+
         /// <summary>
-        /// テクスチャコード
+        /// 所作の削除
         /// </summary>
-        public int TextureID
+        /// <param name="bh">削除所作</param>
+        public void RemoveProcBehavior(BaseBehavior bh)
         {
-            get
-            {
-                return this.RenderSet.TextureID;
-            }
-            set
-            {
-                this.RenderSet.TextureID = value;
-            }
+            this.ProcBehaviorList.Remove(bh);
         }
+
         /// <summary>
-        /// シェーダーコード
+        /// 所作の削除
         /// </summary>
-        public int ShaderID
+        /// <param name="oid">削除対象ID</param>
+        public void RemoveProcBehavior(long oid)
         {
-            get
-            {
-                return this.RenderSet.ShaderID;
-            }
-            set
-            {
-                this.RenderSet.ShaderID = value;
-            }
+            this.ProcBehaviorList.RemoveAll((x) => x.ID == oid);
         }
         
         /// <summary>
-        /// 色の設定
+        /// 所作の全削除
         /// </summary>
-        public SharpDX.Vector4 Color
+        internal void ClearProcBehavior()
         {
-            get
-            {
-                return this.RenderSet.Color;
-            }
-            set
-            {
-                this.RenderSet.Color = value;
-            }
+            this.ProcBehaviorList.Clear();
         }
-        /// <summary>
-        /// 透明色の設定
-        /// </summary>
-        public float ColorAlpha
-        {
-            get
-            {
-                return this.RenderSet.Color.W;
-            }
-            set
-            {
-                this.RenderSet.Color.W = value;
-            }
-        }
-
-        /// <summary>
-        /// TextureOffset < 1.0
-        /// </summary>
-        public Vector2 TextureOffset
-        {
-            get
-            {
-                return this.RenderSet.TextureOffset;
-            }
-            set
-            {
-                this.RenderSet.TextureOffset = value;
-            }
-        }
-
-        /// <summary>
-        /// TextureIDの設定
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <param name="texid"></param>
-        public void SetTextureID(int slot, int texid)
-        {
-            this.RenderSet.SetTextureId(slot, texid);
-        }
-
-        /// <summary>
-        /// TextureID値の取得
-        /// </summary>
-        /// <param name="slot"></param>
-        /// <returns></returns>
-        public int GetTextureID(int slot)
-        {
-            return this.RenderSet.TextureIdList[slot];
-        }
-        #endregion
-
-
-        /// <summary>
-        /// これの親
-        /// </summary>
-        public BaseElement ParentObj = null;
-
-        /// <summary>
-        /// 自身の配下のobject ここに登録したものは通常の描画からは外れ、このobject内で描画が行われる。AddElementはしてはいけない。
-        /// また処理は親objectの実行後行われる。
-        /// </summary>
-        private List<BaseElement> DominateList = new List<BaseElement>();
-
-        /// <summary>
-        /// イベント送付対象
-        /// </summary>
-        private List<IClarityElementEvent> EventSenderList = new List<IClarityElementEvent>();
-
-        #endregion
-
-        protected abstract void InitElement();
-        protected abstract void ProcElement();
-        protected abstract void RenderElement();
-
-        
-
-        /// <summary>
-        /// 初期化関数
-        /// </summary>
-        internal void Init()
-        {
-            this.ShaderID = ClarityDataIndex.Shader_Default;            
-            this.InitElement();
-        }
-
-        /// <summary>
-        /// Speedのフレームレート処理
-        /// </summary>
-        /// <param name="src"></param>
-        /// <returns></returns>
-        private SpeedSet ApplayFrameRate(SpeedSet src)
-        {
-            SpeedSet ans = new SpeedSet();
-            ans.Pos3D = this.ApplayFrameRate(src.Pos3D);
-            ans.Rot = this.ApplayFrameRate(src.Rot);
-            ans.Scale3D = this.ApplayFrameRate(src.Scale3D);
-            ans.ScaleRate = this.ApplayFrameRate(src.ScaleRate);
-            ans.Color = this.ApplayFrameRate(src.Color);
-
-            return ans;
-        }
-
-        /// <summary>
-        /// 処理関数
-        /// </summary>        
-        /// <param name="fparam">フレーム処理パラメータ</param>
-        internal void Proc(FrameProcParam fparam)
-        {
-            #region フレーム情報更新処理
-            if (fparam != null)
-            {
-                //フレーム基準情報の初期化
-                this.FrameInfo.ProcIndex = fparam.ProcIndex;
-
-                //処理total時間に加算
-                this.FrameInfo.ElementTime += fparam.Span;
-                
-                //計算済みフレームレート情報の保存
-                this.FrameInfo.FrameSpan = fparam.Span;                
-                this.FrameInfo.ProcBaseRate = fparam.FrameBaseRate;
-
-                //一応設定するがこれは使用するべきではないためほぼ意味なし
-                this.FrameInfo.ProcFrameTime = fparam.FrameTime;
-                this.FrameInfo.PrevProcFrameTime = fparam.PrevFrameTime;
-            }
-            #endregion
-            
-            //今回の処理フレーム初期化
-            this.FrameSpeed = new SpeedSet();
-
-
-            //通常処理
-            this.ProcElement();
-            //コルーチン処理
-            var coret = this.CurrentCoroutine?.MoveNext();
-            if (coret != true)
-            {
-                this.CurrentCoroutine = null;
-            }
-            
-            //追加処理の実行
-            this.AdditionalProc?.Invoke();
-
-
-            //フレームレートを考慮した値へ変換
-            SpeedSet frate = this.ApplayFrameRate(this.FrameSpeed);
-
-            this.TransSet.Pos3D += frate.Pos3D;
-            this.TransSet.Rot += frate.Rot;
-            this.TransSet.Scale3D += frate.Scale3D;
-            this.TransSet.ScaleRate += frate.ScaleRate;
-            this.Color += frate.Color;
-
-            //配下の処理
-            this.DominateList?.ForEach(x =>
-            {
-                x.Proc(fparam);
-            });
-        }
-
-        #region フレームレート処理
-        /// <summary>
-        /// フレームレートを勘定した値にする。float
-        /// </summary>
-        /// <param name="v"></param>
-        /// <returns></returns>
-        protected float ApplayFrameRate(float v)
-        {
-            float ans = v * this.FrameInfo.ProcBaseRate;
-            return ans;
-        }
-
-
-        /// <summary>
-        /// フレームレートを勘定した値にする vector4
-        /// </summary>
-        /// <param name="v"></param>
-        /// <returns></returns>
-        protected Vector4 ApplayFrameRate(Vector4 v)
-        {
-            Vector4 ans = v * this.FrameInfo.ProcBaseRate;
-            return ans;
-        }
-        /// <summary>
-        /// フレームレートを勘定した値にする Vector3
-        /// </summary>
-        /// <param name="v"></param>
-        /// <returns></returns>
-        protected Vector3 ApplayFrameRate(Vector3 v)
-        {
-            Vector3 ans = v * this.FrameInfo.ProcBaseRate;
-            return ans;
-        }
-        /// <summary>
-        /// フレームレートを勘定した値にする Vector2
-        /// </summary>
-        /// <param name="v"></param>
-        /// <returns></returns>
-        protected Vector2 ApplayFrameRate(Vector2 v)
-        {
-            Vector2 ans = v * this.FrameInfo.ProcBaseRate;
-            return ans;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 描画
-        /// </summary>
-        /// <param name="rparam">フレーム描画パラメータ</param>
-        internal virtual void Render(FrameRenderParam rparam)
-        {
-            //フレーム描画情報の更新
-            this.FrameInfo.RenderViewIndex = rparam.ViewIndex;
-            this.FrameInfo.RenderIndex = rparam.RenderIndex;            
-
-            
-            
-            this.RenderElement();
-
-            //配下の処理
-            this.DominateList?.ForEach(x =>
-            {
-                x.Render(rparam);
-            });
-
-        }
-
-        /// <summary>
-        /// オブジェクトが破棄
-        /// </summary>
-        internal virtual void Remove()
-        {
-            //削除イベント送付
-            this.SendEvent(ClarityElementEventID.Remove);
-        }
-
-
 
         /// <summary>
         /// イベントの送付
         /// </summary>
         /// <param name="eid">送付イベントID</param>
-        public void SendEvent(int eid)
+        protected void SendElementEvent(int eid)
         {
-            //自分には必ず送付
-            this.EventCallback(eid, this);
+            this._ElementEvent.Invoke(eid, this);
+        }
+                
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        protected virtual void InitElement()
+        {
+        }
 
-            this.EventSenderList.ForEach(x =>
+        /// <summary>
+        /// 前処理
+        /// </summary>
+        protected virtual void ProcBefore()
+        {
+        }
+
+        /// <summary>
+        /// 後処理
+        /// </summary>
+        protected virtual void ProcAfter()
+        {
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        internal void Init()
+        {
+            this.Enabled = true;
+            this.InitElement();
+        }
+
+        /// <summary>
+        /// 処理
+        /// </summary>
+        /// <param name="pid">処理Index</param>
+        /// <param name="finfo">処理フレーム情報</param>
+        internal void Proc(int pid, FrameInfo finfo)
+        {
+            if (this.Enabled == false)
             {
-                x.EventCallback(eid, this);
-            });
-        }
+                return;
+            }
 
-        /// <summary>
-        /// イベント送付対象のクリア
-        /// </summary>
-        public void ClearEventSenderList()
-        {
-            this.EventSenderList.Clear();
-        }
+            //フレーム情報の保存
+            this.ProcIndex = pid;
+            this.FrameInfo = finfo;
 
+            //前処理
+            this.ProcBefore();
 
-        /// <summary>
-        /// イベント送付対象への追加
-        /// </summary>
-        /// <param name="iee"></param>
-        public void AddEventSenderList(IClarityElementEvent iee)
-        {
-            this.EventSenderList.Add(iee);
-        }
+            //所作の実行
+            this.ExecuteProcBehavior();
 
+            //後処理
+            this.ProcAfter();
 
-        /// <summary>
-        /// 自身の配下リストへAdd
-        /// </summary>
-        /// <param name="de"></param>
-        protected void AddDominateList(BaseElement de)
-        {
-            de.Init();
-            this.DominateList.Add(de);
-        }
-        /// <summary>
-        /// 配下リストの削除
-        /// </summary>
-        /// <param name="de"></param>
-        protected void RemoveDominateList(BaseElement de)
-        {
-            de.Enabled = false;
-            this.DominateList.Remove(de);
-        }
-        /// <summary>
-        /// 配下登録のクリア
-        /// </summary>
-        protected void ClearDominateList()
-        {
-            this.DominateList.Clear();
-        }
-        /// <summary>
-        /// 配下リスト処理
-        /// </summary>
-        /// <param name="ac">index、対象</param>
-        protected void ProcDominateList(Action<int, BaseElement> ac)
-        {
-            int i = 0;
-            this.DominateList.ForEach((x)=>
+            //子供の処理実行
+            foreach (var c in this.SystemLink.ChildList)
             {
-                ac.Invoke(i, x);
-                i++;
-            });
+                int cp = ElementManager.GetProcIndex();
+                c.Proc(cp, finfo);
+            }
         }
 
+
+
         /// <summary>
-        /// イベント処理
+        /// 描画
         /// </summary>
-        /// <param name="eid"></param>
-        /// <param name="data"></param>
-        public virtual void EventCallback(int eid, BaseElement data)
+        /// <param name="rid">描画Index</param>
+        internal void Render(int rid)
         {
-            
+            if (this.Enabled == false)
+            {
+                return;
+            }
+
+            this.ProcIndex = rid;
+
+            //描画所作の実行            
+            this.RenderBehavior?.Execute(this);
+
+            //子供の描画実行
+            foreach (var c in this.SystemLink.ChildList)
+            {
+                int cp = ElementManager.GetProcIndex();
+                c.Render(cp);
+            }
+
+        }
+
+
+        /// <summary>
+        /// 処理Element数を数える
+        /// </summary>
+        /// <returns></returns>
+        internal int CountElement()
+        {
+            int count = this.SystemLink.ChildList.Count;
+            foreach (var c in this.SystemLink.ChildList)
+            {
+                count += c.CountElement();
+            }
+            return count;
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+        /// <summary>
+        /// 処理所作の実行
+        /// </summary>
+        private void ExecuteProcBehavior()
+        {
+            //処理中の追加削除を許容するため、コピーして実行する
+            //速度出ない場合はrequestを実装せよ
+            List<BaseBehavior> templist = new List<BaseBehavior>(this.ProcBehaviorList);
+            templist.ForEach(x =>
+            {
+                x.Execute(this);
+            });
+
         }
     }
 }

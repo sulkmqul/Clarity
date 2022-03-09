@@ -83,9 +83,8 @@ namespace Clarity.Element.Collider
 
         /// <summary>
         /// 当たり判定の更新 TempInfoの情報を初期化し書き換える。
-        /// </summary>        
-        /// <param name="frametime">今回のフレーム処理時間</param>
-        internal void UpdateTempInfo(long frametime)
+        /// </summary>                
+        internal void UpdateTempInfo()
         {
             //フラグの初期化
             this.TempInfo.TargetColType = this.TargetColType;
@@ -98,7 +97,7 @@ namespace Clarity.Element.Collider
             {
                 BaseCollider c = (BaseCollider)x.Clone();
                 c.TransformCollider(this.Parent.TransSet);
-                c.Proc(null);
+                c.Proc(0, null);
                 this.TempInfo.TempColliderList.Add(c);
 
             });

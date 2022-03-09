@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
+using System.Numerics;
 
 namespace Clarity.Util
 {
+    /// <summary>
+    /// ランダム生成の初期化
+    /// </summary>
     public class RandomMaker
     {
         /// <summary>
@@ -18,7 +21,7 @@ namespace Clarity.Util
         /// <summary>
         /// ランダムの初期化 今回の初期化値
         /// </summary>
-        internal static int Init()
+        public static int Init()
         {
             int val = (int)(DateTime.Now.Ticks);
             RandomMaker.Rand = new Random(val);
@@ -28,13 +31,13 @@ namespace Clarity.Util
         /// <summary>
         /// Float値の返却
         /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
+        /// <param name="min">最小値</param>
+        /// <param name="max">最大値</param>
         /// <returns></returns>
         public static float GetSingle(float min = 0.0f, float max = 1.0f)
         {
-
-            float ans = RandomUtil.NextFloat(RandomMaker.Rand, min, max);
+            float f = (float)Rand.NextDouble();
+            float ans = (max - min) * f;
             return ans;
         }
 
@@ -49,7 +52,8 @@ namespace Clarity.Util
             int ans = min;
             try
             {
-                ans = Convert.ToInt32(RandomUtil.NextLong(RandomMaker.Rand, min, max));
+                
+                ans = Rand.Next(min, max);
             }
             catch
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
+using System.Numerics;
 
 namespace Clarity.Element.Collider
 {
@@ -264,9 +264,10 @@ namespace Clarity.Element.Collider
             //終了点から円へのベクトル
             Vector3 edcen = cir.Center - line.EndPos;
 
-            lvec.Normalize();
-            stcen.Normalize();
-            edcen.Normalize();
+
+            lvec = Vector3.Normalize(lvec);
+            stcen = Vector3.Normalize(lvec);
+            edcen = Vector3.Normalize(edcen);
 
             float stdot = this.Vec2Dot(stcen, lvec);
             float eddot = this.Vec2Dot(edcen, lvec);

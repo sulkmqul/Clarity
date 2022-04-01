@@ -123,7 +123,7 @@ namespace ClarityEmotion.EditView
             List<AnimeElement> anslist = new List<AnimeElement>();
 
             //選択を最優先
-            AnimeElement sel = this.CurrentList.Where(x => x.LayerNo == EmotionProject.Mana.SelectLayerData.LayerNo).FirstOrDefault();
+            AnimeElement sel = this.CurrentList.Where(x => x.LayerNo == EmotionProject.Mana.SelectLayerData?.LayerNo).FirstOrDefault();
             if (sel != null)
             {
                 anslist.Add(sel);

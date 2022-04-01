@@ -62,7 +62,7 @@ namespace ClarityEmotion.LayerControl
         /// <summary>
         /// 初期化
         /// </summary>
-        /// <param name="pane"></param>
+        /// <param name="pane">コントロール作成パネル</param>
         public void Init(Panel pane)
         {
             this.CreateScaleTable();
@@ -137,7 +137,7 @@ namespace ClarityEmotion.LayerControl
         /// レイヤーパネルの初期化、プロジェクトに従ってコントロールを作成する
         /// </summary>
         /// <param name="pane">格納パネル</param>        
-        private void CreateLayerControl(Panel pane)
+        private void CreateLayerControl(Panel cpane)
         {
 
             try
@@ -145,14 +145,34 @@ namespace ClarityEmotion.LayerControl
                 this.Con.SuspendLayout();
 
                 //既存のコントロールをクリア
-                pane.Controls.Clear();
+                cpane.Controls.Clear();
                 this.FData.ControlList = new List<LayerControlSet>();
 
                 EmotionProjectDataAnime adata = EmotionProject.Mana.Anime;
                 var pinfo = EmotionProject.Mana.Info;
 
-                int margin = 5;
+                int margin = 0;
                 int toppos = margin;
+
+                int layconleft = 90;
+
+                //メジャー
+                {
+                    LayerControl con = new LayerControl();
+                    {
+                        con.Top = toppos;
+                        con.BorderStyle = BorderStyle.FixedSingle;
+                        con.Left = layconleft;
+                        con.Init(-1, this.FData.FramePixelRate, EmotionProject.Mana.BasicInfo.MaxFrame);
+
+                    }
+                    cpane.Controls.Add(con);
+                    toppos += con.Height + margin;
+
+                    //管理へ
+                    this.FData.ControlList.Add(new LayerControlSet() { LabelLayer = null, Layer = con });
+                }
+
 
                 //アニメコントロールをADD
                 adata.LayerList.ForEach(ae =>
@@ -167,7 +187,7 @@ namespace ClarityEmotion.LayerControl
                         la.BorderStyle = BorderStyle.FixedSingle;
                         la.Left = margin;
                         la.Top = toppos;
-                        la.Width = 100;
+                        la.Width = 80;
                         la.Height = 30;
                     }
 
@@ -175,13 +195,13 @@ namespace ClarityEmotion.LayerControl
                     {
                         con.Top = toppos;
                         con.BorderStyle = BorderStyle.FixedSingle;
-                        con.Left = la.Right + margin;
+                        con.Left = layconleft;
                         con.Init(ae.EaData.LayerNo, this.FData.FramePixelRate, EmotionProject.Mana.BasicInfo.MaxFrame);
 
                     }
 
-                    pane.Controls.Add(la);
-                    pane.Controls.Add(con);
+                    cpane.Controls.Add(la);
+                    cpane.Controls.Add(con);
 
                     toppos += la.Height + margin;
 

@@ -188,7 +188,7 @@ namespace Clarity.Element.Collider
                 {
                     co.ColInfo.TempInfo.TempColliderList.ForEach(ele =>
                     {                        
-                        ele.Render(0);
+                        ele.Render(0, 0);
                     });
                 });
             }

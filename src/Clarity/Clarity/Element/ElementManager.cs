@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clarity.Element.Collider;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,6 +52,11 @@ namespace Clarity.Element
         /// 削除申請一式
         /// </summary>
         private Queue<ReqData> RemoveReqQue = new Queue<ReqData>();
+
+        /// <summary>
+        /// 衝突判定管理者
+        /// </summary>
+        private ColliderManager ColMana = new ColliderManager();
         #endregion
 
 
@@ -138,12 +144,12 @@ namespace Clarity.Element
         /// <summary>
         /// 描画処理
         /// </summary>
-        public void Render()
+        public void Render(int id = 0)
         {
             this.ProcIndex = 0;
 
             //描画処理の実行
-            this.RootElement.Render(this.ProcIndex);
+            this.RootElement.Render(id, this.ProcIndex);
         }
 
         /// <summary>
@@ -175,7 +181,8 @@ namespace Clarity.Element
                 req.Item.SystemLink.ParentElement = req.Parent;
                 req.Parent.SystemLink.ChildList.AddLast(req.Item);
 
-                //当たり判定へ登録・・・ここは再帰的に登録する必要はない
+                //衝突判定処理者への登録
+                this.AddColliderManager(req.Item);
 
 
             }
@@ -196,14 +203,55 @@ namespace Clarity.Element
 
                 ReqData req = this.RemoveReqQue.Dequeue();
 
+
+                //当たり判定の削除
+                this.RemoveColliderManager(req.Item);
+
+
                 //削除処理
                 BaseElement par = req.Item.SystemLink.ParentElement;
                 par.SystemLink.ChildList.Remove(req.Item);
                 req.Item.SystemLink.ParentElement = null;
-
-                //当たり判定の削除・・・自身の子供を再帰的に全て削除する必要がある
+                                
 
             }
+        }
+
+
+        /// <summary>
+        /// 当たり判定への追加
+        /// </summary>
+        /// <param name="ele"></param>
+        private void AddColliderManager(BaseElement ele)
+        {
+            ICollider ic = ele as ICollider;
+            if (ic == null)
+            {
+                return;
+            }
+            this.ColMana.AddCollider(ic);
+        }
+        /// <summary>
+        /// 当たり判定から削除
+        /// </summary>
+        /// <param name="ele"></param>
+        /// <remarks>再帰的に自分の子供もすべて削除する</remarks>
+        private void RemoveColliderManager(BaseElement ele)
+        {   
+            //まず子供を削除する
+            foreach (BaseElement child in ele.SystemLink.ChildList)
+            {
+                this.RemoveColliderManager(child);
+            }
+
+            //自分も削除
+            ICollider ic = ele as ICollider;
+            if (ic == null)
+            {
+                return;
+            }
+            this.ColMana.RemoveCollider(ic);
+
         }
     }
 }

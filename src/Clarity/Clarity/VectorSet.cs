@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Drawing;
+using Vortice.Mathematics;
 
 namespace Clarity
 {
@@ -296,6 +297,38 @@ namespace Clarity
 
             return ans;
         }
+
+
+    }
+
+
+
+    /// <summary>
+    /// 速度情報データ
+    /// </summary>
+    public class SpeedSet : VectorSet
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="f"></param>
+        public SpeedSet(float f = 0.0f) : base(f)
+        {
+        }
+        /// <summary>
+        /// 速度倍率情報
+        /// </summary>
+        public float Rate = 1.0f;
+
+        /// <summary>
+        /// 拡縮変更速度
+        /// </summary>
+        public float ScaleRate = 0.0f;
+
+        /// <summary>
+        /// 色変更速度
+        /// </summary>
+        public Vector4 Color = new Vector4();
 
 
     }

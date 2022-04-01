@@ -28,6 +28,11 @@ namespace ClarityEmotion.LayerControl
     class LayerControlDisplayData
     {
         /// <summary>
+        /// 親コントロール
+        /// </summary>
+        public Control Con = null;
+
+        /// <summary>
         /// 親情報
         /// </summary>
         public AnimeElement LayerData;
@@ -155,25 +160,37 @@ namespace ClarityEmotion.LayerControl
         /// </summary>
         private void RenderScale(Graphics gra, Control con, LayerControlDisplayData data)
         {
-            using (Pen pe = new Pen(Color.DarkGray))
+            using (SolidBrush bru = new SolidBrush(Color.Black))
             {
-
-                //罫線の描画
-                int prevpos = 0;
-                for (int i = 0; i < data.MaxFrame; i += 5)
+                using (Pen pe = new Pen(Color.DarkGray))
                 {
-                    //今回の位置を計算
-                    int pix = data.FrameToPixelX(i);
-                    int sa = pix - prevpos;
-                    if (sa < 50)
+
+                    //罫線の描画
+                    int prevpos = 0;
+                    for (int i = 0; i < data.MaxFrame; i += 5)
                     {
-                        //あまり詰まるなら描画しない
-                        continue;
+                        //今回の位置を計算
+                        int pix = data.FrameToPixelX(i);
+                        int sa = pix - prevpos;
+                        if (sa < 50)
+                        {
+                            //あまり詰まるなら描画しない
+                            continue;
+                        }
+                        prevpos = pix;
+
+                        gra.DrawLine(pe, new Point(pix, 0), new Point(pix, con.Height));
+
+
+                        //文字の表示
+                        if (data.LayerData == null)
+                        {
+                            SizeF fsize = gra.MeasureString(i.ToString(), data.Con.Font);
+                            float fpos = pix - (fsize.Width * 0.5f);
+                            gra.DrawString(i.ToString(), data.Con.Font, bru, new PointF(fpos, 0));
+                        }
+
                     }
-                    prevpos = pix;
-
-                    gra.DrawLine(pe, new Point(pix, 0), new Point(pix, con.Height));
-
                 }
             }
         }
@@ -187,6 +204,11 @@ namespace ClarityEmotion.LayerControl
         /// <param name="data"></param>
         private void RenderAnime(Graphics gra, Control con, LayerControlDisplayData data)
         {
+            if (data.LayerData == null)
+            {
+                return;
+            }
+
             int height = con.Height;
 
             Rectangle anime_rect = new Rectangle(data.AnimeStartPos, 0, data.AnimePixelWidth, height);

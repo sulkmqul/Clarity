@@ -21,8 +21,8 @@ namespace ClarityEmotion
         //最大編集フレーム
         public int MaxFrame = 600;
 
-        public int ImageWidth = 0;
-        public int ImageHeight = 0;
+        public int ImageWidth = 1;
+        public int ImageHeight = 1;
     }
 
     /// <summary>
@@ -54,6 +54,23 @@ namespace ClarityEmotion
                 x.Id = id;                
                 this.AnimeDefinitionDic.Add(id, x);
                 id++;
+            });
+
+        }
+
+
+        /// <summary>
+        /// Layerの更新
+        /// </summary>
+        /// <param name="ealist"></param>
+        public void CreateLayerWithSrc(List<EmotionAnimeData> ealist)
+        {
+            this.LayerList = new List<AnimeElement>();
+            ealist.ForEach(x =>
+            {
+                AnimeElement a = new AnimeElement(x.LayerNo);
+                a.EaData = x;
+                this.LayerList.Add(a);
             });
 
         }
@@ -323,11 +340,30 @@ namespace ClarityEmotion
             //必要な場所を取得
             this.PData.BasicInfo = rdata.BasicInfo;
             this.PData.Anime.AnimeDefinitionDic = rdata.Anime.AnimeDefinitionDic;
+            this.PData.Anime.LayerList = rdata.Anime.LayerList;
 
             //画像再読み込み
             foreach (var a in this.PData.Anime.AnimeDefinitionDic.Values)
             {
                 a.ImageDataList.ForEach(x => x.ReloadImage());
+            }
+        }
+
+        /// <summary>
+        /// デフォルトレイヤーの作成
+        /// </summary>
+        public void CreateDefaultLayer()
+        {
+            //レイヤー情報の初期化
+            this.Anime.LayerList = new List<AnimeElement>();
+            for (int i = 0; i < 50; i++)
+            {
+                AnimeElement data = new AnimeElement(i);
+                data.EaData.Enabled = true;
+                data.StartFrame = 10;
+                data.EndFrame = 100;
+
+                this.Anime.LayerList.Add(data);
             }
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -336,16 +372,8 @@ namespace ClarityEmotion
         /// </summary>
         private void CreteDefault()
         {
-            //レイヤー情報の初期化
-            this.Anime.LayerList = new List<AnimeElement>();
-            for (int i = 0; i < 50; i++)
-            {
-                AnimeElement data = new AnimeElement(i);
-                data.StartFrame = 10;
-                data.EndFrame = 100;
-
-                this.Anime.LayerList.Add(data);
-            }
+            //レイヤー作成
+            this.CreateDefaultLayer();
         }
 
 

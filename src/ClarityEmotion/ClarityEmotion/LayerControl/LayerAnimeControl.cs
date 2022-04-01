@@ -45,6 +45,16 @@ namespace ClarityEmotion.LayerControl
         }
 
         /// <summary>
+        /// コントロールの再初期化
+        /// </summary>
+        public void ReInitControl()
+        {
+            this.FData.ControlList.ForEach(x => x.Layer.SetScale(this.FData.FramePixelRate, EmotionProject.Mana.BasicInfo.MaxFrame));
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
         /// 拡大ボタンが押された時
         /// </summary>
         /// <param name="sender"></param>

@@ -49,6 +49,9 @@ namespace ClarityEmotion
             //初期データの設定
             EmotionProject.Mana.InitNewProject(np);
 
+            //設定
+            this.Form.animeEditViewControl1.ResetView();
+
         }
 
         /// <summary>
@@ -94,6 +97,24 @@ namespace ClarityEmotion
 
         }
 
+        /// <summary>
+        /// 設定変更時の初期化更新
+        /// </summary>
+        public void ChangeAnimeSetting()
+        {
+            this.Form.animeEditViewControl1.ResetView();
+            this.Form.layerAnimeControl1.ReInitControl();
+        }
+
+
+        /// <summary>
+        /// レイヤー情報を初期化する
+        /// </summary>
+        public void InitLayer()
+        {
+            EmotionProject.Mana.CreateDefaultLayer();
+
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
     }

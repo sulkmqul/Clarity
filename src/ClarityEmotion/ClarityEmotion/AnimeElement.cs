@@ -12,6 +12,7 @@ namespace ClarityEmotion
     /// <summary>
     /// 情報まとめ
     /// </summary>
+    [Serializable]
     public class EmotionAnimeData
     {
         /// <summary>
@@ -55,6 +56,11 @@ namespace ClarityEmotion
         public double SpeedRate = 1.0;
 
         /// <summary>
+        /// フレーム開始オフセット
+        /// </summary>
+        public int FrameOffset = 0;
+
+        /// <summary>
         /// 位置情報
         /// </summary>
         public Point Pos2D = new Point(0, 0);
@@ -83,6 +89,22 @@ namespace ClarityEmotion
     }
 
     /// <summary>
+    /// 描画用データ一式
+    /// </summary>
+    public class AnimeFrameRenderData
+    {
+        /// <summary>
+        /// 描画画像
+        /// </summary>
+        public Bitmap Image = null;
+
+        /// <summary>
+        /// 描画情報情報
+        /// </summary>
+        public EmotionAnimeData EaData = null;
+    }
+
+    /// <summary>
     /// レイヤーアニメ管理データ
     /// </summary>
     public class AnimeElement
@@ -102,6 +124,11 @@ namespace ClarityEmotion
         /// 編集表示用一時データ
         /// </summary>
         public EditTemplateData TempData = new EditTemplateData();
+
+        /// <summary>
+        /// 処理
+        /// </summary>
+        public BaseAnimeElementBehavior Behavior = new AnimeElementBehavior();
 
         /// <summary>
         /// 開始フレーム
@@ -191,17 +218,23 @@ namespace ClarityEmotion
         /// </summary>
         /// <param name="frame">対象フレーム(絶対時間)</param>
         /// <returns></returns>
-        public Bitmap GetFrameImage(int frame)
+        public AnimeFrameRenderData GetFrameImage(int frame)
         {
-            int sf = frame - this.StartFrame;
+            AnimeFrameRenderData ans = new AnimeFrameRenderData();            
+            EmotionAnimeData eadata = this.Behavior.ProcBehavior(this, this.EaData);
 
+            ans.EaData = eadata;
+
+            frame += eadata.FrameOffset;
+            int sf = frame - eadata.StartFrame;
+            
 
             //フレーム範囲外
             if (sf < 0)
             {
                 return null;
             }
-            if (this.EndFrame <= frame)
+            if (eadata.EndFrame <= frame)
             {
                 return null;
             }
@@ -215,12 +248,13 @@ namespace ClarityEmotion
             double framecount = this.SelectAnime.ImageDataList.Count();
 
             //一回のアニメの速度
-            double playframe = this.EaData.SpeedRate * framecount;
+            double playframe = eadata.SpeedRate * framecount;
             
             //ループせずにアニメカウント以上なら最終アニメを返却で確定
-            if (sf >= playframe && this.EaData.LoopFlag == false)
+            if (sf >= playframe && eadata.LoopFlag == false)
             {
-                return this.SelectAnime.ImageDataList.Last().BitImage;
+                ans.Image = this.SelectAnime.ImageDataList.Last().BitImage;
+                return ans;
             }
 
 
@@ -233,7 +267,7 @@ namespace ClarityEmotion
 
             int frameindex = (int)Math.Floor(ff);
 
-            Bitmap ans =  this.SelectAnime.ImageDataList.ElementAt(frameindex).BitImage;
+            ans.Image = this.SelectAnime.ImageDataList.ElementAt(frameindex).BitImage;            
             return ans;
         }
 

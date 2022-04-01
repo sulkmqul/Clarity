@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+      <TargetFramework>net5.0-windows</TargetFramework>
+      <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Clarity\Clarity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SharpGen.Runtime">
+      <HintPath>..\DLL\sharpgen\net5.0\SharpGen.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.D3DCompiler">
+      <HintPath>..\DLL\vortice\net5.0\Vortice.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.Direct2D1">
+      <HintPath>..\DLL\vortice\net5.0\Vortice.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.Direct3D11">
+      <HintPath>..\DLL\vortice\net5.0\Vortice.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.DirectX">
+      <HintPath>..\DLL\vortice\Vortice.DirectX.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.DXGI">
+      <HintPath>..\DLL\vortice\Vortice.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.Mathematics">
+      <HintPath>..\DLL\vortice\net5.0\Vortice.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.XAudio2">
+      <HintPath>..\DLL\vortice\net5.0\Vortice.XAudio2.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.XInput">
+      <HintPath>..\DLL\vortice\net5.0\Vortice.XInput.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

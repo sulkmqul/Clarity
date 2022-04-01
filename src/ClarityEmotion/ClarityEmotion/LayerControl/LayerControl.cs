@@ -58,6 +58,11 @@ namespace ClarityEmotion.LayerControl
         {
             get
             {
+                if (this.LayerNo < 0)
+                {
+                    return null;
+                }
+
                 return EmotionProject.Mana.Anime.LayerList[this.LayerNo];
             }
         }
@@ -88,7 +93,9 @@ namespace ClarityEmotion.LayerControl
         public void Init(int layerno, double pixel_rate, int max_frame)
         {
             this.LayerNo = layerno;
-            this.SetScale(pixel_rate, max_frame);            
+            this.SetScale(pixel_rate, max_frame);
+
+            this.DispData.Con = this;
         }
 
         /// <summary>
@@ -96,10 +103,14 @@ namespace ClarityEmotion.LayerControl
         /// </summary>
         public void CylcleUpdate()
         {
-            //アニメ位置再計算
-            this.DispData.LayerData = this.AData;
             this.Width = this.DispData.DisplayPixelRange;
-            this.DispData.CalcuAnimeDisplayPos(this.AData.StartFrame, this.AData.EndFrame);
+
+            //アニメ位置再計算
+            if (this.AData != null)
+            {
+                this.DispData.LayerData = this.AData;                
+                this.DispData.CalcuAnimeDisplayPos(this.AData.StartFrame, this.AData.EndFrame);
+            }
 
             //再描画
             this.Refresh();
@@ -136,6 +147,11 @@ namespace ClarityEmotion.LayerControl
         /// <returns></returns>
         private EMouseMoveType CalcuMoveType(Point pos)
         {
+            if (this.DispData.LayerData == null)
+            {
+                return EMouseMoveType.None;
+            }
+
             int clickrange = LayerControl.MouseMoveDetectWidth;
 
             int px = pos.X;
@@ -274,6 +290,11 @@ namespace ClarityEmotion.LayerControl
         /// </summary>
         private void SelectedLayer()
         {
+            if (this.LayerNo < 0)
+            {
+                return;
+            }
+
             EmotionProject.Mana.Info.SelectLayerNo = this.LayerNo;
             this.Focus();
         }
@@ -334,8 +355,11 @@ namespace ClarityEmotion.LayerControl
         {
             this.Minfo.UpMouse(e);
 
+            //位置を判定
+            this.DispData.MouseType = this.CalcuMoveType(e.Location);
+
             int m = this.Minfo.DownLength.X + this.Minfo.DownLength.Y;
-            if (m <= 0)
+            if (m <= 0 && this.DispData.MouseType == EMouseMoveType.None)
             {
                 int fpos = this.DispData.PixelXToFrame(this.Minfo.NowPos.X);
                 EmotionProject.Mana.FramePosition = fpos;
@@ -352,6 +376,7 @@ namespace ClarityEmotion.LayerControl
             Graphics gra = e.Graphics;
 
             this.Renderer.ClearColor = (EmotionProject.Mana.Info.SelectLayerNo == this.LayerNo) ? Color.White : Color.LightGray;
+            this.Renderer.ClearColor = (this.AData == null) ? Color.LightBlue : this.Renderer.ClearColor;
             this.Renderer.RenderControl(gra, this.pictureBoxFrame, this.DispData, EmotionProject.Mana.FramePosition);
         }
 

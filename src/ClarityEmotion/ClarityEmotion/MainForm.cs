@@ -184,6 +184,34 @@ namespace ClarityEmotion
             ExportForm f = new ExportForm();
             f.ShowDialog(this);
         }
+
+        /// <summary>
+        /// アニメ設定ボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 設定ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AnimeSettingForm f = new AnimeSettingForm();
+            DialogResult dret = f.ShowDialog(this);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+
+            //設定更新
+            this.Logic.ChangeAnimeSetting();
+        }
+
+        /// <summary>
+        /// レイヤーの初期化
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void layer初期化ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Logic.InitLayer();
+        }
     }
 }
 

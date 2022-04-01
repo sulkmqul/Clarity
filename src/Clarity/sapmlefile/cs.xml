@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!---
+    要素は以下の形式で省略可、タグの値はcsv形式で定義する、その際、()は無視する
+    type：含まれるデータ型、boo, int float vec2 vec3 string array
+    subtype：type=arrayの場合の型、arrayは指定不可
+    type=boolはtrue falseのみ
+    
+    
+    単一要素の場合、typeの設定だけで良い。
+    arrayの場合は全て設定する
+    
+    タグ名がコード名になる
+    <FileVersion type="" subtype="" count="">1.0.0.0</FileVersion>
+    
+    配列の場合は、要素を下記のように定義する、中のタグ名は無視出来る
+    <Mon type="array" subtype="vector3" count="45">
+        <vec>1.0,2.0,3.0</vec>
+        <vec>1.0,2.0,3.0</vec>
+        <vec>1.0,2.0,3.0</vec>
+        <vec>1.0,2.0,3.0</vec>
+    </Mon>
+    
+    Rootタグ以外でタグを入れ子にした場合、名前空間と同じ扱いになる
+    <Debug>
+        <Monta type="string">ALL</Monta>
+    </Debug>
+    と書いた場合Debug.Montaでアクセスできる。
+    Enumの場合はDebug_Montaとなる
+
+-->
+<ClaritySetting>
+
+	<FileVersion type="string">1.0.0.0</FileVersion>
+
+    <Log>
+        <Level type="string">ALL</Level>
+        <Mode type="string">Console</Mode>
+        <OutputPath></OutputPath>
+        <FileName></FileName>
+    </Log>
+    
+    <!--<DisplayViewSize type="vec2">1920,1080</DisplayViewSize>-->
+    <!--<RenderingViewSize type="vec2">1024,900</RenderingViewSize>-->
+    <!--表示画面サイズ-->
+    <DisplayViewSize type="vec2">1024,640</DisplayViewSize>
+    <!--内部画面サイズ-->
+    <RenderingViewSize type="vec2">1920,1080</RenderingViewSize>
+    
+    
+    <VertexShaderVersion type="string">vs_4_0</VertexShaderVersion>
+    <PixelShaderVersion type="string">ps_4_0</PixelShaderVersion>
+    <RenderingThreadCount type="int">1</RenderingThreadCount>
+
+    <Debug>
+        <SystemText>
+            <Enabled type="bool">true</Enabled>
+            <Pos type="vec2">10.0, 10.0</Pos>
+            <Font type="string">Arial</Font>
+            <FontSize type="float">20.0</FontSize>
+        </SystemText>
+    </Debug>
+</ClaritySetting>

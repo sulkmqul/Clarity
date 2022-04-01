@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace ClarityEmotion.Core
 {
@@ -70,19 +71,9 @@ namespace ClarityEmotion.Core
             //編集中は余計なものの描画
             if (this.EditFlag == true)
             {
-                //マウスオーバー
-                AnimeElement oe = ealist.Where(x => x.TempData.MouseOverFlag).FirstOrDefault();
-                if (oe != null)
-                {
-                    this.RenderMouseOver(gra, oe);
-                }
+                this.RenderEditInfo(gra, ealist, frame);
 
-                //選択領域
-                AnimeElement sedata = ealist.Where(x => x.LayerNo == EmotionProject.Mana.SelectLayerData.LayerNo).FirstOrDefault();
-                if (sedata != null)
-                {
-                    this.RenderSelected(gra, sedata);
-                }
+               
             }
 
 
@@ -192,27 +183,93 @@ namespace ClarityEmotion.Core
         /// <param name="frame"></param>
         private void RenderElement(Graphics gra, AnimeElement adata, int frame)
         {
-            //描画イメージ取得
-            Bitmap bit = adata.GetFrameImage(frame);
-            if (bit == null)
+            //描画情報取得
+            AnimeFrameRenderData rdata = adata.GetFrameImage(frame);
+            if (rdata == null)
             {
                 return;
             }
 
+            Bitmap bit = rdata.Image;
 
             //位置とサイズを変換し、位置を保存
-            adata.TempData.DispAreaRect.X = this.ImageXToDispX(adata.EaData.Pos2D.X);
-            adata.TempData.DispAreaRect.Y = this.ImageYToDispY(adata.EaData.Pos2D.Y);
+            adata.TempData.DispAreaRect.X = this.ImageXToDispX(rdata.EaData.Pos2D.X);
+            adata.TempData.DispAreaRect.Y = this.ImageYToDispY(rdata.EaData.Pos2D.Y);
 
-            double fw = (double)bit.Width * adata.EaData.ScaleRate;
-            double fh = (double)bit.Height * adata.EaData.ScaleRate;
+            double fw = (double)bit.Width * rdata.EaData.ScaleRate;
+            double fh = (double)bit.Height * rdata.EaData.ScaleRate;
             adata.TempData.DispAreaRect.Width = this.ImageXToDispX(Convert.ToInt32(fw));
             adata.TempData.DispAreaRect.Height = this.ImageYToDispY(Convert.ToInt32(fh));
 
+
+            //透明設定
+            ColorMatrix cmat = new ColorMatrix();
+
+            cmat.Matrix00 = 1.0f;
+            cmat.Matrix11 = 1.0f;
+            cmat.Matrix22 = 1.0f;
+            cmat.Matrix33 = rdata.EaData.Alpha;
+            cmat.Matrix44 = 1.0f;
+
+            ImageAttributes iat = new ImageAttributes();
+            iat.SetColorMatrix(cmat);
+
+            //これでマスク可能
+            //gra.SetClip
+
+            //加算合成はデフォルトでは無理っぽい
+
             //画像表示
-            gra.DrawImage(bit, adata.TempData.DispAreaRect);
+            gra.DrawImage(bit, adata.TempData.DispAreaRect, 
+                0, 0, adata.TempData.DispAreaRect.Width, adata.TempData.DispAreaRect.Height,
+                GraphicsUnit.Pixel, iat);
 
         }
+
+
+        //----------------------------------------------------------------------------------------
+        /// <summary>
+        /// 編集中情報の描画可否
+        /// </summary>
+        /// <param name="gra"></param>
+        /// <param name="ealist"></param>
+        /// <param name="frame"></param>
+        private void RenderEditInfo(Graphics gra, List<AnimeElement> ealist, int frame)
+        {
+            //とりあえず領域
+            ealist.ForEach(x => this.RenderArea(gra, x));
+
+            //マウスオーバー
+            AnimeElement oe = ealist.Where(x => x.TempData.MouseOverFlag).FirstOrDefault();
+            if (oe != null)
+            {
+                this.RenderMouseOver(gra, oe);
+            }
+
+            //選択領域
+            AnimeElement sedata = ealist.Where(x => x.LayerNo == EmotionProject.Mana.SelectLayerData?.LayerNo).FirstOrDefault();
+            if (sedata != null)
+            {
+                this.RenderSelected(gra, sedata);
+            }
+        }
+
+
+        /// <summary>
+        /// 自身の領域の描画
+        /// </summary>
+        /// <param name="gra"></param>
+        /// <param name="adata"></param>
+        private void RenderArea(Graphics gra, AnimeElement adata)
+        {
+            using (Pen pe = new Pen(Color.Blue, 1.0f))
+            {                
+                this.RenderElementArea(gra, pe, adata.TempData.DispAreaRect);
+            }
+        }
+
+
+
 
         /// <summary>
         /// 選択の描画
@@ -223,7 +280,8 @@ namespace ClarityEmotion.Core
         {
             using (Pen pe = new Pen(Color.Yellow, 2.0f))
             {
-                gra.DrawRectangle(pe, adata.TempData.DispAreaRect);
+                //gra.DrawRectangle(pe, adata.TempData.DispAreaRect);
+                this.RenderElementArea(gra, pe, adata.TempData.DispAreaRect);
             }
         }
         /// <summary>
@@ -233,10 +291,34 @@ namespace ClarityEmotion.Core
         /// <param name="adata"></param>
         private void RenderMouseOver(Graphics gra, AnimeElement adata)
         {
-            using (Pen pe = new Pen(Color.Blue, 1.0f))
+            using (Pen pe = new Pen(Color.Blue, 2.0f))
             {
-                gra.DrawRectangle(pe, adata.TempData.DispAreaRect);
+                //gra.DrawRectangle(pe, adata.TempData.DispAreaRect);
+                this.RenderElementArea(gra, pe, adata.TempData.DispAreaRect);
             }
+        }
+
+
+
+
+        /// <summary>
+        /// 自身の範囲の描画
+        /// </summary>
+        /// <param name="gra"></param>
+        /// <param name="pe"></param>
+        /// <param name="rect"></param>
+        private void RenderElementArea(Graphics gra, Pen pe, Rectangle rect)
+        {
+            //矩形の描画
+            gra.DrawRectangle(pe, rect);
+
+            //中心線の描画
+            int hw = rect.X + (rect.Width / 2);
+            int hh = rect.Y + (rect.Height / 2);
+
+            gra.DrawLine(pe, new Point(hw, rect.Top), new Point(hw, rect.Bottom));
+            gra.DrawLine(pe, new Point(rect.Left, hh), new Point(rect.Right, hh));
+
         }
     }
 }

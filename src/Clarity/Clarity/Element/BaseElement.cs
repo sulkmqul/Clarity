@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Clarity.Element.Collider;
 
 namespace Clarity.Element
 {
@@ -35,10 +36,30 @@ namespace Clarity.Element
     /// </summary>
     public class FrameInfo
     {
+        private long _Span = 0;
+
         /// <summary>
         /// 差分時間(ms)
         /// </summary>
-        public long Span { init; get; }
+        public long Span
+        {
+            init
+            {
+                this._Span = value;
+
+                //時間Rateの計算
+                this.BaseRate = ((float)value * 0.001f);
+            }
+            get
+            {
+                return this._Span;
+            }
+        }
+
+        /// <summary>
+        /// 基準時間Rate
+        /// </summary>
+        public float BaseRate { get; private set; } = 0.0f;
 
         /// <summary>
         /// システムでカウントしている絶対時間
@@ -48,9 +69,45 @@ namespace Clarity.Element
 
 
     /// <summary>
+    /// Element処理所作
+    /// </summary>
+    public class ElementProcBehavior : BehaviorController
+    {
+        /// <summary>
+        /// 切り替えを随時行わない固定処理はこちらを使う。(元はClearで削除される可能性がある。こちらは追加だけを想定)
+        /// </summary>
+        protected List<BaseBehavior> FixedProcBehaviorList = new List<BaseBehavior>(8);
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 所作の実行
+        /// </summary>
+        /// <param name="beo"></param>
+        public override void Execute(object beo)
+        {
+            base.Execute(beo);
+
+            //固定処理の実行
+            this.FixedProcBehaviorList.ForEach(x =>
+            {
+                x.Execute(beo);
+            });
+        }
+
+        /// <summary>
+        /// 固定処理の追加
+        /// </summary>
+        /// <param name="beh"></param>
+        public void AddFixedProcess(BaseBehavior beh)
+        {
+            this.FixedProcBehaviorList.Add(beh);
+        }
+    }
+
+    /// <summary>
     ///基底要素
     /// </summary>
-    public abstract class BaseElement
+    public abstract class BaseElement : ICollider
     {
         /// <summary>
         /// コンストラクタ
@@ -78,9 +135,9 @@ namespace Clarity.Element
         internal ElementSystemLink SystemLink = new ElementSystemLink();
 
         /// <summary>
-        /// 処理所作一式
+        /// 実行所作
         /// </summary>
-        internal List<BaseBehavior> ProcBehaviorList = new List<BaseBehavior>(10);
+        protected ElementProcBehavior ProcBehavior = new ElementProcBehavior();
 
         /// <summary>
         /// 描画所作
@@ -117,12 +174,27 @@ namespace Clarity.Element
         /// <summary>
         /// 今回のフレーム情報
         /// </summary>
-        protected FrameInfo FrameInfo = null;
+        public FrameInfo FrameInfo { get; private set; }
 
+        /// <summary>
+        /// 自身の基準時間
+        /// </summary>
+        public long ProcTime { get; internal set; } = 0;
+        
         /// <summary>
         /// 処理情報
         /// </summary>
         public TransposeSet TransSet = new TransposeSet();
+
+
+        /// <summary>
+        /// 当たり判定情報
+        /// </summary>
+        public ColliderInfo ColInfo { get; set; } = null;
+        /// <summary>
+        /// 当たり判定処理所作
+        /// </summary>
+        public ColliderBehavior ColliderBehavior { get; set; } = new ColliderBehavior();
         #endregion
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
@@ -132,8 +204,7 @@ namespace Clarity.Element
         /// <param name="bh">追加所作</param>
         public void AddProcBehavior(BaseBehavior bh)
         {
-            this.ProcBehaviorList.Add(bh);            
-            
+            this.ProcBehavior.AddProcBehavior(bh);
         }
 
         /// <summary>
@@ -142,7 +213,7 @@ namespace Clarity.Element
         /// <param name="bh">削除所作</param>
         public void RemoveProcBehavior(BaseBehavior bh)
         {
-            this.ProcBehaviorList.Remove(bh);
+            this.ProcBehavior.RemoveProcBehavior(bh);
         }
 
         /// <summary>
@@ -151,7 +222,7 @@ namespace Clarity.Element
         /// <param name="oid">削除対象ID</param>
         public void RemoveProcBehavior(long oid)
         {
-            this.ProcBehaviorList.RemoveAll((x) => x.ID == oid);
+            this.ProcBehavior.RemoveProcBehavior(oid);
         }
         
         /// <summary>
@@ -159,7 +230,7 @@ namespace Clarity.Element
         /// </summary>
         internal void ClearProcBehavior()
         {
-            this.ProcBehaviorList.Clear();
+            this.ProcBehavior.ClearProcBehavior();
         }
 
         /// <summary>
@@ -193,6 +264,29 @@ namespace Clarity.Element
         {
         }
 
+        /// <summary>
+        /// 子供の処理の後処理これが採取処理
+        /// </summary>
+        protected virtual void ProcChildAfter()
+        {
+        }
+
+        /// <summary>
+        /// 子供の処理の実行可否を制御 true:実行 false:子供はskip
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool ControlChildProcEnabled()
+        {
+            return true;
+        }
+        /// <summary>
+        /// 子供の処理の描画可否を制御 true:実行 false:子供はskip
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool ControlChildRenderEnabled()
+        {
+            return true;
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化処理
@@ -219,14 +313,24 @@ namespace Clarity.Element
             this.ProcIndex = pid;
             this.FrameInfo = finfo;
 
+            //自分の時間を経過させる
+            this.ProcTime += this.FrameInfo.Span;
+
             //前処理
             this.ProcBefore();
 
             //所作の実行
-            this.ExecuteProcBehavior();
+            this.ProcBehavior.Execute(this);
 
             //後処理
             this.ProcAfter();
+
+            //子供の実行可否を確認
+            bool ckret = this.ControlChildProcEnabled();
+            if (ckret == false)
+            {
+                return;
+            }
 
             //子供の処理実行
             foreach (var c in this.SystemLink.ChildList)
@@ -234,6 +338,9 @@ namespace Clarity.Element
                 int cp = ElementManager.GetProcIndex();
                 c.Proc(cp, finfo);
             }
+
+            //子供処理の後
+            this.ProcChildAfter();
         }
 
 
@@ -241,8 +348,9 @@ namespace Clarity.Element
         /// <summary>
         /// 描画
         /// </summary>
+        /// <param name="id">描画情報番号</param>
         /// <param name="rid">描画Index</param>
-        internal void Render(int rid)
+        internal void Render(int id, int rid)
         {
             if (this.Enabled == false)
             {
@@ -254,11 +362,18 @@ namespace Clarity.Element
             //描画所作の実行            
             this.RenderBehavior?.Execute(this);
 
+            //子供の描画可否を確認
+            bool ckret = this.ControlChildRenderEnabled();
+            if (ckret == false)
+            {
+                return;
+            }
+
             //子供の描画実行
             foreach (var c in this.SystemLink.ChildList)
             {
                 int cp = ElementManager.GetProcIndex();
-                c.Render(cp);
+                c.Render(id, cp);
             }
 
         }
@@ -279,19 +394,6 @@ namespace Clarity.Element
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
-        /// <summary>
-        /// 処理所作の実行
-        /// </summary>
-        private void ExecuteProcBehavior()
-        {
-            //処理中の追加削除を許容するため、コピーして実行する
-            //速度出ない場合はrequestを実装せよ
-            List<BaseBehavior> templist = new List<BaseBehavior>(this.ProcBehaviorList);
-            templist.ForEach(x =>
-            {
-                x.Execute(this);
-            });
-
-        }
+      
     }
 }

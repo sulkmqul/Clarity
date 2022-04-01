@@ -149,9 +149,11 @@ namespace ClarityEmotion.LayerSetting
                 this.numericUpDownStartFrame.Value = Convert.ToDecimal(adata.StartFrame);
                 this.numericUpDownEndFrame.Value = Convert.ToDecimal(adata.EndFrame);
 
-
                 //再生速度
                 this.valueScrollControlSpeedRate.ValueFixedPoint = adata.SpeedRate;
+
+                //フレームオフセット
+                this.numericUpDownFrameOffset.Value = adata.FrameOffset;
 
                 //ループ可否
                 this.checkBoxLoopFlag.Checked = adata.LoopFlag;
@@ -204,6 +206,9 @@ namespace ClarityEmotion.LayerSetting
             //ループ可否
             adata.EaData.LoopFlag = this.checkBoxLoopFlag.Checked;
 
+            //フレームオフセット
+            adata.EaData.FrameOffset = Convert.ToInt32(this.numericUpDownFrameOffset.Value);
+
             //位置
             adata.EaData.Pos2D.X  = Convert.ToInt32(this.numericUpDownPosX.Value);
             adata.EaData.Pos2D.Y = Convert.ToInt32(this.numericUpDownPosY.Value);
@@ -243,6 +248,11 @@ namespace ClarityEmotion.LayerSetting
             {
                 this.labelFrameSpan.Text = (adata.EndFrame - adata.StartFrame).ToString();
             }
+        }
+
+        private void LayerSettingControl_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

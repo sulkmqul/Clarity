@@ -6,14 +6,19 @@ using System.Threading.Tasks;
 
 namespace Clarity.Element.Collider
 {
-    public abstract class BaseColliderBehavior
+    /// <summary>
+    /// 当たり判定処理所作 これを継承して作成する
+    /// </summary>
+    public class ColliderBehavior
     {
         /// <summary>
         /// 判定コールバック処理
         /// </summary>
         /// <param name="obj">当たった自分</param>
         /// <param name="opptant">処理対象</param>
-        public abstract void ProcColliderAction(Clarity.Element.Collider.ICollider obj, Clarity.Element.Collider.ICollider opptant);
+        public virtual void ProcColliderAction(Clarity.Element.Collider.ICollider obj, Clarity.Element.Collider.ICollider opptant)
+        {
+        }
     }
 
     /// <summary>
@@ -32,7 +37,7 @@ namespace Clarity.Element.Collider
         /// <summary>
         /// 当たり判定実行所作
         /// </summary>
-        BaseColliderBehavior ColliderBehavior { get; set; }
+        ColliderBehavior ColliderBehavior { get; set; }
 
         /// <summary>
         /// 当たり判定コールバック

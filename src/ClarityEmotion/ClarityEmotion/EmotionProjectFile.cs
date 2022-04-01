@@ -25,7 +25,10 @@ namespace ClarityEmotion
         /// </summary>
         public List<AnimeDefinitionData> AnimeDefinitionList = new List<AnimeDefinitionData>();
 
-        //ここにElemet情報を
+        /// <summary>
+        /// アニメLayer情報
+        /// </summary>
+        public List<EmotionAnimeData> AnimeList = new List<EmotionAnimeData>();
 
     }
 
@@ -79,6 +82,8 @@ namespace ClarityEmotion
             ans.BasicInfo = pdata.BasicInfo;
             ans.AnimeDefinitionList = pdata.Anime.AnimeDefinitionDic.Values.ToList();
 
+            ans.AnimeList = pdata.Anime.LayerList.Select(x => x.EaData).ToList();
+
             return ans;
         }
 
@@ -94,6 +99,9 @@ namespace ClarityEmotion
             ans.BasicInfo = fdata.BasicInfo;
             ans.Anime = new EmotionProjectDataAnime();
             ans.Anime.CreateAnimeDefinitionDic(fdata.AnimeDefinitionList);
+            ans.Anime.CreateLayerWithSrc(fdata.AnimeList);
+            
+
             return ans;
         }
 

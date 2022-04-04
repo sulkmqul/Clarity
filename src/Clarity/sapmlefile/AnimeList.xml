@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <ClarityTextureAnime root_id="90">
-  <TextureAnimeData code="TestAnimeCode" loop="Loop" next="none">
+  <TextureAnimeData code="TestAnimeCode" loop="Loop">
     <Frame>TexCode,0,0,100</Frame>
     <Frame>TexCode,1,0,100</Frame>
     <Frame>TexCode,2,0,100</Frame>
     <Frame>TexCode,3,0,100</Frame>
   </TextureAnimeData>
-  <TextureAnimeData code="TestAnimeCode_02" loop="Once" next="TestAnimeCode">
+  <TextureAnimeData code="TestAnimeCode_02" loop="Once">
     <Frame>TexCode,0,0,100</Frame>
     <Frame>TexCode,1,0,100</Frame>
     <Frame>TexCode,2,0,100</Frame>

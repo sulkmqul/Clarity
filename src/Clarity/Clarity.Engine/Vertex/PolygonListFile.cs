@@ -30,9 +30,29 @@ namespace Clarity.Engine.Vertex
     internal class PolygonListData
     {
         /// <summary>
+        /// これのID
+        /// </summary>
+        public int Id;
+
+        /// <summary>
+        /// これのコード
+        /// </summary>
+        public string Code
+        {
+            get
+            {
+                return System.IO.Path.GetFileNameWithoutExtension(this.FilePath);
+            }
+        }
+            
+
+
+        /// <summary>
         /// ポリゴンオブジェクトファイルパス
         /// </summary>
         public string FilePath = "";
+
+
     }
 
     /// <summary>
@@ -62,9 +82,13 @@ namespace Clarity.Engine.Vertex
 
                 PolygonListData pdata = new PolygonListData();
                 int pos = 0;
+
                 //ファイルパス
-                pdata.FilePath = data[pos];
+                pdata.FilePath = data[pos];                
                 pos++;
+
+                //ID
+                pdata.Id = ans.RootID + i;
 
                 ans.PolyFileList.Add(pdata);
             }

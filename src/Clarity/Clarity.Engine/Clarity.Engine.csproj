@@ -5,6 +5,12 @@
       <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Clarity\Clarity.csproj" />
   </ItemGroup>
@@ -21,6 +27,9 @@
     </Reference>
     <Reference Include="Vortice.Direct3D11">
       <HintPath>..\DLL\vortice\net5.0\Vortice.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="Vortice.DirectInput">
+      <HintPath>..\DLL\vortice\net5.0\Vortice.DirectInput.dll</HintPath>
     </Reference>
     <Reference Include="Vortice.DirectX">
       <HintPath>..\DLL\vortice\Vortice.DirectX.dll</HintPath>

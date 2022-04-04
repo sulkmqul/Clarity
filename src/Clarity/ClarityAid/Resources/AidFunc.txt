@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ClarityCodeAid>
+	<Texture>
+		public static void SetTexture(this Clarity.Engine.RendererSet set, ETextureID etex, int slot = 0)
+        {
+            set.SetTextureId(slot, (int)etex);
+        }
+	</Texture>
+	<Vertex>
+	</Vertex>
+	<Shader>
+		public static void SetTexture(this Clarity.Engine.RendererSet set, EShaderID esh)
+        {
+            set.ShaderID = (int)esh;
+        }
+	</Shader>
+	<Sound>
+	</Sound>
+	<ImageMerge>
+	</ImageMerge>
+	<TextureAnime>
+	</TextureAnime>
+	<Structure>
+		public static void AddElement(EClarityStructureID id, Clarity.Element.BaseElement data)
+		{
+			Clarity.Engine.ClarityEngine.AddManage((long)id, data);
+		}
+	</Structure>
+	<ClaritySetting>
+	</ClaritySetting>
+</ClarityCodeAid>

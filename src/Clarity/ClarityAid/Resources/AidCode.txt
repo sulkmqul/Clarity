@@ -1,0 +1,8 @@
+
+    /// <summary>
+    /// Clarity Engine Aid Class
+    /// </summary>
+    public static partial class ClarityAid
+    {
+        __AID_CODE__
+    }

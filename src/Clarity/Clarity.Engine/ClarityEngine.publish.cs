@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using Clarity.Engine.Element;
+using Clarity.Element;
 
 namespace Clarity.Engine
 {
+
     /// <summary>
     /// 外部公開関数定義
     /// </summary>
@@ -16,6 +19,15 @@ namespace Clarity.Engine
         /// 無効ID値
         /// </summary>
         public const int INVALID_ID = int.MinValue;
+
+        /// <summary>
+        /// 入力設定ファイルの読み込み
+        /// </summary>
+        /// <param name="isfilepath">読み込み入力設定ファイルパス</param>
+        public static void LoadInputSetting(string isfilepath)
+        {
+            InputManager.Mana.ReadInputSetting(isfilepath);
+        }
 
 
         /// <summary>
@@ -43,7 +55,44 @@ namespace Clarity.Engine
         /// <param name="line">設定行</param>
         public static void SetSystemText(string s, int line = 0)
         {
-            Core.SystemText.SetText(s, line + 1);
+            ClarityEngine.Engine.EngineData.SystemText.SetText(s, line + 1);
         }
+
+        //////////////////////
+        //Element操作
+
+        /// <summary>
+        /// 構造の作成
+        /// </summary>
+        /// <param name="stfilepath"></param>
+        public static void CreateStructure(string stfilepath)
+        {
+            //ユーザー構造作成先のデータ取得
+            ClarityStructure ust = ClarityEngine.Engine.EngineData.SystemStructure.GetNode(SystemStructureID.User);
+
+            ClarityStructureFile fp = new ClarityStructureFile();
+            {
+                ust = fp.ReadStructure(stfilepath, ust);
+            }
+
+            //ユーザー管理構造を追加
+            EngineStructureManager mana = new EngineStructureManager();
+            mana.Init(ust);
+
+            ClarityEngine.Engine.EngineData.UserStructure = mana;
+        }
+
+        /// <summary>
+        /// 管理へ追加
+        /// </summary>
+        /// <param name="sid">追加先構造ID</param>
+        /// <param name="data">追加データ</param>
+        public static void AddManage(long sid, BaseElement data)
+        {
+            BaseElement parent = ClarityEngine.Engine.EngineData.UserStructure.GetNode(sid);
+            ElementManager.AddRequest(parent, data);
+        }
+
+        
     }
 }

@@ -10,7 +10,7 @@ namespace Clarity.Element
     /// <summary>
     /// Root要素
     /// </summary>
-    internal class RootElement : BaseElement
+    class RootElement : BaseElement
     {
         
     }
@@ -178,13 +178,12 @@ namespace Clarity.Element
                 ReqData req = this.AddReqQue.Dequeue();
 
                 //追加処理
-                req.Item.SystemLink.ParentElement = req.Parent;
-                req.Parent.SystemLink.ChildList.AddLast(req.Item);
+                //req.Item.SystemLink.ParentElement = req.Parent;
+                //req.Parent.SystemLink.ChildList.AddLast(req.Item);
+                req.Parent.AddChild(req.Item);
 
                 //衝突判定処理者への登録
                 this.AddColliderManager(req.Item);
-
-
             }
         }
 
@@ -210,8 +209,10 @@ namespace Clarity.Element
 
                 //削除処理
                 BaseElement par = req.Item.SystemLink.ParentElement;
-                par.SystemLink.ChildList.Remove(req.Item);
-                req.Item.SystemLink.ParentElement = null;
+                //par.SystemLink.ChildList.Remove(req.Item);
+                //req.Item.SystemLink.ParentElement = null;
+                par.RemoveChild(req.Item);
+                
                                 
 
             }

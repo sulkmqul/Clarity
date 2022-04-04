@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ClaritryTextureList root_id="90">
+	<TextureBlock path="F:\作業領域\Game\Stellamaris\data\img\char">
+		<Texture divx="8" divy="1" tcol="0xFFFFFF">plj_000.png</Texture>
+		<Texture divx="8" divy="1" tcol="0xFFFFFF">plj_001.png</Texture>
+		<Texture>plj_002.png</Texture>
+	</TextureBlock>
+	<TextureBlock path="F:\作業領域\Game\Stellamaris\data\img\bul">
+		<Texture>aa.png</Texture>
+		<Texture>bb.png</Texture>
+	</TextureBlock>
+</ClaritryTextureList>

@@ -33,6 +33,10 @@ namespace Clarity.Engine.Shader
         /// </summary>
         public string Code;
         /// <summary>
+        /// これのID
+        /// </summary>
+        public int Id = 0;
+        /// <summary>
         /// 読み込みShaderファイルパス
         /// </summary>
         public string FilePath;
@@ -100,6 +104,9 @@ namespace Clarity.Engine.Shader
                 //Code
                 sdata.Code = data[pos];
                 pos++;
+
+                //IDを割り振り
+                sdata.Id = ans.RootID + i;
 
                 //ファイルパス
                 sdata.FilePath = data[pos];

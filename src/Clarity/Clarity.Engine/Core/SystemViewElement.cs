@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Clarity.Element;
@@ -59,11 +60,21 @@ namespace Clarity.Engine.Core
         public void InitSystemView()
         {
             this.TransSet.WorldID = WorldManager.SystemViewID;
-            this.RenderSet.VertexID = BuildInDataIndex.VertexRect;
-            this.RenderSet.ShaderID = BuildInDataIndex.ShaderDefault;
+            this.RenderSet.VertexID = BuildInPolygonModelIndex.Rect;
+            this.RenderSet.ShaderID = BuildInShaderIndex.Default;
             this.RenderingTextureResource = DxManager.Mana.SystemViewTextureResource;
+
+            
+            this.AddProcBehavior(new ActionBehavior((data) =>
+            {
+                WorldData wd = WorldManager.Mana.Get(this.TransSet.WorldID);
+                this.TransSet.Pos2D = new Vector2(0.0f, 0.0f);
+                this.TransSet.Scale2D = new Vector2(wd.VPort.VPort.Width * 0.8f, wd.VPort.VPort.Height * 0.8f);
+            }));
         }
 
+
         
+
     }
 }

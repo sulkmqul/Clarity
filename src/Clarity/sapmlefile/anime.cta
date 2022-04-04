@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ClarityTextureAnime root_id="0">
+  <TextureAnimeData code="PlayerWait" loop="Loop" next="">
+    <Frame>plj_000,0,0,80</Frame>
+    <Frame>plj_000,1,0,80</Frame>
+    <Frame>plj_000,2,0,80</Frame>
+    <Frame>plj_000,3,0,80</Frame>
+    <Frame>plj_000,4,0,80</Frame>
+    <Frame>plj_000,5,0,80</Frame>
+    <Frame>plj_000,6,0,80</Frame>
+    <Frame>plj_000,7,0,80</Frame>
+  </TextureAnimeData>
+</ClarityTextureAnime>

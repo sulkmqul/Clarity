@@ -76,12 +76,15 @@ namespace Clarity.Engine.Core
             /// </summary>
             public ClarityEnginePlugin ExProc = null;
 
+
+            /// <summary>
+            /// SwapChainに描画する物体一覧
+            /// </summary>
+            public Element.ClarityStructure SwapChainElement = null;
             /// <summary>
             /// 描画View
             /// </summary>
             public SystemViewElement SystemView = null;
-
-
             
         }
 
@@ -90,10 +93,7 @@ namespace Clarity.Engine.Core
         /// </summary>
         private ClarityCoreData FData = null;
 
-        /// <summary>
-        /// システム表示者
-        /// </summary>
-        public Element.TextObject SystemText = null;
+        
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -113,20 +113,13 @@ namespace Clarity.Engine.Core
             //Buildinデータ読み込み
             BuildInData.LoadBuildInData();
 
+            this.FData.SwapChainElement = new Element.ClarityStructure("SwapChain", 0);
 
             //システムViewの作成
             this.FData.SystemView = new SystemViewElement();
             this.FData.SystemView.InitSystemView();
 
-
-            //システムテキストの初期化
-            {
-                string fontname = ClarityEngine.EngineSetting.GetString("Debug.SystemText.Font", "Arial");
-                float fontsize = ClarityEngine.EngineSetting.GetFloat("Debug.SystemText.FontSize", 10.0f);
-                this.SystemText = new Element.TextObject("", 0, fontname, fontsize);
-                this.SystemText.Enabled = ClarityEngine.EngineSetting.GetBool("Debug.SystemText.Enabled", false);
-                this.SystemText.TransSet.Pos2D = ClarityEngine.EngineSetting.GetVec2("Debug.SystemText.Pos", new Vector2(0.0f));
-            }
+            this.FData.SwapChainElement.AddChild(this.FData.SystemView);
 
         }
 
@@ -180,6 +173,15 @@ namespace Clarity.Engine.Core
             //DirectX
             DxManager.Mana.Dispose();
         }
+
+        /// <summary>
+        /// SwapChainに直接描画する物体の追加
+        /// </summary>
+        /// <param name="data"></param>
+        internal void AddSwapChainElement(BaseElement data)
+        {
+            this.FData.SwapChainElement.AddChild(data);
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -195,34 +197,50 @@ namespace Clarity.Engine.Core
 
             long prev_time = 0;
 
+            float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit", 0.0f);            
+            double nexttime = limittile;
+
             //実行ループ
             ClarityLoop.Run(this.FData.Con, () =>
             {
+                //時間経過判断
                 long time = ClarityTimeManager.TotalMilliseconds;
-                FrameInfo finfo = new FrameInfo() { FrameTime = time, Span = time - prev_time };
+                if (nexttime > time)
+                {
+                    System.Threading.Thread.Sleep(1);
+                    return;
+                }
+
+                FrameInfo finfo = new FrameInfo(time, time - prev_time);
 
                 //フレーム処理
                 this.ProcFrame(finfo);
                 fps.ProcCount++;
 
                 //フレーム描画処理
-                this.RenderFrame();
-                fps.RenderCount++;
-                
+                //if (renderskip == false)
+                {
+                    this.RenderFrame();
+                    fps.RenderCount++;                    
+                }
+
                 //今回のフレーム時間を保存
                 prev_time = finfo.FrameTime;
+
+
+                
 
                 #region FPSの計算
                 {
                     long fpsbasetime = ClarityTimeManager.TotalMilliseconds;
                     long dur = fpsbasetime - fps.PrevCalcuMs;
-                    if (dur > 500)
+                    if (dur > 1000)
                     {
                         //計算
                         var data = fps.CalcuFPS(fpsbasetime);
                         string fpsstring = string.Format("Proc:{0:F} Render:{1:F}", data.proc, data.render);
                         //System.Diagnostics.Trace.WriteLine(fpsstring);
-                        this.SystemText.SetText(fpsstring, 0);
+                        ClarityEngine.SetSystemTextForEngine(fpsstring, 0);
 
                         //初期化
                         fps.ProcCount = 0;
@@ -231,6 +249,8 @@ namespace Clarity.Engine.Core
                     }
                 }
                 #endregion
+
+                nexttime += limittile;
 
                 //ちょい待ち
                 System.Threading.Thread.Sleep(1);
@@ -243,8 +263,16 @@ namespace Clarity.Engine.Core
         /// </summary>
         private void ProcFrame(FrameInfo finfo)
         {
+            //入力情報の取得
+            InputManager.Mana.GetInput();
+
             //処理
             ElementManager.Mana.Proc(finfo);
+
+            //処理外SwapChaiの処理
+            this.FData.SwapChainElement.Proc(0, finfo);
+
+
         }
 
 
@@ -303,12 +331,8 @@ namespace Clarity.Engine.Core
             //描画リソース取得
             var texres = DxManager.Mana.SystemViewTextureResource;
 
-            this.FData.SystemView.TransSet.Pos2D = new Vector2(0.0f, 0.0f);
-            this.FData.SystemView.TransSet.Scale2D = new Vector2(wd.VPort.VPort.Width*0.8f, wd.VPort.VPort.Height*0.8f);
-            this.FData.SystemView.Render(0, 0);
-
-            //システムテキストの描画
-            this.SystemText.Render(0, 0);
+            //SwapChainへの描画物の描画
+            this.FData.SwapChainElement.Render(0, 0);
 
             DxManager.Mana.EndRendering();
         }
@@ -341,7 +365,7 @@ namespace Clarity.Engine.Core
             Texture.TextureAnimeFactory.Create();
 
             //入力管理
-            //InputManager.Create();
+            InputManager.Create();
 
             //世界管理
             WorldManager.Create();

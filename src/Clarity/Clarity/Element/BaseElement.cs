@@ -36,6 +36,18 @@ namespace Clarity.Element
     /// </summary>
     public class FrameInfo
     {
+        public FrameInfo(long frametilme, long span)
+        {
+            this.FrameTime = frametilme;
+            this.Span = span;            
+        }
+
+        public FrameInfo(FrameInfo f)
+        {
+            this.Span = f.Span;
+            this.FrameTime = f.FrameTime;                        
+        }
+
         private long _Span = 0;
 
         /// <summary>
@@ -175,6 +187,10 @@ namespace Clarity.Element
         /// 今回のフレーム情報
         /// </summary>
         public FrameInfo FrameInfo { get; private set; }
+        /// <summary>
+        /// 子供に渡す送信フレーム情報
+        /// </summary>
+        protected FrameInfo SendFrameInfo { get; set; }
 
         /// <summary>
         /// 自身の基準時間
@@ -311,7 +327,8 @@ namespace Clarity.Element
 
             //フレーム情報の保存
             this.ProcIndex = pid;
-            this.FrameInfo = finfo;
+            this.FrameInfo = new FrameInfo(finfo);
+            this.SendFrameInfo = new FrameInfo(finfo);
 
             //自分の時間を経過させる
             this.ProcTime += this.FrameInfo.Span;
@@ -336,7 +353,7 @@ namespace Clarity.Element
             foreach (var c in this.SystemLink.ChildList)
             {
                 int cp = ElementManager.GetProcIndex();
-                c.Proc(cp, finfo);
+                c.Proc(cp, this.SendFrameInfo);
             }
 
             //子供処理の後
@@ -391,6 +408,28 @@ namespace Clarity.Element
                 count += c.CountElement();
             }
             return count;
+        }
+
+        /// <summary>
+        /// 子供に追加
+        /// </summary>
+        /// <param name="data"></param>
+        internal void AddChild(BaseElement data)
+        {
+            data.SystemLink.ParentElement = this;
+            this.SystemLink.ChildList.AddLast(data);
+        }
+
+
+        /// <summary>
+        /// 子供の削除
+        /// </summary>
+        /// <param name="data"></param>
+        internal void RemoveChild(BaseElement data)
+        {
+            //削除処理            
+            this.SystemLink.ChildList.Remove(data);
+            data.SystemLink.ParentElement = null;
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 

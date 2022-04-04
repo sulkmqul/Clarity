@@ -6,24 +6,72 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Clarity.Element;
+using Clarity.Engine.Element;
 
 namespace Clarity.Engine
 {
+
+    class SystemStructureID
+    {
+        public const long System = -100;
+        public const long User = -99;
+        public const long Cleanup = -98;
+    }
+    
+
+
+    internal class ClarityEngineData
+    {
+        /// <summary>
+        /// システム表示者
+        /// </summary>
+        public TextObject SystemText = null;
+
+        /// <summary>
+        /// エンジン構造
+        /// </summary>
+        public EngineStructureManager SystemStructure = null;
+
+        /// <summary>
+        /// 提供構造
+        /// </summary>
+        public EngineStructureManager UserStructure = null;
+    }
+
+
     /// <summary>
     /// ClarityEngine
     /// </summary>
     public partial class ClarityEngine
-    {
+    {        
+
+        /// <summary>
+        /// ClarityEngine実体
+        /// </summary>
+        private static ClarityEngine Engine = null;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// ClarityEngineコア処理
         /// </summary>
-        internal static Core.ClarityCore Core = null;
+        internal Core.ClarityCore Core = null;
 
         /// <summary>
         /// エンジン設定
         /// </summary>
-        internal static ClaritySetting EngineSetting = null;
+        internal ClaritySetting _EngineSetting = null;
+        internal static ClaritySetting EngineSetting
+        {
+            get
+            {
+                return ClarityEngine.Engine._EngineSetting;
+            }
+        }
+
+        /// <summary>
+        /// 全体で使用するEngineデータ
+        /// </summary>
+        internal ClarityEngineData EngineData = null;
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         public static void TestSpace()
@@ -117,38 +165,19 @@ namespace Clarity.Engine
         {
             try
             {
-                if (ClarityEngine.Core != null)
+                //ClarityEngineの複数存在を許さない
+                if (ClarityEngine.Engine != null)
                 {
                     throw new Exception("ClarityEngine already exists!!");
                 }
+                ClarityEngine.Engine = new ClarityEngine();
 
-                //エンジン設定の読み込み
-                ClarityEngine.EngineSetting = new ClaritySetting();
-                ClarityEngine.EngineSetting.Read(cesfilepath);
 
-                //ログの初期化
-                {
-                    EClarityLogLevel lev = EngineSetting.GetEnum<EClarityLogLevel>("Log.Level", EClarityLogLevel.None);
-                    EClarityLogMode lmode = EngineSetting.GetEnum<EClarityLogMode>("Log.Mode", EClarityLogMode.Console);
-                    string logpath = EngineSetting.GetString("Log.OutputPath", ".");
-                    string logname = EngineSetting.GetString("Log.FileName", "cl.log");
-                    ClarityLog.Init(lev, lmode, logpath, logname);
-                }
-
-                //エンジンの初期化
-                DLL.Winmm.timeBeginPeriod(1);
-                Util.RandomMaker.Init();
-
-                //画面設定
-                Vector2 vec = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize", new Vector2(640, 480));
-                con.ClientSize = new System.Drawing.Size((int)vec.X, (int)vec.Y);
-
-                //作成
-                ClarityEngine.Core = new Core.ClarityCore();
-                ClarityEngine.Core.Init(con);
+                //初期化
+                ClarityEngine.Engine.InitEngine(con, cesfilepath);
 
                 
-                //
+                //試験、そのうち消す
                 TestSpace();
             }
             catch (Exception ex)
@@ -164,23 +193,123 @@ namespace Clarity.Engine
         /// <param name="cep">追加動作</param>
         public static void Run(ClarityEnginePlugin cep)
         {
-            if (ClarityEngine.Core == null)
+            if (ClarityEngine.Engine == null)
             {
                 throw new Exception("ClarityEngine initialize");
             }
 
-            ClarityEngine.Core.StartClarity(cep);
-
-            ClarityEngine.Core.Dispose();
-            ClarityEngine.Core = null;
+            //エンジンの実行
+            ClarityEngine.Engine.RunEngine(cep);
 
 
             //ログの終了
             ClarityLog.Release();
         }
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
+        /// <summary>
+        /// システムテキストの設定(内部用)
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="line"></param>
+        internal static void SetSystemTextForEngine(string s, int line = 0)
+        {
+            ClarityEngine.Engine.EngineData.SystemText.SetText(s, line);
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// エンジンの初期化
+        /// </summary>
+        /// <param name="con"></param>
+        /// <param name="cesfilepath"></param>
+        private void InitEngine(Control con, string cesfilepath = "")
+        {
+            //エンジン設定の読み込み
+            this._EngineSetting = new ClaritySetting();
+            ClarityEngine.EngineSetting.Read(cesfilepath);
+
+            //ログの初期化
+            {
+                EClarityLogLevel lev = ClarityEngine.EngineSetting.GetEnum<EClarityLogLevel>("Log.Level", EClarityLogLevel.None);
+                EClarityLogMode lmode = ClarityEngine.EngineSetting.GetEnum<EClarityLogMode>("Log.Mode", EClarityLogMode.Console);
+                string logpath = ClarityEngine.EngineSetting.GetString("Log.OutputPath", ".");
+                string logname = ClarityEngine.EngineSetting.GetString("Log.FileName", "cl.log");
+                ClarityLog.Init(lev, lmode, logpath, logname);
+            }
+
+            //エンジンの初期化
+            DLL.Winmm.timeBeginPeriod(1);
+            Util.RandomMaker.Init();
+
+            //画面設定
+            Vector2 vec = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize", new Vector2(640, 480));
+            con.ClientSize = new System.Drawing.Size((int)vec.X, (int)vec.Y);
+
+
+            //データの作成
+            this.EngineData = new ClarityEngineData();
+
+            //作成
+            this.Core = new Core.ClarityCore();
+            this.Core.Init(con);
+
+            //システムテキストの初期化
+            {
+                string fontname = ClarityEngine.EngineSetting.GetString("Debug.SystemText.Font", "Arial");
+                float fontsize = ClarityEngine.EngineSetting.GetFloat("Debug.SystemText.FontSize", 10.0f);
+                TextObject stext = new Element.TextObject("", 0, fontname, fontsize);
+                stext.Enabled = ClarityEngine.EngineSetting.GetBool("Debug.SystemText.Enabled", false);
+                stext.TransSet.Pos2D = ClarityEngine.EngineSetting.GetVec2("Debug.SystemText.Pos", new Vector2(0.0f));
+                this.EngineData.SystemText = stext;
+
+                //SwapChain描画命令
+                this.Core.AddSwapChainElement(this.EngineData.SystemText);
+            }
+
+            //システムElement構造の作成
+            this.CreateSystemStructure();
+
+        }
+
+
+        /// <summary>
+        /// システムElememt構造の作成
+        /// </summary>
+        /// <remarks>ClarityEngineに適したElement構造を作成する</remarks>
+        private void CreateSystemStructure()
+        {
+            this.EngineData.SystemStructure = new EngineStructureManager();
+
+            //ノードを定義
+            (string code, long oid)[] datavec = {
+                ("System", SystemStructureID.System),
+                ("User", SystemStructureID.User),
+                ("Clean", SystemStructureID.Cleanup)
+            };
+
+            //管理へ追加
+            foreach (var data in datavec)
+            {
+                ClarityStructure st = new ClarityStructure(data.code, data.oid);
+                this.EngineData.SystemStructure.AddManage(st);
+                ElementManager.AddRequest(st);
+            }
+
+            
+        }
+
+
+        /// <summary>
+        /// エンジンの実行
+        /// </summary>
+        /// <param name="cep">追加動作</param>
+        private void RunEngine(ClarityEnginePlugin cep)
+        {
+            this.Core.StartClarity(cep);
+
+            this.Core.Dispose();
+            this.Core = null;
+        }
 
     }
 }

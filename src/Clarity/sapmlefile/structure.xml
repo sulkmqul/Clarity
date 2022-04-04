@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ClarityStructure>
+	<Node code="System" />
+	<Node code="Mona">
+		<Node code="Child" />
+		<Node code="Past" />
+	</Node>
+	<Node code="aaaa" />
+</ClarityStructure>

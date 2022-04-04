@@ -1,0 +1,12 @@
+namespace Clarity.Engine
+{
+    /// <summary>
+    /// __CLASS_DESC__
+    /// </summary>
+    public class __CLASS_NAME__ 
+    {
+__MEMBER_CODE__
+    }
+
+__AID_FUNC__
+}

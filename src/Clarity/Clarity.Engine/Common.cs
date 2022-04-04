@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using Vortice.Mathematics;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ClarityAid")]
+
 namespace Clarity.Engine
 {
     /// <summary>

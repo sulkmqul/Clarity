@@ -1,0 +1,4 @@
+20
+F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\vertex.cpo
+F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\afads.cpo
+F:\作業領域\Game\Clarity\src\Clarity\sapmlefile\fdnsikaw.cpo

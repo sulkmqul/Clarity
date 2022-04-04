@@ -148,7 +148,6 @@ namespace Clarity.Engine.Vertex
                 //全データの読みこみ
                 foreach (PolygonListFileDataRoot rdata in rdatalist)
                 {
-                    int index = rdata.RootID;
                     PolygonObjectFile pof = new PolygonObjectFile();
                     foreach (PolygonListData data in rdata.PolyFileList)
                     {
@@ -156,9 +155,7 @@ namespace Clarity.Engine.Vertex
                         PolyData pol = pof.ReadFile(data.FilePath);
 
                         //ADD
-                        this.AddVertexDic(index, pol);
-
-                        index++;
+                        this.AddVertexDic(data.Id, pol);
                     }
                 }
 

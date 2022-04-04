@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Clarity.File;
 using System.Drawing;
+using System.IO;
+using System.Xml.Linq;
 
 namespace Clarity.Engine.Texture
 {
@@ -84,7 +86,7 @@ namespace Clarity.Engine.Texture
     /// <summary>
     /// テクスチャデータ一覧ファイル
     /// </summary>
-    internal class TextureListFile : BaseCsvFile
+    internal class TextureListFile
     {
 
 
@@ -93,51 +95,107 @@ namespace Clarity.Engine.Texture
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        public TextureListFileDataRoot ReadFile(string filepath)
+        public TextureListFileDataRoot ReadTextureList(string filepath)
         {
-            //csvの読み込み
-            List<string[]> datalist = this.ReadCsvFile(filepath);
-
             //作成
             TextureListFileDataRoot ans = new TextureListFileDataRoot();
 
-            //一行目はIDのはず
-            ans.RootID = Convert.ToInt32(datalist[0][0]);            
-
-            //特にコンマなしの予定なので0番目を読む込む
-            //foreach (string[] data in datalist)
-            for(int i=1; i<datalist.Count; i++)
+            using (FileStream fp = new FileStream(filepath, FileMode.Open))
             {
-                string[] data = datalist[i];
-
-
-                bool ckblank = this.CheckBlank(data);
-                if (ckblank == true)
-                {
-                    continue;
-                }
-
-                TextureListFileData tdata = new TextureListFileData();
-                int pos = 0;
-
-                //ファイルパス
-                tdata.FilePath = data[pos];
-                pos++;
-                //透過色
-                tdata.TransColor = Convert.ToInt32(data[pos]);
-                pos++;
-
-                //画像数
-                int icx = Convert.ToInt32(data[pos]);
-                pos++;
-                int icy = Convert.ToInt32(data[pos]);
-                pos++;
-                tdata.IndexSize = new Size(icx, icy);
-
-                ans.TextureList.Add(tdata);
+                ans = this.ReadTextureList(fp);
             }
 
             return ans;
         }
+
+        /// <summary>
+        /// 一覧ファイルの読み込み
+        /// </summary>
+        /// <param name="fp"></param>
+        /// <returns></returns>
+        public TextureListFileDataRoot ReadTextureList(Stream fp)
+        {
+            //作成
+            TextureListFileDataRoot ans = new TextureListFileDataRoot();
+
+            try
+            {
+                XElement xml = XElement.Load(fp);
+
+                //RootIDの読み込み
+                ans.RootID = Convert.ToInt32(xml.Attribute("root_id").Value);
+
+                //読み込み
+                ans.TextureList = this.ReadData(xml);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("ReadTextureList", ex);
+            }
+            return ans;
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 読み込み
+        /// </summary>
+        /// <param name="rxml"></param>
+        /// <returns></returns>
+        private List<TextureListFileData> ReadData(XElement rxml)
+        {
+            List<TextureListFileData> anslist = new List<TextureListFileData>();
+
+            //Blockの読み込み
+            var tbem = rxml.Elements("TextureBlock");
+            foreach (XElement tb in tbem)
+            {
+                var a = this.ReadTextureBlock(tb);
+                anslist.AddRange(a);
+            }
+
+            return anslist;
+        }
+
+        /// <summary>
+        /// テクスチャブロックの読み込み
+        /// </summary>
+        /// <param name="xml"></param>
+        /// <returns></returns>
+        private List<TextureListFileData> ReadTextureBlock(XElement xml)
+        {
+            List<TextureListFileData> anslist = new List<TextureListFileData>();
+
+            //読み込みパス
+            string path = xml.Attribute("path").Value;
+
+            //データの取得
+            var tem = xml.Elements("Texture");
+            foreach (XElement tex in tem)
+            {
+                TextureListFileData ans = new TextureListFileData();
+
+                //分割サイズ
+                string divx = tex.Attribute("divx")?.Value ?? "1";
+                string divy = tex.Attribute("divy")?.Value ?? "1";
+                ans.IndexSize = new Size(Convert.ToInt32(divx), Convert.ToInt32(divy));
+
+                //透過色
+                ans.TransColor = -1;
+                string? tcol = tex.Attribute("tcol")?.Value;
+                if (tcol != null)
+                {
+                    ans.TransColor = Convert.ToInt32(tcol, 16);
+                }
+
+                //パス
+                ans.FilePath = path + "\\" + tex.Value;
+
+                anslist.Add(ans);
+            }
+
+            return anslist;
+        }
+
     }
 }

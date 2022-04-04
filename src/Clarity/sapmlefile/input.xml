@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ClarityInputSetting>
+	<InputSet type="Keyboard">
+		<button srckey="VK_LEFT" key="Left" />
+		<button srckey="VK_UP" key="Up" />
+		<button srckey="VK_RIGHT" key="Right" />
+		<button srckey="VK_DOWN" key="Down" />
+		<!--================================================-->
+		<button srckey="VK_Z" key="Button1" />
+		<button srckey="VK_X" key="Button2" />
+		<button srckey="VK_C" key="Button3" />
+		<button srckey="VK_V" key="Button4" />
+	</InputSet>
+	
+	<!-- GamePadの仕様は決まっていないので読み込んでいないですが、こんな感じの予定です -->
+	<InputSet type="GamePadXInput">
+		<button xipad="VK_UP" key="Up" />
+	</InputSet>
+	<InputSet type="GamePadDInput">
+		<button dipad="VK_UP" key="Up" />
+	</InputSet>
+</ClarityInputSetting>

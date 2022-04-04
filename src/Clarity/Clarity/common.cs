@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 //ClarityEngineはInternal扱いとする
 [assembly: InternalsVisibleTo("Clarity.Engine")]
+[assembly: InternalsVisibleTo("ClarityAid")]
 
 
 namespace Clarity

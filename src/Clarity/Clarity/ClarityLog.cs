@@ -114,7 +114,7 @@ namespace Clarity
                 ClarityLog.Instance.LogForm = new ClarityLogForm();
                 //一回showしないと問題あり
                 ClarityLog.Instance.LogForm.Show();
-                ClarityLog.Instance.LogForm.Hide();
+                //ClarityLog.Instance.LogForm.Hide();
             }
 
         }

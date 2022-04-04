@@ -61,10 +61,6 @@ namespace Clarity.Engine.Texture
         /// </summary>
         public ETextureAnimationKind Kind = ETextureAnimationKind.Loop;
 
-        /// <summary>
-        /// EAnimeKindがOnceの時、終了後自動で遷移する対象ID(INVALID IDで遷移なし)
-        /// </summary>
-        public int NextAnimeID = ClarityEngine.INVALID_ID;
 
         /// <summary>
         /// アニメのフレームの一覧
@@ -149,13 +145,13 @@ namespace Clarity.Engine.Texture
 
             //表示時間計算
             long ftime = frametime - this.CurrentAnimeStartTime;
-            //時間経過していないなら表示する
+            //時間経過していないならそのまま表示
             if (ftime <= finfo.FrameTime)
             {
                 return;
             }
 
-            //ここまで来ていたら次のアニメ
+            //ここまで来ていたら次のアニメ・・・過剰に表示時間が過ぎていたならindexを1つ以上進める処理が必要かもしれない。
             this.CurrentAnimeFrameIndex += 1;
             
             //表示時間が経過したと判断
@@ -187,12 +183,6 @@ namespace Clarity.Engine.Texture
 
                         //Anime終了処理実行
                         this.EndAnimeEvent?.Invoke(caid);
-
-                        //次があるなら遷移する
-                        if (adata.NextAnimeID != ClarityEngine.INVALID_ID)
-                        {
-                            this.ChangeAnime(adata.NextAnimeID);
-                        }
 
                     }
                     break;

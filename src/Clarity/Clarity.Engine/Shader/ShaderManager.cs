@@ -339,7 +339,6 @@ namespace Clarity.Engine.Shader
         private void LoadShaderListFileData<T>(ShaderListFileDataRoot rdata, InputElementDescription[] ipevec) where T : struct
         {
             //シェーダーのcompileと読み込み
-            int index = rdata.RootID;
             foreach (ShaderListData sd in rdata.ShaderList)
             {
 
@@ -357,9 +356,8 @@ namespace Clarity.Engine.Shader
 
                 //--------------------------------------
                 //ADD
-                this.ManaDic.Add(index, data);
+                this.ManaDic.Add(sd.Id, data);
 
-                index++;
             }
         }
 

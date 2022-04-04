@@ -286,7 +286,7 @@ namespace Clarity.Engine.Texture
                 filepathlist.ForEach(path =>
                 {
                     TextureListFile tf = new TextureListFile();
-                    TextureListFileDataRoot rdata = tf.ReadFile(path);
+                    TextureListFileDataRoot rdata = tf.ReadTextureList(path);
                     rdatalist.Add(rdata);
                 });
 
@@ -420,6 +420,14 @@ namespace Clarity.Engine.Texture
             return this.ManaDic[tid];
         }
 
+        /// <summary>
+        /// IDとcodeの一覧を作成する（Aid用）
+        /// </summary>
+        /// <returns></returns>
+        internal List<(int id, string code)> CreateIDList()
+        {
+            return this.ManaDic.Select(x => (x.Key, x.Value.Code)).ToList();
+        }
         //==============================================================================================================
         /// <summary>
         /// テクスチャの設定 設定テクスチャの分割サイズを返却

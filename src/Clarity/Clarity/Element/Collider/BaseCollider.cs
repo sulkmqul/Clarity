@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 
-namespace Clarity.Element.Collider
+namespace Clarity.Collider
 {
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace Clarity.Element.Collider
         /// <param name="cmode">当たり判定種別</param>
         public BaseCollider(EColMode cmode) : base(-99)
         {
-            this.ColMode = cmode;
+            this.ColMode = cmode;            
         }
 
         /// <summary>
@@ -58,6 +58,10 @@ namespace Clarity.Element.Collider
         /// </summary>
         public int ColiderTransposeMode = EColiderTransposeMode.ALL;
 
+        /// <summary>
+        /// true=今回のフレームでこれが誰かと衝突した(Debug描画用 これによって色を変更する)
+        /// </summary>
+        internal bool HitTempFlag = false;
 
 
         /// <summary>

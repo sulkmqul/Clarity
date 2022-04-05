@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Clarity.Element;
+using Clarity;
 using Clarity.Engine.Element;
 using Clarity.Engine.Element.Behavior;
 

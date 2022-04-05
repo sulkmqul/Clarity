@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clarity.Element
+namespace Clarity
 {
     /// <summary>
     /// 所作基底
@@ -32,7 +32,9 @@ namespace Clarity.Element
         public abstract void Execute(object beo);
     }
 
-
+    /// <summary>
+    /// Actionで動く所作
+    /// </summary>
     public class ActionBehavior : BaseBehavior
     {
         public ActionBehavior(Action<object> ac, long oid = 0) : base(oid)

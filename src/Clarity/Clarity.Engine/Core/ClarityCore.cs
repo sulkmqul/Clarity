@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Numerics;
 using Vortice.Mathematics;
-using Clarity.Element;
 
 namespace Clarity.Engine.Core
 {

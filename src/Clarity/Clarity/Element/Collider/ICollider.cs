@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clarity.Element.Collider
+namespace Clarity.Collider
 {
     /// <summary>
     /// 当たり判定処理所作 これを継承して作成する
@@ -16,7 +16,7 @@ namespace Clarity.Element.Collider
         /// </summary>
         /// <param name="obj">当たった自分</param>
         /// <param name="opptant">処理対象</param>
-        public virtual void ProcColliderAction(Clarity.Element.Collider.ICollider obj, Clarity.Element.Collider.ICollider opptant)
+        public virtual void ProcColliderAction(Clarity.Collider.ICollider obj, Clarity.Collider.ICollider opptant)
         {
         }
     }

@@ -76,10 +76,10 @@ namespace Clarity.Engine.Core
             Shader.ShaderListFileDataRoot rdata = new Shader.ShaderListFileDataRoot();
             rdata.RootID = -100;
             rdata.ShaderList = new List<Shader.ShaderListData>();
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "Default", SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsDefault" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "NoTexture", SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsNoTex" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAnime", SrcCode = Properties.Resources.SDef, VsName = "VsTextureAnimation", PsName = "PsDefault" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAlpha", SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsTextureAlphaOnlyBind" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "Default",  Id= BuildInShaderIndex.Default,  SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsDefault" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "NoTexture", Id = BuildInShaderIndex.NoTexture, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsNoTex" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAnime", Id=BuildInShaderIndex.TextureAnime,  SrcCode = Properties.Resources.SDef, VsName = "VsTextureAnimation", PsName = "PsDefault" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAlpha", Id=BuildInShaderIndex.TextureUseAlpha, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsTextureAlphaOnlyBind" });
             Shader.ShaderManager.Mana.CreateDefaultResource(rdata);
         }
 

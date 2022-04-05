@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clarity.Element.Collider
+namespace Clarity.Collider
 {
 
 
@@ -71,9 +71,9 @@ namespace Clarity.Element.Collider
                         continue;
                     }
 
-                    //判定色の変更
-                    //co.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
-                    //tar.Color = ClarityEngine.Setting.Debug.ColliderContactColor;
+                    //だれかと当たったことを通知
+                    co.HitTempFlag = true;
+                    tar.HitTempFlag = true;
 
                     return true;
                 }
@@ -179,7 +179,7 @@ namespace Clarity.Element.Collider
         /// 当たり領域の描画(デバッグ用)
         /// </summary>
         /// <param name="vindex">描画ViewIndex</param>
-        public void RenderCollider(int vindex)
+        public void RenderCollider(int vindex, object rinfo)
         {
             //登録判定をすべて描画する
             foreach (List<ICollider> collist in this.ColliderDic.Values)
@@ -188,7 +188,7 @@ namespace Clarity.Element.Collider
                 {
                     co.ColInfo.TempInfo.TempColliderList.ForEach(ele =>
                     {                        
-                        ele.Render(0, 0);
+                        ele.Render(0, 0, rinfo);
                     });
                 });
             }

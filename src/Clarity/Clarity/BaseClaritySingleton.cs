@@ -61,7 +61,7 @@ namespace Clarity
         /// <summary>
         /// ユーザー定義データのクリア
         /// </summary>
-        protected void ClearUserData()
+        internal void ClearUserData()
         {
             int[] indexvec = this.ManaDic.Keys.ToArray();
             foreach (int index in indexvec)

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Clarity.Element.Collider;
+using Clarity.Collider;
 
-namespace Clarity.Element
+namespace Clarity
 {
     /// <summary>
     /// 根幹親子関係定義
@@ -134,6 +134,8 @@ namespace Clarity.Element
         /// </summary>
         public long ID { internal init; get; }
 
+
+
         #region メンバ変数
 
         /// <summary>
@@ -154,7 +156,7 @@ namespace Clarity.Element
         /// <summary>
         /// 描画所作
         /// </summary>
-        protected BaseBehavior RenderBehavior; 
+        protected BaseBehavior RenderBehavior = null; 
 
         /// <summary>
         /// Elementのイベント
@@ -191,6 +193,11 @@ namespace Clarity.Element
         /// 子供に渡す送信フレーム情報
         /// </summary>
         protected FrameInfo SendFrameInfo { get; set; }
+
+        /// <summary>
+        /// 描画追加情報
+        /// </summary>
+        protected object RenderInfo = null;
 
         /// <summary>
         /// 自身の基準時間
@@ -281,9 +288,9 @@ namespace Clarity.Element
         }
 
         /// <summary>
-        /// 子供の処理の後処理これが採取処理
+        /// 子供の処理の後の後始末処理。これが最終処理
         /// </summary>
-        protected virtual void ProcChildAfter()
+        protected virtual void ProcCleanup()
         {
         }
 
@@ -357,7 +364,7 @@ namespace Clarity.Element
             }
 
             //子供処理の後
-            this.ProcChildAfter();
+            this.ProcCleanup();
         }
 
 
@@ -367,7 +374,8 @@ namespace Clarity.Element
         /// </summary>
         /// <param name="id">描画情報番号</param>
         /// <param name="rid">描画Index</param>
-        internal void Render(int id, int rid)
+        /// <param name="rinfo">追加情報(必要に応じて)</param>
+        internal void Render(int id, int rid, object rinfo = null)
         {
             if (this.Enabled == false)
             {
@@ -375,6 +383,7 @@ namespace Clarity.Element
             }
 
             this.ProcIndex = rid;
+            this.RenderInfo = rinfo;
 
             //描画所作の実行            
             this.RenderBehavior?.Execute(this);
@@ -390,7 +399,7 @@ namespace Clarity.Element
             foreach (var c in this.SystemLink.ChildList)
             {
                 int cp = ElementManager.GetProcIndex();
-                c.Render(id, cp);
+                c.Render(id, cp, rinfo);
             }
 
         }

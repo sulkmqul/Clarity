@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace ClarityAid
 {
     /// <summary>
@@ -39,17 +40,12 @@ namespace ClarityAid
                 #region デバッグ情報作成
 
                 string[] arg = {
-                    "im",
+                    "cs",
                     "-i",
-                    @"C:\Users\alk\Desktop\一時作業\新しいフォルダー\data",
-                    "-k",
-                    "*.png",
+                    @"F:\作業領域\Game\Stellamaris\src\Stellamaris\Stellamaris\cs.xml",                    
                     "-o",
                     @"C:\Users\alk\Desktop\一時作業\新しいフォルダー",
-                    "-x",
-                    "2",
-                    "-y",
-                    "1"
+                    
                 };
 
                 args = arg;
@@ -112,14 +108,16 @@ Usage:
 
         te : Create texture code.
             [required]
-                -i : Clarity texture list filepath(-i multiple)
+
             [Option]
+                -i : Clarity texture list filepath(-i multiple)
                 -o : Output directory path.
         
         ve : Create Vertex code.
             [required]
-                -i : Clarity polygon list filepath(-i multiple)
+
             [Option]
+                -i : Clarity polygon list filepath(-i multiple)
                 -o : Output directory path.
         
         sh : Create Shader code.
@@ -137,6 +135,12 @@ Usage:
                 -x : limit of columns 
                 -y : limit of rows
 
+        cs : Create Setting Code
+            [required]
+                -i : Input clarity setting file path
+            [Option]                
+                -o : Output directory path
+
 ";
             Console.WriteLine(help);
 
@@ -148,5 +152,16 @@ Usage:
 
 
 
-    
- }
+
+    public static class TetsSpace
+    {
+        public enum ESettingCode
+        {
+        }
+
+        
+    }
+
+
+
+}

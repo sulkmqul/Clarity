@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ClarityCodeAid>
 	<Texture>
-		public static void SetTexture(this Clarity.Engine.RendererSet set, ETextureID etex, int slot = 0)
+		public static void SetTextureID(this Clarity.Engine.Element.ClarityObject obj, ETextureID etex, int slot = 0)
         {
-            set.SetTextureId(slot, (int)etex);
+            obj.SetTextureID(0, (int)etex);
         }
 	</Texture>
 	<Vertex>
+		public static void SetVertexID(this Clarity.Engine.Element.ClarityObject obj, EVertexCode evc)
+        {
+            obj.VertexID = (int)evc;
+        }
 	</Vertex>
 	<Shader>
-		public static void SetTexture(this Clarity.Engine.RendererSet set, EShaderID esh)
+		public static void SetShaderID(this Clarity.Engine.Element.ClarityObject obj, EShaderID esh)
         {
-            set.ShaderID = (int)esh;
+            obj.ShaderID = (int)esh;
         }
 	</Shader>
 	<Sound>
@@ -21,11 +25,72 @@
 	<TextureAnime>
 	</TextureAnime>
 	<Structure>
-		public static void AddElement(EClarityStructureID id, Clarity.Element.BaseElement data)
+		public static void AddElement(EStructureCode id, Clarity.BaseElement data)
 		{
 			Clarity.Engine.ClarityEngine.AddManage((long)id, data);
 		}
 	</Structure>
 	<ClaritySetting>
+        public static bool GetBool(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetBool((int)code);
+        }
+
+        public static int GetInteger(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetInteger((int)code);
+        }
+
+        public static float GetFloat(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetFloat((int)code);
+        }
+
+        public static string GetString(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetString((int)code);
+        }
+
+        public static System.Numerics.Vector2 GetVec2(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetVec2((int)code);
+        }
+
+        public static System.Numerics.Vector3 GetVec3(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetVec3((int)code);
+        }
+                
+        public static int[] GetIntegerArray(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetIntegerArray((int)code);
+        }
+
+        public static float[] GetFloatArray(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetFloatArray((int)code);
+        }
+
+        public static string[] GetStringArray(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetStringArray((int)code);
+        }
+
+        public static System.Numerics.Vector2[] GetVec2Array(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetVec2Array((int)code);
+        }
+
+        public static System.Numerics.Vector3[] GetVec3Array(this Clarity.ClaritySetting cs, ESettingCode code)
+        {
+            return cs.GetVec3Array((int)code);
+        }
+
+        public static T GetEnum&lt;T&gt;(this Clarity.ClaritySetting cs, ESettingCode code) where T : System.Enum
+        {
+            string m = cs.GetString(code);
+            T ans = (T)System.Enum.Parse(typeof(T), m);
+            return ans;
+        }
 	</ClaritySetting>
 </ClarityCodeAid>

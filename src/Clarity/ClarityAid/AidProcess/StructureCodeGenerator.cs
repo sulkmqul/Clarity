@@ -29,7 +29,7 @@ namespace ClarityAid.AidProcess
         {
         }
 
-        public string ClassName => "EClarityStructureID";
+        public string ClassName => "EStructureCode";
 
         /// <summary>
         /// 処理の実行

@@ -135,6 +135,14 @@ namespace Clarity
             });            
         }
 
+        /// <summary>
+        /// 管理しているkeyとcodeを取得する(Aid用)
+        /// </summary>
+        /// <returns></returns>
+        internal List<(int key, string code)> GetManagedKeyCode()
+        {
+            return this.DataDic.Select(x => (x.Value.Id, x.Value.Code)).ToList();
+        }
 
 
         #region 設定値の取得
@@ -398,6 +406,9 @@ namespace Clarity
 
         #endregion
 
+
+
+        
         #endregion
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

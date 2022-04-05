@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Clarity.Element;
 using Clarity.Engine.Element;
 
 namespace Clarity.Engine
 {
-
-    class SystemStructureID
+    /// <summary>
+    /// システム構造管理ID
+    /// </summary>
+    enum ESystemStructureID : long
     {
-        public const long System = -100;
-        public const long User = -99;
-        public const long Cleanup = -98;
+        System = -100,
+        User = -99,
+        Cleanup = -98,
     }
     
 
@@ -30,12 +31,13 @@ namespace Clarity.Engine
         /// <summary>
         /// エンジン構造
         /// </summary>
-        public EngineStructureManager SystemStructure = null;
+        public EngineSystemStructureManager SystemStructure = null;
 
         /// <summary>
         /// 提供構造
         /// </summary>
         public EngineStructureManager UserStructure = null;
+
     }
 
 
@@ -178,7 +180,7 @@ namespace Clarity.Engine
 
                 
                 //試験、そのうち消す
-                TestSpace();
+                //TestSpace();
             }
             catch (Exception ex)
             {　　　　
@@ -278,26 +280,29 @@ namespace Clarity.Engine
         /// <remarks>ClarityEngineに適したElement構造を作成する</remarks>
         private void CreateSystemStructure()
         {
-            this.EngineData.SystemStructure = new EngineStructureManager();
+            this.EngineData.SystemStructure = new EngineSystemStructureManager();
 
             //ノードを定義
-            (string code, long oid)[] datavec = {
-                ("System", SystemStructureID.System),
-                ("User", SystemStructureID.User),
-                ("Clean", SystemStructureID.Cleanup)
+            (string code, ESystemStructureID oid)[] datavec = {
+                ("System", ESystemStructureID.System),
+                ("User", ESystemStructureID.User),
+                ("Clean", ESystemStructureID.Cleanup)
             };
 
             //管理へ追加
             foreach (var data in datavec)
             {
-                ClarityStructure st = new ClarityStructure(data.code, data.oid);
+                ClarityStructure st = new ClarityStructure(data.code, (long)data.oid);
                 this.EngineData.SystemStructure.AddManage(st);
                 ElementManager.AddRequest(st);
             }
 
-            
-        }
+            //------------------------------------------------------------------------------
+            //必要なControllerの作成
 
+            
+
+        }
 
         /// <summary>
         /// エンジンの実行
@@ -311,5 +316,6 @@ namespace Clarity.Engine
             this.Core = null;
         }
 
+        
     }
 }

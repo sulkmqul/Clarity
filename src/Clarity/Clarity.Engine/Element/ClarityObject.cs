@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Clarity.Engine;
 using Clarity.Engine.Shader;
-using Clarity.Element;
+using Clarity;
 using Clarity.Engine.Element.Behavior;
 using Clarity.Engine.Texture;
 
@@ -126,6 +126,118 @@ namespace Clarity.Engine.Element
             {
                 this.TexAnimeCont?.ChangeAnime(value);
             }
+        }
+
+        #region RendererSetアクセサ
+        /// <summary>
+        /// 頂点ID
+        /// </summary>
+        public int VertexID
+        {
+            get
+            {
+                return this.RenderSet.VertexID;
+            }
+            set
+            {
+                this.RenderSet.VertexID = value;
+            }
+        }
+        /// <summary>
+        /// テクスチャコード
+        /// </summary>
+        public int TextureID
+        {
+            get
+            {
+                return this.RenderSet.TextureID;
+            }
+            set
+            {
+                this.RenderSet.TextureID = value;
+            }
+        }
+        /// <summary>
+        /// シェーダーコード
+        /// </summary>
+        public int ShaderID
+        {
+            get
+            {
+                return this.RenderSet.ShaderID;
+            }
+            set
+            {
+                this.RenderSet.ShaderID = value;
+            }
+        }
+
+        /// <summary>
+        /// 色の設定
+        /// </summary>
+        public Vortice.Mathematics.Color4 Color
+        {
+            get
+            {
+                return this.RenderSet.Color;
+            }
+            set
+            {
+                this.RenderSet.Color = value;
+            }
+        }
+        
+        /// <summary>
+        /// TextureOffset < 1.0
+        /// </summary>
+        public Vector2 TextureOffset
+        {
+            get
+            {
+                return this.RenderSet.TextureOffset;
+            }
+            set
+            {
+                this.RenderSet.TextureOffset = value;
+            }
+        }
+
+        /// <summary>
+        /// TextureIDの設定
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <param name="texid"></param>
+        public void SetTextureID(int slot, int texid)
+        {
+            this.RenderSet.SetTextureId(slot, texid);
+        }
+
+        /// <summary>
+        /// TextureID値の取得
+        /// </summary>
+        /// <param name="slot"></param>
+        /// <returns></returns>
+        public int GetTextureID(int slot)
+        {
+            return this.RenderSet.TextureIdList[slot];
+        }
+        #endregion
+
+        /// <summary>
+        /// 自身の削除を行う
+        /// </summary>
+        public void RemoveSelf()
+        {
+            ClarityEngine.RemoveManage(this);            
+        }
+
+
+        /// <summary>
+        /// 現在のテクスチャサイズを自身のサイズとして設定する
+        /// </summary>
+        public void FitTextureSize()
+        {
+            this.TransSet.Scale2D = ClarityEngine.GetTextureSize(this.TextureID);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clarity.Element.Collider
+namespace Clarity.Collider
 {
     /// <summary>
     /// シリアル値の生成

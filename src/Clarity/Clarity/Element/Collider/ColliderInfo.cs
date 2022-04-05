@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clarity.Element.Collider
+namespace Clarity.Collider
 {
 
     /// <summary>
@@ -98,6 +98,7 @@ namespace Clarity.Element.Collider
                 BaseCollider c = (BaseCollider)x.Clone();
                 c.TransformCollider(this.Parent.TransSet);
                 c.Proc(0, null);
+                c.HitTempFlag = false;
                 this.TempInfo.TempColliderList.Add(c);
 
             });

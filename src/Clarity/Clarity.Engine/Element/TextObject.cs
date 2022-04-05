@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Clarity.Element;
 using Vortice.DirectWrite;
 
 namespace Clarity.Engine.Element

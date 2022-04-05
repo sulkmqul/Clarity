@@ -1,11 +1,11 @@
-﻿using Clarity.Element.Collider;
+﻿using Clarity.Collider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clarity.Element
+namespace Clarity
 {
     /// <summary>
     /// Root要素
@@ -119,6 +119,18 @@ namespace Clarity.Element
             Instance.RemoveReqQue.Enqueue(data);
         }
 
+        /// <summary>
+        /// 対象Elementの子供を全て削除する
+        /// </summary>
+        /// <param name="parent">親Element(親を残した全てを削除する)</param>
+        public static void ClearChildRequest(BaseElement parent)
+        {
+            foreach(BaseElement elem in parent.SystemLink.ChildList)
+            {
+                ElementManager.RemoveRequest(elem);
+            }
+        }
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 処理実行
@@ -136,6 +148,7 @@ namespace Clarity.Element
             this.RootElement.Proc(this.ProcIndex, finfo);
 
             //当たり判定
+            this.ColMana.ExecuteCollision();
 
             //削除申請処理
             this.RemoveElement();
@@ -144,12 +157,22 @@ namespace Clarity.Element
         /// <summary>
         /// 描画処理
         /// </summary>
-        public void Render(int id = 0)
+        public void Render(int id = 0, object rinfo = null)
         {
             this.ProcIndex = 0;
 
             //描画処理の実行
-            this.RootElement.Render(id, this.ProcIndex);
+            this.RootElement.Render(id, this.ProcIndex, rinfo);
+        }
+
+        /// <summary>
+        /// 当たり判定情報描画処理
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="rinfo"></param>
+        public void RenderColliderInfo(int id = 0, object rinfo = null)
+        {
+            this.ColMana?.RenderCollider(id, rinfo);
         }
 
         /// <summary>
@@ -229,7 +252,7 @@ namespace Clarity.Element
             if (ic == null)
             {
                 return;
-            }
+            }            
             this.ColMana.AddCollider(ic);
         }
         /// <summary>

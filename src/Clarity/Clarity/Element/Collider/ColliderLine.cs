@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 
-namespace Clarity.Element.Collider
+namespace Clarity.Collider
 {
     /// <summary>
     /// 当たり判定定義クラス　線分

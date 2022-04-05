@@ -1,5 +1,4 @@
-﻿using Clarity.Element;
-using Clarity.Engine.Shader;
+﻿using Clarity.Engine.Shader;
 using System;
 using System.Collections.Generic;
 using System.Linq;

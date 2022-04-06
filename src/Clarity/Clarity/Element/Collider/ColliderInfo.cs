@@ -97,7 +97,7 @@ namespace Clarity.Collider
             {
                 BaseCollider c = (BaseCollider)x.Clone();
                 c.TransformCollider(this.Parent.TransSet);
-                c.Proc(0, null);
+                c.Proc(0, new FrameInfo(0, 0)); //FrameInfoは意味を持たないので仮
                 c.HitTempFlag = false;
                 this.TempInfo.TempColliderList.Add(c);
 

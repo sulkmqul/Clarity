@@ -116,7 +116,7 @@ namespace Clarity.Engine.Element
         /// <summary>
         /// Textureアニメの番号を設定
         /// </summary>
-        public int TexAnimeID
+        public int TextureAnimeID
         {
             get
             {

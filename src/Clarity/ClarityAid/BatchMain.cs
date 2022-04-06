@@ -39,10 +39,12 @@ namespace ClarityAid
             Dictionary<EAidMode, Type> dic = new Dictionary<EAidMode, Type>();
             {
                 dic.Add(EAidMode.Texture, typeof(TextureCodeGenerator));    //texture
+                dic.Add(EAidMode.TextureAnime, typeof(TextureAnimeCodeGenerator));  //テクスチャアニメ
                 dic.Add(EAidMode.Shader, typeof(ShaderCodeGenerator));    //Shader
                 dic.Add(EAidMode.Structure, typeof(StructureCodeGenerator));    //構造
                 dic.Add(EAidMode.Vertex, typeof(VertexCodeGenerator));    //Vertex
                 dic.Add(EAidMode.ClaritySetting, typeof(UserSettingCodeGenerator));    //設定値
+                
 
                 dic.Add(EAidMode.ImageMerge, typeof(ImageMerge));    //画像連結
                 

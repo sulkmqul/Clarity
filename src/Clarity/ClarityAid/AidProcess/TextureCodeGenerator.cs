@@ -12,7 +12,7 @@ namespace ClarityAid.AidProcess
     /// </summary>
     internal class TextureCodeGenerator : IAidProcess
     {
-        public string ClassName => "ETextureID";
+        public string ClassName => "ETextureCode";
 
 
 

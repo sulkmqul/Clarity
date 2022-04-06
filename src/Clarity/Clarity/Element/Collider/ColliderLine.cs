@@ -50,7 +50,7 @@ namespace Clarity.Collider
         /// <summary>
         /// これ回転(親の回転であり、完全に描画用)
         /// </summary>
-        private Vector3 ParentRot = new Vector3();
+        internal Vector3 ParentRot = new Vector3();
 
 
         

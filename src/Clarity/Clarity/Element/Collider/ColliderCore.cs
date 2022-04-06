@@ -266,7 +266,7 @@ namespace Clarity.Collider
 
 
             lvec = Vector3.Normalize(lvec);
-            stcen = Vector3.Normalize(lvec);
+            stcen = Vector3.Normalize(stcen);
             edcen = Vector3.Normalize(edcen);
 
             float stdot = this.Vec2Dot(stcen, lvec);

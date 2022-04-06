@@ -179,7 +179,8 @@ namespace Clarity.Collider
         /// 当たり領域の描画(デバッグ用)
         /// </summary>
         /// <param name="vindex">描画ViewIndex</param>
-        public void RenderCollider(int vindex, object rinfo)
+        /// <param name="renderbehavior">当たり判定情報描画所作</param>
+        public void RenderCollider(int vindex, BaseRenderColliderBehavior renderbehavior = null)
         {
             //登録判定をすべて描画する
             foreach (List<ICollider> collist in this.ColliderDic.Values)
@@ -188,7 +189,7 @@ namespace Clarity.Collider
                 {
                     co.ColInfo.TempInfo.TempColliderList.ForEach(ele =>
                     {                        
-                        ele.Render(0, 0, rinfo);
+                        ele.Render(0, 0, renderbehavior);
                     });
                 });
             }

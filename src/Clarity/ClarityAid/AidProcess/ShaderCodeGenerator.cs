@@ -12,7 +12,7 @@ namespace ClarityAid.AidProcess
     /// </summary>
     internal class ShaderCodeGenerator : IAidProcess
     {
-        public string ClassName => "EShaderID";
+        public string ClassName => "EShaderCode";
 
 
         /// <summary>

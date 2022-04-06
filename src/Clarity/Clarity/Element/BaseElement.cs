@@ -197,7 +197,7 @@ namespace Clarity
         /// <summary>
         /// 描画追加情報
         /// </summary>
-        protected object RenderInfo = null;
+        public object RenderInfo { get; internal set; } = null;
 
         /// <summary>
         /// 自身の基準時間

@@ -84,7 +84,15 @@ namespace Clarity.Engine.Core
             /// 描画View
             /// </summary>
             public SystemViewElement SystemView = null;
-            
+
+            /// <summary>
+            /// 当たり判定描画可否
+            /// </summary>
+            public bool RenderColliderFlag = false;
+            /// <summary>
+            /// 当たり判定描画所作
+            /// </summary>
+            public RenderColliderBehavior RenderColBh = null;
         }
 
         /// <summary>
@@ -120,6 +128,13 @@ namespace Clarity.Engine.Core
 
             this.FData.SwapChainElement.AddChild(this.FData.SystemView);
 
+
+            //その他初期情報の取得
+            {
+                //当たり判定描画可否
+                this.FData.RenderColliderFlag = ClarityEngine.EngineSetting.GetBool("Debug.Collider.Visible", false);
+                this.FData.RenderColBh = new RenderColliderBehavior();
+            }
         }
 
         /// <summary>
@@ -196,7 +211,7 @@ namespace Clarity.Engine.Core
 
             long prev_time = 0;
 
-            float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit", 0.0f);            
+            float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit", 0.0f);
             double nexttime = limittile;
 
             //実行ループ
@@ -310,6 +325,16 @@ namespace Clarity.Engine.Core
 
                 //描画処理
                 ElementManager.Mana.Render();
+
+                //当たり判定の描画
+                if (this.FData.RenderColliderFlag == true)
+                {
+                    using (DepthStencilDisabledState ds = new DepthStencilDisabledState())
+                    {
+                        ElementManager.Mana.RenderColliderInfo(0, this.FData.RenderColBh);
+                    }
+                }
+
             }
             DxManager.Mana.EndRendering();
         }
@@ -328,7 +353,7 @@ namespace Clarity.Engine.Core
             DxManager.Mana.DxContext.RSSetViewport(wd.VPort.VPort);
 
             //描画リソース取得
-            var texres = DxManager.Mana.SystemViewTextureResource;
+            //var texres = DxManager.Mana.SystemViewTextureResource;
 
             //SwapChainへの描画物の描画
             this.FData.SwapChainElement.Render(0, 0);

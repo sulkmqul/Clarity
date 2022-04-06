@@ -68,8 +68,9 @@ namespace Clarity.Engine.Core
             this.AddProcBehavior(new ActionBehavior((data) =>
             {
                 WorldData wd = WorldManager.Mana.Get(this.TransSet.WorldID);
-                this.TransSet.Pos2D = new Vector2(0.0f, 0.0f);
-                this.TransSet.Scale2D = new Vector2(wd.VPort.VPort.Width * 0.8f, wd.VPort.VPort.Height * 0.8f);
+                this.TransSet.Pos2D = new Vector2(0.0f, 0.0f);                
+                this.TransSet.Scale2D = new Vector2(wd.VPort.VPort.Width, wd.VPort.VPort.Height);
+                this.TransSet.ScaleRate = 1.0f;
             }));
         }
 

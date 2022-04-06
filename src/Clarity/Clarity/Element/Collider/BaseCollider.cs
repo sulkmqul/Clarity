@@ -35,6 +35,26 @@ namespace Clarity.Collider
 
 
     /// <summary>
+    /// 当たり判定情報描画所作
+    /// </summary>
+    class RenderColliderBehavior : BaseModelBehavior<BaseCollider>
+    {
+        protected override void ExecuteBehavior(BaseCollider obj)
+        {
+            //送られてきた物体が所作の場合は起動する
+            BaseBehavior beh = obj.RenderInfo as BaseBehavior;
+            beh?.Execute(obj);
+        }
+    }
+
+    /// <summary>
+    /// 当たり判定描画所作
+    /// </summary>
+    public abstract class BaseRenderColliderBehavior : BaseModelBehavior<BaseCollider>
+    {
+    }
+
+    /// <summary>
     /// 当たり判定オブジェクト基底
     /// </summary>
     public abstract class BaseCollider : BaseElement, ICloneable
@@ -45,7 +65,8 @@ namespace Clarity.Collider
         /// <param name="cmode">当たり判定種別</param>
         public BaseCollider(EColMode cmode) : base(-99)
         {
-            this.ColMode = cmode;            
+            this.ColMode = cmode;
+            this.RenderBehavior = new RenderColliderBehavior();
         }
 
         /// <summary>

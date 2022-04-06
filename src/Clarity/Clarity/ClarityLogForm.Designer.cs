@@ -46,13 +46,13 @@ namespace Clarity
             this.textBoxLog.Name = "textBoxLog";
             this.textBoxLog.ReadOnly = true;
             this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxLog.Size = new System.Drawing.Size(728, 370);
+            this.textBoxLog.Size = new System.Drawing.Size(728, 588);
             this.textBoxLog.TabIndex = 0;
             // 
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClear.Location = new System.Drawing.Point(665, 388);
+            this.buttonClear.Location = new System.Drawing.Point(665, 606);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(75, 23);
             this.buttonClear.TabIndex = 1;
@@ -65,7 +65,7 @@ namespace Clarity
             this.trackBarAlpha.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBarAlpha.AutoSize = false;
-            this.trackBarAlpha.Location = new System.Drawing.Point(33, 388);
+            this.trackBarAlpha.Location = new System.Drawing.Point(33, 606);
             this.trackBarAlpha.Maximum = 100;
             this.trackBarAlpha.Minimum = 10;
             this.trackBarAlpha.Name = "trackBarAlpha";
@@ -79,7 +79,7 @@ namespace Clarity
             // 
             this.checkBoxTopMost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxTopMost.AutoSize = true;
-            this.checkBoxTopMost.Location = new System.Drawing.Point(12, 393);
+            this.checkBoxTopMost.Location = new System.Drawing.Point(12, 611);
             this.checkBoxTopMost.Name = "checkBoxTopMost";
             this.checkBoxTopMost.Size = new System.Drawing.Size(15, 14);
             this.checkBoxTopMost.TabIndex = 3;
@@ -90,7 +90,7 @@ namespace Clarity
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(752, 423);
+            this.ClientSize = new System.Drawing.Size(752, 641);
             this.Controls.Add(this.checkBoxTopMost);
             this.Controls.Add(this.trackBarAlpha);
             this.Controls.Add(this.buttonClear);

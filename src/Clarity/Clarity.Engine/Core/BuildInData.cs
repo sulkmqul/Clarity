@@ -23,6 +23,7 @@ namespace Clarity.Engine.Core
     internal class BuildInPolygonModelIndex
     {
         public const int Rect = -100;
+        public const int Line = -99;
     }
 
     /// <summary>
@@ -62,7 +63,8 @@ namespace Clarity.Engine.Core
         private static void LoadVertex()
         {
             PolyCsvData[] vdata = {
-                new PolyCsvData(){ VNo = -100, Text = Properties.Resources.VRect },
+                new PolyCsvData(){ VNo = BuildInPolygonModelIndex.Rect, Text = Properties.Resources.VRect },
+                new PolyCsvData(){ VNo = BuildInPolygonModelIndex.Line, Text = Properties.Resources.VLine },
             };
 
             VertexManager.Mana.LoadCSV(vdata.ToList());

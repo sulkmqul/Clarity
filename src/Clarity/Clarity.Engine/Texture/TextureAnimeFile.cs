@@ -36,6 +36,12 @@ namespace Clarity.Engine.Texture
         public string AnimeCode = "Amida";
 
         /// <summary>
+        /// 割り当てたアニメコード
+        /// </summary>
+        [XmlIgnore]
+        public int Id = 0;
+
+        /// <summary>
         /// アニメの取り扱い
         /// </summary>
         [XmlAttribute("loop")]
@@ -105,6 +111,13 @@ namespace Clarity.Engine.Texture
                 {
                     ans = (TextureAnimeFileDataRoot)xml.Deserialize(fp);
                 }
+
+                int aid = ans.RootID;
+                ans.AnimeDataList.ForEach(x =>
+                {
+                    x.Id = aid;
+                    aid++;
+                });
 
             }
             catch (Exception e)

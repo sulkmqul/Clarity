@@ -40,9 +40,11 @@ namespace ClarityAid
                 #region デバッグ情報作成
 
                 string[] arg = {
-                    "cs",
+                    "ta",
                     "-i",
-                    @"F:\作業領域\Game\Stellamaris\src\Stellamaris\Stellamaris\cs.xml",                    
+                    @"F:\作業領域\Game\Stellamaris\古\data\anime",
+                    "-k",
+                    "*.cta",
                     "-o",
                     @"C:\Users\alk\Desktop\一時作業\新しいフォルダー",
                     
@@ -111,6 +113,14 @@ Usage:
 
             [Option]
                 -i : Clarity texture list filepath(-i multiple)
+                -o : Output directory path.
+
+        ta : Create texture anime code
+            [required]
+                -i : Input directory path.
+                -k : match extension(*.cta)
+                
+            [Option]
                 -o : Output directory path.
         
         ve : Create Vertex code.

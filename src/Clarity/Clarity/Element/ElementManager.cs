@@ -168,11 +168,11 @@ namespace Clarity
         /// <summary>
         /// 当たり判定情報描画処理
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="rinfo"></param>
-        public void RenderColliderInfo(int id = 0, object rinfo = null)
+        /// <param name="id">設定ID</param>
+        /// <param name="rinfo">当たり判定情報描画所作</param>
+        public void RenderColliderInfo(int id = 0, BaseRenderColliderBehavior renderbehavior = null)
         {
-            this.ColMana?.RenderCollider(id, rinfo);
+            this.ColMana?.RenderCollider(id, renderbehavior);
         }
 
         /// <summary>

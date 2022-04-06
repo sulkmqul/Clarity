@@ -76,84 +76,7 @@ namespace Clarity.Engine
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        public static void TestSpace()
-        {
-            /*
-            string datapath = @"F:\作業領域\Game\Clarity\src\ClarityIntensity\";
-            Texture.TextureManager.Mana.AddTexture(1, datapath + "T0000.png", new System.Drawing.Size(1, 1));
-
-            Vertex.VertexManager.Mana.AddResource(1, datapath + "vertex.cpo");
-
-            //Buildin Shader Listの読み込み            
-            {
-                Shader.ShaderListFileDataRoot rdata = new Shader.ShaderListFileDataRoot();
-                rdata.RootID = 1;
-                rdata.ShaderList = new List<Shader.ShaderListData>();
-                rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TEST", FilePath = datapath + "aabbcc.fx", VsName = "VsDefault", PsName = "PsDefault" });
-                //rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TEST", FilePath = datapath + "honi.hlsl", VsName = "VSMain", PsName = "PSMain" });
-                Shader.ShaderManager.Mana.CreateDefaultResource(rdata);
-            }*/
-
-
-            Texture.TextureManager.Mana.AddTexture(1, @"F:\作業領域\Game\Stellamaris\data\img\char\plj_000.png", new System.Drawing.Size(8, 1));
-
-            Texture.TextureAnimeFactory.Create();
-            Texture.TextureAnimeFactory.Mana.ReadTextureAnimeFile(@"F:\作業領域\Game\Clarity\src\ClarityIntensity\0mayu.cta");
-            Clarity.Engine.Element.ClarityObject obj = new Element.ClarityObject(10);
-            obj.TextureAnimeEnabled = true;
-            obj.TransSet.WorldID = 0;
-            obj.TexAnimeID = 0;
-            obj.RenderSet.TextureID = 1;
-            obj.RenderSet.VertexID = -100;
-            obj.RenderSet.Color = new Vortice.Mathematics.Color4(1.0f, 0.0f, 0.0f, 1.0f);
-            obj.RenderSet.ShaderID = -98;
-            obj.TransSet.Scale2D = new Vector2(192, 256.0f) * 2.0f;
-            obj.TransSet.Pos2D = new Vector2(0.0f, 0.0f);
-            obj.AddProcBehavior(new ActionBehavior((x) =>
-            {
-                //obj.FrameSpeed.RotZ = 1.0f;
-            }));
-            obj.TexAnimeCont.EndAnimeEvent += (int aid) => {
-                ClarityEngine.SetSystemText($"{obj.ProcTime}");
-            };
-
-            ElementManager.AddRequest(obj);
-
-
-            //obj = new Element.ClarityObject(10);
-            //obj.TransSet.WorldID = 0;
-            //obj.RenderSet.TextureID =-100;
-            //obj.RenderSet.VertexID = -100;
-            //obj.RenderSet.Color = new Vortice.Mathematics.Color4(1.0f, 0.5f, 0.8f, 1.0f);
-            //obj.RenderSet.ShaderID = -100;
-            //obj.TransSet.Scale2D = new Vector2(100.0f, 100.0f);
-            //obj.TransSet.Pos2D = new Vector2(0.0f, 0.0f);
-            //ElementManager.AddRequest(obj);
-
-
-
-            //文字の描画
-            Element.TextObject  text = new Element.TextObject("あかさ\nたな");
-            text.TransSet.Pos2D = new Vector2(200.0f, 100.0f);
-            text.AddProcBehavior(new ActionBehavior((x) => {                
-                text.FrameSpeed.PosX += 100f;
-                text.Text = $"x={text.TransSet.PosX} y={text.TransSet.PosY}";
-                if (text.TransSet.PosX > 500)
-                {
-                    text.RemoveProcBehavior(0);
-                }
-            }));
-            text.AddProcBehavior(new ActionBehavior((x) => {
-                text.FrameSpeed.PosY += 100f;
-                text.Text = $"x={text.TransSet.PosX} y={text.TransSet.PosY}";
-                if (text.TransSet.PosY > 500)
-                {
-                    text.RemoveProcBehavior(1);
-                }
-            }, 1));
-            ElementManager.AddRequest(text);
-
-        }
+        
 
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -178,9 +101,6 @@ namespace Clarity.Engine
                 //初期化
                 ClarityEngine.Engine.InitEngine(con, cesfilepath);
 
-                
-                //試験、そのうち消す
-                //TestSpace();
             }
             catch (Exception ex)
             {　　　　

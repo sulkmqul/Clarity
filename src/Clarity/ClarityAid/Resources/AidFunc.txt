@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ClarityCodeAid>
 	<Texture>
-		public static void SetTextureID(this Clarity.Engine.Element.ClarityObject obj, ETextureID etex, int slot = 0)
+		public static void SetTextureCode(this Clarity.Engine.Element.ClarityObject obj, ETextureCode etex, int slot = 0)
         {
-            obj.SetTextureID(0, (int)etex);
+            obj.SetTextureID(slot, (int)etex);
         }
 	</Texture>
 	<Vertex>
-		public static void SetVertexID(this Clarity.Engine.Element.ClarityObject obj, EVertexCode evc)
+		public static void SetVertexCode(this Clarity.Engine.Element.ClarityObject obj, EVertexCode evc)
         {
             obj.VertexID = (int)evc;
         }
 	</Vertex>
 	<Shader>
-		public static void SetShaderID(this Clarity.Engine.Element.ClarityObject obj, EShaderID esh)
+		public static void SetShaderCode(this Clarity.Engine.Element.ClarityObject obj, EShaderCode esh)
         {
             obj.ShaderID = (int)esh;
         }
@@ -23,6 +23,10 @@
 	<ImageMerge>
 	</ImageMerge>
 	<TextureAnime>
+        public static void SetTextureAnimeCode(this Clarity.Engine.Element.ClarityObject obj, ETextureAnimeCode eta)
+        {
+            obj.TextureAnimeID = (int)eta;
+        }
 	</TextureAnime>
 	<Structure>
 		public static void AddElement(EStructureCode id, Clarity.BaseElement data)

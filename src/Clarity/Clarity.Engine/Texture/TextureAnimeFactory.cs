@@ -98,7 +98,6 @@ namespace Clarity.Engine.Texture
         {
             List<ReadTempData> anslist = new List<ReadTempData>();
 
-            int aid = rdata.RootID;
 
             rdata.AnimeDataList.ForEach(x =>
             {
@@ -128,8 +127,7 @@ namespace Clarity.Engine.Texture
                 ans.FileData = x;
 
                 //IDの割り当て
-                ans.AnimeID = aid;
-                aid++;
+                ans.AnimeID = x.Id;                
 
                 anslist.Add(ans);
 
@@ -246,6 +244,16 @@ namespace Clarity.Engine.Texture
             return ans;
         }
 
+
+
+        /// <summary>
+        /// IDとcodeの一覧を作成する（Aid用）
+        /// </summary>
+        /// <returns></returns>
+        internal List<(int id, string code)> CreateIDList()
+        {
+            return this.ManaDic.Select(x => (x.Key, x.Value.Code)).ToList();
+        }
 
     }
 }

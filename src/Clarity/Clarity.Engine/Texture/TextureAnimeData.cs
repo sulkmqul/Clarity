@@ -81,7 +81,7 @@ namespace Clarity.Engine.Texture
     /// <summary>
     /// オブジェクト対象のテクスチャアニメを管理するクラス
     /// </summary>
-    internal class TextureAnimeController
+    public class TextureAnimeController
     {
         public TextureAnimeController()
         {

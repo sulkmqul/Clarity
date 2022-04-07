@@ -55,6 +55,7 @@ namespace Clarity.Engine.Element
             //適切なTextureの設定
             obj.RenderSet.TextureID = obj.TexAnimeCont.CurrentFrameInfo.TextureID;
             obj.RenderSet.TextureOffset = obj.TexAnimeCont.CurrentFrameInfo.TextureOffset;
+
         }
     }
 
@@ -66,6 +67,7 @@ namespace Clarity.Engine.Element
     {
         public ClarityObject(long oid) : base(oid)
         {
+            //基底描画設定
             this.RenderBehavior = new RenderDefaultBehavior();
 
             //可変フレーム所作を追加
@@ -74,7 +76,7 @@ namespace Clarity.Engine.Element
             //テクスチャアニメ所作
             this.ProcBehavior.AddFixedProcess(new TextureAnimeProcBehavior());
         }
-
+        
         #region メンバ変数
         /// <summary>
         /// 描画情報
@@ -85,7 +87,7 @@ namespace Clarity.Engine.Element
         /// <summary>
         /// テクスチャアニメ管理
         /// </summary>
-        internal TextureAnimeController TexAnimeCont = null;
+        public TextureAnimeController TexAnimeCont { get; protected set; } = null;
         #endregion
 
         /// <summary>
@@ -239,5 +241,6 @@ namespace Clarity.Engine.Element
         {
             this.TransSet.Scale2D = ClarityEngine.GetTextureSize(this.TextureID);
         }
+
     }
 }

@@ -41,6 +41,12 @@ namespace Clarity
         /// データコード
         /// </summary>
         public string Code = "";
+
+        /// <summary>
+        /// これのタグ名
+        /// </summary>
+        public string TagName = "";
+
         /// <summary>
         /// 格納データ
         /// </summary>
@@ -55,6 +61,7 @@ namespace Clarity
         public EClaritySettingFileDataType SubDataType = EClaritySettingFileDataType.MAX;
 
     }
+
 
     /// <summary>
     /// 設定情報

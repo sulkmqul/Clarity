@@ -127,6 +127,9 @@ namespace Clarity.File
                 //Code
                 ans.Code = this.CreateElementCode(epath, ele);
 
+                //生のタグ名
+                ans.TagName = ele.Name.LocalName;
+
                 //データコード
                 {
                     XAttribute atype = ele.Attribute("type");

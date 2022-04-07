@@ -114,6 +114,15 @@ namespace Clarity
         {
             this.FixedProcBehaviorList.Add(beh);
         }
+
+        /// <summary>
+        /// 固定処理の解除
+        /// </summary>
+        /// <param name="beh"></param>
+        protected void RemoveFiexedProcess(BaseBehavior beh)
+        {
+            this.FixedProcBehaviorList.Remove(beh);
+        }
     }
 
     /// <summary>

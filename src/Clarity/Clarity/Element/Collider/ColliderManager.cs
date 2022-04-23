@@ -105,6 +105,10 @@ namespace Clarity.Collider
                 List<ICollider> targetlist = this.ColliderDic[ptype];
                 targetlist.ForEach((target) =>
                 {
+                    if (target.ColInfo.Enabled == false)
+                    {
+                        return;
+                    }
 
                     //coiとtargetの判定
                     bool cret = this.Collider(coi, target);
@@ -141,7 +145,7 @@ namespace Clarity.Collider
                 coilist.ForEach(coi =>
                 {
                     //判定を取る必要がない
-                    if (coi.ColInfo.TempInfo.TargetColType == 0)
+                    if (coi.ColInfo.TempInfo.TargetColType == 0 || coi.ColInfo.Enabled == false)
                     {
                         return;
                     }
@@ -187,8 +191,13 @@ namespace Clarity.Collider
             {
                 collist.ForEach(co =>
                 {
+                    if (co.ColInfo.Enabled == false)
+                    {
+                        return;
+                    }
+
                     co.ColInfo.TempInfo.TempColliderList.ForEach(ele =>
-                    {                        
+                    {   
                         ele.Render(0, 0, renderbehavior);
                     });
                 });

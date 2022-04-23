@@ -11,7 +11,7 @@ namespace Clarity.Engine
     /// アニメ終了Delegate
     /// </summary>
     /// <param name="aid">終了animeID</param>
-    public delegate void EndTextureAnimeDelegate(int aid);
+    public delegate void EndTextureAnimeDelegate(int aid, ref bool nextflag);
 
 
     /// <summary>
@@ -70,7 +70,7 @@ namespace Clarity.Engine
         /// <summary>
         /// これの色
         /// </summary>
-        public Color4 Color = new Color4(0.0f, 0.0f, 0.0f, 1.0f);
+        public Color4 Color = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
 
         /// <summary>
         /// テクスチャ < 1.0f
@@ -102,6 +102,38 @@ namespace Clarity.Engine
 
     public static class Common
     {
+        /// <summary>
+        /// 指定方向を計算する
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="trans">180°判定可否 = trueで反転</param>
+        /// <returns></returns>
+        public static float CalcuZDirection(Vector2 vec, bool trans = false)
+        {
+            float ans = 0.0f;
+
+            double rad = Math.Atan2(vec.X, -vec.Y);
+            if (rad < 0.0)
+            {
+                rad = (Math.PI * 2) + rad;
+            }
+            if (trans == false)
+            {
+                rad += Math.PI;
+            }
+            ans = Convert.ToSingle(rad);
+            return ans;
+        }
+
+
+
+
+        /// <summary>
+        /// Indexで色の取得
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
         public static float GetIndex(this Vortice.Mathematics.Color4 col, int i)
         {
             switch (i)
@@ -119,7 +151,11 @@ namespace Clarity.Engine
             }
         }
 
-
+        /// <summary>
+        /// 転置行列の計算
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static Matrix4x4 CreateTransposeMat(this Clarity.TransposeSet data)
         {
             WorldData wdata = WorldManager.Mana.Get(data.WorldID);

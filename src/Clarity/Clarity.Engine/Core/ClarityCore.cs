@@ -214,6 +214,9 @@ namespace Clarity.Engine.Core
             float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit", 0.0f);
             double nexttime = limittile;
 
+            //デバッグ可否
+            bool deflag = ClarityEngine.EngineSetting.GetBool("Debug.Enabled", false);
+
             //実行ループ
             ClarityLoop.Run(this.FData.Con, () =>
             {
@@ -231,6 +234,9 @@ namespace Clarity.Engine.Core
                 this.ProcFrame(finfo);
                 fps.ProcCount++;
 
+
+                this.FData.ExProc?.CyclingProc(new ClarityEngineCyclingParam() { Con = this.FData.Con, Frame = finfo });
+
                 //フレーム描画処理
                 //if (renderskip == false)
                 {
@@ -245,16 +251,20 @@ namespace Clarity.Engine.Core
                 
 
                 #region FPSの計算
+                if(deflag == true)
                 {
                     long fpsbasetime = ClarityTimeManager.TotalMilliseconds;
                     long dur = fpsbasetime - fps.PrevCalcuMs;
                     if (dur > 1000)
                     {
-                        //計算
+                        //FPSの表示
                         var data = fps.CalcuFPS(fpsbasetime);
-                        string fpsstring = string.Format("Proc:{0:F} Render:{1:F}", data.proc, data.render);
-                        //System.Diagnostics.Trace.WriteLine(fpsstring);
+                        string fpsstring = string.Format("Proc:{0:F} Render:{1:F}", data.proc, data.render);                        
                         ClarityEngine.SetSystemTextForEngine(fpsstring, 0);
+
+                        //現在の管理object数の計算
+                        int m = ElementManager.Mana.CountElement();
+                        ClarityEngine.SetSystemTextForEngine($"Object Count ={m}", 1);
 
                         //初期化
                         fps.ProcCount = 0;
@@ -316,7 +326,7 @@ namespace Clarity.Engine.Core
 
             //描画対象            
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
-            DxManager.Mana.BeginRendering(new Color4(0.0f, 1.0f, 1.0f, 1.0f));
+            DxManager.Mana.BeginRendering(new Color4(0.0f, 0.0f, 0.0f, 1.0f));
 
             {
                 //処理の設定
@@ -424,8 +434,10 @@ namespace Clarity.Engine.Core
             
             //デフォルト世界の登録
             WorldData wdata = new WorldData();
-            wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(0.0f, 0.0f, -10000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);            
+            wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(0.0f, 0.0f, -10000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
             wdata.ProjectionMat = Matrix4x4.CreateOrthographic(vsize.X, vsize.Y, 1.0f, 15000.0f);
+
+            //wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(1000.0f, 1000.0f, -2000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
             //wdata.ProjectionMat = Matrix4x4.CreatePerspectiveFieldOfView((float)(Math.PI / 4), vsize.Y / vsize.X, 0.01f, 10000.0f);
             
             wdata.ReCalcu();

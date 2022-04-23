@@ -21,7 +21,7 @@ namespace Clarity.Util
         /// <summary>
         /// ランダムの初期化 今回の初期化値
         /// </summary>
-        public static int Init()
+        internal static int Init()
         {
             int val = (int)(DateTime.Now.Ticks);
             RandomMaker.Rand = new Random(val);
@@ -38,7 +38,7 @@ namespace Clarity.Util
         {
             float f = (float)Rand.NextDouble();
             float ans = (max - min) * f;
-            return ans;
+            return ans + min;
         }
 
         /// <summary>

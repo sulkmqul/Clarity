@@ -36,7 +36,7 @@ namespace Clarity.Engine
     /// </summary>
     public class ClarityEngineCyclingParam : ClarityEngineParam
     {
-
+        public FrameInfo Frame;        
     }
 
     /// <summary>

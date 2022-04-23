@@ -161,7 +161,8 @@ namespace ClarityAid
                 ("im", EAidMode.ImageMerge),
                 ("es", EAidMode.Structure),
                 ("cs", EAidMode.ClaritySetting),
-                
+                ("ip", EAidMode.InitialParam),
+
             };
 
 

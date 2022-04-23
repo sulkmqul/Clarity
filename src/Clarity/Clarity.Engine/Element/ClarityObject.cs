@@ -76,7 +76,7 @@ namespace Clarity.Engine.Element
             //テクスチャアニメ所作
             this.ProcBehavior.AddFixedProcess(new TextureAnimeProcBehavior());
         }
-        
+
         #region メンバ変数
         /// <summary>
         /// 描画情報
@@ -106,7 +106,7 @@ namespace Clarity.Engine.Element
             set
             {
                 if (value == true && this.TexAnimeCont == null)
-                {                    
+                {
                     this.TexAnimeCont = new TextureAnimeController();
                     return;
                 }
@@ -188,7 +188,19 @@ namespace Clarity.Engine.Element
                 this.RenderSet.Color = value;
             }
         }
-        
+
+        public float ColorA
+        {
+            get
+            {
+                return this.RenderSet.Color.A;
+            }
+            set
+            {
+                this.RenderSet.Color = new Vortice.Mathematics.Color4(this.RenderSet.Color.R, this.RenderSet.Color.G, this.RenderSet.Color.B, value);
+            }
+        }
+
         /// <summary>
         /// TextureOffset < 1.0
         /// </summary>
@@ -239,7 +251,14 @@ namespace Clarity.Engine.Element
         /// </summary>
         public void FitTextureSize()
         {
-            this.TransSet.Scale2D = ClarityEngine.GetTextureSize(this.TextureID);
+            if (this.TextureAnimeEnabled == false)
+            {
+                this.TransSet.Scale2D = ClarityEngine.GetTextureSize(this.TextureID);
+                return;
+            }
+            this.TransSet.Scale2D = ClarityEngine.GetTextureSize(this.TextureAnimeID, 0);
+
+
         }
 
     }

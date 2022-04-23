@@ -10,4 +10,10 @@
     <ProjectReference Include="..\..\Clarity\Clarity.Engine\Clarity.Engine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="cs.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

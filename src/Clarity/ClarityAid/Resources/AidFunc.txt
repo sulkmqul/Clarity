@@ -97,4 +97,19 @@
             return ans;
         }
 	</ClaritySetting>
+    <InitialParam>
+        public static System.Collections.Generic.List&lt;T&gt; GetData&lt;T&gt;(this Clarity.Engine.ClarityInitialParameter data, EInitialParameterCode code, string tag)
+        {
+            return data.GetData&lt;T&gt;(code.ToString(), tag);
+        }
+
+        public static T GetDataFirst&lt;T&gt;(this Clarity.Engine.ClarityInitialParameter data, EInitialParameterCode code, string tag, T def)
+        {
+            return data.GetDataFirst&lt;T&gt;(code.ToString(), tag, def);
+        }
+        public static T GetDataEnum&lt;T&gt;(this Clarity.Engine.ClarityInitialParameter data, EInitialParameterCode code, string tag, T def) where T : System.Enum
+        {
+            return data.GetDataEnum&lt;T&gt;(code.ToString(), tag, def);
+        }
+    </InitialParam>
 </ClarityCodeAid>

@@ -319,6 +319,16 @@ namespace Clarity
         {
             return true;
         }
+
+
+        /// <summary>
+        /// 描画処理
+        /// </summary>
+        protected virtual void RenderElemenet()
+        {
+            //描画所作の実行            
+            this.RenderBehavior?.Execute(this);            
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化処理
@@ -394,8 +404,7 @@ namespace Clarity
             this.ProcIndex = rid;
             this.RenderInfo = rinfo;
 
-            //描画所作の実行            
-            this.RenderBehavior?.Execute(this);
+            this.RenderElemenet();
 
             //子供の描画可否を確認
             bool ckret = this.ControlChildRenderEnabled();

@@ -56,7 +56,7 @@ namespace Clarity.Engine
         /// <param name="line">設定行</param>
         public static void SetSystemText(string s, int line = 0)
         {
-            ClarityEngine.Engine.EngineData.SystemText.SetText(s, line + 1);
+            ClarityEngine.Engine.EngineData.SystemText.SetText(s, line + 2);
         }
 
         /// <summary>

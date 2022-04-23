@@ -76,6 +76,11 @@ float4 PsDefault(PS_IN psin) : SV_TARGET
 	//return float4(0.5f, 0.5f, 1.0f, 1.0f);
 	float4 col = pix.Sample(picsamp, psin.tex);
 
+
+	col.x *= psin.col.x;
+	col.y *= psin.col.y;
+	col.z *= psin.col.z;
+
 	col.w *= psin.col.w;
 
 

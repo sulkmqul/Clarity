@@ -487,6 +487,10 @@ namespace Clarity.Engine.Texture
             {
                 return mdata.ImageSize;
             }
+            if (mdata == null)
+            {
+                return new Vector2(0.0f);
+            }
 
             Vector2 ans = new Vector2(mdata.ImageSize.X * mdata.IndexDiv.X, mdata.ImageSize.Y * mdata.IndexDiv.Y);
             return ans;

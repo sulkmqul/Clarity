@@ -34,7 +34,7 @@ namespace Clarity.Engine
         public EngineSystemStructureManager SystemStructure = null;
 
         /// <summary>
-        /// 提供構造
+        /// 提供構造管理
         /// </summary>
         public EngineStructureManager UserStructure = null;
 

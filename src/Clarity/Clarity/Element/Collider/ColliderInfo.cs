@@ -43,6 +43,11 @@ namespace Clarity.Collider
             this.ColliderSerialCode = ColliderSerialCodeGenerator.GetNextSerial();
         }
 
+        /// <summary>
+        /// 当たり判定有効可否
+        /// </summary>
+        public bool Enabled = true;
+
 
         /// <summary>
         /// 自分の当たり判定タイプ bit演算が行えるようにシフトを利用した単一フラグであること

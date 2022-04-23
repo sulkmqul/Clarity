@@ -28,17 +28,22 @@ namespace Clarity.File
         /// <summary>
         /// ユーザー設定の読み込み
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="filepath">読み込みパス</param>
+        /// <param name="rid">読み込みroot_id</param>
         /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(string filepath)
+        public List<ClaritySettingData> ReadSetting(string filepath, out int rid)
         {
             List<ClaritySettingData> anslist = new List<ClaritySettingData>();
             try
             {
+                int root_id = 0;
                 using (FileStream fp = new FileStream(filepath, FileMode.Open))
                 {
-                    anslist = this.ReadSetting(fp);
+                    anslist = this.ReadSetting(fp, out root_id);
                 }
+                rid = root_id;
+
+                anslist.ForEach(x => x.Id = root_id++);
             }
             catch (Exception e)
             {
@@ -51,15 +56,29 @@ namespace Clarity.File
         /// <summary>
         /// ユーザー設定の読み込み
         /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        public List<ClaritySettingData> ReadSetting(string filepath)
+        {
+            int rid = 0;
+            return this.ReadSetting(filepath, out rid);
+        }
+
+        /// <summary>
+        /// ユーザー設定の読み込み
+        /// </summary>
         /// <param name="st"></param>
         /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(Stream st)
+        public List<ClaritySettingData> ReadSetting(Stream st, out int rid)
         {
             List<ClaritySettingData> anslist = new List<ClaritySettingData>();
             try
             {
                 XElement xml = XElement.Load(st);
                 anslist = this.ReadNodes(null, xml, false);
+
+                string s = xml.Attribute("root_id")?.Value ?? "0";
+                rid = Convert.ToInt32(s);
             }
             catch (Exception e)
             {

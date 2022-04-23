@@ -61,6 +61,10 @@ namespace Clarity.Engine.Texture
         /// </summary>
         public ETextureAnimationKind Kind = ETextureAnimationKind.Loop;
 
+        /// <summary>
+        /// EAnimeKindがOnceの時、終了後自動で遷移する対象ID(INVALID IDで遷移なし)
+        /// </summary>
+        public int NextAnimeID = ClarityEngine.INVALID_ID;
 
         /// <summary>
         /// アニメのフレームの一覧
@@ -108,7 +112,7 @@ namespace Clarity.Engine.Texture
         /// <summary>
         /// 現在の表示フレーム情報
         /// </summary>
-        internal TextureAnimeFrameInfo CurrentFrameInfo = null;
+        public TextureAnimeFrameInfo CurrentFrameInfo { get; internal set; } = null;
 
 
         /// <summary>
@@ -151,9 +155,29 @@ namespace Clarity.Engine.Texture
                 return;
             }
 
-            //ここまで来ていたら次のアニメ・・・過剰に表示時間が過ぎていたならindexを1つ以上進める処理が必要かもしれない。
-            this.CurrentAnimeFrameIndex += 1;
             
+            
+            //一枚以上進む可能性を考慮する
+            long temptime = ftime;
+            while (true)
+            {
+                //次のアニメへ
+                this.CurrentAnimeFrameIndex += 1;
+
+                //次のアニメの表示時間を計算
+                if (this.CurrentAnimeFrameIndex >= adata.FrameList.Count)
+                {
+                    break;
+                }
+                TextureAnimeFrameInfo ft = adata.FrameList[this.CurrentAnimeFrameIndex];
+                temptime -= ft.FrameTime;
+                if (temptime < ft.FrameTime)                
+                {
+                    //表示時間以内になれば良い
+                    break;
+                }
+            }
+
             //表示時間が経過したと判断
             //this.CurrentAnimeStartTime += finfo.FrameTime;
             this.CurrentAnimeStartTime = frametime;
@@ -182,7 +206,15 @@ namespace Clarity.Engine.Texture
                         this.CurrentAnimeStartTime = long.MaxValue;
 
                         //Anime終了処理実行
-                        this.EndAnimeEvent?.Invoke(caid);
+                        bool nextflag = true;
+                        this.EndAnimeEvent?.Invoke(caid, ref nextflag);
+
+                        //次があるなら遷移する
+                        if (adata.NextAnimeID != ClarityEngine.INVALID_ID && nextflag == true)
+                        {
+                            this.ChangeAnime(adata.NextAnimeID);
+                        }
+
 
                     }
                     break;
@@ -197,9 +229,15 @@ namespace Clarity.Engine.Texture
         /// <summary>
         /// アニメの変更
         /// </summary>
-        /// <param name="aid"></param>
-        public void ChangeAnime(int aid)
+        /// <param name="aid">変更後id</param>
+        /// <param name="f">同一アニメの場合変更するかtrue=強制変更</param>
+        public void ChangeAnime(int aid, bool f = false)
         {
+            if (this.CurrentAnimeID == aid && f == false)
+            {
+                return;
+            }
+
             this.CurrentAnimeID = aid;
             this.CurrentAnimeStartTime = -1;
 

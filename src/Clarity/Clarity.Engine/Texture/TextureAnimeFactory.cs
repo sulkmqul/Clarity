@@ -172,6 +172,9 @@ namespace Clarity.Engine.Texture
             });
 
 
+            //次へのlinkを作成
+            this.LinkNextAnimation(templist);
+
             //IDデータを元に辞書を作成
             templist.ForEach(adata =>
            {
@@ -190,7 +193,39 @@ namespace Clarity.Engine.Texture
             return ansdic;
         }
 
+        /// <summary>
+        /// NextAnimeをリンクさせる
+        /// </summary>
+        /// <param name="templist">リンクセルデータ（先のデータもすべて含まれていること）</param>
+        private void LinkNextAnimation(List<ReadTempData> templist)
+        {
+            templist.ForEach(adata =>
+            {
+                //自身の次のコード取得
+                string nextcode = adata.FileData.NextAnimeCode;
+                bool nextf = this.CheckNextAnimeLink(nextcode);
+                if (nextf == false)
+                {
+                    return;
+                }
 
+
+                //先のデータを検索
+                var dist = from f in templist where f.FileData.AnimeCode == nextcode select f;
+
+                //一つでない場合はエラー（0はlinkなし、以上はダブリ）
+                int dcount = dist.Count();
+                if (dcount != 1)
+                {
+                    throw new Exception(string.Format("AnimeCodeLink Exception srcode={0}, next={1} count={2}", adata.AnimeCode, nextcode, dcount));
+                }
+
+                //next対象の取得
+                ReadTempData dd = dist.First();
+                adata.AnimeData.NextAnimeID = dd.AnimeID;
+
+            });
+        }
         //////////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// 対象のテクスチャアニメファイルの読み込みを行う

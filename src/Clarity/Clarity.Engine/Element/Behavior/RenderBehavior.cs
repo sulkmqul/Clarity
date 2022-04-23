@@ -12,7 +12,7 @@ namespace Clarity.Engine.Element.Behavior
     {
     }
 
-    internal abstract class BaseClarityObjectBehavior : BaseModelBehavior<ClarityObject>
+    public abstract class BaseClarityObjectBehavior : BaseModelBehavior<ClarityObject>
     {
     }
 

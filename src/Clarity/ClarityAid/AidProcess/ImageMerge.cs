@@ -34,6 +34,11 @@ namespace ClarityAid.AidProcess
             public Size ImageSize;
 
             /// <summary>
+            /// 合成画像のパス一覧
+            /// </summary>
+            public List<string> PathList = new List<string>();
+
+            /// <summary>
             /// 結合後の画像サイズ(pixel)
             /// </summary>
             public Size MergeSize
@@ -60,7 +65,7 @@ namespace ClarityAid.AidProcess
             MergeInfo minfo = this.CreateMergeInfo(param, pathlist);
 
             //合成画像の作成
-            Image ans = this.CreateMergeImage(minfo, pathlist);
+            Image ans = this.CreateMergeImage(minfo);
 
             //保存
             string opath = param.CreateOutputFile("merge.png");
@@ -104,13 +109,17 @@ namespace ClarityAid.AidProcess
                 ans.ImageSize = new Size(bit.Size.Width, bit.Size.Height);
             }
 
+            //有効なパスの確定             
+            int aim = param.GetParameterInt("-m") ?? -1;
+            List<string> proclist = this.CreateAviableProcPath(pathlist, aim);
+            
             //初期値は横にずらっと並べる。
-            int x = pathlist.Count;
-            int y = 1;
+            int x = proclist.Count;
+            int y = 0;
 
             //Limitの計算
             int tx = 0;
-            foreach(string data in pathlist)
+            foreach(string data in proclist)
             {
                 tx += 1;
                 if (tx >= maxcol)
@@ -126,10 +135,17 @@ namespace ClarityAid.AidProcess
                     y = maxraw;
                 }
             }
+            if (y <= 0)
+            {
+                y = 1;
+            }
 
             //最終値を反映
             ans.ColCount = x;
             ans.RawCount = y;
+
+            //処理一覧を保存
+            ans.PathList = proclist;
 
             return ans;
         }
@@ -141,10 +157,13 @@ namespace ClarityAid.AidProcess
         /// <param name="minfo">合成情報</param>
         /// <param name="pathlist">パス一式</param>
         /// <returns></returns>
-        private Image CreateMergeImage(MergeInfo minfo, List<string> pathlist)
+        private Image CreateMergeImage(MergeInfo minfo)
         {
             //合成サイズの作成
             Bitmap ans = new Bitmap(minfo.MergeSize.Width, minfo.MergeSize.Height, PixelFormat.Format32bppArgb);
+
+            //処理パス取得
+            var pathlist = minfo.PathList;
 
             Rectangle rect = new Rectangle(0, 0, minfo.ImageSize.Width, minfo.ImageSize.Height);
             using (Graphics gra = Graphics.FromImage(ans))
@@ -175,6 +194,44 @@ namespace ClarityAid.AidProcess
             }
 
             return ans;
+        }
+
+
+        /// <summary>
+        /// 有効なパスの確定
+        /// </summary>
+        /// <param name="srclist">元ネタ一式</param>
+        /// <param name="aim">有効枚数</param>
+        /// <returns>有効パス一式</returns>
+        private List<string> CreateAviableProcPath(List<string> srclist, int aim)
+        {
+            //基底枚数以下だった もしくは分解能以上だった
+            if (aim < 2 || aim >= srclist.Count)
+            {
+                return srclist;
+            }
+
+            string[] retpath = new string[aim];
+            //初めと終わりは確定
+            retpath[0] = srclist[0];
+            retpath[aim - 1] = srclist.Last();
+
+            int restcount = aim - 2;
+
+            //等間隔の間を取得
+            double m = (srclist.Count - 2.0) / (double)(restcount + 1);
+            double fpos = m;    //誤差収束のため浮動小数計算
+            
+            //順番に取得していく
+            for (int i = 0; i < restcount; i++)
+            {
+                int pos = Convert.ToInt32(fpos);
+                retpath[i + 1] = srclist[pos];
+                fpos += m;
+            }
+
+            return new List<string>(retpath);
+
         }
     }
 }

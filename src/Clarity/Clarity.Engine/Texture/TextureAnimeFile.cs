@@ -48,6 +48,12 @@ namespace Clarity.Engine.Texture
         public ETextureAnimationKind Kind = ETextureAnimationKind.Loop;
 
         /// <summary>
+        /// loopがonceの時の終了時遷移先アニメーションコード
+        /// </summary>
+        [XmlAttribute("next")]
+        public string NextAnimeCode = "";
+
+        /// <summary>
         /// アニメフレーム情報(TextureCode,IndexX,IndexY,表示時間ms)
         /// </summary>
         [XmlElement("Frame")]

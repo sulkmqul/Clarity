@@ -16,6 +16,7 @@ namespace ClarityAid
         TextureAnime,
         Structure,
         ClaritySetting,
+        InitialParam,
 
         //-----------
         Max,
@@ -40,13 +41,11 @@ namespace ClarityAid
                 #region デバッグ情報作成
 
                 string[] arg = {
-                    "ta",
+                    "ip",
                     "-i",
-                    @"F:\作業領域\Game\Stellamaris\古\data\anime",
-                    "-k",
-                    "*.cta",
+                    @"F:\作業領域\Game\Stellamaris\data\initinfo.xml",                    
                     "-o",
-                    @"C:\Users\alk\Desktop\一時作業\新しいフォルダー",
+                    @"C:\Users\alk\Desktop\一時作業\新しいフォルダー"
                     
                 };
 
@@ -54,7 +53,7 @@ namespace ClarityAid
 
                 #endregion
 #endif
-                
+
 
                 //パラメータの解析
                 ArgParam param = new ArgParam();
@@ -142,12 +141,19 @@ Usage:
                 -k : match extension(*.jpg  *.ping  *.bmp)
                 -o : Output directory path
             [Option]
+                -m : avialble image counts. (2 < x && x < max)                
                 -x : limit of columns 
                 -y : limit of rows
 
         cs : Create Setting Code
             [required]
                 -i : Input clarity setting file path
+            [Option]                
+                -o : Output directory path
+
+        ip : Create Initial param Code
+            [required]
+                -i : Input clarity initial param file path(-i multiple)
             [Option]                
                 -o : Output directory path
 
@@ -168,8 +174,13 @@ Usage:
         public enum ESettingCode
         {
         }
+        public enum EMOA
+        {
+        }
 
         
+
+
     }
 
 

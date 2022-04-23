@@ -61,13 +61,12 @@ namespace Clarity.Engine.Core
         /// </summary>
         /// <param name="obj"></param>
         protected override void ExecuteBehavior(BaseCollider obj)
-        {
+        {   
             this.RenderObj.Color = this.DefaultColor;
             if (obj.HitTempFlag == true)
             {
                 this.RenderObj.Color = this.ContanctColor;
             }
-
             this.ProcDic[obj.ColMode].Invoke(obj);
         }
 

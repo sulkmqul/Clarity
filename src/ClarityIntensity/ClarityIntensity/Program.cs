@@ -30,7 +30,7 @@ namespace ClarityIntensity
             });*/
 
             MainForm f = new MainForm();
-            Clarity.Engine.ClarityEngine.Init(f, @"F:\ì‹Æ—Ìˆæ\Game\Clarity\src\Clarity\cs.xml");
+            Clarity.Engine.ClarityEngine.Init(f, @"cs.xml");
 
             Clarity.Engine.ClarityEngine.Run(new IntensityPlugin());
 

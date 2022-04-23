@@ -320,7 +320,7 @@ namespace Clarity.Engine.Core
                 this.InitRenderTarget();
 
                 //ラスタライズ方式初期化                
-                Vortice.Direct3D11.RasterizerDescription rastdec = new RasterizerDescription(CullMode.None, FillMode.Solid);
+                Vortice.Direct3D11.RasterizerDescription rastdec = new RasterizerDescription(CullMode.Back, FillMode.Solid);
                 rastdec.DepthClipEnable = true;
                 rastdec.FrontCounterClockwise = true;   //ポリゴン正面の方向基底、時計回り正面＝true
                 rastdec.ScissorEnable = false;          //シーザー矩形有効可否(描画領域設定)

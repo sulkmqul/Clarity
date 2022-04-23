@@ -248,6 +248,29 @@ namespace Clarity
         public float ScaleRate = 1.0f;
 
         /// <summary>
+        /// ScaleRateを加味した実サイズ3D
+        /// </summary>
+        public Vector3 Size3D
+        {
+            get
+            {
+                return this.Scale3D * this.ScaleRate;
+            }
+        }
+
+        /// <summary>
+        /// ScaleRateを加味した実サイズ2D
+        /// </summary>
+        public Vector2 Size2D
+        {
+            get
+            {
+                return this.Scale2D * this.ScaleRate;
+            }
+        }
+
+
+        /// <summary>
         /// 回転のみの行列を作成
         /// </summary>
         /// <returns></returns>

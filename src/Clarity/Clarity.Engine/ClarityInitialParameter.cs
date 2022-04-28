@@ -79,7 +79,9 @@ namespace Clarity.Engine
                 ClaritySettingFile fp = new ClaritySettingFile();
 
                 int rid = 0;
-                var fl = fp.ReadSetting(x, out rid);
+                string rname;
+                var fl = fp.ReadSetting(x, out rid, out rname);
+                
                 this.SrcList.AddRange(fl);
 
                 

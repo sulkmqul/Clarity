@@ -16,4 +16,16 @@ namespace Clarity.Engine.Element
             ClarityEngine.RemoveManage(this);
         }
     }
+
+    /// <summary>
+    /// 管理Element基底(処理だけを行う物体)
+    /// </summary>
+    public class BaseProcessingElement : ClarityObject
+    {
+        public BaseProcessingElement() : base(0)
+        {
+            this.RenderBehavior = null;
+        }
+    }
+
 }

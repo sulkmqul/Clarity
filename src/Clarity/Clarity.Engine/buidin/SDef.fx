@@ -112,11 +112,11 @@ float4 PsHitLight(PS_IN psin) : SV_TARGET
 //??{?I??????g??
 float4 PsNoTex(PS_IN psin) : SV_TARGET
 {
-	return float4(0.5f, 0.5f, 1.0f, 1.0f);
-	//float4 col = psin.col;
+	//return float4(0.5f, 0.5f, 1.0f, 1.0f);
+	float4 col = psin.col;
 
 
-	//return col;
+	return col;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -128,6 +128,7 @@ float4 PsTextureAlphaOnlyBind(PS_IN psin) : SV_TARGET
 	col.x = psin.col.x;
 	col.y = psin.col.y;
 	col.z = psin.col.z;
+	col.w *= psin.col.w;
 
 	return col;
 }

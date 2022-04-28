@@ -9,12 +9,9 @@ using System.IO;
 
 namespace Clarity.File
 {
-    /// <summary>
-    /// ユーザー設定の読み込み
-    /// </summary>
-    class ClaritySettingFile
+    public class BaseClaritySetting
     {
-        const string PathDev = ".";
+        internal const string PathDev = ".";
 
 
         /// <summary>
@@ -24,121 +21,13 @@ namespace Clarity.File
         /// <param name="data"></param>
         private delegate object AnalyzeDataDelegate(XElement ele, EClaritySettingFileDataType type, EClaritySettingFileDataType subtype);
 
-
-        /// <summary>
-        /// ユーザー設定の読み込み
-        /// </summary>
-        /// <param name="filepath">読み込みパス</param>
-        /// <param name="rid">読み込みroot_id</param>
-        /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(string filepath, out int rid)
-        {
-            List<ClaritySettingData> anslist = new List<ClaritySettingData>();
-            try
-            {
-                int root_id = 0;
-                using (FileStream fp = new FileStream(filepath, FileMode.Open))
-                {
-                    anslist = this.ReadSetting(fp, out root_id);
-                }
-                rid = root_id;
-
-                anslist.ForEach(x => x.Id = root_id++);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ClarityUserSettingFile ReadSetting", e);
-            }
-
-            return anslist;
-        }
-
-        /// <summary>
-        /// ユーザー設定の読み込み
-        /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(string filepath)
-        {
-            int rid = 0;
-            return this.ReadSetting(filepath, out rid);
-        }
-
-        /// <summary>
-        /// ユーザー設定の読み込み
-        /// </summary>
-        /// <param name="st"></param>
-        /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(Stream st, out int rid)
-        {
-            List<ClaritySettingData> anslist = new List<ClaritySettingData>();
-            try
-            {
-                XElement xml = XElement.Load(st);
-                anslist = this.ReadNodes(null, xml, false);
-
-                string s = xml.Attribute("root_id")?.Value ?? "0";
-                rid = Convert.ToInt32(s);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ClarityUserSettingFile ReadSetting", e);
-            }
-
-            return anslist;
-        }
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-
-        /// <summary>
-        /// XMLの読み込み
-        /// </summary>
-        /// <param name="epath">親パス nullで付与しない</param>
-        /// <param name="ele">読み込みノード</param>
-        /// <param name="adf">自身のパスを付与するか？ false=下にはepathnullで渡す(root用)</param>
-        /// <returns></returns>
-        private List<ClaritySettingData> ReadNodes(string? epath, XElement ele, bool adf)
-        {
-            List<ClaritySettingData> anslist = new List<ClaritySettingData>();
-
-            //自身が解析できたか？
-            {
-                ClaritySettingData ans = this.AnalyzeNode(epath, ele);
-                if (ans != null)
-                {
-                    anslist.Add(ans);
-                    return anslist;
-                }
-            }
-
-            //解析できない場合は、自身のパスを付与してもう一回
-            var nodes = ele.Nodes();
-            foreach (XNode node in nodes)
-            {
-                XElement em = node as XElement;
-                if (em == null)
-                {
-                    continue;
-                }
-
-                string path = (epath != null) ? epath + PathDev + ele.Name : ele.Name.LocalName;
-                if (adf == false) { path = null; }
-
-                //子供を解析
-                List<ClaritySettingData> tl = this.ReadNodes(path, em, true);
-                anslist.AddRange(tl);
-            }
-
-            return anslist;
-        }
-
-
         /// <summary>
         /// ノードの解析　失敗=null
         /// </summary>
         /// <param name="epath">親のパス</param>
         /// <param name="ele">解析対象</param>
         /// <returns></returns>
-        private ClaritySettingData AnalyzeNode(string? epath, XElement ele)
+        protected ClaritySettingData AnalyzeNode(string? epath, XElement ele)
         {
             ClaritySettingData ans = new ClaritySettingData();
             try
@@ -192,6 +81,7 @@ namespace Clarity.File
             return ans;
         }
 
+
         /// <summary>
         /// Codeの作成
         /// </summary>
@@ -209,7 +99,7 @@ namespace Clarity.File
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public EClaritySettingFileDataType IdentityDataType(string s)
+        private EClaritySettingFileDataType IdentityDataType(string s)
         {
             //有効なもの一式
             (string ck, EClaritySettingFileDataType code)[] supportvec = {
@@ -296,7 +186,7 @@ namespace Clarity.File
         private object AnalyzeDataVec2(XElement ele, EClaritySettingFileDataType type, EClaritySettingFileDataType subtype)
         {
             Vector2 v = new Vector2(0.0f);
-            
+
             string[] svec = ele.Value.Split(",");
             v.X = Convert.ToSingle(svec[0]);
             v.Y = Convert.ToSingle(svec[1]);
@@ -309,7 +199,7 @@ namespace Clarity.File
         private object AnalyzeDataVec3(XElement ele, EClaritySettingFileDataType type, EClaritySettingFileDataType subtype)
         {
             Vector3 v = new Vector3(0.0f);
-            
+
 
             string[] svec = ele.Value.Split(",");
             v.X = Convert.ToSingle(svec[0]);
@@ -334,7 +224,7 @@ namespace Clarity.File
 
             var nodes = ele.Nodes();
             foreach (XNode node in nodes)
-            {   
+            {
                 XElement em = node as XElement;
                 if (em == null)
                 {
@@ -349,5 +239,140 @@ namespace Clarity.File
 
             return anslist.ToArray();
         }
+    }
+
+
+    /// <summary>
+    /// ユーザー設定の読み込み
+    /// </summary>
+    class ClaritySettingFile : BaseClaritySetting
+    {
+        
+
+
+        /// <summary>
+        /// ユーザー設定の読み込み
+        /// </summary>
+        /// <param name="filepath">読み込みパス</param>
+        /// <param name="rid">読み込みroot_id</param>
+        /// <returns></returns>
+        public List<ClaritySettingData> ReadSetting(string filepath, out int rid, out string name)
+        {
+            List<ClaritySettingData> anslist = new List<ClaritySettingData>();
+            try
+            {
+                int root_id = 0;
+                string rname = "";
+                using (FileStream fp = new FileStream(filepath, FileMode.Open))
+                {
+                    anslist = this.ReadSetting(fp, out root_id, out rname);
+                }
+                rid = root_id;
+                name = rname;
+
+                anslist.ForEach(x =>
+                {
+                    x.Id = root_id++;
+                    if (rname.Length > 0)
+                    {
+                        x.Code = rname + "_" + x.Code;
+                    }
+                });
+                
+            }
+            catch (Exception e)
+            {
+                throw new Exception("ClarityUserSettingFile ReadSetting", e);
+            }
+
+            return anslist;
+        }
+
+        /// <summary>
+        /// ユーザー設定の読み込み
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns></returns>
+        public List<ClaritySettingData> ReadSetting(string filepath)
+        {
+            int rid = 0;
+            string rname;
+            return this.ReadSetting(filepath, out rid, out rname);
+        }
+
+        /// <summary>
+        /// ユーザー設定の読み込み
+        /// </summary>
+        /// <param name="st"></param>
+        /// <returns></returns>
+        public List<ClaritySettingData> ReadSetting(Stream st, out int rid, out string name)
+        {
+            List<ClaritySettingData> anslist = new List<ClaritySettingData>();
+            try
+            {
+                XElement xml = XElement.Load(st);
+                anslist = this.ReadNodes(null, xml, false);
+
+                string s = xml.Attribute("root_id")?.Value ?? "0";
+                rid = Convert.ToInt32(s);
+
+                name = xml.Attribute("name")?.Value ?? "";
+                
+            }
+            catch (Exception e)
+            {
+                throw new Exception("ClarityUserSettingFile ReadSetting", e);
+            }
+
+            return anslist;
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+        /// <summary>
+        /// XMLの読み込み
+        /// </summary>
+        /// <param name="epath">親パス nullで付与しない</param>
+        /// <param name="ele">読み込みノード</param>
+        /// <param name="adf">自身のパスを付与するか？ false=下にはepathnullで渡す(root用)</param>
+        /// <returns></returns>
+        private List<ClaritySettingData> ReadNodes(string? epath, XElement ele, bool adf)
+        {
+            List<ClaritySettingData> anslist = new List<ClaritySettingData>();
+
+            //自身が解析できたか？
+            {
+                ClaritySettingData ans = this.AnalyzeNode(epath, ele);
+                if (ans != null)
+                {
+                    anslist.Add(ans);
+                    return anslist;
+                }
+            }
+
+            //解析できない場合は、自身のパスを付与してもう一回
+            var nodes = ele.Nodes();
+            foreach (XNode node in nodes)
+            {
+                XElement em = node as XElement;
+                if (em == null)
+                {
+                    continue;
+                }
+
+                string path = (epath != null) ? epath + PathDev + ele.Name : ele.Name.LocalName;
+                if (adf == false) { path = null; }
+
+                //子供を解析
+                List<ClaritySettingData> tl = this.ReadNodes(path, em, true);
+                anslist.AddRange(tl);
+            }
+
+            return anslist;
+        }
+
+
+        
+
+       
     }
 }

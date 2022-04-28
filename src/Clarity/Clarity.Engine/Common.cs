@@ -199,6 +199,33 @@ namespace Clarity.Engine
             value = temp;
         }
 
+
+        /// <summary>
+        /// 文字列での設定
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="svec"></param>
+        public static void SetString(this ref System.Numerics.Vector3 v, string[] svec)
+        {
+            float[] dv = { 0.0f, 0.0f, 0.0f };
+
+            int i = 0;
+            foreach (string s in svec)
+            {
+                dv[i] = Convert.ToSingle(s);
+                i++;
+                if (i >= dv.Length)
+                {
+                    break;
+                }
+            }
+
+            v.X = dv[0];
+            v.Y = dv[1];
+            v.Z = dv[2];
+
+        }
+
     }
 
 

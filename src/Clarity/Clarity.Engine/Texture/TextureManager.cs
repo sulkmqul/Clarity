@@ -440,7 +440,12 @@ namespace Clarity.Engine.Texture
         {
             ID3D11DeviceContext cont = DxManager.Mana.DxContext;
 
-            TextureManageData td = TextureManager.Mana.ManaDic[texid];
+            //TextureManageData td = TextureManager.Mana.ManaDic[texid];
+            TextureManageData td = TextureManager.Mana.GetTextureManageData(texid);
+            if (td == null)
+            {
+                return;
+            }
 
             //今回の対象データ取得
             ID3D11SamplerState texst = TextureManager.Mana.TexSampler;
@@ -483,14 +488,15 @@ namespace Clarity.Engine.Texture
         public static Vector2 GetTextureSize(int tid, bool f = false)
         {
             TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);
-            if (f == true)            
-            {
-                return mdata.ImageSize;
-            }
             if (mdata == null)
             {
                 return new Vector2(0.0f);
             }
+            if (f == true)            
+            {
+                return mdata.ImageSize;
+            }
+            
 
             Vector2 ans = new Vector2(mdata.ImageSize.X * mdata.IndexDiv.X, mdata.ImageSize.Y * mdata.IndexDiv.Y);
             return ans;

@@ -11,7 +11,7 @@ namespace Clarity
     /// <summary>
     /// データコード
     /// </summary>
-    enum EClaritySettingFileDataType
+    public enum EClaritySettingFileDataType
     {
         Bool,
         Int,
@@ -31,7 +31,7 @@ namespace Clarity
     /// <summary>
     /// Clarity設定情報管理
     /// </summary>
-    internal class ClaritySettingData
+    public class ClaritySettingData
     {
         /// <summary>
         /// データID

@@ -224,6 +224,12 @@ namespace Clarity
                 }
 
                 ReqData req = this.RemoveReqQue.Dequeue();
+                if (req.Item.SystemLink.ParentElement == null)
+                {
+                    //すでに削除済み(1処理で何回も削除が走ることは稀にあり得る(独立した所作が動くときなど))
+                    return;
+                }
+
 
 
                 //当たり判定の削除

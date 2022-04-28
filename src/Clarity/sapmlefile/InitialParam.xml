@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--ゲーム内初期化情報ファイル-->
-<ObjectInfomation root_id="0">
+<ObjectInfomation root_id="0" name="Player">
     <Player>
         <Base>
             <ShaderCode type="string">System_TextureAnime</ShaderCode>

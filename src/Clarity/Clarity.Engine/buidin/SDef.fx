@@ -10,6 +10,7 @@ struct PS_IN
 {
 	float4 pos : SV_POSITION;
 	float4 col : COLOR;
+	float4 addcol : COLOR2;
 	float2 tex : TEXCOORD;
 };
 
@@ -18,6 +19,7 @@ struct RegistData
 {
 	float4x4 WorldViewProj;
 	float4 Col;
+	float4 AddCol;
 	float2 tex_div;
 	float2 tex_offset;
 
@@ -41,6 +43,8 @@ PS_IN VsDefault(VS_IN vsin)
 	outdata.pos = mul(vsin.pos, RData.WorldViewProj);
 	outdata.col = RData.Col;
 
+	outdata.addcol = RData.AddCol;
+	
 	outdata.tex = vsin.tex;
 
 	return outdata;
@@ -56,7 +60,7 @@ PS_IN VsTextureAnimation(VS_IN vsin)
 	//outdata.pos = vsin.pos;
 	outdata.pos = mul(vsin.pos, RData.WorldViewProj);
 	outdata.col = RData.Col;
-
+	outdata.addcol = RData.AddCol;
 	//outdata.tex.x = (RData.anime_index.x + vsin.tex.x) * RData.tex_div.x;
 	//outdata.tex.y = (RData.anime_index.y + vsin.tex.y) * RData.tex_div.y;
 
@@ -84,6 +88,9 @@ float4 PsDefault(PS_IN psin) : SV_TARGET
 	col.w *= psin.col.w;
 
 
+	col.x += psin.addcol.x;
+	col.y += psin.addcol.y;
+	col.z += psin.addcol.z;
 
 	return col;
 }
@@ -103,6 +110,7 @@ float4 PsHitLight(PS_IN psin) : SV_TARGET
 
 
 
+
 	return col;
 }
 
@@ -115,6 +123,13 @@ float4 PsNoTex(PS_IN psin) : SV_TARGET
 	//return float4(0.5f, 0.5f, 1.0f, 1.0f);
 	float4 col = psin.col;
 
+	col.x += RData.AddCol.x;
+	col.y += RData.AddCol.y;
+	col.z += RData.AddCol.z;
+
+	col.x += psin.addcol.x;
+	col.y += psin.addcol.y;
+	col.z += psin.addcol.z;
 
 	return col;
 }
@@ -130,5 +145,6 @@ float4 PsTextureAlphaOnlyBind(PS_IN psin) : SV_TARGET
 	col.z = psin.col.z;
 	col.w *= psin.col.w;
 
+	
 	return col;
 }

@@ -202,6 +202,22 @@ namespace Clarity.Engine.Element
         }
 
         /// <summary>
+        /// 色の設定
+        /// </summary>
+        public Vortice.Mathematics.Color4 AddColor
+        {
+            get
+            {
+                return this.RenderSet.AddColor;
+            }
+            set
+            {
+                this.RenderSet.AddColor = value;
+            }
+        }
+
+
+        /// <summary>
         /// TextureOffset < 1.0
         /// </summary>
         public Vector2 TextureOffset

@@ -33,6 +33,11 @@ namespace Clarity.Engine.Shader
         public Vector4 Color;
 
         /// <summary>
+        /// 色
+        /// </summary>
+        public Vector4 AddColor;
+
+        /// <summary>
         /// テクスチャ分割サイズ(4分割なら 1/4で0.25と設定)
         /// </summary>
         public Vector2 TexDiv;

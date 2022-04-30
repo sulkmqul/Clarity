@@ -73,6 +73,11 @@ namespace Clarity.Engine
         public Color4 Color = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
 
         /// <summary>
+        /// これの追加色
+        /// </summary>
+        public Color4 AddColor = new Color4(0.0f, 0.0f, 0.0f, 0.0f);
+
+        /// <summary>
         /// テクスチャ < 1.0f
         /// </summary>
         public Vector2 TextureOffset = new Vector2(0.0f);

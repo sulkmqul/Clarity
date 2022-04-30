@@ -69,7 +69,7 @@ namespace Clarity.Engine.Element.Behavior
             ShaderDataDefault data = new ShaderDataDefault();
             data.WorldViewProjMat = obj.TransSet.CreateTransposeMat();
             data.Color = rset.Color;
-
+            data.AddColor = rset.AddColor;
             data.TexDiv = tdiv;
 
             data.TextureOffset = rset.TextureOffset;

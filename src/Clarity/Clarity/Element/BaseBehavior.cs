@@ -117,6 +117,18 @@ namespace Clarity
         {
             this.ExecBehaviorList.Clear();
         }
+
+        /// <summary>
+        /// 全所作に対して処理を実行する
+        /// </summary>
+        /// <param name="ac"></param>
+        public void  ProcActionExecList(Action<BaseBehavior> ac)
+        {
+            this.ExecBehaviorList.ForEach(x =>
+            {
+                ac.Invoke(x);
+            });
+        }
     }
 
     /// <summary>

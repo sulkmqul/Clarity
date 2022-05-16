@@ -94,6 +94,7 @@ namespace ClarityEmotion.LayerSetting
 
             //コントロールの初期化
             this.InitAnimeDefinitionComboBox();
+            this.InitFlipComboBox();
         }
 
         /// <summary>
@@ -115,6 +116,20 @@ namespace ClarityEmotion.LayerSetting
             foreach (AnimeDefinitionData adata in EmotionProject.Mana.Anime.AnimeDefinitionDic.Values)
             {
                 this.comboBoxAnimeDefinition.Items.Add(adata);
+            }
+        }
+
+
+        /// <summary>
+        /// 反転可否コンボの作成
+        /// </summary>
+        private void InitFlipComboBox()
+        {
+            EFlipType[] stvec = (EFlipType[])Enum.GetValues(typeof(EFlipType));
+            this.comboBoxFlipState.Items.Clear();
+            foreach (var ee in stvec)
+            {
+                this.comboBoxFlipState.Items.Add(ee);
             }
         }
 
@@ -164,6 +179,9 @@ namespace ClarityEmotion.LayerSetting
 
                 //拡縮率
                 this.valueScrollControlScaleRate.ValueFixedPoint = adata.ScaleRate;
+
+                //Flip
+                this.comboBoxFlipState.SelectedItem = adata.FlipType;
             }
             catch (Exception ex)
             {
@@ -215,6 +233,9 @@ namespace ClarityEmotion.LayerSetting
 
             //拡縮率
             adata.EaData.ScaleRate = Convert.ToSingle(this.valueScrollControlScaleRate.ValueFixedPoint);
+
+            //Flip
+            adata.EaData.FlipType = (EFlipType)this.comboBoxFlipState.SelectedItem;
         }
 
         /// <summary>

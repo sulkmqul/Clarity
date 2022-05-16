@@ -191,6 +191,8 @@ namespace ClarityEmotion.Core
             }
 
             Bitmap bit = rdata.Image;
+            //Flip処理
+            bit = this.FlipBitmap(adata.EaData.FlipType, bit);
 
             //位置とサイズを変換し、位置を保存
             adata.TempData.DispAreaRect.X = this.ImageXToDispX(rdata.EaData.Pos2D.X);
@@ -219,6 +221,8 @@ namespace ClarityEmotion.Core
 
             //加算合成はデフォルトでは無理っぽい
 
+            
+
             //画像表示
             gra.DrawImage(bit, adata.TempData.DispAreaRect, 
                 0, 0, adata.TempData.DispAreaRect.Width, adata.TempData.DispAreaRect.Height,
@@ -226,6 +230,24 @@ namespace ClarityEmotion.Core
 
         }
 
+        /// <summary>
+        /// 画像のFLip処理
+        /// </summary>
+        /// <param name="ftype"></param>
+        /// <param name="bit"></param>
+        /// <returns></returns>
+        private Bitmap FlipBitmap(EFlipType ftype, Bitmap bit)
+        {
+            if ((ftype & EFlipType.XFlip) == EFlipType.XFlip)
+            {
+                bit.RotateFlip(RotateFlipType.RotateNoneFlipX);
+            }
+            if ((ftype & EFlipType.YFlip) == EFlipType.YFlip)
+            {
+                bit.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            }
+            return bit;
+        }
 
         //----------------------------------------------------------------------------------------
         /// <summary>

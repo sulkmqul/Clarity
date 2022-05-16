@@ -9,6 +9,17 @@ using System.Drawing;
 namespace ClarityEmotion
 {
     /// <summary>
+    /// Flipタイプ
+    /// </summary>
+    public enum EFlipType
+    {
+        None = 0,
+        XFlip = 1 << 0,
+        YFlip = 1 << 1,
+        XYFlip = XFlip | YFlip,
+    }
+
+    /// <summary>
     /// 情報まとめ
     /// </summary>
     [Serializable]
@@ -67,7 +78,13 @@ namespace ClarityEmotion
         /// <summary>
         /// 拡縮率
         /// </summary>
-        public double ScaleRate = 0.0;
+        public double ScaleRate = 1.0;
+
+        /// <summary>
+        /// フリップ可否
+        /// </summary>
+        public EFlipType FlipType = EFlipType.None;
+
     }
 
 

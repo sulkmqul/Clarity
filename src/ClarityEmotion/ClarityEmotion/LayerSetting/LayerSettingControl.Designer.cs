@@ -52,6 +52,8 @@ namespace ClarityEmotion.LayerSetting
             this.labelFrameSpan = new System.Windows.Forms.Label();
             this.numericUpDownFrameOffset = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.comboBoxFlipState = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartFrame)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEndFrame)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPosY)).BeginInit();
@@ -340,10 +342,32 @@ namespace ClarityEmotion.LayerSetting
             this.label9.TabIndex = 23;
             this.label9.Text = "フレームOffset";
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(13, 427);
+            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(26, 15);
+            this.label10.TabIndex = 24;
+            this.label10.Text = "Flip";
+            // 
+            // comboBoxFlipState
+            // 
+            this.comboBoxFlipState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxFlipState.FormattingEnabled = true;
+            this.comboBoxFlipState.Location = new System.Drawing.Point(13, 444);
+            this.comboBoxFlipState.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxFlipState.Name = "comboBoxFlipState";
+            this.comboBoxFlipState.Size = new System.Drawing.Size(174, 23);
+            this.comboBoxFlipState.TabIndex = 25;
+            // 
             // LayerSettingControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.comboBoxFlipState);
+            this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.numericUpDownFrameOffset);
             this.Controls.Add(this.labelFrameSpan);
@@ -405,5 +429,7 @@ namespace ClarityEmotion.LayerSetting
         private System.Windows.Forms.Label labelFrameSpan;
         private System.Windows.Forms.NumericUpDown numericUpDownFrameOffset;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ComboBox comboBoxFlipState;
     }
 }

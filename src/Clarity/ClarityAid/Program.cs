@@ -153,7 +153,8 @@ Usage:
 
         ip : Create Initial param Code
             [required]
-                -i : Input clarity initial param file path(-i multiple)
+                -i : Input directory path
+                -k : match extension
             [Option]                
                 -o : Output directory path
 

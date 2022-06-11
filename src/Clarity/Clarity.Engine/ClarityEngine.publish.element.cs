@@ -95,6 +95,17 @@ namespace Clarity.Engine
 
 
         /// <summary>
+        /// ユーザー管理へ直接追加
+        /// </summary>
+        /// <param name="data"></param>
+        /// <remarks>structure構造を経ず、直接ユーザー管理へ追加する</remarks> 
+        public static void AddManageUser(BaseElement data)
+        {
+            var parent = Engine.EngineData.SystemStructure.GetNode(ESystemStructureID.User);
+            ElementManager.AddRequest(parent, data);
+        }
+
+        /// <summary>
         /// システム管理後処理へ追加
         /// </summary>
         /// <param name="data"></param>

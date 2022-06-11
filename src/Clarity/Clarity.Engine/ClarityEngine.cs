@@ -164,7 +164,7 @@ namespace Clarity.Engine
             Util.RandomMaker.Init();
 
             //画面設定
-            Vector2 vec = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize", new Vector2(640, 480));
+            Vector2 vec = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize", new Vector2(con.Width, con.Height));
             con.ClientSize = new System.Drawing.Size((int)vec.X, (int)vec.Y);
 
 
@@ -236,6 +236,16 @@ namespace Clarity.Engine
             this.Core = null;
         }
 
-        
+        /// <summary>
+        /// エンジンの実行
+        /// </summary>
+        /// <param name="cep">追加動作</param>
+        private async Task RunEngineAsync(ClarityEnginePlugin cep)
+        {
+            await this.Core.StartClarityAsync(cep);
+
+            this.Core.Dispose();
+            this.Core = null;
+        }
     }
 }

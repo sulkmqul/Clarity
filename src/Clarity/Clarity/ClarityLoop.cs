@@ -37,9 +37,9 @@ namespace Clarity
             con.Show();
             while (loopflag)
             {
+                
                 tagMSG msg;
-                //while (User32.PeekMessage(out msg, con.Handle, 0, 0, User32.PM_REMOVE) == WinDef.TRUE)
-                while (User32.PeekMessage(out msg, IntPtr.Zero, 0, 0, User32.PM_REMOVE) == WinDef.TRUE)
+                while (User32.PeekMessage(out msg, con.Handle, 0, 0, User32.PM_REMOVE) == WinDef.TRUE)                
                 {
                     User32.TranslateMessage(ref msg);
                     User32.DispatchMessage(ref msg);

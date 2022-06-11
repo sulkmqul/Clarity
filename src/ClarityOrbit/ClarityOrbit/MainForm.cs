@@ -20,7 +20,44 @@ namespace ClarityOrbit
         public MainForm()
         {
             InitializeComponent();
+            this.Logic = new MainFormLogic(this);
+        }
+        /// <summary>
+        /// 処理
+        /// </summary>
+        private MainFormLogic Logic = null;
+
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 読み込まれた時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
+        /// <summary>
+        /// 表示された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            this.Logic.InitForm();
         }
 
+        /// <summary>
+        /// DirectXのサイズ変更
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void panelWorkingDx_Resize(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 }

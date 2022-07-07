@@ -9,61 +9,6 @@ namespace Clarity
 {
 
     /// <summary>
-    /// データコード
-    /// </summary>
-    public enum EClaritySettingFileDataType
-    {
-        Bool,
-        Int,
-        Float,
-        Vec2,
-        Vec3,
-        String,
-        Array,
-        
-        //Array_String,保留中　やるなら""で囲むなど仕様を定義せよ
-
-
-        //------------------------------------
-        MAX,
-    }
-
-    /// <summary>
-    /// Clarity設定情報管理
-    /// </summary>
-    public class ClaritySettingData
-    {
-        /// <summary>
-        /// データID
-        /// </summary>
-        public int Id = 0;
-        /// <summary>
-        /// データコード
-        /// </summary>
-        public string Code = "";
-
-        /// <summary>
-        /// これのタグ名
-        /// </summary>
-        public string TagName = "";
-
-        /// <summary>
-        /// 格納データ
-        /// </summary>
-        public object Data = null;
-        /// <summary>
-        /// データType
-        /// </summary>
-        public EClaritySettingFileDataType DataType = EClaritySettingFileDataType.MAX;
-        /// <summary>
-        /// DataTypeがArrayの場合の格納タイプ
-        /// </summary>
-        public EClaritySettingFileDataType SubDataType = EClaritySettingFileDataType.MAX;
-
-    }
-
-
-    /// <summary>
     /// 設定情報
     /// </summary>
     public class ClaritySetting
@@ -88,7 +33,7 @@ namespace Clarity
         public void Read(string filepath)
         {
             //ファイルの読み込み
-            File.ClaritySettingFile fp = new File.ClaritySettingFile();
+            ClaritySettingFile fp = new ClaritySettingFile();
             List<ClaritySettingData> datalist = fp.ReadSetting(filepath);
 
             //コード重複チェック
@@ -542,16 +487,16 @@ namespace Clarity
         /// <param name="t"></param>
         /// <param name="type"></param>
         /// <param name="subtype"></param>
-        private void GetClaritySettingFileDataType(Type t, out EClaritySettingFileDataType type, out EClaritySettingFileDataType subtype)
+        private void GetClaritySettingFileDataType(Type t, out EClaritySettingDataType type, out EClaritySettingDataType subtype)
         {
-            type = EClaritySettingFileDataType.MAX;
-            subtype = EClaritySettingFileDataType.MAX;
+            type = EClaritySettingDataType.MAX;
+            subtype = EClaritySettingDataType.MAX;
 
             //メインタイプ取得
             type = this.GetClaritySettingFileDataType(t);
 
             //配列の場合はsubtype
-            if (type == EClaritySettingFileDataType.Array)
+            if (type == EClaritySettingDataType.Array)
             {
                 Type subt = t.GetElementType();
                 subtype = this.GetClaritySettingFileDataType(subt);
@@ -563,20 +508,20 @@ namespace Clarity
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private EClaritySettingFileDataType GetClaritySettingFileDataType(Type t)
+        private EClaritySettingDataType GetClaritySettingFileDataType(Type t)
         {
             if (t.IsArray == true)
             {
-                return EClaritySettingFileDataType.Array;
+                return EClaritySettingDataType.Array;
             }
 
-            Dictionary<Type, EClaritySettingFileDataType> datadic = new Dictionary<Type, EClaritySettingFileDataType>();
+            Dictionary<Type, EClaritySettingDataType> datadic = new Dictionary<Type, EClaritySettingDataType>();
             {
-                datadic.Add(typeof(int), EClaritySettingFileDataType.Int);
-                datadic.Add(typeof(float), EClaritySettingFileDataType.Float);
-                datadic.Add(typeof(string), EClaritySettingFileDataType.String);
-                datadic.Add(typeof(Vector2), EClaritySettingFileDataType.Vec2);
-                datadic.Add(typeof(Vector3), EClaritySettingFileDataType.Vec3);
+                datadic.Add(typeof(int), EClaritySettingDataType.Int);
+                datadic.Add(typeof(float), EClaritySettingDataType.Float);
+                datadic.Add(typeof(string), EClaritySettingDataType.String);
+                datadic.Add(typeof(Vector2), EClaritySettingDataType.Vec2);
+                datadic.Add(typeof(Vector3), EClaritySettingDataType.Vec3);
             }
 
             return datadic[t];

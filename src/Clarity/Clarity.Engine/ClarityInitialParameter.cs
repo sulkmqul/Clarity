@@ -88,6 +88,9 @@ namespace Clarity.Engine
                 
             });
 
+            //先頭nodesの検索
+            var rootlist = this.SrcList.SearchRootNode();
+
             //データを変換して保持
             var dic = this.CreateMap(this.SrcList);
 

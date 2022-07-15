@@ -43,7 +43,9 @@ namespace ClarityAid
                 string[] arg = {
                     "ip",
                     "-i",
-                    @"F:\作業領域\Game\Stellamaris\data\initinfo.xml",                    
+                    @"F:\作業領域\Game\Stellamaris\data\script",                    
+                    "-k",
+                    "*.cip",
                     "-o",
                     @"C:\Users\alk\Desktop\一時作業\新しいフォルダー"
                     

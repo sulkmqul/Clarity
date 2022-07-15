@@ -98,18 +98,23 @@
         }
 	</ClaritySetting>
     <InitialParam>
+        public static Clarity.ClaritySettingData GetSettingData(this Clarity.Engine.ClarityInitialParameter data, EInitialParameterCode code)
+		{
+			return data.GetSettingData((int)code);
+		}
+
         public static System.Collections.Generic.List&lt;T&gt; GetData&lt;T&gt;(this Clarity.Engine.ClarityInitialParameter data, EInitialParameterCode code, string tag)
         {
-            return data.GetData&lt;T&gt;(code.ToString(), tag);
+            return data.GetData&lt;T&gt;((int)code, tag);
         }
 
         public static T GetDataFirst&lt;T&gt;(this Clarity.Engine.ClarityInitialParameter data, EInitialParameterCode code, string tag, T def)
         {
-            return data.GetDataFirst&lt;T&gt;(code.ToString(), tag, def);
+            return data.GetDataFirst&lt;T&gt;((int)code, tag, def);
         }
         public static T GetDataEnum&lt;T&gt;(this Clarity.Engine.ClarityInitialParameter data, EInitialParameterCode code, string tag, T def) where T : System.Enum
         {
-            return data.GetDataEnum&lt;T&gt;(code.ToString(), tag, def);
+            return data.GetDataEnum&lt;T&gt;((int)code, tag, def);
         }
     </InitialParam>
 </ClarityCodeAid>

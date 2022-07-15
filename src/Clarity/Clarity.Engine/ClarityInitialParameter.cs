@@ -7,61 +7,16 @@ using Clarity.File;
 
 namespace Clarity.Engine
 {
-    public class ClarityInitialParameterSet
-    {
-        /// <summary>
-        /// データID
-        /// </summary>
-        public int Id = 0;
-        /// <summary>
-        /// データコード
-        /// </summary>
-        public string Code = "";
-
-        /// <summary>
-        /// これのタグ名
-        /// </summary>
-        public string TagName = "";
-
-        /// <summary>
-        /// 格納データ
-        /// </summary>
-        public object Data = null;
-
-
-        /// <summary>
-        /// データの取得
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public T GetData<T>()
-        {
-            return (T)this.Data;
-        }
-    }
-
     /// <summary>
     /// 初期設定パラメータ
     /// </summary>
     public class ClarityInitialParameter
     {
-        /// <summary>
-        /// 元ネタ
-        /// </summary>
-        List<ClaritySettingData> SrcList = null;
-
-        class ManageData
-        {
-            public string Code;
-            public int Id;
-
-            public List<ClarityInitialParameterSet> DataList = new List<ClarityInitialParameterSet>();
-        }
 
         /// <summary>
         /// 変換マップ
         /// </summary>
-        Dictionary<string, ManageData> ManaDic = null;
+        Dictionary<int, ClaritySettingData> ManaDic = null;
 
         /// <summary>
         /// ファイルの読み込み
@@ -69,10 +24,9 @@ namespace Clarity.Engine
         /// <param name="pathlist"></param>
         public void LoadFile(List<string> pathlist)
         {
-            this.SrcList = new List<ClaritySettingData>();
+            this.ManaDic = new Dictionary<int, ClaritySettingData>();
 
-            this.ManaDic = new Dictionary<string, ManageData>();
-
+            List<ClaritySettingData> srclist = new List<ClaritySettingData>();
             pathlist.ForEach(x =>
             {
 
@@ -80,78 +34,54 @@ namespace Clarity.Engine
 
                 int rid = 0;
                 string rname;
-                var fl = fp.ReadSetting(x, out rid, out rname);
-                
-                this.SrcList.AddRange(fl);
-
-                
-                
+                var tlist = fp.ReadSetting(x, out rid, out rname);
+                srclist.AddRange(tlist);
             });
 
-            //先頭nodesの検索
-            var rootlist = this.SrcList.SearchRootNode();
 
-            //データを変換して保持
-            var dic = this.CreateMap(this.SrcList);
+            //扱いやすいmap形式に変換
+            var dic = this.CreateMap(srclist);            
 
             //データを突っ込む
             dic.ToList().ForEach(x => this.ManaDic.Add(x.Key, x.Value));
-
+            
         }
 
-        /// <summary>
-        /// 対象のデータを取得
-        /// </summary>
-        /// <param name="rootcode">RootCode名</param>
-        /// <param name="tag">rootコード以下のtag名</param>
-        /// <returns>取得値</returns>
-        public List<ClarityInitialParameterSet> GetTagData(string rootcode, string? tag = null)
-        {
-            if (this.ManaDic.ContainsKey(rootcode) == false)
-            {
-                return new List<ClarityInitialParameterSet>();
-            }
-
-            var datalist = this.ManaDic[rootcode].DataList;
-            string code = rootcode + "." + tag;
-
-            //return datalist.Where(x => x.Code.StartsWith(code)).ToList();
-            return datalist.Where(x => x.Code == code).ToList();
-        }
 
         /// <summary>
-        /// 対象データを単体取得
+        /// 設定データを生で取得
         /// </summary>
-        /// <param name="rootcode">RootCode名</param>
-        /// <param name="tag">RootCode以下のtag名</param>
+        /// <param name="rid"></param>
         /// <returns></returns>
-        public ClarityInitialParameterSet GetTagDataFirst(string rootcode, string? tag = null)
+        public ClaritySettingData GetSettingData(int rid)
         {
-            return this.GetTagData(rootcode, tag).FirstOrDefault();
+            return this.ManaDic[rid];
         }
+
 
         /// <summary>
         /// データの取得対象全部
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="rootcode"></param>
+        /// <param name="rid"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public List<T> GetData<T>(string rootcode, string? tag = null)
+        public List<T> GetData<T>(int rid, string tag)
         {
-            return this.GetTagData(rootcode, tag).Select(x => (T)x.Data).ToList();
+            var data = this.GetSettingData(rid);
+            return data.GetDataList<T>(tag);
         }
 
         /// <summary>
         /// データの取得 単体
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="rootcode"></param>
+        /// <param name="rid"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public T GetDataFirst<T>(string rootcode, string tag , T def)
+        public T GetDataFirst<T>(int rid, string tag , T def)
         {
-            var m = this.GetData<T>(rootcode, tag);
+            var m = this.GetData<T>(rid, tag);
             if (m.Count <= 0)
             {
                 return def;
@@ -163,12 +93,12 @@ namespace Clarity.Engine
         /// Enumデータの取得
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="rootcode"></param>
+        /// <param name="rid"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public T GetDataEnum<T>(string rootcode, string tag, T def) where T: Enum
+        public T GetDataEnum<T>(int rid, string tag, T def) where T: Enum
         {
-            string s = this.GetDataFirst<string>(rootcode, tag, "");
+            string s = this.GetDataFirst<string>(rid, tag, "");
             
             //指定型に変換可能？
             object o;
@@ -191,34 +121,25 @@ namespace Clarity.Engine
             return this.ManaDic.Select(x => (x.Value.Code, x.Value.Id)).ToList();
         }
 
+
+        
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 変換マップを作成する [root code, deta]
         /// </summary>
         /// <param name="datalist"></param>
         /// <returns></returns>
-        private Dictionary<string, ManageData> CreateMap(List<ClaritySettingData> datalist)
+        private Dictionary<int, ClaritySettingData> CreateMap(List<ClaritySettingData> datalist)
         {
-            Dictionary<string, ManageData> ansdic = new Dictionary<string, ManageData>();
+            Dictionary<int, ClaritySettingData> ansdic = new Dictionary<int, ClaritySettingData>();
 
-            //Setに変換する
-            List<ClarityInitialParameterSet> templist = datalist.Select(x => new ClarityInitialParameterSet() { Id = x.Id, Code = x.Code, TagName = x.TagName, Data = x.Data }).ToList();
+            //大本Nodeを取得
+            List<ClaritySettingData> rootlist = datalist.SearchRootNode();
 
-            //rootの設定
-            templist.ForEach(x =>
+            rootlist.ForEach(x =>
             {
-                string rootcode = this.GetRootCode(x.Code);
-                bool f = ansdic.ContainsKey(rootcode);
-                if (f == false)
-                {
-                    ManageData data = new ManageData();
-                    data.Code = rootcode;
-                    data.Id = x.Id;
-                    data.DataList = new List<ClarityInitialParameterSet>();
-                    ansdic.Add(rootcode, data);
-                }
-                ansdic[rootcode].DataList.Add(x);
-
+                ansdic.Add(x.Id, x);
             });
 
             return ansdic;

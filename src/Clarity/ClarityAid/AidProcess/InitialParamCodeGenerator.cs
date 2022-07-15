@@ -35,7 +35,6 @@ namespace ClarityAid.AidProcess
             string opath = param.CreateOutputFile($"{this.ClassName}.cs");
             CodeClassFile fp = new CodeClassFile(false);
             fp.Write(param.Mode, opath, this.ClassName, idlist, "Initial Parameter Code");
-
         }
 
         /// <summary>

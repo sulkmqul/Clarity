@@ -17,10 +17,10 @@ namespace Clarity.GUI.Wpf
 
         }
 
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             int m;
-            return int.TryParse(value.ToString(), out m);
+            return int.TryParse(value?.ToString(), out m);
         }
     }
 
@@ -35,10 +35,10 @@ namespace Clarity.GUI.Wpf
 
         }
 
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             double m;
-            return double.TryParse(value.ToString(), out m);
+            return double.TryParse(value?.ToString(), out m);
         }
     }
 }

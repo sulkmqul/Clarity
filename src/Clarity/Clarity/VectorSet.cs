@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Drawing;
-using Vortice.Mathematics;
+
 
 namespace Clarity
 {

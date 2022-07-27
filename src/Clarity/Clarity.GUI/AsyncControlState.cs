@@ -18,7 +18,7 @@ namespace Clarity.GUI
         /// <param name="c">制御中、無効にするコントロール</param>
         /// <param name="envcon">制御中、有効にするコントロール</param>
         /// <param name="ev">即時視覚イベント可否</param>
-        public AsyncControlState(Control c, Control envcon = null, bool ev = true)
+        public AsyncControlState(Control c, Control? envcon = null, bool ev = true)
         {
             //制御対象管理へ
             this.DisableConList = new List<Control>();
@@ -46,7 +46,7 @@ namespace Clarity.GUI
         /// </summary>
         /// <param name="c">制御コントロール一式</param>
         /// <param name="ev">即時視覚イベント可否</param>
-        public AsyncControlState(List<Control> clist, List<Control> dlist = null,bool ev = true)
+        public AsyncControlState(List<Control> clist, List<Control>? dlist = null,bool ev = true)
         {
             this.DisableConList = new List<Control>();
             this.DisableConList.AddRange(clist);
@@ -119,8 +119,8 @@ namespace Clarity.GUI
 
         }
 
-        Control Parent = null;
-        PictureBox WaitEffect = null;
+        Control Parent;
+        PictureBox WaitEffect = new PictureBox();
 
 
         private void AddEffectImage()

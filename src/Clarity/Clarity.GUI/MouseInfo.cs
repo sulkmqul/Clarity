@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace Clarity.GUI
 {
+
     /// <summary>
     /// マウス情報
     /// </summary>
@@ -18,17 +19,54 @@ namespace Clarity.GUI
         /// <summary>
         /// マウス押されているか可否
         /// </summary>
-        public bool DownFlag { get; private set; } = false;
+        public bool DownFlag
+        {
+            get
+            {
+                if (this.DownButton == MouseButtons.None)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
 
         /// <summary>
-        /// 押された時
+        /// 押されているボタン
+        /// </summary>
+        public MouseButtons DownButton { get; private set; } = MouseButtons.None;
+
+        /// <summary>
+        /// 押された位置
         /// </summary>
         public Point DownPos { get; private set; } = new Point();
 
         /// <summary>
-        /// 離された時
+        ///　現在値
         /// </summary>
-        public Point NowPos { get; private set; } = new Point();
+        private Point _NowPos = new Point();
+        /// <summary>
+        /// 現在値
+        /// </summary>
+        public Point NowPos
+        {
+            get
+            {
+                return this._NowPos;
+            }
+            private set
+            {
+                this.PrevPos = this._NowPos;
+                this._NowPos = value;
+            }
+        }
+
+        /// <summary>
+        /// 前回の位置
+        /// </summary>
+        public Point PrevPos { get; private set; } = new Point();
+
 
         /// <summary>
         /// 押した位置からの距離
@@ -43,9 +81,23 @@ namespace Clarity.GUI
         }
 
         /// <summary>
+        /// 前回から動いた距離
+        /// </summary>
+        public Point PrevLength
+        {
+            get
+            {
+                return new Point(this.NowPos.X - this.PrevPos.X,
+                    this.NowPos.Y - this.PrevPos.Y);
+            }
+        }
+
+
+
+        /// <summary>
         /// 記憶値
         /// </summary>
-        public Dictionary<int, object> MemoryDic = new Dictionary<int, object>();
+        protected Dictionary<int, object> MemoryDic = new Dictionary<int, object>();
 
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -55,7 +107,7 @@ namespace Clarity.GUI
         /// <param name="args"></param>
         public void DownMouse(MouseEventArgs args)
         {
-            this.DownFlag = true;
+            this.DownButton = args.Button;
             this.DownPos = new Point(args.X, args.Y);
             this.NowPos = new Point(args.X, args.Y);
         }
@@ -76,8 +128,18 @@ namespace Clarity.GUI
         public void UpMouse(MouseEventArgs args)
         {
             this.NowPos = new Point(args.X, args.Y);
-            this.DownFlag = false;
+            this.DownButton = MouseButtons.None;
         }
+
+        /// <summary>
+        /// マウスホイール
+        /// </summary>
+        /// <param name="args"></param>
+        public void WheelMouse(MouseEventArgs args)
+        {
+            this.NowPos = new Point(args.X, args.Y);            
+        }
+
 
         /// <summary>
         /// メモリ値の設定
@@ -95,11 +157,11 @@ namespace Clarity.GUI
         /// <typeparam name="T"></typeparam>
         /// <param name="slot">記憶場所</param>
         /// <returns></returns>
-        public T GetMemory<T>(int slot = 0)
+        public T? GetMemory<T>(int slot = 0)
         {
             if (this.MemoryDic.ContainsKey(slot) == false)
             {
-                return default(T);
+                return default;
             }
 
             T data = (T)this.MemoryDic[slot];

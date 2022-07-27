@@ -8,6 +8,12 @@
     <Compile Update="ClarityScrollBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="ClarityViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ClarityViewerMinimap.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="ValueScrollControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

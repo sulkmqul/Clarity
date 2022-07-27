@@ -16,12 +16,6 @@
   <ItemGroup>
     <Folder Include="Element\Collider\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Vortice.Mathematics">
-      <HintPath>..\DLL\vortice\net5.0\Vortice.Mathematics.dll</HintPath>
-    </Reference>
-  </ItemGroup>
     
 
 </Project>

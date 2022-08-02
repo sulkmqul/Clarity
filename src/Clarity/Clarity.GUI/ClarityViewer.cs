@@ -37,17 +37,25 @@ namespace Clarity.GUI
         public Color ClearColor { get; set; } = Color.Black;
 
         [Category(CommonDescriptionCategory)]
-        [Description("Src範囲色(画像無の時のみ有効)")]
+        [Description("Src範囲色(画像無の時のみ有効)")]        
         public Color SrcBackColor { get; set; } = Color.Red;
 
         [Category(CommonDescriptionCategory)]
         [Description("右ダブルクリックセンタリング可否")]
-        public bool DoubleClickCentering { get; set; } = true;
+        public bool DoubleClickFitCentering { get; set; } = true;
 
+        [Category(CommonDescriptionCategory)]
+        [Description("画像サイズで描画をclippingするか否か")]
+        public bool ImageClippingEnabled { get; set; } = true;
 
         [Category(CommonDescriptionCategory)]
         [Description("表示画像補間モード")]
         public System.Drawing.Drawing2D.InterpolationMode ImageInterpolationMode { get; set; } = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+
+        [Category(CommonDescriptionCategory)]
+        [Description("画像を移動操作する時のマウスボタン")]
+        [DefaultValue(MouseButtons.Right)]
+        public MouseButtons MoveImageMouseButton { get; set; } = MouseButtons.Right;
         #endregion
 
         #region Minimap
@@ -67,6 +75,7 @@ namespace Clarity.GUI
 
         [Category(MinimapDescriptionCategory)]
         [Description("ミニマップサイズ比")]
+        [DefaultValue(0.3f)]
         public float MinimapSizeRate
         {
             get
@@ -81,6 +90,7 @@ namespace Clarity.GUI
 
         [Category(MinimapDescriptionCategory)]
         [Description("描画位置基準比")]
+        [DefaultValue(0.01f)]
         public float MinimapDisplayMerginRate
         {
             get
@@ -150,6 +160,29 @@ namespace Clarity.GUI
         #endregion
 
         #endregion
+
+        /// <summary>
+        /// クリッピングの有効化
+        /// </summary>
+        class ClippingState : IDisposable
+        {
+            public ClippingState(Graphics gra, RectangleF rc, bool clipflag)
+            {
+                this.Gra = gra;
+                if (clipflag == false)
+                {
+                    return;
+                }
+                this.Gra.SetClip(rc);
+            }
+
+            Graphics Gra;
+
+            public void Dispose()
+            {
+                this.Gra.ResetClip();
+            }
+        }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
@@ -285,6 +318,16 @@ namespace Clarity.GUI
 
             this.ChangeZoom(this.ZoomRate, new PointF(cx, cy));
 
+        }
+
+
+        /// <summary>
+        /// Fitting処理
+        /// </summary>
+        public void FitImage()
+        {
+            this.ZoomRate = this.CalcuFitRate();
+            this.CalcuViewArea();
         }
 
 
@@ -479,24 +522,27 @@ namespace Clarity.GUI
             //画像の描画
             this.RenderImage(gra);
 
-            //描画者の表示
-            this.DisplayerList.ForEach(x =>
+            using (ClippingState cs = new ClippingState(gra, this.ViewRect, this.ImageClippingEnabled))
             {
-                x.SrcRect = this.SrcRect;
-                x.ViewRect = this.ViewRect;
-                x.DispRect = this.DispRect;
+                //描画者の表示
+                this.DisplayerList.ForEach(x =>
+                {
+                    x.SrcRect = this.SrcRect;
+                    x.ViewRect = this.ViewRect;
+                    x.DispRect = this.DispRect;
 
-                x.Render(gra);
-            });
+                    x.Render(gra);
+                });
+            }
 
+            //ミニマップを描画する
             {
                 float l = this.Ivt.DispXToSrcX(this.DispRect.Left);
                 float t = this.Ivt.DispYToSrcY(this.DispRect.Top);
                 float r = this.Ivt.DispXToSrcX(this.DispRect.Right);
                 float b = this.Ivt.DispYToSrcY(this.DispRect.Bottom);
-                this.clarityViewerMinimapView.DispArea = new RectangleF(l, t, r-l, b-t);
-                
-                this.clarityViewerMinimapView.Refresh();
+                this.clarityViewerMinimapView.DispArea = new RectangleF(l, t, r-l, b-t);                
+                //this.clarityViewerMinimapView.Refresh();
             }
             
         }
@@ -607,10 +653,9 @@ namespace Clarity.GUI
         {
             this.MInfo.MoveMouse(e);
             this.DisplayerList.ForEach(x => x.MouseMove(this.MInfo));
-            if (e.Button == MouseButtons.Right)
-            {
-                this.Ivt.ViewRect.Offset(this.MInfo.PrevMoveLength.X, this.MInfo.PrevMoveLength.Y);
-                
+            if (e.Button == this.MoveImageMouseButton)
+            {   
+                this.Ivt.ViewRect.Offset(this.MInfo.PrevMoveLength.X, this.MInfo.PrevMoveLength.Y);                
             }
             this.Refresh();
         }
@@ -653,8 +698,9 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && this.DoubleClickCentering == true)
+            if (e.Button == this.MoveImageMouseButton && this.DoubleClickFitCentering == true)
             {
+                this.FitImage();
                 this.MoveCenter();
                 this.Refresh();
             }

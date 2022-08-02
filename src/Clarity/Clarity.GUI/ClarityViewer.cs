@@ -134,6 +134,19 @@ namespace Clarity.GUI
                 this.clarityViewerMinimapView.SrcBackColor = value;
             }
         }
+        [Category(MinimapDescriptionCategory)]
+        [Description("登録Displayer描画可否")]
+        public bool DisplayerRendering
+        {
+            get
+            {
+                return this.clarityViewerMinimapView.DisplayerRendering;
+            }
+            set
+            {
+                this.clarityViewerMinimapView.DisplayerRendering = value;
+            }
+        }
         #endregion
 
         #endregion
@@ -283,6 +296,15 @@ namespace Clarity.GUI
         public void AddDisplayer(BaseDisplayer dp)
         {
             this.DisplayerList.Add(dp);
+
+            Type a = dp.GetType();
+            BaseDisplayer? minidp = (BaseDisplayer?)Activator.CreateInstance(a);
+            if (minidp != null)
+            {
+                dp.ManageLink = minidp;
+                this.clarityViewerMinimapView.AddDisplayer(minidp);
+            }
+            this.Refresh();
         }
 
         /// <summary>
@@ -292,6 +314,10 @@ namespace Clarity.GUI
         public void RemoveDisplayer(BaseDisplayer dp)
         {
             this.DisplayerList.Remove(dp);
+            this.clarityViewerMinimapView.RemoveDisplayer(dp.ManageLink);
+
+            this.Refresh();
+
         }
         #endregion
 
@@ -469,6 +495,7 @@ namespace Clarity.GUI
                 float r = this.Ivt.DispXToSrcX(this.DispRect.Right);
                 float b = this.Ivt.DispYToSrcY(this.DispRect.Bottom);
                 this.clarityViewerMinimapView.DispArea = new RectangleF(l, t, r-l, b-t);
+                
                 this.clarityViewerMinimapView.Refresh();
             }
             
@@ -582,7 +609,7 @@ namespace Clarity.GUI
             this.DisplayerList.ForEach(x => x.MouseMove(this.MInfo));
             if (e.Button == MouseButtons.Right)
             {
-                this.Ivt.ViewRect.Offset(this.MInfo.PrevLength.X, this.MInfo.PrevLength.Y);
+                this.Ivt.ViewRect.Offset(this.MInfo.PrevMoveLength.X, this.MInfo.PrevMoveLength.Y);
                 
             }
             this.Refresh();
@@ -638,8 +665,7 @@ namespace Clarity.GUI
         /// </summary>
         /// <param name="srcpos"></param>
         private void clarityViewerMinimapView_PositonSelectEvent(PointF srcpos)
-        {
-            System.Diagnostics.Trace.WriteLine($"x={srcpos.X} y={srcpos.Y}");
+        {            
             this.MoveSrcPos(srcpos);
             this.Refresh();
         }

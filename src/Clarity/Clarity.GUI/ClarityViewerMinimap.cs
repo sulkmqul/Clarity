@@ -12,8 +12,9 @@ namespace Clarity.GUI
 {
     /// <summary>
     /// ClarityViewerのminimap管理
-    /// </summary>
-    internal partial class ClarityViewerMinimap : UserControl
+    /// </summary>    
+    [ToolboxItem(false)]
+    partial class ClarityViewerMinimap : UserControl
     {
         public ClarityViewerMinimap()
         {
@@ -47,6 +48,11 @@ namespace Clarity.GUI
         [Category(CategoryName)]
         [Description("表示エリア線幅")]
         public float DisplayAreaLineWidth { get; set; } = 1.0f;
+
+        [Category(CategoryName)]
+        [Description("登録Displayer描画可否")]
+        public bool DisplayerRendering { get; set; } = true;
+
 
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -102,6 +108,12 @@ namespace Clarity.GUI
         /// マウス管理
         /// </summary>
         private MouseInfo MInfo = new MouseInfo();
+
+
+        /// <summary>
+        /// 描画者
+        /// </summary>
+        private List<BaseDisplayer> DisplayerList = new List<BaseDisplayer>();
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化処理
@@ -151,6 +163,28 @@ namespace Clarity.GUI
         }
 
 
+
+        #region Displayerの登録解除
+        /// <summary>
+        /// 描画者登録
+        /// </summary>
+        /// <param name="dp"></param>
+        public void AddDisplayer(BaseDisplayer dp)
+        {
+            this.DisplayerList.Add(dp);
+        }
+
+        /// <summary>
+        /// 描画者登録解除
+        /// </summary>
+        /// <param name="dp"></param>
+        public void RemoveDisplayer(BaseDisplayer dp)
+        {
+            this.DisplayerList.Remove(dp);
+        }
+        #endregion
+
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
         /// <summary>
@@ -163,6 +197,18 @@ namespace Clarity.GUI
             if (this.SrcImage == null)
             {
                 gra.Clear(this.SrcBackColor);
+            }
+
+            //カスタム描画
+            if (this.DisplayerRendering == true)
+            {
+                this.DisplayerList.ForEach(x =>
+                {
+                    x.SrcRect = this.SrcRect;
+                    x.ViewRect = this.DispRect;
+                    x.DispRect = this.DispRect;
+                    x.Render(gra);
+                });
             }
 
             //矩形の描画
@@ -178,6 +224,9 @@ namespace Clarity.GUI
 
                 gra.DrawRectangle(pe, x, y, w, h);
             }
+
+
+            
 
         }
         

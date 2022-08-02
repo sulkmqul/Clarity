@@ -29,13 +29,12 @@ namespace ClarityOrbit
         /// <summary>
         /// 自身のチップID
         /// </summary>
-        public int TipImageID = OrbitGlobal.EVal;
-
+        public int TipImageID { get; set; } = OrbitGlobal.EVal;
+        
         /// <summary>
         /// 自身のindex位置
         /// </summary>
         public Point Pos { get; private set; }
-
         
     }
 }

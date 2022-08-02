@@ -39,6 +39,9 @@
             this.panelDx.Name = "panelDx";
             this.panelDx.Size = new System.Drawing.Size(150, 150);
             this.panelDx.TabIndex = 0;
+            this.panelDx.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelDx_MouseDown);
+            this.panelDx.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelDx_MouseMove);
+            this.panelDx.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelDx_MouseUp);
             // 
             // OrbitEditViewControl
             // 

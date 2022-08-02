@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+      <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,13 +14,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Clarity\Clarity.Engine\Clarity.Engine.csproj" />
+    <ProjectReference Include="..\..\Clarity\Clarity.GUI\Clarity.GUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="cs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="structure.xml">
+    <None Update="data\structure.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

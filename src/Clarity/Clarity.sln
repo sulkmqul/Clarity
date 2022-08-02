@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clarity.Engine", "Clarity.E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClarityAid", "ClarityAid\ClarityAid.csproj", "{108C9EBA-4C0A-48FE-9036-E84D13D9FF21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.GUI", "Clarity.GUI\Clarity.GUI.csproj", "{3121AFBC-0637-4E1C-9E74-19AEF4787297}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clarity.GUI", "Clarity.GUI\Clarity.GUI.csproj", "{3121AFBC-0637-4E1C-9E74-19AEF4787297}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.DB", "Clarity.DB\Clarity.DB.csproj", "{CDDC22DA-537A-4C44-918A-DCF64947C3BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{3121AFBC-0637-4E1C-9E74-19AEF4787297}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3121AFBC-0637-4E1C-9E74-19AEF4787297}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3121AFBC-0637-4E1C-9E74-19AEF4787297}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDDC22DA-537A-4C44-918A-DCF64947C3BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDDC22DA-537A-4C44-918A-DCF64947C3BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDDC22DA-537A-4C44-918A-DCF64947C3BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDDC22DA-537A-4C44-918A-DCF64947C3BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

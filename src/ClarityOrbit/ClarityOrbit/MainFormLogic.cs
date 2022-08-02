@@ -17,8 +17,7 @@ namespace ClarityOrbit
     {
         public MainFormLogic(MainForm f)
         {
-            this.Form = f;
-            this.WindowManager = new WindowManager();
+            this.Form = f;            
         }
 
         /// <summary>
@@ -27,9 +26,9 @@ namespace ClarityOrbit
         MainForm Form { get; init; }
 
         /// <summary>
-        /// ウィンドウの管理クラス
+        /// 各画面の管理クラス
         /// </summary>
-        public WindowManager WindowManager = null;
+        public WindowManager WindowManager = new WindowManager();
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -50,6 +49,33 @@ namespace ClarityOrbit
 
             //各Controlの初期化
             this.Form.orbitEditViewControl1.Init();
+        }
+
+
+        /// <summary>
+        /// 新規作成処理
+        /// </summary>
+        /// <param name="binfo">作成情報</param>
+        public void CreateNewProject(OrbitProjectBase binfo)
+        {
+            //解放処理
+
+            //作成処理
+            this.CreateNew(binfo);
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 新規作成処理本体
+        /// </summary>
+        /// <returns></returns>
+        private void CreateNew(OrbitProjectBase binfo)
+        {
+            //プロジェクト情報初期化
+            OrbitProject proj = new OrbitProject();
+            proj.Init(binfo);
+            OrbitGlobal.Mana.Project = proj;
+
+            //engine構造の作成
         }
     }
 }

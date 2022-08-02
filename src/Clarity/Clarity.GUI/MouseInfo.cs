@@ -83,7 +83,7 @@ namespace Clarity.GUI
         /// <summary>
         /// 前回から動いた距離
         /// </summary>
-        public Point PrevLength
+        public Point PrevMoveLength
         {
             get
             {

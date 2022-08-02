@@ -14,6 +14,7 @@ namespace ClarityOrbit.EditView
     internal class OrbitEditViewData
     {
         
+        
     }
 
     internal class OrbitEditViewControlLogic : ClarityEnginePlugin
@@ -31,6 +32,7 @@ namespace ClarityOrbit.EditView
         /// </summary>
         private OrbitEditViewData FData { get; init; }
 
+        //エンジン実行タスク
         private Task EngineTask = null;
 
         /// <summary>

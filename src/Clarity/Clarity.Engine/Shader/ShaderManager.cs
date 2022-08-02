@@ -80,8 +80,8 @@ namespace Clarity.Engine.Shader
             Instance = new ShaderManager();
 
             //必要な情報の取得
-            Instance.VertexShaderProfile = ClarityEngine.EngineSetting.GetString("VertexShaderVersion", "vs_4_0");
-            Instance.PixelShaderProfile = ClarityEngine.EngineSetting.GetString("PixelShaderVersion", "ps_4_0");
+            Instance.VertexShaderProfile = ClarityEngine.EngineSetting.GetString("VertexShaderVersion", "vs_5_0");
+            Instance.PixelShaderProfile = ClarityEngine.EngineSetting.GetString("PixelShaderVersion", "ps_5_0");
         }
 
 

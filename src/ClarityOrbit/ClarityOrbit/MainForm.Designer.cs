@@ -73,36 +73,37 @@ namespace ClarityOrbit
             this.新規作成ToolStripMenuItem.Name = "新規作成ToolStripMenuItem";
             this.新規作成ToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.新規作成ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.新規作成ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.新規作成ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.新規作成ToolStripMenuItem.Text = "新規作成";
+            this.新規作成ToolStripMenuItem.Click += new System.EventHandler(this.新規作成ToolStripMenuItem_Click);
             // 
             // 開くToolStripMenuItem
             // 
             this.開くToolStripMenuItem.Name = "開くToolStripMenuItem";
-            this.開くToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.開くToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.開くToolStripMenuItem.Text = "開く";
             // 
             // 保存ToolStripMenuItem
             // 
             this.保存ToolStripMenuItem.Name = "保存ToolStripMenuItem";
-            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.保存ToolStripMenuItem.Text = "名前を付けて保存";
             // 
             // 閉じるToolStripMenuItem
             // 
             this.閉じるToolStripMenuItem.Name = "閉じるToolStripMenuItem";
-            this.閉じるToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.閉じるToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.閉じるToolStripMenuItem.Text = "上書き保存";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(161, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // 閉じるToolStripMenuItem1
             // 
             this.閉じるToolStripMenuItem1.Name = "閉じるToolStripMenuItem1";
-            this.閉じるToolStripMenuItem1.Size = new System.Drawing.Size(164, 22);
+            this.閉じるToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.閉じるToolStripMenuItem1.Text = "閉じる";
             // 
             // statusStrip1

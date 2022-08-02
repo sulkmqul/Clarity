@@ -90,6 +90,8 @@ namespace Clarity.GUI
 
         #endregion
 
+
+
         #region 座標変換
 
         #region Src→View変換        
@@ -186,7 +188,7 @@ namespace Clarity.GUI
         /// <returns></returns>
         public float ViewXToDispX(float vx)
         {
-            float ans = vx - this.ViewRect.X;
+            float ans = vx + this.ViewRect.X;
             ans = ans + this.DispRect.X;
             return ans;
         }
@@ -197,7 +199,7 @@ namespace Clarity.GUI
         /// <returns></returns>
         public float ViewYToDispY(float vy)
         {
-            float ans = vy - this.ViewRect.Y;
+            float ans = vy + this.ViewRect.Y;
             ans = ans + this.DispRect.Y;
             return ans;
         }
@@ -336,6 +338,12 @@ namespace Clarity.GUI
     public abstract class BaseDisplayer : ImageViewerTranslator
     {
         /// <summary>
+        /// 管理リンク()
+        /// </summary>
+        internal BaseDisplayer? ManageLink { get; set; } = null;
+
+
+        /// <summary>
         /// マウスが押されたとき
         /// </summary>
         /// <param name="minfo"></param>        
@@ -368,9 +376,9 @@ namespace Clarity.GUI
         /// 描画処理
         /// </summary>
         /// <param name="gra"></param>
-        public virtual bool Render(Graphics gra)
+        public virtual void Render(Graphics gra)
         {
-            return true;
+            
         }
 
 

@@ -137,6 +137,28 @@ namespace Clarity.Engine
         {
             ClarityEngine.Engine.EngineData.SystemText.SetText(s, line);
         }
+
+
+
+        /// <summary>
+        /// Clarityエンジンの実行
+        /// </summary>
+        /// <param name="cep">追加動作</param>
+        public static async Task RunAsync(ClarityEnginePlugin cep)
+        {
+            if (ClarityEngine.Engine == null)
+            {
+                throw new Exception("ClarityEngine initialize");
+            }
+
+            //エンジンの実行
+            await ClarityEngine.Engine.RunEngineAsync(cep);
+
+
+            //ログの終了
+            ClarityLog.Release();
+        }
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>

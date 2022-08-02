@@ -25,7 +25,7 @@ namespace ClarityOrbit
         /// <summary>
         /// 処理
         /// </summary>
-        private MainFormLogic Logic = null;
+        private MainFormLogic Logic;
 
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -58,6 +58,27 @@ namespace ClarityOrbit
 
         }
 
-        
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 新規作成
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 新規作成ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //設定画面の作成
+            ProjectSettingForm f = new ProjectSettingForm();
+            f.Init();
+            DialogResult dret = f.ShowDialog(this);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+
+
+            //新規作成処理をここで行う
+            this.Logic.CreateNewProject(f.Result);
+        }
     }
 }

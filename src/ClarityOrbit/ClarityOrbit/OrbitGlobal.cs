@@ -19,6 +19,9 @@ namespace ClarityOrbit
         public const int EVal = Clarity.Engine.ClarityEngine.INVALID_ID;
 
 
+        /// <summary>
+        /// ClarityEngine設定ファイルパス
+        /// </summary>
         public static string ClarityEngineSettingFilePath
         {
             get
@@ -26,18 +29,22 @@ namespace ClarityOrbit
                 return "cs.xml";
             }
         }
+
+        /// <summary>
+        /// 構造設定ファイルパス
+        /// </summary>
         public static string StructureSettingFilePath
         {
             get
             {
-                return "structure.xml";
+                return "data\\structure.xml";
             }
         }
 
         /// <summary>
         /// プロジェクト情報
         /// </summary>
-        public OrbitProject Project = null;
+        public OrbitProject? Project = null;
 
 
     }

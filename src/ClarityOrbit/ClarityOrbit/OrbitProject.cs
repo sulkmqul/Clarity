@@ -33,17 +33,27 @@ namespace ClarityOrbit
         /// <summary>
         /// 基本情報
         /// </summary>
-        public OrbitProjectBase BaseInfo = null;
+        public OrbitProjectBase BaseInfo;
 
         /// <summary>
         /// レイヤー情報
         /// </summary>
-        public OrbitProjectBaseLayer Layer = null;
+        public OrbitProjectBaseLayer Layer;
 
         /// <summary>
         /// 元チップ情報
         /// </summary>
         public List<TipImageInfo> TipImageList = new List<TipImageInfo>();
+
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        /// <param name="binfo"></param>
+        public void Init(OrbitProjectBase binfo)
+        {
+            this.BaseInfo = binfo;
+            this.Layer = new OrbitProjectBaseLayer(this);
+        }
     }
 
     internal abstract class BaseOrbitProjectInfo
@@ -54,14 +64,22 @@ namespace ClarityOrbit
         }
 
         protected OrbitProject Project { get; init; }
+
+        protected OrbitProjectBase BaseInfo
+        {
+            get
+            {
+                return this.Project.BaseInfo;
+            }
+        }
     }
 
     /// <summary>
     /// プロジェクト基本情報
     /// </summary>
-    internal class OrbitProjectBase : BaseOrbitProjectInfo
+    internal class OrbitProjectBase
     {
-        public OrbitProjectBase(OrbitProject op) : base(op)
+        public OrbitProjectBase()
         {
         }
 
@@ -120,7 +138,9 @@ namespace ClarityOrbit
         /// <summary>
         /// チップ画像情報
         /// </summary>
-        public Bitmap TipImage = null;
+        public Bitmap TipImage;
+
+        
 
     }
 

@@ -48,9 +48,9 @@
     <!--<RenderingViewSize type="vec2">1920,1080</RenderingViewSize>-->
     
     <!--VertexShaderVersion-->
-    <VertexShaderVersion type="string">vs_4_0</VertexShaderVersion>
+    <VertexShaderVersion type="string">vs_5_0</VertexShaderVersion>
     <!--PixelShaderVersion-->
-    <PixelShaderVersion type="string">ps_4_0</PixelShaderVersion>
+    <PixelShaderVersion type="string">ps_5_0</PixelShaderVersion>
     <!--描画スレッド数(当分実装予定なし-->
     <RenderingThreadCount type="int">1</RenderingThreadCount>
    

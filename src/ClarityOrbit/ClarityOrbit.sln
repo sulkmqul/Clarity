@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32228.343
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClarityOrbit", "ClarityOrbit\ClarityOrbit.csproj", "{4DD640DF-415B-4940-8A9D-B7E582483A94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClarityOrbit", "ClarityOrbit\ClarityOrbit.csproj", "{4DD640DF-415B-4940-8A9D-B7E582483A94}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clarity.Engine", "..\Clarity\Clarity.Engine\Clarity.Engine.csproj", "{13B377A0-4C42-403F-9B66-FC8B71D7DE4A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clarity", "..\Clarity\Clarity\Clarity.csproj", "{1FD9104B-93A3-40C6-B02E-D7CEE41CC95D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clarity.GUI", "..\Clarity\Clarity.GUI\Clarity.GUI.csproj", "{AE90D164-BE02-4E17-9EE0-1CC327417BB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{1FD9104B-93A3-40C6-B02E-D7CEE41CC95D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FD9104B-93A3-40C6-B02E-D7CEE41CC95D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FD9104B-93A3-40C6-B02E-D7CEE41CC95D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE90D164-BE02-4E17-9EE0-1CC327417BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE90D164-BE02-4E17-9EE0-1CC327417BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE90D164-BE02-4E17-9EE0-1CC327417BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE90D164-BE02-4E17-9EE0-1CC327417BB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

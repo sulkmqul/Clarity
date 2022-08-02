@@ -20,6 +20,19 @@ namespace ClarityOrbit
         /// レイヤー一覧
         /// </summary>
         public List<LayerInfo> LayerList = new List<LayerInfo>();
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+        public void AddNewLayer()
+        {
+
+        }
+
+        public void ResizeLayer()
+        {
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        
+
     }
 
 
@@ -31,11 +44,20 @@ namespace ClarityOrbit
         /// <summary>
         /// レイヤー番号
         /// </summary>
-        public int LayerNo { get; set; }
+        public int LayerNo { get; set; } = -1;
         /// <summary>
         /// レイヤー名
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
+
+        /// <summary>
+        /// 表示可否
+        /// </summary>
+        public bool Visible { get; set; } = true;
+        /// <summary>
+        /// 編集可否
+        /// </summary>
+        public bool Enable { get; set; } = true;
 
         /// <summary>
         /// 作業場一式 [y][x]
@@ -46,6 +68,7 @@ namespace ClarityOrbit
         /// レイヤー構造描画上の親
         /// </summary>
         public LayerStructureElement StructureElement = null;
+
 
     }
 

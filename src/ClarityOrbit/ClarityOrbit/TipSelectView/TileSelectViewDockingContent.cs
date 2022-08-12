@@ -48,7 +48,8 @@ namespace ClarityOrbit.TipSelectView
             //ページの追加
             var data = OrbitGlobal.Project.AddNewTileImageSrc(filepath);
             TabPage ans = new TabPage();
-            
+
+            return ans;
             
         }
         

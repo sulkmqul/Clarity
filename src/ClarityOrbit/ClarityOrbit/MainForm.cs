@@ -78,7 +78,7 @@ namespace ClarityOrbit
 
 
             //新規作成処理をここで行う
-            this.Logic.CreateNewProject(f.Result);
+            this.Logic.CreateNew(f.Result);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Clarity.Engine;
 
 namespace ClarityOrbit
 {
@@ -36,6 +37,10 @@ namespace ClarityOrbit
         /// </summary>
         public void InitForm()
         {
+            //全体に関係する基本を初期化
+            OrbitGlobal.Init();
+
+
             //Dockingテーマの設定
             this.Form.dockPanelToolBox.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015BlueTheme();
 
@@ -46,9 +51,9 @@ namespace ClarityOrbit
             this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
             this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
 
-
             //各Controlの初期化
             this.Form.orbitEditViewControl1.Init();
+                        
         }
 
 
@@ -56,26 +61,30 @@ namespace ClarityOrbit
         /// 新規作成処理
         /// </summary>
         /// <param name="binfo">作成情報</param>
-        public void CreateNewProject(OrbitProjectBase binfo)
+        public void CreateNew(OrbitProjectBase binfo)
         {
             //解放処理
 
             //作成処理
-            this.CreateNew(binfo);
+            this.CreateNewProject(binfo);
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
-        /// 新規作成処理本体
+        /// プロジェクトの新規作成処理
         /// </summary>
         /// <returns></returns>
-        private void CreateNew(OrbitProjectBase binfo)
+        private void CreateNewProject(OrbitProjectBase binfo)
         {
             //プロジェクト情報初期化
             OrbitProject proj = new OrbitProject();
             proj.Init(binfo);
             OrbitGlobal.Mana.Project = proj;
 
-            //engine構造の作成
+            this.Form.orbitEditViewControl1.InitInfoView();            
+
+            //レイヤの作成
+            proj.Layer.AddNewLayer();
+            
         }
     }
 }

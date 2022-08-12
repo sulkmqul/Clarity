@@ -107,7 +107,8 @@ namespace ClarityOrbit
         /// <param name="e"></param>
         private void ProjectSettingForm_Load(object sender, EventArgs e)
         {
-
+            this.GetInputValue();
+            this.Display(false);
         }
 
         /// <summary>

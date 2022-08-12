@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClarityOrbit.EditView;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace ClarityOrbit
         /// <summary>
         /// チップ画像IDの取得
         /// </summary>
-        public static int NextTipImageIDSeq
+        public static int NextTileImageSrcIDSeq
         {
             get
             {
@@ -35,15 +36,16 @@ namespace ClarityOrbit
         /// </summary>
         public OrbitProjectBase BaseInfo;
 
+
         /// <summary>
         /// レイヤー情報
         /// </summary>
-        public OrbitProjectBaseLayer Layer;
+        public OrbitProjectLayer Layer;
 
         /// <summary>
         /// 元チップ情報
         /// </summary>
-        public List<TipImageInfo> TipImageList = new List<TipImageInfo>();
+        public List<TileImageSrcInfo> TipImageList = new List<TileImageSrcInfo>();
 
         /// <summary>
         /// 初期化
@@ -52,7 +54,7 @@ namespace ClarityOrbit
         public void Init(OrbitProjectBase binfo)
         {
             this.BaseInfo = binfo;
-            this.Layer = new OrbitProjectBaseLayer(this);
+            this.Layer = new OrbitProjectLayer(this);
         }
     }
 
@@ -111,19 +113,19 @@ namespace ClarityOrbit
 
 
     /// <summary>
-    /// チップ画像情報
+    /// タイル元画像情報
     /// </summary>
-    internal class TipImageInfo : BaseOrbitProjectInfo
+    internal class TileImageSrcInfo : BaseOrbitProjectInfo
     {        
-        public TipImageInfo(OrbitProject op) : base(op)
+        public TileImageSrcInfo(OrbitProject op) : base(op)
         {
     
-            this.TipImageID = OrbitProject.NextTipImageIDSeq;
+            this.TileImageSrcID = OrbitProject.NextTileImageSrcIDSeq;
         }
         /// <summary>
         /// これのチップID(OrbitProject.NextTipImageIDSeqによって割り当てること)(テクスチャIDにもなります)
         /// </summary>
-        public int TipImageID { get; init; }
+        public int TileImageSrcID { get; init; }
 
         /// <summary>
         /// これのコメント

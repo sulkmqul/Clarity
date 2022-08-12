@@ -19,6 +19,30 @@ namespace ClarityOrbit
         public const int EVal = Clarity.Engine.ClarityEngine.INVALID_ID;
 
 
+        public const int OrbitWorldID = 0;
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+        /// <summary>
+        /// プロジェクト情報
+        /// </summary>
+        public OrbitProject? Project = null;
+
+
+        //保存情報以外のアプリ情報
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+
+
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        public static void Init()
+        {
+            OrbitGlobal.Instance = new OrbitGlobal();
+        }
+
+
         /// <summary>
         /// ClarityEngine設定ファイルパス
         /// </summary>
@@ -42,9 +66,29 @@ namespace ClarityOrbit
         }
 
         /// <summary>
-        /// プロジェクト情報
+        /// Shader一覧ファイル
         /// </summary>
-        public OrbitProject? Project = null;
+        public static string ShaderListFile
+        {
+            get
+            {
+                return "data\\shlist.txt";
+            }
+        }
+
+        /// <summary>
+        /// Polygon一覧ファイル
+        /// </summary>
+        public static string PolyListFilePath
+        {
+            get
+            {
+                return "data\\polylist.txt";
+            }
+        }
+
+
+        
 
 
     }

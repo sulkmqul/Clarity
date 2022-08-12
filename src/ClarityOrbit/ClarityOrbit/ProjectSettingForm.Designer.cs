@@ -62,7 +62,7 @@
             this.buttonClose.Location = new System.Drawing.Point(211, 224);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(75, 23);
-            this.buttonClose.TabIndex = 1;
+            this.buttonClose.TabIndex = 4;
             this.buttonClose.Text = "閉じる";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
@@ -73,7 +73,7 @@
             this.buttonOk.Location = new System.Drawing.Point(130, 224);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 1;
+            this.buttonOk.TabIndex = 3;
             this.buttonOk.Text = "OK";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -87,7 +87,7 @@
             this.groupBoxTipSize.Location = new System.Drawing.Point(12, 12);
             this.groupBoxTipSize.Name = "groupBoxTipSize";
             this.groupBoxTipSize.Size = new System.Drawing.Size(271, 58);
-            this.groupBoxTipSize.TabIndex = 3;
+            this.groupBoxTipSize.TabIndex = 0;
             this.groupBoxTipSize.TabStop = false;
             this.groupBoxTipSize.Text = "チップサイズ(Pixel)";
             // 
@@ -119,7 +119,7 @@
             this.numericUpDownTipSizeH.Tag = "2";
             this.numericUpDownTipSizeH.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericUpDownTipSizeH.Value = new decimal(new int[] {
-            1,
+            30,
             0,
             0,
             0});
@@ -153,7 +153,7 @@
             this.numericUpDownTipSizeW.Tag = "1";
             this.numericUpDownTipSizeW.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numericUpDownTipSizeW.Value = new decimal(new int[] {
-            1,
+            30,
             0,
             0,
             0});
@@ -168,7 +168,7 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 140);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(271, 58);
-            this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "全体サイズ";
             // 
@@ -227,7 +227,7 @@
             this.groupBoxTipCount.Location = new System.Drawing.Point(12, 76);
             this.groupBoxTipCount.Name = "groupBoxTipCount";
             this.groupBoxTipCount.Size = new System.Drawing.Size(271, 58);
-            this.groupBoxTipCount.TabIndex = 3;
+            this.groupBoxTipCount.TabIndex = 1;
             this.groupBoxTipCount.TabStop = false;
             this.groupBoxTipCount.Text = "チップ数";
             // 
@@ -252,6 +252,11 @@
             this.numericUpDownTipCountH.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownTipCountH.TabIndex = 6;
             this.numericUpDownTipCountH.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDownTipCountH.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numericUpDownTipCountH.ValueChanged += new System.EventHandler(this.numericUpDownTip_ValueChanged);
             // 
             // label4
@@ -275,6 +280,11 @@
             this.numericUpDownTipCountW.Size = new System.Drawing.Size(66, 23);
             this.numericUpDownTipCountW.TabIndex = 4;
             this.numericUpDownTipCountW.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numericUpDownTipCountW.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             this.numericUpDownTipCountW.ValueChanged += new System.EventHandler(this.numericUpDownTip_ValueChanged);
             // 
             // ProjectSettingForm

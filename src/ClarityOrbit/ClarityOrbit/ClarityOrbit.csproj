@@ -21,13 +21,31 @@
     <None Update="cs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="data\polylist.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data\shader.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data\shlist.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="data\structure.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data\VGrid.cpo">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Resource\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Vortice.Mathematics">
+      <HintPath>..\..\Clarity\DLL\vortice\net6.0\Vortice.Mathematics.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

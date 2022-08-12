@@ -44,8 +44,8 @@
     
     <!--表示画面サイズ-->    
     <!--<DisplayViewSize type="vec2">1440,810</DisplayViewSize>-->
-    <!--内部画面サイズ-->
-    <!--<RenderingViewSize type="vec2">1920,1080</RenderingViewSize>-->
+    <!--内部画面サイズ、マイナス値でswapchain同期-->
+    <!--<RenderingViewSize type="vec2">-1,-1</RenderingViewSize>-->
     
     <!--VertexShaderVersion-->
     <VertexShaderVersion type="string">vs_5_0</VertexShaderVersion>
@@ -53,8 +53,7 @@
     <PixelShaderVersion type="string">ps_5_0</PixelShaderVersion>
     <!--描画スレッド数(当分実装予定なし-->
     <RenderingThreadCount type="int">1</RenderingThreadCount>
-   
-    
+ 
     <Debug>
         <!--デバッグ可否-->
         <Enabled type="bool">true</Enabled>           

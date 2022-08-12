@@ -23,8 +23,7 @@ namespace Clarity.Engine
         /// カメラ行列[viewport index]
         /// </summary>
         /// <remarks>
-        /// 複数ViewPortでの画面分割などではカメラが複数になりえるため配列とし、基本ViewPortIndexとの対応を前提とするが
-        /// 詳細には規定しない
+        /// カメラ複数はなにかありえそうなので一応配列・・・別worldでもいいか？
         /// </remarks>
         public Matrix4x4[] CameraMatVec = new Matrix4x4[1] { new Matrix4x4() };
         /// <summary>
@@ -74,6 +73,43 @@ namespace Clarity.Engine
         {
             
         }
+
+        /// <summary>
+        /// 元座標に戻す逆行列を計算
+        /// </summary>
+        /// <returns></returns>
+        public Matrix4x4 CalcuInvCameraProjectionView()
+        {
+            //カメラ逆
+            Matrix4x4 invcam;
+            Matrix4x4.Invert(this.DefaultCameraMat, out invcam);
+
+            //projection逆
+            Matrix4x4 invproj;
+            Matrix4x4.Invert(this.ProjectionMat, out invproj);
+
+            //viewport
+            Matrix4x4 vpmat = this.VPort.CreateViewportMatrix();
+            Matrix4x4 invpmat;
+            Matrix4x4.Invert(vpmat, out invpmat);
+
+
+            Matrix4x4 invmat = invpmat * invproj * invcam;
+            return invmat;
+        }
+
+        /// <summary>
+        /// Camera x Projection x Viewの行列を取得する
+        /// </summary>
+        /// <returns></returns>
+        public Matrix4x4 CalcuCameraProjectionView()
+        {
+            //viewport
+            Matrix4x4 vpmat = this.VPort.CreateViewportMatrix();            
+            Matrix4x4 ans = this.DefaultCameraMat  * this.ProjectionMat * vpmat;
+            return ans;
+        }
+
     }
 
     /// <summary>
@@ -81,7 +117,35 @@ namespace Clarity.Engine
     /// </summary>
     public class ViewPortData
     {
-        public Viewport VPort;
+        public ViewPortData()
+        {
+        }
+        public ViewPortData(float x, float y, float width, float height, float minDepth, float maxDepth)
+        {
+            this.VPort = new Viewport(x,y,width,height,minDepth, maxDepth);
+        }
+        internal Viewport VPort;
+
+
+        /// <summary>
+        /// Viewport行列を作成する
+        /// </summary>
+        /// <remarks>https://docs.microsoft.com/ja-jp/windows/win32/direct3d9/viewports-and-clipping</remarks>
+        /// <returns></returns>
+        public Matrix4x4 CreateViewportMatrix()
+        {
+            var mat = Matrix4x4.Identity;
+            mat.M11 = this.VPort.Width * 0.5f;
+            mat.M22 = -this.VPort.Height * 0.5f;
+            mat.M33 = this.VPort.MaxDepth - this.VPort.MinDepth;
+
+            mat.M41 = this.VPort.X + mat.M11;
+            mat.M42 = this.VPort.Y + (this.VPort.Height * 0.5f);
+            mat.M43 = this.VPort.MinDepth;
+            
+
+            return mat;
+        }
     }
 
     /// <summary>
@@ -97,7 +161,7 @@ namespace Clarity.Engine
         }
 
         /// <summary>
-        /// 基本View(RenderingTextureを描画するSystemViewのID)
+        /// 基本View(RenderingTextureを描画するSystemViewのWorldID)
         /// </summary>
         public static readonly int SystemViewID = -1;
 

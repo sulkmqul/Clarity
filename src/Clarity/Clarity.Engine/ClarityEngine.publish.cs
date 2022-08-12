@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Numerics;
 using Clarity.Engine.Element;
 using Clarity;
+using Clarity.Engine.Shader;
+using Clarity.Engine.Vertex;
 
 namespace Clarity.Engine
 {
@@ -21,6 +23,27 @@ namespace Clarity.Engine
         public const int INVALID_ID = int.MinValue;
 
 
+        public class BuildInShaderIndex
+        {
+            public const int Default = -100;
+            public const int NoTexture = -99;
+            public const int TextureAnime = -98;
+            public const int TextureUseAlpha = -97;
+        }
+
+        public class BuildInTextureIndex
+        {
+            public const int CollisionCircle = -100;
+            public const int CollisionRect = -99;
+        }
+        public class BuildInPolygonModelIndex
+        {
+            public const int Rect = -100;
+            public const int Line = -99;
+        }
+
+
+
         /// <summary>
         /// 入力設定ファイルの読み込み
         /// </summary>
@@ -31,23 +54,7 @@ namespace Clarity.Engine
         }
 
 
-        /// <summary>
-        /// 対象テクスチャindexのoffsetを取得する
-        /// </summary>
-        /// <param name="tid">texture id</param>
-        /// <param name="tix">index x</param>
-        /// <param name="tiy">index y</param>
-        /// <returns></returns>
-        public static Vector2 GetTextureOffset(int tid, int tix, int tiy = 0)
-        {
-            Vector2 tsize = Texture.TextureManager.GetTextureDivSize(tid) ?? new Vector2(0, 0);
-
-            Vector2 ans = new Vector2();
-            ans.X = tsize.X * (float)tix;
-            ans.Y = tsize.Y * (float)tiy;
-
-            return ans;
-        }
+        
 
         /// <summary>
         /// システムテキストの設定
@@ -82,66 +89,116 @@ namespace Clarity.Engine
 
 
         /// <summary>
-        /// テクスチャファイル一式の読み込み
+        /// 世界情報の設定
         /// </summary>
-        /// <param name="filepathlist">テクスチャ一覧ファイル</param>
-        public static void LoadTextureList(List<string> filepathlist)
+        /// <param name="wid">WorldID</param>
+        /// <param name="wdata">設定データ</param>
+        public static void SetWorld(int wid, WorldData wdata)
         {
-            Texture.TextureManager.Mana.CreateResource(filepathlist);
+            WorldManager.Mana.Set(wid, wdata);
         }
 
         /// <summary>
-        /// 読み込みテクスチャの解放
+        /// 世界情報の取得
         /// </summary>
-        public static void ClearTexture()
-        {
-            Texture.TextureManager.Mana.ClearUserData();
-        }
-
-        /// <summary>
-        /// テクスチャアニメの読み込み
-        /// </summary>
-        /// <param name="filepathlist">テクスチャアニメファイル一式</param>
-        public static void LoadTextureAnimeFile(List<string> filepathlist)
-        {
-            Texture.TextureAnimeFactory.Mana.ReadTextureAnimeFile(filepathlist);
-        }
-
-        /// <summary>
-        /// テクスチャサイズの取得
-        /// </summary>
-        /// <param name="tid"></param>
+        /// <param name="wid">WorldID</param>
         /// <returns></returns>
-        public static Vector2 GetTextureSize(int tid)
+        public static WorldData GetWorld(int wid)
         {
-            return Texture.TextureManager.GetTextureSize(tid);
+            return WorldManager.Mana.Get(wid);
+        }
+        /// <summary>
+        /// カメラの更新
+        /// </summary>
+        /// <param name="wid">WorldID</param>
+        /// <param name="cmat">カメラマトリックス</param>        
+        public static void UpdateCamera(int wid, Matrix4x4 cmat)
+        {
+            WorldManager.Mana.SetCamera(wid, cmat);
+        }
+
+
+
+        /// <summary>
+        /// 画面座標からWorld座標変換
+        /// </summary>
+        /// <param name="wid">世界ID</param>
+        /// <param name="mx">画面位置X</param>
+        /// <param name="my">画面位置Y</param>
+        /// <param name="z">0.0～1.0の間で深さを指定</param>
+        /// <returns></returns>
+        public static Vector3 WindowToWorld(int wid, float mx, float my, float z = 0.0f)
+        {
+            //現在世界を取得
+            Clarity.Engine.WorldData wdata = ClarityEngine.GetWorld(wid);
+
+            Matrix4x4 invmat = wdata.CalcuInvCameraProjectionView();
+
+            Vector4 mpos = new Vector4(mx, my, z, 1.0f);
+            mpos = Vector4.Transform(mpos, invmat);
+            mpos /= mpos.W;
+
+            //systemviewは正射影等倍表示なため、無視する。
+
+            return new Vector3(mpos.X, mpos.Y, mpos.Z);
+        }
+
+
+
+     
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        #region Model_Obect_Vertex
+
+        /// <summary>
+        /// 頂点ポリゴン一式の読み込み
+        /// </summary>
+        /// <param name="plfilepath"></param>
+        public static void AddVertexResources(string listfilepath)
+        {
+            VertexManager.Mana.CreateResource(listfilepath);
         }
 
         /// <summary>
-        /// テクスチャの画像サイズを取得(分割数を考慮しない実サイズ)
+        /// 頂点ポリゴンの追加
         /// </summary>
-        /// <param name="tid"></param>
-        /// <returns></returns>
-        public static Vector2 GetTextureOriginalSize(int tid)
+        /// <param name="vno"></param>
+        /// <param name="polfilepath"></param>
+        public static void AddVertexResource(int vno, string polfilepath)
         {
-            return Texture.TextureManager.GetTextureSize(tid, true);
+            VertexManager.Mana.AddResource(vno, polfilepath);
         }
 
         /// <summary>
-        /// テクスチャサイズの取得 Anime版
+        /// 頂点データのクリア
         /// </summary>
-        /// <param name="aid">アニメID</param>
-        /// <param name="aindex">アニメIndex</param>
-        /// <returns></returns>
-        public static Vector2 GetTextureSize(int aid, int aindex)
+        public static void ClearVertexResource()
         {
-            var adata = Texture.TextureAnimeFactory.GetAnime(aid);
-            int tid = adata.FrameList[aindex].TextureID;
-
-            return ClarityEngine.GetTextureSize(tid);
+            VertexManager.Mana.ClearUserData();
         }
 
 
+        /// <summary>
+        /// 対象モデルの頂点情報を取得する(index展開はしていない生データ)
+        /// </summary>
+        /// <param name="vid"></param>
+        /// <returns></returns>
+        public static List<Vector3> GetVertexList(int vid)
+        {
+            List<Vector3> anslist = new List<Vector3>();
+            PolyData podata = VertexManager.GetPolygonData(vid);
+
+            podata.VertexList.ForEach(x =>
+            {
+                anslist.Add(new Vector3(x.Pos.X, x.Pos.Y, x.Pos.Z));
+            });
+            return anslist;
+        }
+            
+        #endregion
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         #region Input
 
         /// <summary>
@@ -173,6 +230,34 @@ namespace Clarity.Engine
         {
             return InputManager.TestKeyReleaseEdge(gamekey);
         }
+        #endregion
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        #region Shader
+
+        /// <summary>
+        /// Shaderの追加
+        /// </summary>
+        /// <typeparam name="T">データ型</typeparam>
+        /// <param name="shlist"></param>
+        public static void AddShader<T>(List<string> shlist) where T : struct
+        {
+            ShaderManager.Mana.AddResource<T>(shlist);
+        }
+
+
+        /// <summary>
+        /// Shaderデータの設定
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sid"></param>
+        /// <param name="data"></param>
+        public static void SetShaderData<T>(int sid, T data) where T : unmanaged
+        {
+            ShaderManager.SetShaderData<T>(data, sid);
+        }
+
         #endregion
     }
 }

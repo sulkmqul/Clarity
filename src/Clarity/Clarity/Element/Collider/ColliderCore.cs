@@ -65,12 +65,26 @@ namespace Clarity.Collider
                 linedic.Add(EColMode.Dot, null);
                 linedic.Add(EColMode.Circle, this.DetectCircleLine);
                 linedic.Add(EColMode.Line, null);
+                linedic.Add(EColMode.Polygon, this.DetectLinePolygon);
+                linedic.Add(EColMode.PlaneRect, this.DetectLinePlaneRect);
+            }
+            //srcがpolygon
+            Dictionary<EColMode, DetectColliderFuncDelegate> polydic = new Dictionary<EColMode, DetectColliderFuncDelegate>();
+            {
+                polydic.Add(EColMode.Line, this.DetectLinePolygon);                
+            }
+            //srcがplanerect
+            Dictionary<EColMode, DetectColliderFuncDelegate> plrdic = new Dictionary<EColMode, DetectColliderFuncDelegate>();
+            {
+                plrdic.Add(EColMode.Line, this.DetectLinePlaneRect);
             }
 
 
             ans.Add(EColMode.Dot, dotdic);
             ans.Add(EColMode.Circle, cirdic);
             ans.Add(EColMode.Line, linedic);
+            ans.Add(EColMode.Polygon, polydic);
+            ans.Add(EColMode.PlaneRect, plrdic);
 
             return ans;
 
@@ -105,7 +119,7 @@ namespace Clarity.Collider
             }
 
             return ret;
-                
+
 
         }
 
@@ -201,7 +215,7 @@ namespace Clarity.Collider
         }
 
 
-        
+
 
 
         /// <summary>
@@ -284,6 +298,180 @@ namespace Clarity.Collider
 
             return true;
 
+        }
+
+        /// <summary>
+        /// 直線と三角ポリゴンの当たり判定
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        /// <remarks>https://risalc.info/src/line-triangle-intersection.html</remarks>
+        private bool DetectLinePolygon(BaseCollider src, BaseCollider target)
+        {
+            return this.DetectLinePolygonEx(src, target);
+
+            //データ変換            
+            ColliderPolygon pol = src as ColliderPolygon;
+            ColliderLine line = target as ColliderLine;
+            if (pol == null)
+            {
+                pol = target as ColliderPolygon;
+                line = src as ColliderLine;
+            }
+
+            //ポリゴンの存在する無限平面を表すものを求める
+            Vector3 h = pol.CalcuNormal();
+
+
+            //無限平面と直線と交点を求める
+            float nm = Vector3.Dot(h, line.Dir);
+            float nr = Vector3.Dot(h, line.StartPos);
+            Vector3 hcorsspos = line.StartPos + ((nr / nm) * line.Dir);
+
+
+            //係数を出す
+            Matrix4x4 cmat = Matrix4x4.Identity;
+            cmat.M11 = pol.SideLineA.X;
+            cmat.M21 = pol.SideLineA.Y;
+            cmat.M31 = pol.SideLineA.Z;
+
+            cmat.M12 = pol.SideLineB.X;
+            cmat.M22 = pol.SideLineB.Y;
+            cmat.M32 = pol.SideLineB.Z;
+
+            cmat.M13 = h.X;
+            cmat.M23 = h.Y;
+            cmat.M33 = h.Z;
+
+            Matrix4x4 cmatinv;
+            Matrix4x4.Invert(cmat, out cmatinv);
+
+            Vector3 r = Vector3.Transform(hcorsspos, cmatinv);
+
+            //交点を算出
+            Vector3 tpos = (r.X * pol.SideLineA) + (r.Y * pol.SideLineB) + (r.Z * h);
+
+            //交点が三角形に含まれているかを確認
+
+            if (r.X > 0 && r.Y > 0 && (r.X + r.Y) < 1.0f)
+            {
+                return true;
+            }
+
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="target"></param>
+        /// <remarks>http://ft-lab.ne.jp/cgi-bin/wiki.cgi?page=%B8%F2%BA%B9%C8%BD%C4%EA_3DCG</remarks>
+        /// <returns></returns>
+        private bool DetectLinePolygonEx(BaseCollider src, BaseCollider target)
+        {
+            //データ変換            
+            ColliderPolygon pol = src as ColliderPolygon;
+            ColliderLine line = target as ColliderLine;
+            if (pol == null)
+            {
+                pol = target as ColliderPolygon;
+                line = src as ColliderLine;
+            }
+
+            Vector3 dnor = Vector3.Normalize(line.Dir);
+
+            Vector3 pvec = Vector3.Cross(dnor, pol.SideLineB);
+            float det = Vector3.Dot(pvec, pol.SideLineA);
+
+            float v = 0.0f;
+            float u = 0.0f;
+            Vector3 qvec = new Vector3();
+            if (det > 0.000001f)
+            {
+                Vector3 tvec = line.StartPos - pol.VertexList[0];
+                u = Vector3.Dot(pvec, tvec);
+                if (u < 0.0f || u > det)
+                {
+                    return false;
+                }
+                qvec = Vector3.Cross(tvec, pol.SideLineA);
+                v = Vector3.Dot(dnor, qvec);
+                if (v < 0.0f || (u + v) > det)
+                {
+                    return false;
+                }
+            }
+            else if (det < -0.000001f)
+            {
+                Vector3 tvec = line.StartPos - pol.VertexList[0];
+                u = Vector3.Dot(pvec, tvec);
+                if (u > 0.0f || u < det)
+                {
+                    return false;
+                }
+                qvec = Vector3.Cross(tvec, pol.SideLineA);
+                v = Vector3.Dot(dnor, qvec);
+                if (v > 0.0f || (u + v) < det)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            float invdet = 1.0f / det;
+            float t = Vector3.Dot(pol.SideLineB, qvec);
+
+            t *= invdet;
+            u *= invdet;
+            v *= invdet;
+
+            //これまでで無限直線との交差点が求まる
+            Vector3 cosspos = (t * dnor) + line.StartPos;
+
+
+            //交差点が開始と終了の間にあればよい
+
+
+            return true; 
+        }
+
+
+
+        /// <summary>
+        /// 直線と平面矩形の判定
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private bool DetectLinePlaneRect(BaseCollider src, BaseCollider target)
+        {
+            //データ変換            
+            ColliderPlaneRect prect = src as ColliderPlaneRect;
+            ColliderLine line = target as ColliderLine;
+            if (prect == null)
+            {
+                prect = target as ColliderPlaneRect;
+                line = src as ColliderLine;
+            }
+
+            //内包しているpolygonと判定
+            for (int i = 0; i < prect.Poly.Count; i++)
+            {
+                //当たったら終わり
+                bool f = this.DetectLinePolygon(line, prect.Poly[i]);
+                if (f == true)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -25,6 +25,9 @@ namespace Clarity.Engine.Vertex
         /// Index一覧 3で区切ります
         /// </summary>
         public List<int> IndexList;
+
+        
+
     }
 
 
@@ -239,7 +242,8 @@ namespace Clarity.Engine.Vertex
                 //一行の解析
                 string[] line = datalist[pos];
 
-                for (int pp = 0; pp < 3; pp++)
+                //for (int pp = 0; pp < 3; pp++)
+                for (int pp = 0; pp < line.Length; pp++)
                 {
                     int n = Convert.ToInt32(line[pp]);
                     anslist.Add(n);

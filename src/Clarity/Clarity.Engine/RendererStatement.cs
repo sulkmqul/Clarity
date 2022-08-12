@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Clarity.Engine.Core;
+using Vortice.Direct3D;
 
 namespace Clarity.Engine
 {
@@ -19,12 +21,12 @@ namespace Clarity.Engine
     {
         public DepthStencilDisabledState()
         {
-            Core.DxManager.Mana.DisabledDepthStencil();
+            DxManager.Mana.DisabledDepthStencil();
         }
 
         public void Dispose()
         {
-            Core.DxManager.Mana.EnabledDepthStencil();
+            DxManager.Mana.EnabledDepthStencil();
         }
     }
 
@@ -36,12 +38,12 @@ namespace Clarity.Engine
     {
         public AlphaBlendDisabledState()
         {
-            Core.DxManager.Mana.DisabledAlphaBlend();
+            DxManager.Mana.DisabledAlphaBlend();
         }
 
         public void Dispose()
         {
-            Core.DxManager.Mana.EnabledAlphaBlendNormal();
+            DxManager.Mana.EnabledAlphaBlendNormal();
         }
     }
 
@@ -53,12 +55,46 @@ namespace Clarity.Engine
     {
         public AlphaBlendPlusEnabledState()
         {
-            Core.DxManager.Mana.EnabledAlphaBlendPlus();
+            DxManager.Mana.EnabledAlphaBlendPlus();
         }
 
         public void Dispose()
         {
-            Core.DxManager.Mana.EnabledAlphaBlendNormal();
+            DxManager.Mana.EnabledAlphaBlendNormal();
+        }
+    }
+
+
+    /// <summary>
+    /// 加算合成State
+    /// </summary>
+    public class AlphaBlendPlusState : IDisposable
+    {
+        public AlphaBlendPlusState()
+        {
+            DxManager.Mana.EnabledAlphaBlendPlus();
+        }
+
+        public void Dispose()
+        {
+            DxManager.Mana.EnabledAlphaBlendNormal();
+        }
+    }
+
+
+    /// <summary>
+    ///  描画primitiveステート
+    /// </summary>
+    public class PrimitiveTopologyLineState : IDisposable
+    {
+        public PrimitiveTopologyLineState()
+        {
+            DxManager.Mana.DxContext.IASetPrimitiveTopology(PrimitiveTopology.LineStrip);
+        }
+
+        public void Dispose()
+        {
+            DxManager.Mana.DxContext.IASetPrimitiveTopology(PrimitiveTopology.TriangleList);
         }
     }
 }

@@ -141,15 +141,14 @@ namespace Clarity
         /// <summary>
         /// ID
         /// </summary>
-        public long ID { internal init; get; }
-
+        public long ID { internal init; get; }        
 
 
         #region メンバ変数
 
-        /// <summary>
-        /// 自身の有効可否
-        /// </summary>
+            /// <summary>
+            /// 自身の有効可否
+            /// </summary>
         internal bool Enabled = true;
 
         /// <summary>
@@ -256,7 +255,17 @@ namespace Clarity
         {
             this.ProcBehavior.RemoveProcBehavior(oid);
         }
-        
+
+        /// <summary>
+        /// 子供の並べ替え
+        /// </summary>
+        /// <param name="func"></param>
+        public void ChildOrderBy(Func<BaseElement, int> func)
+        {
+            this.SystemLink.ChildList.OrderBy(func);
+        }
+
+
         /// <summary>
         /// 所作の全削除
         /// </summary>
@@ -273,7 +282,10 @@ namespace Clarity
         {
             this._ElementEvent.Invoke(eid, this);
         }
-                
+
+
+
+        
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化処理

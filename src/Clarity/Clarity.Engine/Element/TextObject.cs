@@ -98,7 +98,7 @@ namespace Clarity.Engine.Element
         /// <summary>
         /// 文字色
         /// </summary>
-        public Vortice.Mathematics.Color4 Color { get; set; }
+        //public Vortice.Mathematics.Color4 Color { get; set; }
 
         /// <summary>
         /// 行の設定

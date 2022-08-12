@@ -21,7 +21,7 @@ namespace Clarity.Engine.Element.Behavior
     /// <summary>
     /// デフォルト描画所作
     /// </summary>
-    internal class RenderDefaultBehavior : BaseClarityObjectBehavior
+    public class BaseRenderBehavior : BaseClarityObjectBehavior
     {
         /// <summary>
         /// 所作の実行
@@ -31,21 +31,25 @@ namespace Clarity.Engine.Element.Behavior
         {
             //using (AlphaBlendPlusEnabledState ed = new AlphaBlendPlusEnabledState())
             {
+                //Viewport設定
+                this.RenderSetViewPort(obj);
+
                 //テクスチャ設定
                 this.RenderSetTexture(obj);
 
                 //シェーダー処理の設定
-                this.RenderSetShaderData(obj);
+                this.RenderSetShaderData(obj);                                
 
                 //描画頂点設定
                 this.RenderSetVertex(obj);
             }
         }
+
         //
         /// <summary>
         /// 描画テクスチャの設定
         /// </summary>
-        internal protected void RenderSetTexture(ClarityObject obj)
+        protected virtual void RenderSetTexture(ClarityObject obj)
         {
             int index = 0;
             foreach (int texid in obj.RenderSet.TextureIdList)
@@ -58,7 +62,7 @@ namespace Clarity.Engine.Element.Behavior
         /// <summary>
         /// デフォルト描画関数
         /// </summary>
-        internal protected void RenderSetShaderData(ClarityObject obj)
+        protected virtual void RenderSetShaderData(ClarityObject obj)
         {
             RendererSet rset = obj.RenderSet;
 
@@ -83,9 +87,28 @@ namespace Clarity.Engine.Element.Behavior
         /// <summary>
         /// 頂点の設定と描画
         /// </summary>
-        internal protected void RenderSetVertex(ClarityObject obj)
+        protected virtual void RenderSetVertex(ClarityObject obj)
         {
             Engine.Vertex.VertexManager.RenderData(obj.RenderSet.VertexID);
+            
+        }
+
+        /// <summary>
+        /// ViewPortの設定
+        /// </summary>
+        /// <param name="obj"></param>
+        protected virtual void RenderSetViewPort(ClarityObject obj)
+        {
+            //Viewportの設定
+            WorldData wd = WorldManager.Mana.Get(obj.TransSet.WorldID);
+            Core.DxManager.Mana.DxContext.RSSetViewport(wd.VPort.VPort);
         }
     }
+
+
+    internal class RenderDefaultBehavior : BaseRenderBehavior
+    {
+    }
+
+
 }

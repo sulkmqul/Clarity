@@ -60,8 +60,8 @@ namespace Clarity.Engine.Core
         public void InitSystemView()
         {
             this.TransSet.WorldID = WorldManager.SystemViewID;
-            this.RenderSet.VertexID = BuildInPolygonModelIndex.Rect;
-            this.RenderSet.ShaderID = BuildInShaderIndex.Default;
+            this.RenderSet.VertexID = ClarityEngine.BuildInPolygonModelIndex.Rect;
+            this.RenderSet.ShaderID = ClarityEngine.BuildInShaderIndex.Default;
             this.RenderingTextureResource = DxManager.Mana.SystemViewTextureResource;
 
             
@@ -71,6 +71,7 @@ namespace Clarity.Engine.Core
                 this.TransSet.Pos2D = new Vector2(0.0f, 0.0f);                
                 this.TransSet.Scale2D = new Vector2(wd.VPort.VPort.Width, wd.VPort.VPort.Height);
                 this.TransSet.ScaleRate = 1.0f;
+                this.RenderingTextureResource = DxManager.Mana.SystemViewTextureResource;   //デバイスリセット時初期化されるので毎フレームセットする・・・
             }));
         }
 

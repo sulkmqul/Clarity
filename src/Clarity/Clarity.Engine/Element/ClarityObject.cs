@@ -269,11 +269,11 @@ namespace Clarity.Engine.Element
         {
             if (this.TextureAnimeEnabled == false)
             {
-                this.TransSet.Scale2D = ClarityEngine.GetTextureSize(this.TextureID);
+                this.TransSet.Scale2D = ClarityEngine.Texture.GetTextureSize(this.TextureID);
                 return;
             }
-            this.TransSet.Scale2D = ClarityEngine.GetTextureSize(this.TextureAnimeID, 0);
-
+            this.TransSet.Scale2D = ClarityEngine.Texture.GetTextureSize(this.TextureAnimeID, 0);
+            
 
         }
 

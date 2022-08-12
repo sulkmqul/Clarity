@@ -100,7 +100,6 @@ namespace Clarity.Engine.Core
         /// </summary>
         private ClarityCoreData FData = null;
 
-        
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -445,9 +444,9 @@ namespace Clarity.Engine.Core
             DxManager.Mana.BeginRendering(new Color4(0.0f, 0.0f, 0.0f, 1.0f));
 
             {
-                //処理の設定
-                WorldData wd = WorldManager.Mana.Get(0);                
-                DxManager.Mana.DxContext.RSSetViewport(wd.VPort.VPort);
+                ////処理の設定
+                //WorldData wd = WorldManager.Mana.Get(0);                
+                //DxManager.Mana.DxContext.RSSetViewport(wd.VPort.VPort);
 
                 //描画処理
                 ElementManager.Mana.Render();
@@ -472,7 +471,7 @@ namespace Clarity.Engine.Core
         {
             //SwapChainへ切り替え
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.SwapChain);
-            DxManager.Mana.BeginRendering(new Vortice.Mathematics.Color4(0.0f, 0.0f, 0.0f));
+            DxManager.Mana.BeginRendering(new Vortice.Mathematics.Color4(0.0f, 1.0f, 0.0f));
 
             //ViewPort設定
             WorldData wd = WorldManager.Mana.Get(WorldManager.SystemViewID);
@@ -495,8 +494,8 @@ namespace Clarity.Engine.Core
         private void CreateEngineManagers()
         {
             #region エンジン管理クラスの作成
-            //DirectXの初期化
-            Vector2 rvsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize", new Vector2(640.0f, 480.0f));
+            //DirectXの初期化           
+            Vector2 rvsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize", new Vector2(-1.0f, -1.0f));
             DxManager.Init(this.FData.Con, new System.Drawing.Size((int)rvsize.X, (int)rvsize.Y));
 
             //時間管理
@@ -550,7 +549,7 @@ namespace Clarity.Engine.Core
             
             //デフォルト世界の登録
             WorldData wdata = new WorldData();
-            wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(0.0f, 0.0f, -10000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
+            wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(0.0f, 0.0f, -1000.0f), new Vector3(0.0f, 0.0f, 0.0f), -Vector3.UnitY);
             wdata.ProjectionMat = Matrix4x4.CreateOrthographic(vsize.X, vsize.Y, 1.0f, 15000.0f);
 
             //wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(1000.0f, 1000.0f, -2000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
@@ -577,14 +576,15 @@ namespace Clarity.Engine.Core
         /// <exception cref="NotImplementedException"></exception>
         private void Control_Resize(object sender, EventArgs e)
         {
+
             //デバイスの初期化を行う            
             DxManager.Mana.ResizeSwapChain();
 
             //SystemViewの作り直し
             WorldManager.Mana.CreateSystemViewWorld(this.FData.Con.Width, this.FData.Con.Height);
 
-            //リサイズ関数
-            //this.Proc?.ResizeView(this.DisplaySize);
+            //リサイズ処理
+            this.FData.ExProc?.ResizeView(this.FData.Con.Size);
         }
 
     }

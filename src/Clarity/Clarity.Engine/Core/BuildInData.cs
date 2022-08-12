@@ -7,25 +7,7 @@ using System.Threading.Tasks;
 
 namespace Clarity.Engine.Core
 {
-    internal class BuildInShaderIndex
-    {
-        public const int Default = -100;
-        public const int NoTexture = -99;
-        public const int TextureAnime = -98;
-        public const int TextureUseAlpha = -97;
-    }
-
-    internal class BuildInTextureIndex
-    {
-        public const int CollisionCircle = -100;
-        public const int CollisionRect = -99;
-    }
-    internal class BuildInPolygonModelIndex
-    {
-        public const int Rect = -100;
-        public const int Line = -99;
-    }
-
+    
     /// <summary>
     /// ビルドインデータ管理
     /// </summary>
@@ -63,8 +45,8 @@ namespace Clarity.Engine.Core
         private static void LoadVertex()
         {
             PolyCsvData[] vdata = {
-                new PolyCsvData(){ VNo = BuildInPolygonModelIndex.Rect, Text = Properties.Resources.VRect },
-                new PolyCsvData(){ VNo = BuildInPolygonModelIndex.Line, Text = Properties.Resources.VLine },
+                new PolyCsvData(){ VNo = ClarityEngine.BuildInPolygonModelIndex.Rect, Text = Properties.Resources.VRect },
+                new PolyCsvData(){ VNo = ClarityEngine.BuildInPolygonModelIndex.Line, Text = Properties.Resources.VLine },
             };
 
             VertexManager.Mana.LoadCSV(vdata.ToList());
@@ -78,10 +60,10 @@ namespace Clarity.Engine.Core
             Shader.ShaderListFileDataRoot rdata = new Shader.ShaderListFileDataRoot();
             rdata.RootID = -100;
             rdata.ShaderList = new List<Shader.ShaderListData>();
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "Default",  Id= BuildInShaderIndex.Default,  SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsDefault" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "NoTexture", Id = BuildInShaderIndex.NoTexture, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsNoTex" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAnime", Id=BuildInShaderIndex.TextureAnime,  SrcCode = Properties.Resources.SDef, VsName = "VsTextureAnimation", PsName = "PsDefault" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAlpha", Id=BuildInShaderIndex.TextureUseAlpha, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsTextureAlphaOnlyBind" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "Default",  Id= ClarityEngine.BuildInShaderIndex.Default,  SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsDefault" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "NoTexture", Id = ClarityEngine.BuildInShaderIndex.NoTexture, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsNoTex" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAnime", Id= ClarityEngine.BuildInShaderIndex.TextureAnime,  SrcCode = Properties.Resources.SDef, VsName = "VsTextureAnimation", PsName = "PsDefault" });
+            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAlpha", Id= ClarityEngine.BuildInShaderIndex.TextureUseAlpha, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsTextureAlphaOnlyBind" });
             Shader.ShaderManager.Mana.CreateDefaultResource(rdata);
         }
 

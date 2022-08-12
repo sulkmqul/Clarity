@@ -177,6 +177,22 @@ namespace Clarity.Engine
             return ans;
         }
 
+        public static Matrix4x4 CreateWorldMat(this Clarity.TransposeSet data)
+        {
+            WorldData wdata = WorldManager.Mana.Get(data.WorldID);
+
+            Matrix4x4 tm = Matrix4x4.CreateTranslation(data.Pos3D);
+            Matrix4x4 wm = Matrix4x4.CreateScale(data.Scale3D);
+            Matrix4x4 wmrate = Matrix4x4.CreateScale(data.ScaleRate);
+            Matrix4x4 rmat = data.CreateTransposeRotationMat();
+
+
+            //Matrix4x4 ans = wm * wmrate * rmat * tm * wdata.CamProjectionMat;            
+            Matrix4x4 ans = wm * wmrate * rmat * tm * wdata.CamProjectionMat;
+            
+            return ans;
+        }
+
         /// <summary>
         /// SharpDXのMatrix.Transposeのコピー　転置行列を作成、
         /// </summary>

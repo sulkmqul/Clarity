@@ -18,7 +18,7 @@ namespace Clarity.Engine.Core
         public RenderColliderBehavior()
         {
             this.RenderObj = new ClarityObject(0);
-            this.RenderObj.ShaderID = BuildInShaderIndex.TextureUseAlpha;
+            this.RenderObj.ShaderID = ClarityEngine.BuildInShaderIndex.TextureUseAlpha;
             
 
             //初期情報の取得
@@ -85,8 +85,8 @@ namespace Clarity.Engine.Core
 
             ClarityObject data = this.RenderObj;
 
-            data.VertexID = BuildInPolygonModelIndex.Rect;
-            data.TextureID = BuildInTextureIndex.CollisionCircle;
+            data.VertexID = ClarityEngine.BuildInPolygonModelIndex.Rect;
+            data.TextureID = ClarityEngine.BuildInTextureIndex.CollisionCircle;
 
             data.TransSet.Pos3D = col.Center;
             float dia = col.Radius * 2.0f;
@@ -113,8 +113,8 @@ namespace Clarity.Engine.Core
 
             ClarityObject data = this.RenderObj;
 
-            data.VertexID = BuildInPolygonModelIndex.Rect;
-            data.TextureID = BuildInTextureIndex.CollisionCircle;
+            data.VertexID = ClarityEngine.BuildInPolygonModelIndex.Rect;
+            data.TextureID = ClarityEngine.BuildInTextureIndex.CollisionCircle;
 
             data.TransSet.Pos3D = col.Center;
             float dia = 10f;
@@ -140,8 +140,8 @@ namespace Clarity.Engine.Core
 
             ClarityObject data = this.RenderObj;
 
-            data.VertexID = BuildInPolygonModelIndex.Line;
-            data.TextureID = BuildInTextureIndex.CollisionRect;
+            data.VertexID = ClarityEngine.BuildInPolygonModelIndex.Line;
+            data.TextureID = ClarityEngine.BuildInTextureIndex.CollisionRect;
 
             data.TransSet.Pos3D = col.StartPos;
             data.TransSet.Rot = col.ParentRot;

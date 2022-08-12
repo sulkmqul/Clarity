@@ -12,10 +12,6 @@
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Element\Collider\" />
-  </ItemGroup>
     
 
 </Project>

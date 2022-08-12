@@ -77,10 +77,21 @@ namespace Clarity.Engine.Core
         /// </summary>
         public Size GameSize
         {
-            get;
-            protected set;
+            get
+            {
+                if (this.GameSizeParam.Width < 0 || this.GameSize.Height < 0)
+                {
+                    return this.WindowSize;
+                }
+
+                return this.GameSizeParam;
+            }
         }
 
+        /// <summary>
+        /// ゲーム解像度の設定値
+        /// </summary>
+        private Size GameSizeParam;
 
         /// <summary>
         /// 画面サイズ
@@ -230,9 +241,191 @@ namespace Clarity.Engine.Core
                 return this.CurrentRenderTarget.Target2D;
             }
         }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 総合初期化
+        /// </summary>
+        /// <param name="mc">親画面</param>
+        /// <param name="gsize">ゲーム解像度</param>
+        public static void Init(Control mc, Size gsize)
+        {
+            try
+            {
+                //作成済みだった
+                if (DxManager.Instance != null)
+                {
+                    throw new Exception("Already Created");
+                }
+
+                //作成
+                DxManager.Instance = new DxManager();
+
+                //解像度パラメータの設定
+                DxManager.Instance.GameSizeParam = gsize;
+
+                //初期化
+                DxManager.Instance.InitDX(mc);
+
+                //デフォルト設定
+                //背景透過
+                DxManager.Mana.EnabledAlphaBlendNormal();
+                //Zバッファ有効
+                DxManager.Mana.EnabledDepthStencil();
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("DXManager Initialize Exception", e);
+
+            }
+        }
 
 
-        //-----------------------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// RenderTargetの切り替え
+        /// </summary>
+        /// <param name="tno">切り替えるTarget番号</param>
+        public void ChangeRenderTarget(ERenderTargetNo tno)
+        {
+            //保存して切り替え
+            this.RenderTargetNo = tno;
+
+            //this.DisabledDepthStencil();
+            RenderTargetSet cset = this.CurrentRenderTarget;
+            this.DxContext.OMSetRenderTargets(cset.Target3D, cset.DepthView);
+            //this.DxContext.OMSetRenderTargets(cset.Target3D, this.DepthView);
+        }
+
+
+        /// <summary>
+        /// 描画の開始
+        /// </summary>
+        /// <param name="col">クリア色</param>
+        /// <returns>成功可否</returns>
+        public void BeginRendering(Color4 col)
+        {
+            ID3D11DeviceContext cont = this.DxContext;
+
+            RenderTargetSet cset = this.CurrentRenderTarget;
+
+            //ターゲットクリア
+            //cont.ClearDepthStencilView(cset.DepthView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+            cont.ClearDepthStencilView(cset.DepthView, DepthStencilClearFlags.Depth, 1.0f, 0);
+            cont.ClearRenderTargetView(cset.Target3D, col);
+
+        }
+
+        /// <summary>
+        /// 描画の終了
+        /// </summary>
+        public void EndRendering()
+        {
+            RenderTargetSet cset = this.CurrentRenderTarget;
+        }
+
+
+        /// <summary>
+        /// SwapChain描画
+        /// </summary>
+        public void SwapChainPresent()
+        {
+            this.SwapChain.Present(0, PresentFlags.None);
+        }
+
+
+        /// <summary>
+        /// アルファブレンドの有効化(通常)
+        /// </summary>
+        public void EnabledAlphaBlendNormal()
+        {
+            this.DxContext.OMSetBlendState(this.AlphaNormal);
+        }
+        /// <summary>
+        /// アルファブレンドの無効化
+        /// </summary>
+        public void DisabledAlphaBlend()
+        {
+            this.DxContext.OMSetBlendState(this.AlphaDisabled);
+        }
+
+        /// <summary>
+        /// アルファブレンドの有効化(加算合成)
+        /// </summary>
+        public void EnabledAlphaBlendPlus()
+        {
+            this.DxContext.OMSetBlendState(this.AlphaPlus);
+        }
+
+        /// <summary>
+        /// Zバッファ有効化
+        /// </summary>
+        public void EnabledDepthStencil()
+        {
+            this.DxContext.OMSetDepthStencilState(this.DepthStencilEnabled);
+        }
+
+        /// <summary>
+        /// Zバッファ無効化
+        /// </summary>
+        public void DisabledDepthStencil()
+        {
+            this.DxContext.OMSetDepthStencilState(this.DepthStencilDisabled);
+        }
+
+
+        /// <summary>
+        /// サイズの再作成
+        /// </summary>
+        public void ResizeSwapChain()
+        {
+            int w = this.WindowSize.Width;
+            int h = this.WindowSize.Height;
+
+            //SwapChainを使用しているViewを解放
+            this.ReleaseRenderTarget();
+
+            //SwapChainのリサイズ
+            this.SwapChain.ResizeBuffers(1, w, h, Format.R8G8B8A8_UNorm, SwapChainFlags.None);
+            
+            //Viewの再作成
+            this.InitRenderTarget();
+
+        }
+
+
+        /// <summary>
+        /// 破棄されるとき
+        /// </summary>
+        public void Dispose()
+        {
+            //2Dの初期化
+            //this.D2DMana?.Dispose();
+
+            //RenderTarget関連の解放
+            this.ReleaseRenderTarget();
+
+            //ステート
+            this.RastState?.Dispose();
+
+            //SwapChain
+            this.SwapChain?.Dispose();
+
+            //Context
+            this.DxContext?.Dispose();
+
+            //Device
+            this.DxDevice?.Dispose();
+
+            //Factory
+            this.DxFactory?.Dispose();
+
+            //解放
+            DxManager.Instance = null;
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// デバイスとswapchainの作成
         /// </summary>
@@ -333,6 +526,7 @@ namespace Clarity.Engine.Core
 
                 //三角ポリンゴンの描画                
                 this.DxContext.IASetPrimitiveTopology(PrimitiveTopology.TriangleList);
+                
 
                 //アルファブレンドの初期化
                 this.InitAlphaBlend();
@@ -566,221 +760,10 @@ namespace Clarity.Engine.Core
                 this.DepthStencilDisabled = this.DxDevice.CreateDepthStencilState(desc);
             }
         }
-        //-----------------------------------------------------------------------------------------------------------------------------
-        //-----------------------------------------------------------------------------------------------------------------------------
-        /// <summary>
-        /// 総合初期化
-        /// </summary>
-        /// <param name="mc">親画面</param>
-        /// <param name="gsize">ゲーム解像度</param>
-        public static void Init(Control mc, Size gsize)
-        {
-            try
-            {
-                //作成済みだった
-                if (DxManager.Instance != null)
-                {
-                    throw new Exception("Already Created");
-                }
-
-                //作成
-                DxManager.Instance = new DxManager();
-
-                DxManager.Instance.GameSize = gsize;
-
-
-                //初期化
-                DxManager.Instance.InitDX(mc);
-
-                //デフォルト設定
-                //背景透過
-                DxManager.Mana.EnabledAlphaBlendNormal();
-                //Zバッファ有効
-                DxManager.Mana.EnabledDepthStencil();
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception("DXManager Initialize Exception", e);
-
-            }            
-        }
-
-
-
-        /// <summary>
-        /// RenderTargetの切り替え
-        /// </summary>
-        /// <param name="tno">切り替えるTarget番号</param>
-        public void ChangeRenderTarget(ERenderTargetNo tno)
-        {
-            //保存して切り替え
-            this.RenderTargetNo = tno;
-
-            //this.DisabledDepthStencil();
-            RenderTargetSet cset = this.CurrentRenderTarget;
-            this.DxContext.OMSetRenderTargets(cset.Target3D, cset.DepthView);
-            //this.DxContext.OMSetRenderTargets(cset.Target3D, this.DepthView);
-        }
-
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         
-        /// <summary>
-        /// 描画の開始
-        /// </summary>
-        /// <param name="col">クリア色</param>
-        /// <returns>成功可否</returns>
-        public void BeginRendering(Color4 col)
-        {
-            ID3D11DeviceContext cont = this.DxContext;
-
-            RenderTargetSet cset = this.CurrentRenderTarget;
-
-            //ターゲットクリア
-            //cont.ClearDepthStencilView(cset.DepthView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
-            cont.ClearDepthStencilView(cset.DepthView, DepthStencilClearFlags.Depth, 1.0f, 0);
-            cont.ClearRenderTargetView(cset.Target3D, col);
-            
-        }
-
-        /// <summary>
-        /// 描画の終了
-        /// </summary>
-        public void EndRendering()
-        {
-            RenderTargetSet cset = this.CurrentRenderTarget;            
-        }
-
-
-        /// <summary>
-        /// SwapChain描画
-        /// </summary>
-        public void SwapChainPresent()
-        {
-            this.SwapChain.Present(0, PresentFlags.None);            
-        }
-
-
-        /// <summary>
-        /// アルファブレンドの有効化(通常)
-        /// </summary>
-        public void EnabledAlphaBlendNormal()
-        {
-            this.DxContext.OMSetBlendState(this.AlphaNormal);
-        }
-        /// <summary>
-        /// アルファブレンドの無効化
-        /// </summary>
-        public void DisabledAlphaBlend()
-        {
-            this.DxContext.OMSetBlendState(this.AlphaDisabled);
-        }
-
-        /// <summary>
-        /// アルファブレンドの有効化(加算合成)
-        /// </summary>
-        public void EnabledAlphaBlendPlus()
-        {
-            this.DxContext.OMSetBlendState(this.AlphaPlus);
-        }
-
-        /// <summary>
-        /// Zバッファ有効化
-        /// </summary>
-        public void EnabledDepthStencil()
-        {
-            this.DxContext.OMSetDepthStencilState(this.DepthStencilEnabled);
-        }
-
-        /// <summary>
-        /// Zバッファ無効化
-        /// </summary>
-        public void DisabledDepthStencil()
-        {
-            this.DxContext.OMSetDepthStencilState(this.DepthStencilDisabled);
-        }
-
-
-        /// <summary>
-        /// サイズの再作成
-        /// </summary>
-        public void ResizeSwapChain()
-        {
-            int w = this.WindowSize.Width;
-            int h = this.WindowSize.Height;
-
-            //SwapChainを使用しているViewを解放
-            this.ReleaseRenderTarget();
-            
-            //SwapChainのリサイズ
-            this.SwapChain.ResizeBuffers(1, w, h, Format.R8G8B8A8_UNorm, SwapChainFlags.None);
-            
-            //Viewの再作成
-            this.InitRenderTarget();
-            
-        }
-
-
-        /// <summary>
-        /// 破棄されるとき
-        /// </summary>
-        public void Dispose()
-        {
-            //2Dの初期化
-            //this.D2DMana?.Dispose();
-
-            //RenderTarget関連の解放
-            this.ReleaseRenderTarget();
-
-            //ステート
-            this.RastState?.Dispose();
-
-            //SwapChain
-            this.SwapChain?.Dispose();
-
-            //Context
-            this.DxContext?.Dispose();
-
-            //Device
-            this.DxDevice?.Dispose();
-
-            //Factory
-            this.DxFactory?.Dispose();
-
-            //解放
-            DxManager.Instance = null;
-        }
     }
 
 
-    /// <summary>
-    /// 加算合成State
-    /// </summary>
-    internal class AlphaBlendPlusState : IDisposable
-    {
-        public AlphaBlendPlusState()
-        {
-            DxManager.Mana.EnabledAlphaBlendPlus();
-        }
-
-        public void Dispose()
-        {
-            DxManager.Mana.EnabledAlphaBlendNormal();
-        }
-    }
-
-    /// <summary>
-    /// アルファブレンド無効State
-    /// </summary>
-    internal class AlphaBlendDisabledState : IDisposable
-    {
-        public AlphaBlendDisabledState()
-        {
-            DxManager.Mana.DisabledAlphaBlend();
-        }
-
-        public void Dispose()
-        {
-            DxManager.Mana.EnabledAlphaBlendNormal();
-        }
-    }
+    
 }

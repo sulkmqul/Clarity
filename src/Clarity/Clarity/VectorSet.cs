@@ -13,11 +13,9 @@ namespace Clarity
     /// 位置、回転、拡縮のセット
     /// </summary>
     /// <remarks>
-    /// PosとScaleはかなり特殊なことをしています。
-    /// 双方ともVector3とVector2二つの変数を保持していますが、内部的に無理やり同じ値であることを保証しています。
-    /// これはなぜかというと、Vector3だけをもってVec2に変換するとき、毎回変換Newが発生し、
-    /// 2Dゲームを作る上では基本的にVec2の方にアクセスするため、物凄く重いんじゃね？と思ったからです。
-    /// 回転はあまり関係なさそうなのでそのままです、一応一貫性のためプロパティ化ぐらいはしますが・・・
+    /// PosとScaleは特殊処理。posはvector4～2 scaleはvector3～2と複数の値を持ち、同一であることを担保している
+    /// これはVetor4でもった場合、2Dゲームだと毎回newが発生して死ぬほど重いのでは？と思ったから
+    /// 一応マスタは一番次元が高い奴ってことにしてはいますが
     /// </remarks>
     public class VectorSet
     {
@@ -35,11 +33,30 @@ namespace Clarity
         }
 
 
+        private Vector4 _Pos = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
         private Vector3 _Pos3D = new Vector3(0.0f);
         private Vector2 _Pos2D = new Vector2(0.0f);
+
         private Vector3 _Rot = new Vector3(0.0f);
+
         private Vector3 _Scale3D = new Vector3(1.0f);
         private Vector2 _Scale2D = new Vector2(0.0f);
+
+        public Vector4 Pos
+        {
+            get
+            {
+                return this._Pos;
+            }
+            set
+            {
+                this.PosX = value.X;
+                this.PosY = value.Y;
+                this.PosZ = value.Z;
+                this.PosW = value.W;
+
+            }
+        }
 
 
         /// <summary>
@@ -137,7 +154,7 @@ namespace Clarity
             }
             set
             {
-                this._Pos3D.X = this._Pos2D.X = value;
+                this._Pos.X = this._Pos3D.X = this._Pos2D.X = value;
             }
 
         }
@@ -152,7 +169,7 @@ namespace Clarity
             }
             set
             {
-                this._Pos3D.Y = this._Pos2D.Y = value;
+                this._Pos.Y = this._Pos3D.Y = this._Pos2D.Y = value;
             }
 
         }
@@ -168,7 +185,22 @@ namespace Clarity
             }
             set
             {
-                this._Pos3D.Z = value;
+                this._Pos.Z = this._Pos3D.Z = value;
+            }
+
+        }
+        /// <summary>
+        /// PosW値
+        /// </summary>
+        public float PosW
+        {
+            get
+            {
+                return this._Pos.W;
+            }
+            set
+            {
+                this._Pos.W = value;
             }
 
         }

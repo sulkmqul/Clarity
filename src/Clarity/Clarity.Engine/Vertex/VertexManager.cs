@@ -27,6 +27,11 @@ namespace Clarity.Engine.Vertex
         /// </summary>
         public Vortice.Direct3D11.ID3D11Buffer IndexBuffer;
 
+        /// <summary>
+        /// 元ネタ
+        /// </summary>
+        public PolyData SrcData;
+
         public void Dispose()
         {
             
@@ -90,7 +95,7 @@ namespace Clarity.Engine.Vertex
                 mdata.VertexBuffer = vbuf;
                 mdata.IndexBuffer = ibuf;
                 mdata.Count = pdata.IndexList.Count;
-
+                mdata.SrcData = pdata;
             }
             this.ManaDic.Add(vno, mdata);
         }
@@ -160,9 +165,9 @@ namespace Clarity.Engine.Vertex
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new Exception("VertexManager CreateResource Exception");
+                throw new Exception("VertexManager CreateResource Exception", ex);
             }
         }
 
@@ -171,7 +176,7 @@ namespace Clarity.Engine.Vertex
         /// </summary>
         /// <param name="vno">ADD Index システム予約は使用しないこと。</param>
         /// <param name="cpofilepath">読み込みPolygonファイルパス</param>
-        [Obsolete("このメソッドの使用は非推奨です。CreateResource関数を使用してください。")]
+        //[Obsolete("このメソッドの使用は非推奨です。CreateResource関数を使用してください。")]
         public void AddResource(int vno, string cpofilepath)
         {
             //キーの重複チェック
@@ -233,5 +238,16 @@ namespace Clarity.Engine.Vertex
             return true;
         }
 
+
+        /// <summary>
+        /// 頂点情報の取得
+        /// </summary>
+        /// <param name="vid"></param>
+        /// <returns></returns>
+        internal static PolyData GetPolygonData(int vid)
+        {
+            VertexManageData mdata = VertexManager.Instance.ManaDic[vid];
+            return mdata.SrcData;
+        }
     }
 }

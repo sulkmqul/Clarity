@@ -13,10 +13,26 @@ namespace Clarity.Collider
     /// </summary>
     public enum EColMode
     {
+        /// <summary>
+        /// 点
+        /// </summary>
         Dot,
+        /// <summary>
+        /// 円
+        /// </summary>
         Circle,
+        /// <summary>
+        /// 直線
+        /// </summary>
         Line,
-
+        /// <summary>
+        /// ポリゴン(三角形)
+        /// </summary>
+        Polygon,
+        /// <summary>
+        /// 平面矩形
+        /// </summary>
+        PlaneRect,
         //-----------------------
         MAX,
     }
@@ -26,6 +42,7 @@ namespace Clarity.Collider
     /// </summary>
     public class EColiderTransposeMode
     {
+        public const int None = 0;
         public const int Translation = 1 << 0;
         public const int Rotation = 1 << 1;
         public const int Scaling = 1 << 2;

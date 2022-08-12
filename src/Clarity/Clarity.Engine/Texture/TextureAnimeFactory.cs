@@ -81,7 +81,7 @@ namespace Clarity.Engine.Texture
             ans.TextureID = tid;
 
             //インデックスオフセットの設定            
-            ans.TextureOffset = ClarityEngine.GetTextureOffset(tid, fdata.IndexX, fdata.IndexY);
+            ans.TextureOffset = ClarityEngine.Texture.GetTextureOffset(tid, fdata.IndexX, fdata.IndexY);
 
             ans.FrameTime = fdata.FrameTime;
 

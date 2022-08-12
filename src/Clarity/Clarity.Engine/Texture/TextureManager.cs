@@ -381,6 +381,16 @@ namespace Clarity.Engine.Texture
             this.ManaDic.Add(texid, td);
         }
 
+        /// <summary>
+        /// 指定テクスチャの削除
+        /// </summary>
+        /// <param name="texid">削除管理ID</param>
+        internal void RemoveTexture(int texid)
+        {
+            TextureManageData mdata = this.ManaDic[texid];
+            mdata.Dispose();
+            this.ManaDic.Remove(texid);
+        }
 
 
 

@@ -45,6 +45,24 @@ namespace Clarity.Engine
             }
 
             /// <summary>
+            /// テクスチャの追加
+            /// </summary>
+            /// <param name="tid">指定ID</param>            
+            /// <param name="bit">追加データ</param>
+            public static void LoadTexture(int tid, System.Drawing.Bitmap bit)
+            {
+                TextureManager.Mana.AddTexture(tid, bit, tid.ToString(), new System.Drawing.Size(1, 1));
+            }
+
+            /// <summary>
+            /// 対象テクスチャの削除
+            /// </summary>
+            /// <param name="tid"></param>
+            public static void RemoveTexture(int tid)
+            {
+                TextureManager.Mana.RemoveTexture(tid);
+            }
+            /// <summary>
             /// 読み込みテクスチャの解放
             /// </summary>
             public static void ClearTexture()

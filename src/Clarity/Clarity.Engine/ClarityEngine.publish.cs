@@ -144,6 +144,27 @@ namespace Clarity.Engine
         }
 
 
+        /// <summary>
+        /// 3D空間上の座標を画面座標へ変換する
+        /// </summary>
+        /// <param name="wid">世界ID</param>
+        /// <param name="pos">画面座標</param>
+        /// <returns></returns>
+        public static Vector2 WorldToWindow(int wid, Vector4 pos)
+        {
+            //現在世界を取得
+            Clarity.Engine.WorldData wdata = ClarityEngine.GetWorld(wid);
+            Matrix4x4 mat = wdata.CalcuCameraProjectionView();
+                        
+            var wpos = Vector4.Transform(pos, mat);
+            wpos /= wpos.W;
+
+            //systemviewは正射影等倍表示なため、無視する。
+
+            return new Vector2(wpos.X, wpos.Y);
+
+        }
+
 
      
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

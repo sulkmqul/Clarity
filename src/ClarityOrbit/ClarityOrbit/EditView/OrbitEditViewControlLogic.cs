@@ -127,7 +127,7 @@ namespace ClarityOrbit.EditView
 
             this.FData.GridParent = new LayerStructureElement(0);
             //グリッドの再作成
-            this.FData.GridList = this.CreateGridElement(OrbitGlobal.Mana.Project.BaseInfo.TileCount);
+            this.FData.GridList = this.CreateGridElement(OrbitGlobal.Project.BaseInfo.TileCount);
 
             
 
@@ -180,7 +180,7 @@ namespace ClarityOrbit.EditView
 
             return ans;
         }
-
+     
 
         /// <summary>
         /// グリッドの作成

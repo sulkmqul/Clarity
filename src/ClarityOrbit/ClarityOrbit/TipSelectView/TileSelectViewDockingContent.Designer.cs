@@ -1,6 +1,6 @@
 ﻿namespace ClarityOrbit.TipSelectView
 {
-    partial class TipSelectViewDockingContent
+    partial class TileSelectViewDockingContent
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TipSelectViewDockingContent));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TileSelectViewDockingContent));
             this.tabControlTips = new System.Windows.Forms.TabControl();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonTipAdd = new System.Windows.Forms.ToolStripButton();
@@ -68,6 +68,7 @@
             this.toolStripButtonTipAdd.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonTipAdd.Text = "toolStripButton1";
             this.toolStripButtonTipAdd.ToolTipText = "チップ追加";
+            this.toolStripButtonTipAdd.Click += new System.EventHandler(this.toolStripButtonTipAdd_Click);
             // 
             // toolStripButtonTipRemove
             // 
@@ -78,6 +79,7 @@
             this.toolStripButtonTipRemove.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonTipRemove.Text = "toolStripButton2";
             this.toolStripButtonTipRemove.ToolTipText = "チップ削除";
+            this.toolStripButtonTipRemove.Click += new System.EventHandler(this.toolStripButtonTipRemove_Click);
             // 
             // TipSelectViewDockingContent
             // 

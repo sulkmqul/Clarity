@@ -9,7 +9,7 @@ namespace ClarityOrbit
 {
     internal class WindowManager
     {
-        public TipSelectView.TipSelectViewDockingContent TipSelectView = new TipSelectView.TipSelectViewDockingContent();
+        public TipSelectView.TileSelectViewDockingContent TipSelectView = new TipSelectView.TileSelectViewDockingContent();
 
         public LayerView.LayerViewDockingContent LayerView = new LayerView.LayerViewDockingContent();
     }
@@ -46,10 +46,13 @@ namespace ClarityOrbit
 
             //画面初期構成
             this.WindowManager.TipSelectView.Show(this.Form.dockPanelToolBox);
-            this.WindowManager.TipSelectView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockTop;
+            //this.WindowManager.TipSelectView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockTop;
 
+            
             this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
-            this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
+            //this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
+            this.WindowManager.LayerView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockBottom;
+
 
             //各Controlの初期化
             this.Form.orbitEditViewControl1.Init();
@@ -75,15 +78,18 @@ namespace ClarityOrbit
         /// <returns></returns>
         private void CreateNewProject(OrbitProjectBase binfo)
         {
+            
             //プロジェクト情報初期化
             OrbitProject proj = new OrbitProject();
             proj.Init(binfo);
-            OrbitGlobal.Mana.Project = proj;
+            OrbitGlobal.Project = proj;
 
             this.Form.orbitEditViewControl1.InitInfoView();            
 
             //レイヤの作成
             proj.Layer.AddNewLayer();
+
+
             
         }
     }

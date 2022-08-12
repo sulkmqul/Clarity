@@ -93,7 +93,7 @@ namespace ClarityOrbit
         protected override void ExecuteBehavior(BaseTileObject obj)
         {
             //描画情報取得
-            var tsize = OrbitGlobal.Mana.Project.BaseInfo.TileSize;
+            var tsize = OrbitGlobal.Project.BaseInfo.TileSize;
 
             //サイズと位置の設定
             obj.TransSet.Pos2D = new System.Numerics.Vector2(obj.Pos.X * tsize.Width, obj.Pos.Y * tsize.Height);

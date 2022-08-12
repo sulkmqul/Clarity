@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace ClarityOrbit
         /// <summary>
         /// 元チップ情報
         /// </summary>
-        public List<TileImageSrcInfo> TipImageList = new List<TileImageSrcInfo>();
+        public List<TileImageSrcInfo> TileImageSrcList = new List<TileImageSrcInfo>();
 
         /// <summary>
         /// 初期化
@@ -55,6 +56,26 @@ namespace ClarityOrbit
         {
             this.BaseInfo = binfo;
             this.Layer = new OrbitProjectLayer(this);
+        }
+
+
+        /// <summary>
+        /// 新しい元画像情報の作成
+        /// </summary>
+        /// <param name="filepath">元画像ファイルパス</param>
+        /// <returns></returns>
+        public TileImageSrcInfo AddNewTileImageSrc(string filepath)
+        {
+            TileImageSrcInfo data = new TileImageSrcInfo(this);
+            data.SrcFilePath = filepath;
+            data.Name = Path.GetFileName(filepath);
+            data.TipImage = new Bitmap(filepath);
+
+            //シェーダー登録
+            data.RegistShader();
+
+            return data;
+
         }
     }
 
@@ -112,38 +133,6 @@ namespace ClarityOrbit
     
 
 
-    /// <summary>
-    /// タイル元画像情報
-    /// </summary>
-    internal class TileImageSrcInfo : BaseOrbitProjectInfo
-    {        
-        public TileImageSrcInfo(OrbitProject op) : base(op)
-        {
     
-            this.TileImageSrcID = OrbitProject.NextTileImageSrcIDSeq;
-        }
-        /// <summary>
-        /// これのチップID(OrbitProject.NextTipImageIDSeqによって割り当てること)(テクスチャIDにもなります)
-        /// </summary>
-        public int TileImageSrcID { get; init; }
-
-        /// <summary>
-        /// これのコメント
-        /// </summary>
-        public string Comment { get; set; }
-
-        /// <summary>
-        /// 元画像ファイルパス(新規読み込み時のみ)
-        /// </summary>
-        public string SrcFilePath { get; set; }
-
-        /// <summary>
-        /// チップ画像情報
-        /// </summary>
-        public Bitmap TipImage;
-
-        
-
-    }
 
 }

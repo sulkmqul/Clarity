@@ -16,22 +16,39 @@ namespace ClarityOrbit
         {
         }
 
+        /// <summary>
+        /// 無効値
+        /// </summary>
         public const int EVal = Clarity.Engine.ClarityEngine.INVALID_ID;
 
-
+        /// <summary>
+        /// WorldID
+        /// </summary>
         public const int OrbitWorldID = 0;
+
+        public static readonly string ImageFileFilter = "ビットマップ(*.bmp)|*.bmp|Jpegファイル(*.jpg)|*.jpg|Pngファイル(*.png)|*.png|全てのファイル(*.*)|*.*";
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
         /// <summary>
         /// プロジェクト情報
         /// </summary>
-        public OrbitProject? Project = null;
+        private OrbitProject? _Project = null;
 
 
         //保存情報以外のアプリ情報
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-
+        public static OrbitProject? Project
+        {
+            get
+            {
+                return OrbitGlobal.Mana._Project;
+            }
+            set
+            {
+                OrbitGlobal.Mana._Project = value;
+            }
+        }
 
 
         /// <summary>

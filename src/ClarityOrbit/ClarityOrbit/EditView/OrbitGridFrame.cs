@@ -26,30 +26,33 @@ namespace ClarityOrbit.EditView
 
     }
 
+    /// <summary>
+    /// Gird描画Behavior
+    /// </summary>
     class GirdFrameRenderBehavior : BaseRenderBehavior
     {
-        protected override void RenderSetShaderData(ClarityObject obj)
-        {
-            OrbitGridFrame? frame = obj as OrbitGridFrame;
-            if (frame == null)
-            {
-                return;
-            }
+        //protected override void RenderSetShaderData(ClarityObject obj)
+        //{
+        //    OrbitGridFrame? frame = obj as OrbitGridFrame;
+        //    if (frame == null)
+        //    {
+        //        return;
+        //    }
 
-            FrameGridShaderData data = new FrameGridShaderData();
-            data.WorldViewProj = obj.TransSet.CreateTransposeMat();
-            data.Color = obj.Color;
-            data.BorderWidth = 0.1f;
+        //    FrameGridShaderData data = new FrameGridShaderData();
+        //    data.WorldViewProj = obj.TransSet.CreateTransposeMat();
+        //    data.Color = obj.Color;
+        //    data.BorderWidth = 0.1f;
 
-            //選択色の変更
-            if (OrbitEditViewControl.TempInfo.SelectTileIndex.Equals(frame.Pos))
-            {
-                data.Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-            }
+        //    //選択色の変更
+        //    if (OrbitEditViewControl.TempInfo.SelectTileIndex.Equals(frame.Pos))
+        //    {
+        //        data.Color = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+        //    }
 
-            ClarityEngine.SetShaderData<FrameGridShaderData>((int)EShaderCode.FrameGrid, data);
+        //    ClarityEngine.SetShaderData<FrameGridShaderData>((int)EShaderCode.FrameGrid, data);
 
-        }
+        //}
 
         protected override void RenderSetVertex(ClarityObject obj)
         {
@@ -62,7 +65,7 @@ namespace ClarityOrbit.EditView
 
 
     /// <summary>
-    /// グリッドフレームの管理と
+    /// グリッドフレームの管理と描画、ついでに操作の本体
     /// </summary>
     internal class OrbitGridFrame : BaseTileObject
     {
@@ -80,9 +83,10 @@ namespace ClarityOrbit.EditView
             //this.VertexID = ClarityEngine.BuildInPolygonModelIndex.Rect;
             this.SetVertexCode(EVertexCode.VGrid);
             this.Color = new Color4(1.0f, 1.0f, 1.0f, 1.0f);
-            this.SetShaderCode(EShaderCode.FrameGrid);
 
 
+            this.SetShaderCode(EShaderCode.System_NoTexture);
+            //this.SetShaderCode(EShaderCode.FrameGrid);
             this.RenderBehavior = new GirdFrameRenderBehavior();
 
             //当たり判定設定を行う
@@ -90,11 +94,12 @@ namespace ClarityOrbit.EditView
             {
                 //頂点の取得               
                 List<Vector3> vlist = ClarityEngine.GetVertexList((int)EVertexCode.VGrid);
-                //Clarity.Collider.ColliderPolygon cpol = new Clarity.Collider.ColliderPolygon(vlist[0], vlist[1], vlist[2]);
-                Clarity.Collider.ColliderPlaneRect cpol = new Clarity.Collider.ColliderPlaneRect(vlist[0], vlist[1], vlist[2], vlist[3]);
+                //矩形判定
+                Clarity.Collider.ColliderPlaneRect cpol = new Clarity.Collider.ColliderPlaneRect(vlist[0], vlist[1], vlist[3], vlist[2]);
 
-                this.ColInfo.ColType = EditViewDefine.GridColType;
-                this.ColInfo.TargetColType = EditViewDefine.MouseColType;
+                //当たり判定設定
+                this.ColInfo.ColType = OrbitColType.GridColType;
+                this.ColInfo.TargetColType = OrbitColType.MouseColType;
                 this.ColInfo.SrcColliderList.Add(cpol);
                 this.ColliderBehavior = new GridFrameColliderBehavior();
             }
@@ -106,17 +111,34 @@ namespace ClarityOrbit.EditView
     }
 
 
+    /// <summary>
+    /// Grid当たり判定(EditView編集処理)
+    /// </summary>
     internal class GridFrameColliderBehavior : ColliderBehavior
     {
         public override void ProcColliderAction(ICollider obj, ICollider opptant)
         {
-            //System.Diagnostics.Trace.WriteLine("当たった！！！");
-
-            OrbitGridFrame grid = obj as OrbitGridFrame;
-
-            OrbitEditViewControl.TempInfo.SelectTileIndex = grid.Pos;
+            //データ変換
+            MouseManageElement? me = opptant as MouseManageElement;
+            OrbitGridFrame? grid = obj as OrbitGridFrame;
+            if (grid == null || me== null)
+            {
+                return;
+            }
+            this.UpdateMouseSelectRect(grid);
 
             //ClarityEngine.SetSystemText($"あたった({grid?.Pos.X},{grid?.Pos.Y})", 2);
+        }
+
+        /// <summary>
+        /// EditViewでの選択エリアの確定
+        /// </summary>
+        /// <param name="grid"></param>
+        private void UpdateMouseSelectRect(OrbitGridFrame grid)
+        {
+            int w = OrbitGlobal.ControlInfo.SrcSelectedInfo?.SelectedIndexRect.Width ?? 1;
+            int h = OrbitGlobal.ControlInfo.SrcSelectedInfo?.SelectedIndexRect.Height ?? 1;
+            OrbitEditViewControl.TempInfo.SelectTileRect = new Rectangle(grid.Pos.X, grid.Pos.Y, w, h);
         }
     }
 }

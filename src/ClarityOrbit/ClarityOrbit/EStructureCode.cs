@@ -7,7 +7,9 @@
     {
 		Manager = 1,
 		Layer = 2,
-		Infomation = 3,
+		Grid = 3,
+		Control = 4,
+		Infomation = 5,
 
     }
 

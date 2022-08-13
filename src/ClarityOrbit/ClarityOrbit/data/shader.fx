@@ -18,10 +18,8 @@ struct RegistData
 {
 	float4x4 WorldViewProj;
 	float4 SelectCololor;
-	float BorderWidth;
-	float Mergin;
-	float Mergin2;
-	float Mergin3;
+	float2 tex_div;
+	float2 index;
 };
 
 RegistData RData : register(s0);

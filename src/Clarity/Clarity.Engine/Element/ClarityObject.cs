@@ -65,6 +65,10 @@ namespace Clarity.Engine.Element
     /// </summary>
     public class ClarityObject : BaseVariableElement
     {
+        public ClarityObject() : this(0)
+        {
+        }
+
         public ClarityObject(long oid) : base(oid)
         {
             //基底描画設定

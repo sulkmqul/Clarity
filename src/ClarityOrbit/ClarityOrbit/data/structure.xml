@@ -2,5 +2,7 @@
 <ClarityStructure>
     <Node code="Manager" />
 	<Node code="Layer" />
+    <Node code="Grid" />
+    <Node code="Control"/>
     <Node code="Infomation" />
 </ClarityStructure>

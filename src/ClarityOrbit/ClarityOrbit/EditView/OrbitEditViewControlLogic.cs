@@ -46,7 +46,10 @@ namespace ClarityOrbit.EditView
     /// </summary>
     internal class DisplayTemplateInfo
     {
-        public Point SelectTileIndex = new Point(-1,-1);
+        /// <summary>
+        /// 選択エリア情報(xy=マウスからのindex wh=src image area rect size)
+        /// </summary>
+        public Rectangle SelectTileRect = new Rectangle(-1, -1, -1, -1);
     }
 
     internal class OrbitEditViewControlLogic : ClarityEnginePlugin
@@ -125,14 +128,12 @@ namespace ClarityOrbit.EditView
                 ClarityEngine.RemoveManage(this.FData.GridParent);
             }
 
-            this.FData.GridParent = new LayerStructureElement(0);
             //グリッドの再作成
+            this.FData.GridParent = new LayerStructureElement(0);
             this.FData.GridList = this.CreateGridElement(OrbitGlobal.Project.BaseInfo.TileCount);
 
-            
-
             //EngineへADD
-            ClarityAid.AddElement(EStructureCode.Infomation, this.FData.GridParent);
+            ClarityAid.AddElement(EStructureCode.Grid, this.FData.GridParent);
             this.FData.GridList.ForEach(x =>
             {
                 ClarityEngine.AddManage(this.FData.GridParent, x);

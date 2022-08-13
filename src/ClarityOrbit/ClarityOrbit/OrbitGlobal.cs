@@ -35,9 +35,14 @@ namespace ClarityOrbit
         private OrbitProject? _Project = null;
 
 
-        //保存情報以外のアプリ情報
-
+        /// <summary>
+        /// 操作情報
+        /// </summary>
+        private OrbitControlInfo _ControlInfo = new OrbitControlInfo();
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// プロジェクト情報
+        /// </summary>
         public static OrbitProject? Project
         {
             get
@@ -47,6 +52,18 @@ namespace ClarityOrbit
             set
             {
                 OrbitGlobal.Mana._Project = value;
+            }
+        }
+
+
+        /// <summary>
+        /// コントロール情報
+        /// </summary>
+        public static OrbitControlInfo ControlInfo
+        {
+            get
+            {
+                return OrbitGlobal.Mana._ControlInfo;
             }
         }
 

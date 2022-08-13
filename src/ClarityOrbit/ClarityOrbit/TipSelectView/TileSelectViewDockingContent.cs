@@ -33,8 +33,10 @@ namespace ClarityOrbit.TipSelectView
         /// <param name="filepath"></param>
         private void AddTileSrcImage(string filepath)
         {
-            
-            
+            //新しいページの作成
+            var npage = this.CreateAddTileImageNewPage(filepath);
+            //ADD
+            this.tabControlTips.Controls.Add(npage);
         }
 
 
@@ -46,8 +48,25 @@ namespace ClarityOrbit.TipSelectView
         private TabPage CreateAddTileImageNewPage(string filepath)
         {
             //ページの追加
-            var data = OrbitGlobal.Project.AddNewTileImageSrc(filepath);
+            TileImageSrcInfo data = OrbitGlobal.Project.AddNewTileImageSrc(filepath);
             TabPage ans = new TabPage();
+            ans.Text = data.Name;
+            ans.Tag = data;
+            ans.AutoScroll = true;
+            Clarity.GUI.ClarityViewer iv = new ClarityViewer();            
+            ans.Controls.Add(iv);
+            {
+                //ImageViewerの初期化
+                iv.Dock = DockStyle.Fill;
+                //iv.Location = new Point(0, 0);
+                //iv.Size = new Size(1000, 1000);
+                iv.MinimapVisible = false;
+
+                iv.ImageInterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                iv.Init(data.TipImage);
+                //ここで描画物を入れる
+                iv.AddDisplayer(new SrcTileImageGridDisplayer() { SrcInfo = data });
+            }
 
             return ans;
             
@@ -65,6 +84,11 @@ namespace ClarityOrbit.TipSelectView
         /// <param name="e"></param>
         private void toolStripButtonTipAdd_Click(object sender, EventArgs e)
         {
+            if (OrbitGlobal.Project == null)
+            {
+                return;
+            }
+
             //ファイルの選択
             string filepath = "";            
             using (OpenFileDialog diag = new OpenFileDialog())

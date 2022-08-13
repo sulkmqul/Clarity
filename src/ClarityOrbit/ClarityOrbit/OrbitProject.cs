@@ -70,7 +70,7 @@ namespace ClarityOrbit
             data.SrcFilePath = filepath;
             data.Name = Path.GetFileName(filepath);
             data.TipImage = new Bitmap(filepath);
-
+            
             //シェーダー登録
             data.RegistShader();
 
@@ -93,6 +93,17 @@ namespace ClarityOrbit
             get
             {
                 return this.Project.BaseInfo;
+            }
+        }
+
+        /// <summary>
+        /// タイルサイズ(pixel)
+        /// </summary>
+        public Size TileSize
+        {
+            get
+            {
+                return this.Project.BaseInfo.TileSize;
             }
         }
     }

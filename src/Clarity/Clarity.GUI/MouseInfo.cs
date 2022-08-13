@@ -126,9 +126,16 @@ namespace Clarity.GUI
         /// </summary>
         /// <param name="args"></param>
         public void UpMouse(MouseEventArgs args)
+        {            
+            this.DownButton = MouseButtons.None;
+        }
+        /// <summary>
+        /// 位置の更新
+        /// </summary>
+        /// <param name="args"></param>
+        public void UpdatePositon(MouseEventArgs args)
         {
             this.NowPos = new Point(args.X, args.Y);
-            this.DownButton = MouseButtons.None;
         }
 
         /// <summary>

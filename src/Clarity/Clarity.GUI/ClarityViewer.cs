@@ -667,8 +667,12 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_MouseUp(object sender, MouseEventArgs e)
         {
-            this.MInfo.UpMouse(e);
+            //まず位置を更新
+            this.MInfo.UpdatePositon(e);
             this.DisplayerList.ForEach(x => x.MouseUp(this.MInfo));
+
+            //up処理・・・これはマウスボタンの初期化を回避するため
+            this.MInfo.UpMouse(e);
             this.Refresh();
         }
 

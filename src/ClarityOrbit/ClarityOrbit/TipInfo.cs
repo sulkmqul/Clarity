@@ -27,15 +27,26 @@ namespace ClarityOrbit
     /// <summary>
     /// 元データからのチップ抜き出し情報
     /// </summary>
-    public class TileBitInfo
+    internal class TileBitInfo
     {
+        /// <summary>
+        /// 元画像情報
+        /// </summary>
+        internal TileImageSrcInfo? TipImageInfo { get; set; }
+
         /// <summary>
         /// 元チップID
         /// </summary>
-        public int TileImageSrcID { get; set; } = OrbitGlobal.EVal;
+        public int TileImageSrcID
+        {
+            get
+            {
+                return this.TipImageInfo?.TileImageSrcID ?? OrbitGlobal.EVal;
+            }
+        }
 
         /// <summary>
-        /// 元画像からの矩形位置
+        /// 元画像からの矩形位置index
         /// </summary>
         public Point SrcPosIndex = new Point();
 
@@ -68,7 +79,7 @@ namespace ClarityOrbit
         /// </summary>
         public TileBitInfo? SrcInfo = null;
 
-
+        
         private TipInfoControlBehavior Beh = new TipInfoControlBehavior();
 
 

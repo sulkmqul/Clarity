@@ -74,6 +74,11 @@ namespace Clarity.Engine
         /// </summary>
         internal ClarityEngineData EngineData = null;
 
+        /// <summary>
+        /// 管理管理コントロール
+        /// </summary>
+        private Control Con;
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         
@@ -172,6 +177,8 @@ namespace Clarity.Engine
             this._EngineSetting = new ClaritySetting();
             ClarityEngine.EngineSetting.Read(cesfilepath);
 
+            
+
             //ログの初期化
             {
                 EClarityLogLevel lev = ClarityEngine.EngineSetting.GetEnum<EClarityLogLevel>("Log.Level", EClarityLogLevel.None);
@@ -184,6 +191,9 @@ namespace Clarity.Engine
             //エンジンの初期化
             DLL.Winmm.timeBeginPeriod(1);
             Util.RandomMaker.Init();
+
+            //コントロールの初期化
+            this.Con = con;
 
             //画面設定
             Vector2 vec = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize", new Vector2(con.Width, con.Height));

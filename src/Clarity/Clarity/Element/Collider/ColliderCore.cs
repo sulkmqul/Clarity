@@ -309,6 +309,7 @@ namespace Clarity.Collider
         /// <remarks>https://risalc.info/src/line-triangle-intersection.html</remarks>
         private bool DetectLinePolygon(BaseCollider src, BaseCollider target)
         {
+            
             return this.DetectLinePolygonEx(src, target);
 
             //データ変換            

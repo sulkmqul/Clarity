@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace Clarity.GUI
 {
-    //public delegate void ClarityImageViewerMouseEventDelegate(MouseInfo minfo, ImageViewerTranslator ivt);
+    public delegate void ClarityViewerMouseEventDelegate(MouseInfo minfo, ImageViewerTranslator ivt);
     //public delegate void ClarityImageViewerRenderEventDelegate(Graphics gra, ImageViewerTranslator ivt);
 
     /// <summary>
@@ -161,6 +161,18 @@ namespace Clarity.GUI
 
         #endregion
 
+        #region Event
+        [Category(CommonDescriptionCategory)]
+        [Description("View上でマウスが押された時")]
+        public event ClarityViewerMouseEventDelegate ClarityViewerMouseDown;
+        [Category(CommonDescriptionCategory)]
+        [Description("View上でマウスが動いた時")]
+        public event ClarityViewerMouseEventDelegate ClarityViewerMouseMoveEvent;
+        [Category(CommonDescriptionCategory)]
+        [Description("View上でマウスが離された時")]
+        public event ClarityViewerMouseEventDelegate ClarityViewerMouseUpEvent;
+        #endregion
+
         /// <summary>
         /// クリッピングの有効化
         /// </summary>
@@ -224,15 +236,16 @@ namespace Clarity.GUI
         }
 
         /// <summary>
-        /// 元エリア
+        /// 元エリアサイズ
         /// </summary>
-        internal RectangleF SrcRect
+        [Browsable(false)]
+        public RectangleF SrcRect
         {
             get
             {
                 return this.Ivt.SrcRect;
             }
-            set
+            internal set
             {
                 this.Ivt.SrcRect = value;
             }
@@ -640,6 +653,7 @@ namespace Clarity.GUI
         private void ClarityViewer_MouseDown(object sender, MouseEventArgs e)
         {
             this.MInfo.DownMouse(e);
+            this.ClarityViewerMouseDown?.Invoke(this.MInfo, this.Ivt);
             this.DisplayerList.ForEach(x => x.MouseDown(this.MInfo));
             this.Refresh();
         }
@@ -652,6 +666,7 @@ namespace Clarity.GUI
         private void ClarityViewer_MouseMove(object sender, MouseEventArgs e)
         {
             this.MInfo.MoveMouse(e);
+            this.ClarityViewerMouseMoveEvent?.Invoke(this.MInfo, this.Ivt);
             this.DisplayerList.ForEach(x => x.MouseMove(this.MInfo));
             if (e.Button == this.MoveImageMouseButton)
             {   
@@ -669,6 +684,7 @@ namespace Clarity.GUI
         {
             //まず位置を更新
             this.MInfo.UpdatePositon(e);
+            this.ClarityViewerMouseUpEvent?.Invoke(this.MInfo, this.Ivt);
             this.DisplayerList.ForEach(x => x.MouseUp(this.MInfo));
 
             //up処理・・・これはマウスボタンの初期化を回避するため

@@ -193,8 +193,8 @@ namespace Clarity.Engine
         {
             //デフォルト世界の登録
             WorldData wdata = new WorldData();            
-            wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(0.0f, 0.0f, -10000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
-            wdata.ProjectionMat = Matrix4x4.CreateOrthographic(width, height, 1.0f, 15000.0f);
+            wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(0.0f, 0.0f, -1000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
+            wdata.ProjectionMat = Matrix4x4.CreateOrthographic(width, height, 1.0f, 1500.0f);
             wdata.ReCalcu();
 
             //この世界のViewPortを作成

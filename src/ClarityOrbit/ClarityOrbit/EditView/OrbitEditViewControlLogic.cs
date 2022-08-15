@@ -50,6 +50,13 @@ namespace ClarityOrbit.EditView
         /// 選択エリア情報(xy=マウスからのindex wh=src image area rect size)
         /// </summary>
         public Rectangle SelectTileRect = new Rectangle(-1, -1, -1, -1);
+
+
+        /// <summary>
+        /// 有効View範囲Index
+        /// </summary>
+        public Rectangle ViewAreaIndexRect = new Rectangle(-1,-1,-1,-1);
+
     }
 
     internal class OrbitEditViewControlLogic : ClarityEnginePlugin
@@ -87,7 +94,7 @@ namespace ClarityOrbit.EditView
             this.EngineTask = ClarityEngine.RunAsync(this);
 
             //Shaderの初期化
-            ClarityEngine.AddShader<FrameGridShaderData>(new List<string>() { OrbitGlobal.ShaderListFile });
+            ClarityEngine.AddShader<TilemapShaderData>(new List<string>() { OrbitGlobal.ShaderListFile });
 
             //頂点の読み込み
             ClarityEngine.AddVertexResources(OrbitGlobal.PolyListFilePath);
@@ -141,6 +148,7 @@ namespace ClarityOrbit.EditView
             
         }
 
+        
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 画面のリサイズ

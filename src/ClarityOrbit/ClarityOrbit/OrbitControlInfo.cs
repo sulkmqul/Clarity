@@ -7,12 +7,48 @@ using System.Drawing;
 
 namespace ClarityOrbit
 {
+    public enum EOrbitMouseControlMode
+    {
+        /// <summary>
+        /// 移動モード 注視点とカメラを同期して動かす
+        /// </summary>
+        CameraMove,
+
+        /// <summary>
+        /// 注視点を変えずにカメラを動かす
+        /// </summary>
+        CameraMove3D,
+
+        /// <summary>
+        /// 通常描画
+        /// </summary>
+        Draw,
+
+        /// <summary>
+        /// 消しゴム
+        /// </summary>
+        Eraser,
+
+        /// <summary>
+        /// 塗りつぶし
+        /// </summary>
+        Fill,
+
+    }
+
+
+
     /// <summary>
     /// 保存しないが全体で使用する情報
     /// 主にユーザー操作の予定
     /// </summary>
     internal class OrbitControlInfo
     {
+        /// <summary>
+        /// 編集処理モード
+        /// </summary>
+        public EOrbitMouseControlMode ControlMode { get; set; } = EOrbitMouseControlMode.Draw;
+
         /// <summary>
         /// 元画像情報選択可否
         /// </summary>

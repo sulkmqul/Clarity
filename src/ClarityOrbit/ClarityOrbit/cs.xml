@@ -40,7 +40,7 @@
     </Log>
 
     <!--1フレームの時間下限値(ms) 100を設定すると10FPSということである-->
-    <FrameTimeLimit type="float">16.66</FrameTimeLimit>
+    <FrameTimeLimit type="float">0</FrameTimeLimit>
     
     <!--表示画面サイズ-->    
     <!--<DisplayViewSize type="vec2">1440,810</DisplayViewSize>-->

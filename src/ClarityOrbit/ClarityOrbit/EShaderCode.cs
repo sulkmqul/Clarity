@@ -9,7 +9,7 @@
 		System_NoTexture = -99,
 		System_TextureAnime = -98,
 		System_TextureUseAlpha = -97,
-		FrameGrid = 2,
+		TileMap = 2,
 
     }
 

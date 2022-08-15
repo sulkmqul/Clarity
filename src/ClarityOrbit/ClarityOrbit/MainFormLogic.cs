@@ -12,6 +12,8 @@ namespace ClarityOrbit
         public TipSelectView.TileSelectViewDockingContent TipSelectView = new TipSelectView.TileSelectViewDockingContent();
 
         public LayerView.LayerViewDockingContent LayerView = new LayerView.LayerViewDockingContent();
+
+        public EditView.MinimapViewDockingContent MinimapView = new EditView.MinimapViewDockingContent();
     }
 
     internal class MainFormLogic
@@ -39,19 +41,25 @@ namespace ClarityOrbit
         {
             //全体に関係する基本を初期化
             OrbitGlobal.Init();
-
+            OrbitGlobal.Mana.MForm = this.Form;
 
             //Dockingテーマの設定
             this.Form.dockPanelToolBox.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015BlueTheme();
 
             //画面初期構成
-            this.WindowManager.TipSelectView.Show(this.Form.dockPanelToolBox);
-            //this.WindowManager.TipSelectView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockTop;
+            {
+                this.WindowManager.TipSelectView.Show(this.Form.dockPanelToolBox);
+                //this.WindowManager.TipSelectView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockTop;
 
-            
-            this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
-            //this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
-            this.WindowManager.LayerView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockBottom;
+                this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
+                //this.WindowManager.LayerView.Show(this.Form.dockPanelToolBox);
+                this.WindowManager.LayerView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockBottomAutoHide;
+
+                //minimap
+                this.WindowManager.MinimapView.Show(this.Form.dockPanelToolBox);
+                this.WindowManager.MinimapView.DockState = WeifenLuo.WinFormsUI.Docking.DockState.DockBottomAutoHide;
+
+            }
 
 
             //各Controlの初期化
@@ -88,9 +96,11 @@ namespace ClarityOrbit
 
             //レイヤの作成
             proj.Layer.AddNewLayer();
+            proj.Layer.SelectedLayerIndex = 0;  //初期レイヤー選択
 
 
-            
+
+
         }
     }
 }

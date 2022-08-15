@@ -115,14 +115,12 @@ namespace ClarityOrbit.EditView
                 var rect = OrbitEditViewControl.TempInfo.SelectTileRect;
                 Size tsize = OrbitGlobal.Project.BaseInfo.TileSize;
 
-                float px = rect.X * tsize.Width;
-                float py = rect.Y * tsize.Height;                
-                this.TransSet.Scale2D = new System.Numerics.Vector2(rect.Width * tsize.Width, rect.Height * tsize.Height);
+                float px = (rect.X-1) * -tsize.Width;
+                float py = (rect.Y-1) * -tsize.Height;
+                this.TransSet.Pos2D = new System.Numerics.Vector2(px, py);
+                this.TransSet.Scale2D = new System.Numerics.Vector2(rect.Width * -tsize.Width, rect.Height * -tsize.Height);
 
-                //Vector2 offset = new Vector2(this.TransSet.ScaleX * 0.5f, this.TransSet.ScaleY * 0.5f);
-                Vector2 offset = new Vector2();
-
-                this.TransSet.Pos2D = new System.Numerics.Vector2(px + offset.X, py + offset.Y);
+                
 
             }
 

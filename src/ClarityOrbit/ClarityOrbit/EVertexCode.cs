@@ -8,6 +8,7 @@
 		System_Rect = -100,
 		System_Line = -99,
 		VGrid = 2,
+		Tile = 3,
 
     }
 

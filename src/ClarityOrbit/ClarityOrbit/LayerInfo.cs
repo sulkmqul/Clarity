@@ -38,6 +38,11 @@ namespace ClarityOrbit
         public bool Enable { get; set; } = true;
 
         /// <summary>
+        /// このレイヤーの表示固有色
+        /// </summary>
+        public Color LayerDisplayColor { get; set; } = Color.Yellow;
+
+        /// <summary>
         /// 作業場一式 [y][x]
         /// </summary>
         public List<List<TipInfo>> TipMap = new List<List<TipInfo>>();
@@ -96,6 +101,7 @@ namespace ClarityOrbit
         /// 自身の管理番号()
         /// </summary>
         public int LayerNo { get; private set; }
+
     }
 
 

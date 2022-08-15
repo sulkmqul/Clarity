@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Clarity.Engine;
@@ -69,8 +70,19 @@ namespace ClarityOrbit
         }
 
         
-
-
+        /// <summary>
+        /// テクスチャ区切りサイズ
+        /// </summary>
+        public Vector2 TexDiv
+        {
+            get
+            {
+                Vector2 ans = new Vector2();
+                ans.X = (float)this.TileSize.Width / (float)this.ImageSize.Width;
+                ans.Y = (float)this.TileSize.Height / (float)this.ImageSize.Height;
+                return ans;
+            }
+        }
 
         /// <summary>
         /// シェーダー登録

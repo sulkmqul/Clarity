@@ -339,14 +339,13 @@ namespace Clarity.Engine.Core
                 }
 
                 FrameInfo finfo = new FrameInfo(time, time - prev_time);
-
+                                
                 //フレーム処理
                 await Task.Run(() =>
                 {
                     this.ProcFrame(finfo);
                     fps.ProcCount++;
                 });
-
 
                 this.FData.ExProc?.CyclingProc(new ClarityEngineCyclingParam() { Con = this.FData.Con, Frame = finfo });
 

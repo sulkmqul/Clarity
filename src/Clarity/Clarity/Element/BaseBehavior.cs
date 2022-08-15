@@ -32,21 +32,30 @@ namespace Clarity
         public abstract void Execute(object beo);
     }
 
-    /// <summary>
-    /// Actionで動く所作
-    /// </summary>
-    public class ActionBehavior : BaseBehavior
+
+    public class ActionBehavior<T> : BaseBehavior
     {
-        public ActionBehavior(Action<object> ac, long oid = 0) : base(oid)
+        public ActionBehavior(Action<T> ac, long oid = 0) : base(oid)
         {
             this.Proc = ac;
         }
 
-        private Action<object> Proc = null;
+        private Action<T> Proc = null;
 
         public override void Execute(object beo)
         {
-            this.Proc(beo);
+            this.Proc((T)beo);
+        }
+    }
+
+    /// <summary>
+    /// Actionで動く所作
+    /// </summary>
+    public class ActionBehavior : ActionBehavior<object>
+    {
+        public ActionBehavior(Action<object> ac, long oid = 0) : base(ac, oid)
+        {
+            
         }
     }
 

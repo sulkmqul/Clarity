@@ -1,2 +1,2 @@
 1
-FrameGrid,data/shader.fx,VsDefault,PsGrid
+TileMap,data/shader.fx,VsTileMap,PsDefault

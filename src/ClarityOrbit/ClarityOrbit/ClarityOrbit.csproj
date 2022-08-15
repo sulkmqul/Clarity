@@ -33,6 +33,9 @@
     <None Update="data\structure.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="data\Tile.cpo">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="data\VGrid.cpo">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

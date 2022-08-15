@@ -8,6 +8,7 @@ using Clarity.Engine.Element;
 using Clarity;
 using Clarity.Engine.Shader;
 using Clarity.Engine.Vertex;
+using System.Drawing;
 
 namespace Clarity.Engine
 {
@@ -132,6 +133,7 @@ namespace Clarity.Engine
             //現在世界を取得
             Clarity.Engine.WorldData wdata = ClarityEngine.GetWorld(wid);
 
+            //ここ、Viewport行列はsystemでないといけないかもしれない
             Matrix4x4 invmat = wdata.CalcuInvCameraProjectionView();
 
             Vector4 mpos = new Vector4(mx, my, z, 1.0f);
@@ -165,6 +167,14 @@ namespace Clarity.Engine
 
         }
 
+        /// <summary>
+        /// Viewのサイズを取得
+        /// </summary>
+        /// <returns></returns>
+        public static Size GetViewSize()
+        {
+            return ClarityEngine.Engine.Con.Size;
+        }
 
      
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

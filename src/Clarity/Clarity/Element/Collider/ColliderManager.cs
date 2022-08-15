@@ -41,10 +41,18 @@ namespace Clarity.Collider
                 List<ICollider> iclist = this.ColliderDic[key];
                 Parallel.ForEach(iclist, ic =>
                 {
-                    ic.ColInfo.UpdateTempInfo();                    
-                });
-            }
+                    if (ic.ColInfo.Enabled == false)
+                    {
+                        return;
+                    }
 
+                    ic.ColInfo.UpdateTempInfo();
+                });
+                //iclist.ForEach(ic =>
+                //{
+                //    ic.ColInfo.UpdateTempInfo();
+                //});
+            }
         }
 
 
@@ -206,7 +214,7 @@ namespace Clarity.Collider
 
 
 
-        #region 登録削除関数       
+#region 登録削除関数       
 
         /// <summary>
         /// 当たり判定対象へ登録
@@ -268,7 +276,7 @@ namespace Clarity.Collider
             this.ColliderDic.Clear();
 
         }
-        #endregion
+#endregion
 
 
     }

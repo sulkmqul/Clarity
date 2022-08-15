@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Clarity;
@@ -34,11 +36,15 @@ namespace ClarityOrbit
         /// </summary>
         private OrbitProject? _Project = null;
 
-
         /// <summary>
         /// 操作情報
         /// </summary>
         private OrbitControlInfo _ControlInfo = new OrbitControlInfo();
+
+        /// <summary>
+        /// 本体画面
+        /// </summary>
+        public MainForm MForm;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// プロジェクト情報
@@ -67,6 +73,7 @@ namespace ClarityOrbit
             }
         }
 
+        
 
         /// <summary>
         /// 初期化
@@ -122,8 +129,39 @@ namespace ClarityOrbit
         }
 
 
-        
 
 
+        /// <summary>
+        /// World座標からtile indexを計算する
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        public static Point WorldToTileIndex(Vector3 pos)
+        {
+            Point ans = new Point();
+            ans.X = Convert.ToInt32((pos.X / (float)-OrbitGlobal.Project.BaseInfo.TileSize.Width));
+            ans.Y = Convert.ToInt32((pos.Y / (float)-OrbitGlobal.Project.BaseInfo.TileSize.Height));
+
+            return ans;
+        }
+
+        /// <summary>
+        /// Tile indexからwolrd位置を計算する
+        /// </summary>
+        /// <param name="ix"></param>
+        /// <param name="iy"></param>
+        /// <returns></returns>
+        public static Vector3 TileIndexToWorld(int ix, int iy)
+        {
+            if (OrbitGlobal.Project == null)
+            {
+                return new Vector3(0.0f);
+            }
+
+            Size tsize = OrbitGlobal.Project.BaseInfo.TileSize;
+
+            Vector3 ans = new Vector3(ix * -tsize.Width, iy * -tsize.Height, 0.0f);
+            return ans;
+        }
     }
 }

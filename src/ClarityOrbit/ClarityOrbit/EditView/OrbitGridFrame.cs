@@ -14,17 +14,7 @@ using Clarity.Collider;
 
 namespace ClarityOrbit.EditView
 {
-    internal struct FrameGridShaderData
-    {
-        public Matrix4x4 WorldViewProj;
-        public Vector4 Color;
-        public float BorderWidth;
-
-        public float Mergin;
-        public float Mergin2;
-        public float Mergin3;
-
-    }
+    
 
     /// <summary>
     /// Gird描画Behavior
@@ -92,6 +82,8 @@ namespace ClarityOrbit.EditView
             //当たり判定設定を行う
             this.ColInfo = new Clarity.Collider.ColliderInfo(this);
             {
+                
+
                 //頂点の取得               
                 List<Vector3> vlist = ClarityEngine.GetVertexList((int)EVertexCode.VGrid);
                 //矩形判定
@@ -108,6 +100,9 @@ namespace ClarityOrbit.EditView
             //タイル共通所作
             this.AddProcBehavior(new TipInfoControlBehavior());
         }
+
+
+        
     }
 
 
@@ -125,11 +120,13 @@ namespace ClarityOrbit.EditView
             {
                 return;
             }
+            //マウス選択位置の更新
             this.UpdateMouseSelectRect(grid);
 
             //ClarityEngine.SetSystemText($"あたった({grid?.Pos.X},{grid?.Pos.Y})", 2);
         }
 
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// EditViewでの選択エリアの確定
         /// </summary>
@@ -140,5 +137,8 @@ namespace ClarityOrbit.EditView
             int h = OrbitGlobal.ControlInfo.SrcSelectedInfo?.SelectedIndexRect.Height ?? 1;
             OrbitEditViewControl.TempInfo.SelectTileRect = new Rectangle(grid.Pos.X, grid.Pos.Y, w, h);
         }
+
+
+        
     }
 }

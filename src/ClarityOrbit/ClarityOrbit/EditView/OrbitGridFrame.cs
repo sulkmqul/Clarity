@@ -88,10 +88,10 @@ namespace ClarityOrbit.EditView
                 List<Vector3> vlist = ClarityEngine.GetVertexList((int)EVertexCode.VGrid);
                 //矩形判定
                 Clarity.Collider.ColliderPlaneRect cpol = new Clarity.Collider.ColliderPlaneRect(vlist[0], vlist[1], vlist[3], vlist[2]);
-
+                cpol.ColiderTransposeMode = EColiderTransposeMode.Translation | EColiderTransposeMode.Scaling;
                 //当たり判定設定
                 this.ColInfo.ColType = OrbitColType.GridColType;
-                this.ColInfo.TargetColType = OrbitColType.MouseColType;
+                this.ColInfo.TargetColType = OrbitColType.MouseColType;                
                 this.ColInfo.SrcColliderList.Add(cpol);
                 this.ColliderBehavior = new GridFrameColliderBehavior();
             }

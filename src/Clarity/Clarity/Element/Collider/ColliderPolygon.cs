@@ -150,7 +150,7 @@ namespace Clarity.Collider
         {
         }
 
-        public List<ColliderPolygon> Poly = new List<ColliderPolygon>();
+        public List<ColliderPolygon> Poly = new List<ColliderPolygon>(8);
 
         protected override void TranslateCollider(TransposeSet tset)
         {
@@ -183,8 +183,6 @@ namespace Clarity.Collider
         {
             ColliderPlaneRect ans = new ColliderPlaneRect();            
             ans.ColiderTransposeMode = this.ColiderTransposeMode;
-
-            ans.Poly = new List<ColliderPolygon>();            
             this.Poly.ForEach(x =>
             {
                 ans.Poly.Add((ColliderPolygon)x.Clone());

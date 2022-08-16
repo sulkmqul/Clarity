@@ -21,6 +21,7 @@ namespace Clarity
         /// 自分の処理する子供
         /// </summary>
         public LinkedList<BaseElement> ChildList = new LinkedList<BaseElement>();
+        //public List<BaseElement> ChildList = new List<BaseElement>();
 
     }
 
@@ -389,7 +390,7 @@ namespace Clarity
 
             //子供の処理実行
             foreach (var c in this.SystemLink.ChildList)
-            {
+            {   
                 int cp = ElementManager.GetProcIndex();
                 c.Proc(cp, this.SendFrameInfo);
             }
@@ -457,6 +458,7 @@ namespace Clarity
         {
             data.SystemLink.ParentElement = this;
             this.SystemLink.ChildList.AddLast(data);
+            //this.SystemLink.ChildList.Add(data);
         }
 
 

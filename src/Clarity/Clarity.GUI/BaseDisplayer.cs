@@ -25,7 +25,7 @@ namespace Clarity.GUI
     /// <summary>
     /// 画像変換者
     /// </summary>
-    public class ImageViewerTranslator    
+    public class ImageViewerTranslator
     {
         #region 領域取得設定        
         /// <summary>
@@ -37,6 +37,7 @@ namespace Clarity.GUI
         /// 描画エリア
         /// </summary>
         internal RectangleF ViewRect = new RectangleF(0, 0, 0, 0);
+
 
         /// <summary>
         /// 表示元サイズ
@@ -70,6 +71,29 @@ namespace Clarity.GUI
             set
             {
                 this.ViewRect = new RectangleF(this.ViewRect.Left, this.ViewRect.Top, value.Width, value.Height);
+            }
+        }
+
+        public float ViewX
+        {
+            get
+            {
+                return this.ViewRect.X;
+            }
+            set
+            {
+                this.ViewRect.X= value;
+            }
+        }
+        public float ViewY
+        {
+            get
+            {
+                return this.ViewRect.Y;
+            }
+            set
+            {
+                this.ViewRect.Y = value;
             }
         }
 

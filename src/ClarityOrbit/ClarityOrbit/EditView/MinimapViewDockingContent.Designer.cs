@@ -46,9 +46,11 @@
             this.clarityViewerMinimap.MinimapDisplayMerginRate = 0.05F;
             this.clarityViewerMinimap.MinimapVisible = false;
             this.clarityViewerMinimap.Name = "clarityViewerMinimap";
+            this.clarityViewerMinimap.PosMode = Clarity.GUI.EClarityViewerPositionMode.LeftTop;
             this.clarityViewerMinimap.Size = new System.Drawing.Size(800, 450);
             this.clarityViewerMinimap.SrcBackColor = System.Drawing.Color.Black;
             this.clarityViewerMinimap.TabIndex = 0;
+            this.clarityViewerMinimap.ZoomMode = Clarity.GUI.EClarityViewerZoomMode.LimitFit;
             this.clarityViewerMinimap.ClarityViewerMouseMoveEvent += new Clarity.GUI.ClarityViewerMouseEventDelegate(this.clarityViewerMinimap_ClarityViewerMouseMoveEvent);
             this.clarityViewerMinimap.ClarityViewerMouseUpEvent += new Clarity.GUI.ClarityViewerMouseEventDelegate(this.clarityViewerMinimap_ClarityViewerMouseUpEvent);
             // 

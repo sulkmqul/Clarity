@@ -39,6 +39,12 @@ namespace ClarityOrbit.EditView
         /// </summary>
         public MouseManageElement MouseElement;
 
+
+        /// <summary>
+        /// カメラ位置(Zoomに等しい)
+        /// </summary>
+        public float[] CameraZPos = { -125.0f, -250.0f, -500.0f, -1000.0f, -2000.0f, -4000.0f};
+
     }
 
     /// <summary>
@@ -104,8 +110,11 @@ namespace ClarityOrbit.EditView
 
             //カメラの作成と初期位置の設定
             this.FData.Camera = new CameraElement();
-            this.FData.Camera.CameraPos = new Vector3(0.0f, 0.0f, -1000.0f);
-            this.FData.Camera.AtPos = new Vector3(0.0f, 0.0f, 0.0f);
+            //this.FData.Camera.CameraPos = new Vector3(0.0f, 0.0f, -1000.0f);
+            //this.FData.Camera.AtPos = new Vector3(0.0f, 0.0f, 0.0f);
+            this.FData.Camera.SetCameraXY(new Vector3(0.0f, 0.0f, 0.0f));
+            this.FData.Camera.SetCameraZ(-1000.0f);
+
             ClarityAid.AddElement(EStructureCode.Manager, this.FData.Camera);
 
 
@@ -148,7 +157,24 @@ namespace ClarityOrbit.EditView
             
         }
 
+
+
+        /// <summary>
+        /// カメラ位置の拡縮処理
+        /// </summary>
+        /// <param name="f">true=拡大(近くする) false=縮小(遠くする)</param>
+        public void ChangeZoomCameraPos(bool f)
+        {
+            int iz = this.SearchCameraPosIndex(this.FData.Camera.CameraPos.Z);
+            iz = (f == true) ? iz -1 : iz + 1;
+            iz = Math.Clamp(iz, 0, this.FData.CameraZPos.Length - 1);
+
+            this.FData.Camera.SetCameraZ(this.FData.CameraZPos[iz]);
+
+        }
         
+
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 画面のリサイズ
@@ -213,6 +239,30 @@ namespace ClarityOrbit.EditView
             }
 
             return anslist;
+        }
+
+
+        /// <summary>
+        /// 適切なカメラ位置を算出
+        /// </summary>
+        /// <param name="cposz"></param>
+        /// <returns></returns>
+        private int SearchCameraPosIndex(float cposz)
+        {
+            float len = float.MaxValue;
+            int ans = 0;
+            for (int i = 0; i < this.FData.CameraZPos.Length; i++)
+            {
+                //距離が最小な場所を現在の拡大率とする
+                float a = Math.Abs(this.FData.CameraZPos[i] - cposz);
+                if (a < len)
+                {
+                    len = a;
+                    ans = i;
+                }
+            }
+
+            return ans;
         }
     }
 }

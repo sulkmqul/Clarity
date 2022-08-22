@@ -51,6 +51,31 @@ namespace ClarityOrbit.EditView
         internal static DisplayTemplateInfo TempInfo = new DisplayTemplateInfo();
 
 
+        /// <summary>
+        /// 画面座標から計算された直線において、Zが0となるworld座標を計算する
+        /// </summary>
+        /// <param name="px">画面座標X</param>
+        /// <param name="py">画面座標Y</param>
+        /// <returns></returns>
+        internal static Vector3 CalcuZeroPos(int px, int py)
+        {
+            Vector3 st = Clarity.Engine.ClarityEngine.WindowToWorld(0, px, py, 0.0f);
+            Vector3 ed = Clarity.Engine.ClarityEngine.WindowToWorld(0, px, py, 1.0f);
+            Vector3 dir = ed - st;
+
+            Vector3 stzvec = new Vector3(st.X, st.Y, 0.0f) - st;
+            Vector3 stznvec = Vector3.Normalize(stzvec);
+
+            //角度の計算
+            Vector3 ndir = Vector3.Normalize(dir);
+            float cos = Vector3.Dot(stznvec, ndir);
+
+            float len = stzvec.Z / cos;
+            Vector3 zerolen = ndir * len;
+            Vector3 apos = st + zerolen;
+
+            return apos;
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化
@@ -83,7 +108,7 @@ namespace ClarityOrbit.EditView
             Vector3 pos = OrbitGlobal.TileIndexToWorld(ix, iy);
 
             //カメラ設定
-            this.FData.Camera.SetCamera(pos);
+            this.FData.Camera.SetCameraXY(pos);
         }
 
      
@@ -122,31 +147,10 @@ namespace ClarityOrbit.EditView
             this.Minfo.DownMouse(e);
 
             //編集処理
-            TileEditCore.Edit(TempInfo.SelectTileRect);
-
-
+            if (this.Minfo.DownButton == MouseButtons.Left)
             {
-                Vector3 st = Clarity.Engine.ClarityEngine.WindowToWorld(0, 0, 0, 0.0f);
-                Vector3 ed = Clarity.Engine.ClarityEngine.WindowToWorld(0, 0, 0, 1.0f);
-                Vector3 dir = ed - st;
-
-                Vector3 stzvec = new Vector3(st.X, st.Y, 0.0f) - st;
-                Vector3 stznvec = Vector3.Normalize(stzvec);
-
-                //角度の計算
-                Vector3 ndir = Vector3.Normalize(dir);                
-                float cos = Vector3.Dot(stznvec, ndir);
-
-                float len = stzvec.Z / cos;
-                Vector3 zerolen = ndir * len;
-                Vector3 apos = st + zerolen;
-
-                //Clarity.Engine.ClarityEngine.SetSystemText($"{apos.X},{apos.Y},{apos.Z}", 0);
-
-                
-
+                TileEditCore.Edit(TempInfo.SelectTileRect);
             }
-            //Clarity.Engine.ClarityEngine.SetSystemText($"selected x={TempInfo.SelectTileRect.X} y={TempInfo.SelectTileRect.Y} w={TempInfo.SelectTileRect.Width} h={TempInfo.SelectTileRect.Height}", 0);
 
         }
 
@@ -206,11 +210,13 @@ namespace ClarityOrbit.EditView
 
             if (e.Delta < 0)
             {
-                this.FData.Camera.CameraPos += new Vector3(0.0f, 0.0f, -50.0f);
+                //this.FData.Camera.CameraPos += new Vector3(0.0f, 0.0f, -50.0f);
+                this.Logic.ChangeZoomCameraPos(false);
             }
             else
             {
-                this.FData.Camera.CameraPos += new Vector3(0.0f, 0.0f, 50.0f);
+                //this.FData.Camera.CameraPos += new Vector3(0.0f, 0.0f, 50.0f);
+                this.Logic.ChangeZoomCameraPos(true);
             }
         }
     }

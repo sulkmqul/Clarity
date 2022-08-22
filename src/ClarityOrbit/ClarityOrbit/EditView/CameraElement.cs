@@ -29,6 +29,14 @@ namespace ClarityOrbit.EditView
         /// </summary>
         public Vector3 UpDir { get; protected set; }
 
+
+
+        /// <summary>
+        /// 移動量補正値を計算
+        /// </summary>
+        private Vector3 SlideOffset = new Vector3(0.0f, 0.0f, 0.0f);
+
+
         public Vector3? reqcampos =  null;
         public Vector3? reqcamat = null;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -36,25 +44,41 @@ namespace ClarityOrbit.EditView
         /// <summary>
         /// カメラ位置をv分移動させる
         /// </summary>
-        /// <param name="v">移動量</param>
+        /// <param name="v">移動量(画面座標系における)</param>
         public void SlideCamera(Vector3 v)
         {
-            this.CameraPos += v;
-            this.AtPos += v;
+            Vector3 offset = new Vector3(v.X * this.SlideOffset.X, v.Y * this.SlideOffset.Y, 0.0f);
+
+            this.CameraPos += offset;
+            this.AtPos += offset;
         }
         /// <summary>
         /// カメラ位置を設定する
         /// </summary>
         /// <param name="v"></param>
-        public void SetCamera(Vector3 v)
+        public void SetCameraXY(Vector3 v)
         {
-            //this.CameraPos = v;
-            //this.AtPos = new Vector3(v.X, v.Y, this.AtPos.Z);
             this.reqcampos = new Vector3(v.X, v.Y, this.CameraPos.Z);
             this.reqcamat = new Vector3(v.X, v.Y, this.AtPos.Z);
         }
 
+        /// <summary>
+        /// カメラのZ位置を設定する
+        /// </summary>
+        /// <param name="cz"></param>
+        public void SetCameraZ(float cz)
+        {
+            this.reqcampos = new Vector3(this.CameraPos.X, this.CameraPos.Y, cz);
 
+            //移動量オフセットを計算する
+            //中心に近い位置での1pixelはどれぐらいのworld移動量かを算出、基準はz平面0位置
+            int cx = OrbitGlobal.Mana.MForm.orbitEditViewControl1.Width / 2;
+            int cy = OrbitGlobal.Mana.MForm.orbitEditViewControl1.Height / 2;
+            Vector3 a = OrbitEditViewControl.CalcuZeroPos(cx, cy);
+            Vector3 b = OrbitEditViewControl.CalcuZeroPos(cx + 1, cy + 1);
+
+            this.SlideOffset = new Vector3(a.X - b.X, a.Y - b.Y, 0.0f);
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
         /// <summary>
@@ -104,6 +128,9 @@ namespace ClarityOrbit.EditView
                 return;
             }
 
+
+            ClarityEngine.SetSystemText($"Camera={obj.CameraPos.X},{obj.CameraPos.Y},{obj.CameraPos.Z}", 1);
+
             //View範囲の再計算
             Rectangle vrc = this.CalcuViewAreaIndex();
             OrbitEditViewControl.TempInfo.ViewAreaIndexRect = vrc;
@@ -117,7 +144,7 @@ namespace ClarityOrbit.EditView
         /// <returns></returns>
         private Rectangle CalcuViewAreaIndex()
         {
-            //上から見ること前提になっていますが・・・ま
+            //上から見ること前提になっていますが・・・
 
             Size vsize = ClarityEngine.GetViewSize();
 
@@ -153,37 +180,12 @@ namespace ClarityOrbit.EditView
         /// <returns></returns>
         private Point CalcuFormPosToTileIndex(int px, int py)
         {
-            Vector3 zro = this.CalcuZeroPos(px, py);
+            Vector3 zro = OrbitEditViewControl.CalcuZeroPos(px, py);
             return OrbitGlobal.WorldToTileIndex(zro);
         }
 
         
 
-        /// <summary>
-        /// 画面座標から計算された直線において、Zが0となるworld座標を計算する
-        /// </summary>
-        /// <param name="px"></param>
-        /// <param name="py"></param>
-        /// <returns></returns>
-        private Vector3 CalcuZeroPos(int px, int py)
-        {
-            Vector3 st = Clarity.Engine.ClarityEngine.WindowToWorld(0, px, py, 0.0f);
-            Vector3 ed = Clarity.Engine.ClarityEngine.WindowToWorld(0, px, py, 1.0f);
-            Vector3 dir = ed - st;
-
-            Vector3 stzvec = new Vector3(st.X, st.Y, 0.0f) - st;
-            Vector3 stznvec = Vector3.Normalize(stzvec);
-
-            //角度の計算
-            Vector3 ndir = Vector3.Normalize(dir);
-            float cos = Vector3.Dot(stznvec, ndir);
-
-            float len = stzvec.Z / cos;
-            Vector3 zerolen = ndir * len;
-            Vector3 apos = st + zerolen;
-
-            Clarity.Engine.ClarityEngine.SetSystemText($"{apos.X},{apos.Y},{apos.Z}", 0);
-            return apos;
-        }
+        
     }
 }

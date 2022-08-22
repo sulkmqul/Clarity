@@ -61,6 +61,8 @@ namespace ClarityOrbit.TipSelectView
                 //iv.Location = new Point(0, 0);
                 //iv.Size = new Size(1000, 1000);
                 iv.MinimapVisible = false;
+                iv.ZoomMode = EClarityViewerZoomMode.LimitFit;
+                iv.PosMode = EClarityViewerPositionMode.LeftTop;
 
                 iv.ImageInterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 iv.Init(data.TipImage);

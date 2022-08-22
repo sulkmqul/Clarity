@@ -77,7 +77,11 @@ namespace ClarityOrbit.EditView
         /// </summary>        
         /// <returns></returns>
         private bool CheckReCreate(Size tcount)
-        {            
+        {
+            if (this.clarityViewerMinimap.InitializedViewFlag == false)
+            {
+                return true;
+            }
 
             //サイズが違う
             if (this.clarityViewerMinimap.SrcRect.Width != tcount.Width || this.clarityViewerMinimap.SrcRect.Height != tcount.Height)

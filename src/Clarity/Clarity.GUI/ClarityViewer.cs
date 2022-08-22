@@ -15,6 +15,27 @@ namespace Clarity.GUI
     //public delegate void ClarityImageViewerRenderEventDelegate(Graphics gra, ImageViewerTranslator ivt);
 
     /// <summary>
+    /// 拡縮モード
+    /// </summary>
+    public enum EClarityViewerZoomMode
+    {
+        LimitFit,
+        FitOnly,
+        Unlimit,
+    }
+
+    /// <summary>
+    /// 位置モード
+    /// </summary>
+    public enum EClarityViewerPositionMode
+    {
+        LeftTop,
+        //Center,
+        Unlimit
+    }
+
+
+    /// <summary>
     /// 画像表示コントロール
     /// </summary>
     public partial class ClarityViewer : UserControl
@@ -27,6 +48,8 @@ namespace Clarity.GUI
             this.DoubleBuffered = true;
         }
 
+
+
         private const string CommonDescriptionCategory = "ClarityViewer";
         private const string MinimapDescriptionCategory = "Minimap";
 
@@ -37,7 +60,7 @@ namespace Clarity.GUI
         public Color ClearColor { get; set; } = Color.Black;
 
         [Category(CommonDescriptionCategory)]
-        [Description("Src範囲色(画像無の時のみ有効)")]        
+        [Description("Src範囲色(画像無の時のみ有効)")]
         public Color SrcBackColor { get; set; } = Color.Red;
 
         [Category(CommonDescriptionCategory)]
@@ -56,20 +79,31 @@ namespace Clarity.GUI
         [Description("画像を移動操作する時のマウスボタン")]
         [DefaultValue(MouseButtons.Right)]
         public MouseButtons MoveImageMouseButton { get; set; } = MouseButtons.Right;
+
+
+        [Category(CommonDescriptionCategory)]
+        [Description("拡縮モード")]
+        [DefaultValue(EClarityViewerZoomMode.Unlimit)]
+        public EClarityViewerZoomMode ZoomMode { get; set; } = EClarityViewerZoomMode.Unlimit;
+
+        [Category(CommonDescriptionCategory)]
+        [Description("位置モード")]
+        [DefaultValue(EClarityViewerPositionMode.Unlimit)]
+        public EClarityViewerPositionMode PosMode { get; set; } = EClarityViewerPositionMode.Unlimit;
         #endregion
 
         #region Minimap
         [Category(MinimapDescriptionCategory)]
         [Description("ミニマップ表示可否")]
-        public bool MinimapVisible { 
+        public bool MinimapVisible {
             get
             {
                 return this.clarityViewerMinimapView.Visible;
-                
+
             }
             set
             {
-                this.clarityViewerMinimapView.Visible = value;                
+                this.clarityViewerMinimapView.Visible = value;
             }
         }
 
@@ -164,13 +198,13 @@ namespace Clarity.GUI
         #region Event
         [Category(CommonDescriptionCategory)]
         [Description("View上でマウスが押された時")]
-        public event ClarityViewerMouseEventDelegate ClarityViewerMouseDown;
+        public event ClarityViewerMouseEventDelegate? ClarityViewerMouseDown = null;
         [Category(CommonDescriptionCategory)]
         [Description("View上でマウスが動いた時")]
-        public event ClarityViewerMouseEventDelegate ClarityViewerMouseMoveEvent;
+        public event ClarityViewerMouseEventDelegate? ClarityViewerMouseMoveEvent = null;
         [Category(CommonDescriptionCategory)]
         [Description("View上でマウスが離された時")]
-        public event ClarityViewerMouseEventDelegate ClarityViewerMouseUpEvent;
+        public event ClarityViewerMouseEventDelegate? ClarityViewerMouseUpEvent = null;
         #endregion
 
         /// <summary>
@@ -229,10 +263,7 @@ namespace Clarity.GUI
             {
                 return this.Ivt.ViewRect;
             }
-            set
-            {
-                this.Ivt.ViewRect = value;
-            }
+            //SetViewPos関数を使用せよ
         }
 
         /// <summary>
@@ -250,6 +281,24 @@ namespace Clarity.GUI
                 this.Ivt.SrcRect = value;
             }
         }
+
+        /// <summary>
+        /// 初期化済み可否 true=初期化済み
+        /// </summary>
+        [Browsable(false)]
+        public bool InitializedViewFlag
+        {
+            get
+            {
+                if (this.Ivt == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+
         #region メンバ変数
         /// <summary>b
         /// 読み込み画像
@@ -257,14 +306,22 @@ namespace Clarity.GUI
         private Image? SrcImage = null;
 
         /// <summary>
-        /// 座標管理
+        /// 座標管理・・・初期化後作成
         /// </summary>
-        private ImageViewerTranslator Ivt = new ImageViewerTranslator();
+        private ImageViewerTranslator? Ivt = null;
 
+        /// <summary>
+        /// 拡大率テーブルテンプレ
+        /// </summary>
+        private readonly double[] ZoomTableTemplate = { 0.0625, 0.125, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0 };
         /// <summary>
         /// 拡大率テーブル
         /// </summary>
-        private double[] ZoomTable = { 0.0625, 0.125, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0 };
+        private double[] ZoomTable = { };
+        /// <summary>
+        /// 
+        /// </summary>
+        private double FitZoomRate = 1.0;
 
         /// <summary>
         /// マウス情報管理
@@ -393,6 +450,9 @@ namespace Clarity.GUI
                 this.SrcImage = new Bitmap(srcimage);
             }
 
+            this.Ivt = new ImageViewerTranslator();
+            this.DispRect = new RectangleF(0, 0, this.Width, this.Height);            
+
             //元画像の表示エリアを確定せる
             this.SrcRect = new RectangleF(0, 0, size.Width, size.Height);
 
@@ -403,6 +463,9 @@ namespace Clarity.GUI
             //描画サイズを設定
             this.ZoomRate = this.CalcuFitRate();
             this.CalcuViewArea();
+
+            //拡縮テーブルの作成
+            this.CreateZoomTable();
 
             //中心描画指示
             this.MoveCenter();
@@ -432,7 +495,8 @@ namespace Clarity.GUI
         {
             double w = this.SrcRect.Width * this.ZoomRate;
             double h = this.SrcRect.Height * this.ZoomRate;
-            this.ViewRect = new RectangleF(this.ViewRect.X, this.ViewRect.Y, Convert.ToSingle(w), Convert.ToSingle(h));
+            //this.ViewRect = new RectangleF(this.ViewRect.X, this.ViewRect.Y, Convert.ToSingle(w), Convert.ToSingle(h));
+            this.SetViewPos(this.ViewRect.X, this.ViewRect.Y, Convert.ToSingle(w), Convert.ToSingle(h));
         }
 
 
@@ -481,8 +545,8 @@ namespace Clarity.GUI
             float nw = this.SrcRect.Width * nfrate;
             float nh = this.SrcRect.Height * nfrate;
 
-            RectangleF rc = new RectangleF(-(nrx * nw)+ dcen.X, -(nry * nh) + dcen.Y, nw, nh);
-            this.Ivt.ViewRect = rc;
+            RectangleF rc = new RectangleF(-(nrx * nw)+ dcen.X, -(nry * nh) + dcen.Y, nw, nh);            
+            this.SetViewPos(rc.X, rc.Y, rc.Width, rc.Height);
         }
 
         /// <summary>
@@ -516,12 +580,94 @@ namespace Clarity.GUI
             float vx = vpos.X;
             float vy = vpos.Y;
 
+            //指定位置を中心にしたいのでdisplayの半分を補正
             vx -= this.DispRect.Width * 0.5f;
             vy -= this.DispRect.Height * 0.5f;
 
-            this.Ivt.ViewRect.X = -vx;
-            this.Ivt.ViewRect.Y = -vy;
+            this.SetViewPos( -vx, -vy);
+                        
+        }
 
+
+        /// <summary>
+        /// ViewRect位置の設定
+        /// </summary>
+        /// <param name="dx"></param>
+        /// <param name="dy"></param>
+        public void SetViewPos(float vx, float vy, float? w = null, float? h =  null)
+        {
+            this.Ivt.ViewRect.X = vx;
+            this.Ivt.ViewRect.Y = vy;
+            if (w != null)
+            {
+                this.Ivt.ViewRect.Width = w ?? 0;
+            }
+            if (h != null)
+            {
+                this.Ivt.ViewRect.Height = h ?? 0;
+            }
+            if (this.PosMode == EClarityViewerPositionMode.LeftTop)
+            {
+                if (this.Ivt.ViewRect.X > 0)
+                {
+                    this.Ivt.ViewRect.X = 0;
+                }
+                if (this.Ivt.ViewRect.Y > 0)
+                {
+                    this.Ivt.ViewRect.Y = 0;
+                }
+
+                if (this.ZoomRate <= this.FitZoomRate)
+                {
+                    this.Ivt.ViewRect.X = 0;
+                    this.Ivt.ViewRect.Y = 0;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 拡縮テーブルの作成
+        /// </summary>
+        private void CreateZoomTable()
+        {
+            List<double> zrlist = new List<double>();
+            zrlist.AddRange(this.ZoomTableTemplate);
+
+            //Fit拡縮率の計算
+            double fitrate = this.CalcuFitRate();
+            {
+                //Fit挿入位置の検索
+                int inpos = 0;
+                for (int i = 0; i < zrlist.Count; i++)
+                {
+                    if (zrlist[i] < fitrate)
+                    {
+                        inpos = i + 1;
+                        continue;
+                    }
+                    break;
+                }
+                //Fitの挿入
+                zrlist.Insert(inpos, fitrate);
+            }
+
+            //Fit最小の場合、Fit以下を削除する
+            if (this.ZoomMode == EClarityViewerZoomMode.LimitFit)
+            {
+                var a = zrlist.Where(x => x < fitrate).ToList();
+                a.ForEach(x => zrlist.Remove(x));
+            }
+            //Fitのみの場合は拡縮自体を許可しない
+            if (this.ZoomMode == EClarityViewerZoomMode.FitOnly)
+            {
+                zrlist = new List<double>();
+                zrlist.Add(fitrate);
+            }
+
+            this.FitZoomRate = fitrate;
+
+            //Tableの作成
+            this.ZoomTable = zrlist.ToArray();
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -607,8 +753,16 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_SizeChanged(object sender, EventArgs e)
         {
+            if (this.Ivt == null)
+            {
+                return;
+            }
+
             this.DispRect = new RectangleF(0, 0, this.Width, this.Height);
             this.clarityViewerMinimapView.Relocate(this.DispRect);
+
+            //拡縮テーブルの再作成
+            this.CreateZoomTable();
         }
 
         /// <summary>
@@ -618,6 +772,11 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_Paint(object sender, PaintEventArgs e)
         {
+            if (this.Ivt == null)
+            {
+                return;
+            }
+
             Rectangle rcClient = this.DisplayRectangle;
             BufferedGraphicsContext bufContext = BufferedGraphicsManager.Current;
             using (BufferedGraphics buf = bufContext.Allocate(e.Graphics, rcClient))
@@ -652,6 +811,10 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_MouseDown(object sender, MouseEventArgs e)
         {
+            if (this.Ivt == null)
+            {
+                return;
+            }
             this.MInfo.DownMouse(e);
             this.ClarityViewerMouseDown?.Invoke(this.MInfo, this.Ivt);
             this.DisplayerList.ForEach(x => x.MouseDown(this.MInfo));
@@ -665,12 +828,18 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_MouseMove(object sender, MouseEventArgs e)
         {
+            if (this.Ivt == null)
+            {
+                return;
+            }
+            
             this.MInfo.MoveMouse(e);
             this.ClarityViewerMouseMoveEvent?.Invoke(this.MInfo, this.Ivt);
             this.DisplayerList.ForEach(x => x.MouseMove(this.MInfo));
             if (e.Button == this.MoveImageMouseButton)
-            {   
-                this.Ivt.ViewRect.Offset(this.MInfo.PrevMoveLength.X, this.MInfo.PrevMoveLength.Y);                
+            {
+                //this.Ivt.ViewRect.Offset(this.MInfo.PrevMoveLength.X, this.MInfo.PrevMoveLength.Y);                
+                this.SetViewPos(this.ViewRect.X + this.MInfo.PrevMoveLength.X, this.ViewRect.Y + this.MInfo.PrevMoveLength.Y);
             }
             this.Refresh();
         }
@@ -682,6 +851,11 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_MouseUp(object sender, MouseEventArgs e)
         {
+            if (this.Ivt == null)
+            {
+                return;
+            }
+
             //まず位置を更新
             this.MInfo.UpdatePositon(e);
             this.ClarityViewerMouseUpEvent?.Invoke(this.MInfo, this.Ivt);
@@ -700,6 +874,11 @@ namespace Clarity.GUI
         /// <exception cref="NotImplementedException"></exception>
         private void ClarityViewer_MouseWheel(object? sender, MouseEventArgs e)
         {
+            if (this.Ivt == null)
+            {
+                return;
+            }
+
             this.MInfo.WheelMouse(e);
 
             bool f = false;
@@ -718,6 +897,11 @@ namespace Clarity.GUI
         /// <param name="e"></param>
         private void ClarityViewer_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (this.Ivt == null)
+            {
+                return;
+            }
+
             if (e.Button == this.MoveImageMouseButton && this.DoubleClickFitCentering == true)
             {
                 this.FitImage();

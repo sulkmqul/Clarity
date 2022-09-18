@@ -204,7 +204,7 @@ namespace ClarityOrbit.EditView
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <exception cref="NotImplementedException"></exception>
-        private void PanelDx_MouseWheel(object sender, MouseEventArgs e)
+        private void PanelDx_MouseWheel(object? sender, MouseEventArgs e)
         {
             this.Minfo.WheelMouse(e);
 

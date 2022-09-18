@@ -86,7 +86,6 @@ namespace Clarity.GUI
         }
     }
 
-
     /// <summary>
     /// 待ちアニメーションを表示する非同期エフェクト(仮)
     /// </summary>
@@ -148,6 +147,25 @@ namespace Clarity.GUI
             base.Dispose();
         }
     }
+
+    /// <summary>
+    /// 画面レイアウトの変更ステートメント
+    /// </summary>
+    public class LayoutChangingState : IDisposable
+    {
+        public LayoutChangingState(Control c)
+        {
+            this.Con = c;
+            c.SuspendLayout();
+        }
+        Control Con;
+
+        public void Dispose()
+        {
+            this.Con.ResumeLayout();
+        }
+    }
+
 
 
     /// <summary>

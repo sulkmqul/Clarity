@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Clarity.File
+namespace Clarity.Util
 {
     /// <summary>
     /// CSVファイル処理基底クラス
@@ -32,7 +32,7 @@ namespace Clarity.File
         /// <returns></returns>
         private bool CheckComment(string sline)
         {
-            int pos = sline.Trim().IndexOf(this.CommentString);
+            int pos = sline.Trim().IndexOf(CommentString);
             //先頭の場合、コメントと解釈する
             if (pos == 0)
             {
@@ -87,11 +87,11 @@ namespace Clarity.File
                     sline = sline.Trim();
 
                     //コメントチェック
-                    bool ckcom = this.CheckComment(sline);
+                    bool ckcom = CheckComment(sline);
                     if (ckcom == true && commentskip == true)
                     {
                         continue;
-                    }                                        
+                    }
 
                     //削除文字の削除
                     foreach (char c in dels)
@@ -132,7 +132,7 @@ namespace Clarity.File
                 //ファイルを読み込み、
                 using (FileStream fp = new FileStream(filepath, FileMode.Open, FileAccess.Read))
                 {
-                    anslist = this.ReadCsvStream(fp, dels, commentskip);
+                    anslist = ReadCsvStream(fp, dels, commentskip);
                 }
             }
             catch (Exception e)

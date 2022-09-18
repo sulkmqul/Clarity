@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Clarity.File;
 using System.Numerics;
 using Vortice.Mathematics;
+using Clarity.Util;
 
 namespace Clarity.Engine.Vertex
 {
-    
+
 
     /// <summary>
     /// ポリゴン情報

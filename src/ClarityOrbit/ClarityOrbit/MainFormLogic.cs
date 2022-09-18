@@ -63,7 +63,7 @@ namespace ClarityOrbit
 
 
             //各Controlの初期化
-            this.Form.orbitEditViewControl1.Init();
+            this.Form.orbitEditViewControl1.Init();            
                         
         }
 
@@ -97,9 +97,7 @@ namespace ClarityOrbit
             //レイヤの作成
             proj.Layer.AddNewLayer();
             proj.Layer.SelectedLayerIndex = 0;  //初期レイヤー選択
-
-
-
+            this.WindowManager.LayerView.Init();
 
         }
     }

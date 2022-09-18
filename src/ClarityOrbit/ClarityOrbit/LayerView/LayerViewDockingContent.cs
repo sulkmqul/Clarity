@@ -20,19 +20,21 @@ namespace ClarityOrbit.LayerView
         public LayerViewDockingContent()
         {
             InitializeComponent();
-            this.Logic = new LayerViewDockingContentLogic(this);
+            this.Grid = new LayerGrid(this.dataGridViewLayerGird, this.imageList1);
         }
 
-        LayerViewDockingContentLogic Logic = null;
 
+        /// <summary>
+        /// Gird管理
+        /// </summary>
+        private LayerGrid Grid;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化
         /// </summary>
         public void Init()
         {
-            //初期化
-            this.Logic.Init();
+            this.RefleshDisplay();
         }
 
         /// <summary>
@@ -42,6 +44,18 @@ namespace ClarityOrbit.LayerView
         {
         }
 
+
+        /// <summary>
+        /// データ再描画
+        /// </summary>
+        public void RefleshDisplay()
+        {
+            if (OrbitGlobal.Project == null)
+            {
+                return;
+            }
+            this.Grid.RefleshGrid(OrbitGlobal.Project.Layer.LayerList);
+        }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

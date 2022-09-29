@@ -31,15 +31,14 @@ namespace Clarity.Collider
             {
                 throw new Exception("ColliderPolygon is Set 3 vertexes");
             }
-
-            this.VertexList = new List<Vector3>(8);
+                        
             this.VertexList.AddRange(vlist);
         }
 
         /// <summary>
         /// 頂点一式
         /// </summary>
-        public List<Vector3> VertexList = new List<Vector3>();
+        public List<Vector3> VertexList = new List<Vector3>(3);
 
         /// <summary>
         /// 辺A

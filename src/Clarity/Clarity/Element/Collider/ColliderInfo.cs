@@ -93,18 +93,26 @@ namespace Clarity.Collider
         {
             //フラグの初期化
             this.TempInfo.TargetColType = this.TargetColType;
-            
+
             //前回のデータをクリア
             this.TempInfo.TempColliderList.Clear();
+            //if (this.TempInfo.TempColliderList.Count != this.SrcColliderList.Count)
+            //{
+            //    this.TempInfo.TempColliderList = new List<BaseCollider>(this.SrcColliderList.Count);
+            //    this.SrcColliderList.ForEach(x => this.TempInfo.TempColliderList.Add(null));
+            //}
 
             //判定領域の変形してADDする
+            int i = 0;
             this.SrcColliderList.ForEach(x =>
             {
-                BaseCollider c = (BaseCollider)x.Clone();
+                BaseCollider c = (BaseCollider)x.Clone();                
                 c.TransformCollider(this.Parent.TransSet);
                 c.Proc(0, new FrameInfo(0, 0)); //FrameInfoは意味を持たないので仮
                 c.HitTempFlag = false;
                 this.TempInfo.TempColliderList.Add(c);
+                //this.TempInfo.TempColliderList[i] = c;
+                i++;
 
             });
 

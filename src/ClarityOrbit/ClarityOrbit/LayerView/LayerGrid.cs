@@ -150,8 +150,7 @@ namespace ClarityOrbit.LayerView
                     data.No = x.LayerNo;
                     data.VisibleImage = (x.Visible == true) ? this.IconList.Images[0] : null;
                     data.LockImage = (x.Enable == true) ? this.IconList.Images[1] : null;
-                    data.Name = x.Name;
-                    data.Name = "くみｎ";
+                    data.Name = x.Name;                    
 
                     this.DataList.Add(data);
                 });

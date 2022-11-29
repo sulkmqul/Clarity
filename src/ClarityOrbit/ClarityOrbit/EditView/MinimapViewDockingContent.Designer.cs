@@ -64,6 +64,7 @@
             this.Text = "ミニマップ";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MinimapDockingContent_FormClosed);
             this.Load += new System.EventHandler(this.MinimapDockingContent_Load);
+            this.Resize += new System.EventHandler(this.MinimapViewDockingContent_Resize);
             this.ResumeLayout(false);
 
         }

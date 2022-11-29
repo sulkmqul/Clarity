@@ -1,5 +1,6 @@
 ﻿using Clarity.Collider;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,7 +48,9 @@ namespace Clarity
         /// <summary>
         /// 追加申請データ
         /// </summary>
-        private Queue<ReqData> AddReqQue = new Queue<ReqData>();
+        //private Queue<ReqData> AddReqQue = new Queue<ReqData>();
+        private ConcurrentQueue<ReqData> AddReqQue = new ConcurrentQueue<ReqData>();
+
         /// <summary>
         /// 削除申請一式
         /// </summary>
@@ -198,7 +201,13 @@ namespace Clarity
                     return;
                 }
 
-                ReqData req = this.AddReqQue.Dequeue();
+                //ReqData req = this.AddReqQue.Dequeue();
+                ReqData req;
+                bool f = this.AddReqQue.TryDequeue(out req);
+                if (f == false)
+                {
+                    return;
+                }
 
                 //追加処理
                 //req.Item.SystemLink.ParentElement = req.Parent;

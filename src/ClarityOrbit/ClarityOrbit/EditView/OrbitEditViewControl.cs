@@ -149,7 +149,9 @@ namespace ClarityOrbit.EditView
             //編集処理
             if (this.Minfo.DownButton == MouseButtons.Left)
             {
-                TileEditCore.Edit(TempInfo.SelectTileRect);
+                OrbitGlobal.Subject.TipEditSubject.OnNext(new TileEditInfo() { Mode = OrbitGlobal.ControlInfo.ControlMode, SelectedRect = OrbitEditViewControl.TempInfo.SelectTileRect });
+
+                return;
             }
 
         }
@@ -166,11 +168,7 @@ namespace ClarityOrbit.EditView
             //編集処理
             if (this.Minfo.DownButton == MouseButtons.Left)
             {
-                bool f = TileEditCore.Edit(TempInfo.SelectTileRect);
-                if (f == true)
-                {
-                    return;
-                }
+                return;
             }
 
             //カメラ移動
@@ -183,6 +181,7 @@ namespace ClarityOrbit.EditView
                 Vector3 vec = new Vector3(pos.X, pos.Y, 0.0f);
                 this.FData.Camera.SlideCamera(vec);
 
+                OrbitGlobal.Subject.TipEditSubject.OnNext(new TileEditInfo() { Mode =  EOrbitMouseControlMode.CameraMove, SelectedRect = OrbitEditViewControl.TempInfo.SelectTileRect });
                 return;
             }
             
@@ -218,6 +217,7 @@ namespace ClarityOrbit.EditView
                 //this.FData.Camera.CameraPos += new Vector3(0.0f, 0.0f, 50.0f);
                 this.Logic.ChangeZoomCameraPos(true);
             }
+            OrbitGlobal.Subject.TipEditSubject.OnNext(new TileEditInfo() { Mode = EOrbitMouseControlMode.CameraMove, SelectedRect = OrbitEditViewControl.TempInfo.SelectTileRect });
         }
     }
 }

@@ -36,6 +36,7 @@
             // 
             this.clarityViewerMinimapView.DisplayAreaLineColor = System.Drawing.Color.Red;
             this.clarityViewerMinimapView.DisplayAreaLineWidth = 1F;
+            this.clarityViewerMinimapView.DisplayerRendering = true;
             this.clarityViewerMinimapView.DispRect = ((System.Drawing.RectangleF)(resources.GetObject("clarityViewerMinimapView.DispRect")));
             this.clarityViewerMinimapView.Location = new System.Drawing.Point(0, 0);
             this.clarityViewerMinimapView.Margin = new System.Windows.Forms.Padding(0);
@@ -43,6 +44,7 @@
             this.clarityViewerMinimapView.MinimapSizeRate = 0.3F;
             this.clarityViewerMinimapView.Name = "clarityViewerMinimapView";
             this.clarityViewerMinimapView.Size = new System.Drawing.Size(0, 0);
+            this.clarityViewerMinimapView.SrcBackColor = System.Drawing.Color.White;
             this.clarityViewerMinimapView.SrcRect = ((System.Drawing.RectangleF)(resources.GetObject("clarityViewerMinimapView.SrcRect")));
             this.clarityViewerMinimapView.TabIndex = 0;
             this.clarityViewerMinimapView.Visible = false;
@@ -62,6 +64,7 @@
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ClarityViewer_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ClarityViewer_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ClarityViewer_MouseUp);
+            this.Resize += new System.EventHandler(this.ClarityViewer_Resize);
             this.ResumeLayout(false);
 
         }

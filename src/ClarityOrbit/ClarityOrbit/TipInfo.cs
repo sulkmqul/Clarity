@@ -54,7 +54,9 @@ namespace ClarityOrbit
         
     }
 
-
+    /// <summary>
+    /// タイル基底
+    /// </summary>
     internal abstract class BaseTileObject : ClarityObject
     {
         public BaseTileObject() : base(0)
@@ -75,7 +77,7 @@ namespace ClarityOrbit
             {
                 return;
             }
-            
+
 
             base.RenderElemenet();
         }
@@ -141,15 +143,16 @@ namespace ClarityOrbit
     /// </summary>
     internal class TipInfo : BaseTileObject
     {
-        public TipInfo(LayerInfo palay, Point pos) : base()
+        public TipInfo(LayerInfo palay, Point pos, Size tsize) : base()
         {
             this.ParentLayer = palay;
             this.Pos = pos;
             this.ShaderID = ClarityEngine.BuildInShaderIndex.NoTexture;
             this.SetVertexCode(EVertexCode.Tile);
-            //処理の追加
-            this.Beh = new TipInfoControlBehavior();
-            this.AddProcBehavior(this.Beh);
+
+            //サイズと位置の設定
+            this.TransSet.Pos3D = OrbitGlobal.TileIndexToWorld(this.Pos.X, this.Pos.Y);
+            this.TransSet.Scale2D = new System.Numerics.Vector2(tsize.Width, tsize.Height);
 
             //描画処理
             this.RenderBehavior = new TileMapRenderBehavior();
@@ -167,7 +170,7 @@ namespace ClarityOrbit
         public TileBitInfo? SrcInfo = null;
 
         
-        private TipInfoControlBehavior Beh = new TipInfoControlBehavior();
+        
 
         /// <summary>
         /// データ設定可否

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Clarity.Util;
 using Clarity.GUI;
+using System.Reactive.Linq;
 
 namespace ClarityOrbit.EditView
 {
@@ -22,11 +23,8 @@ namespace ClarityOrbit.EditView
             InitializeComponent();
         }
 
-        /// <summary>
-        /// 一定時間ごとにminimap更新を行う
-        /// </summary>
-        private ClarityCycling? MinimapUpdateCycle;
-
+        IDisposable RefleshUnSubscrible;
+        IDisposable OperationUnSubscrible;
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -38,34 +36,29 @@ namespace ClarityOrbit.EditView
             //表示者登録
             this.clarityViewerMinimap.AddDisplayer(new MinimapDisplayer());
 
-            //言って時間ごとに、変更を反映するminimapの再構築を行う
-            this.MinimapUpdateCycle = new ClarityCycling();
-
-            //表示されている時だけ有効化
-            this.MinimapUpdateCycle.EnabledProc = () => {
-                return this.Visible; 
-            };
-            //更新処理の実行
-            this.MinimapUpdateCycle.StartCycling(() =>
+            //編集登録
+            this.RefleshUnSubscrible = OrbitGlobal.Subject.TipEditSubject.Subscribe((x) =>
             {
-                //サイズの取得
-                Size tcount = OrbitGlobal.Project?.BaseInfo.TileCount ?? new Size(-1, -1);
-                if (tcount.Width < 0 || tcount.Height < 0)
+                this.clarityViewerMinimap.Refresh();
+            });
+
+            //制御がはいった
+            this.OperationUnSubscrible = OrbitGlobal.Subject.OperationSubject.Subscribe(x =>
+            {
+                if (OrbitGlobal.Project == null)
                 {
                     return;
                 }
 
-                //再作成チェック
+                //再作成するべき？
+                Size tcount = OrbitGlobal.Project.BaseInfo.TileCount;
                 bool ckret = this.CheckReCreate(tcount);
-                if (ckret == true)
+                if (ckret == true || x.Operation == EOrbitOperation.NewProject || x.Operation == EOrbitOperation.OpenProject)
                 {
                     this.clarityViewerMinimap.Init(new SizeF(tcount.Width, tcount.Height));
                 }
 
-                //再描画指示
-                this.Refresh();
-
-            }, 500);
+            });
 
         }
 
@@ -92,14 +85,6 @@ namespace ClarityOrbit.EditView
 
         }
 
-      
-
-
-
-
-
-
-
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 読み込まれた時
@@ -116,13 +101,10 @@ namespace ClarityOrbit.EditView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void MinimapDockingContent_FormClosed(object sender, FormClosedEventArgs e)
+        private void MinimapDockingContent_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (this.MinimapUpdateCycle == null)
-            {
-                return;
-            }
-            await this.MinimapUpdateCycle.StopCycling();
+            this.RefleshUnSubscrible.Dispose();
+            this.OperationUnSubscrible.Dispose();
         }
 
         /// <summary>
@@ -160,12 +142,27 @@ namespace ClarityOrbit.EditView
                 return;
             }
 
+            if (minfo.DownButton != MouseButtons.Left)
+            {
+                return;
+            }
+
             //位置をindexに変換
             PointF ipos = ivt.DispPointToSrcPoint(minfo.NowPos);
             int ix = Convert.ToInt32(ipos.X);
             int iy = Convert.ToInt32(ipos.Y);
 
             OrbitGlobal.Mana.MForm.orbitEditViewControl1.SetCameraAtTileIndex(ix, iy);
+        }
+
+        private void MinimapViewDockingContent_Shown(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void MinimapViewDockingContent_Resize(object sender, EventArgs e)
+        {
+            
         }
     }
 }

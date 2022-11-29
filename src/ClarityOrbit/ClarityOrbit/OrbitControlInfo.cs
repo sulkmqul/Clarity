@@ -7,8 +7,11 @@ using System.Drawing;
 
 namespace ClarityOrbit
 {
+    /// <summary>
+    /// 描画制御
+    /// </summary>
     public enum EOrbitMouseControlMode
-    {
+    {        
         /// <summary>
         /// 移動モード 注視点とカメラを同期して動かす
         /// </summary>
@@ -124,6 +127,9 @@ namespace ClarityOrbit
         }
 
     }
+
+
+
 
     
 }

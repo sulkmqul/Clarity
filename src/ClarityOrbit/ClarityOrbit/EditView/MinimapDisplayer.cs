@@ -75,14 +75,8 @@ namespace ClarityOrbit.EditView
                                 continue;
                             }
 
-
-                            float l = this.SrcXToDispX(x - 1);
-                            float t = this.SrcYToDispY(y - 1);
-                            float r = this.SrcXToDispX(x);
-                            float b = this.SrcYToDispY(y);
-
-                            //位置に矩形を描画
-                            gra.FillRectangle(bru, l, t, r - l, b - t);
+                            //対象タイルの描画
+                            this.RenderSelectTile(gra, bru, x, y);
                         }
                     }
                 }
@@ -90,6 +84,23 @@ namespace ClarityOrbit.EditView
             });
         }
 
+        /// <summary>
+        /// 対象タイルの描画
+        /// </summary>
+        /// <param name="gra">描画対象</param>
+        /// <param name="bru">描画ブラシ</param>
+        /// <param name="x">タイル位置X</param>
+        /// <param name="y">タイル位置Y</param>
+        private void RenderSelectTile(Graphics gra, Brush bru, int x, int y)
+        {
+            float l = this.SrcXToDispX(x - 1);
+            float t = this.SrcYToDispY(y - 1);
+            float r = this.SrcXToDispX(x);
+            float b = this.SrcYToDispY(y);
+
+            //位置に矩形を描画
+            gra.FillRectangle(bru, l, t, r - l, b - t);
+        }
 
         /// <summary>
         /// 暫定描画範囲を表示

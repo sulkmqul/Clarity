@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Clarity.Engine;
@@ -78,6 +79,7 @@ namespace ClarityOrbit
 
             //作成処理
             this.CreateNewProject(binfo);
+            OrbitGlobal.Subject.OperationSubject.OnNext(new OrbitOperationInfo(EOrbitOperation.NewProject));
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -92,12 +94,15 @@ namespace ClarityOrbit
             proj.Init(binfo);
             OrbitGlobal.Project = proj;
 
-            this.Form.orbitEditViewControl1.InitInfoView();            
+            this.Form.orbitEditViewControl1.InitInfoView();
+
+            this.WindowManager.LayerView.Init();
 
             //レイヤの作成
-            proj.Layer.AddNewLayer();
+            LayerInfo ainfo = proj.Layer.AddNewLayer();
             proj.Layer.SelectedLayerIndex = 0;  //初期レイヤー選択
-            this.WindowManager.LayerView.Init();
+            OrbitGlobal.Subject.OperationSubject.OnNext(new OrbitOperationInfo(EOrbitOperation.LayerAdd, ainfo));
+
 
         }
     }

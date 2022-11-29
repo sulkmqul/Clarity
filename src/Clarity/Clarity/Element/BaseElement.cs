@@ -227,6 +227,21 @@ namespace Clarity
         /// 当たり判定処理所作
         /// </summary>
         public ColliderBehavior ColliderBehavior { get; set; } = new ColliderBehavior();
+
+        /// <summary>
+        /// Clarityシステム管理可否
+        /// </summary>
+        public bool IsManaged
+        {
+            get
+            {
+                if (this.SystemLink.ParentElement == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
         #endregion
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
@@ -266,6 +281,18 @@ namespace Clarity
             this.SystemLink.ChildList.OrderBy(func);
         }
 
+        /// <summary>
+        /// 子供に対して一括処理を掛ける
+        /// </summary>
+        /// <param name="ac"></param>
+        //[Obsolete("何かを考慮して用意をしておくが、使わない方がスマートです")]
+        public void ProcChildAll(Action<BaseElement> ac)
+        {
+            foreach (var c in this.SystemLink.ChildList)
+            {
+                ac(c);
+            }
+        }
 
         /// <summary>
         /// 所作の全削除
@@ -342,6 +369,8 @@ namespace Clarity
             //描画所作の実行            
             this.RenderBehavior?.Execute(this);            
         }
+
+        
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化処理

@@ -435,6 +435,27 @@ namespace Clarity.GUI
         #endregion
 
 
+        /// <summary>
+        /// 描画サイズの変更処理
+        /// </summary>
+        public void ResizeDisplay()
+        {
+            //新しい描画サイズの計算
+            this.DispRect = new RectangleF(0, 0, this.Width, this.Height);
+
+            //描画サイズが変わったらfitする
+            this.FitImage();
+
+            ////Fitサイズが現在の拡縮率より小さい=拡大されたならfitする
+            //double rate = this.CalcuFitRate();
+            //if (this.ZoomRate < rate)
+            //{
+            //    this.FitImage();
+            //}
+
+            //this.Refresh();
+        }
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//        
         /// <summary>
         /// 統一初期化処理
@@ -670,6 +691,8 @@ namespace Clarity.GUI
             this.ZoomTable = zrlist.ToArray();
         }
 
+
+        
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         #region 描画処理
         /// <summary>
@@ -918,6 +941,20 @@ namespace Clarity.GUI
         {            
             this.MoveSrcPos(srcpos);
             this.Refresh();
+        }
+
+        /// <summary>
+        /// サイズが変更された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClarityViewer_Resize(object sender, EventArgs e)
+        {
+            if (this.InitializedViewFlag == false)
+            {
+                return;
+            }
+            this.ResizeDisplay();
         }
     }
 }

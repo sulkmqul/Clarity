@@ -48,23 +48,18 @@ namespace ClarityOrbit
         public List<List<TipInfo>> TipMap = new List<List<TipInfo>>();
 
         /// <summary>
-        /// レイヤー構造描画上の親
+        /// このレイヤーのZ位置
         /// </summary>
-        public LayerStructureElement? StructureElement = null;
+        public float OffsetZ { get; set; } = 0.0f;
 
 
         /// <summary>
         /// 初期タイルマップの作成
         /// </summary>
         /// <param name="tcount">タイル数</param>
-        /// <param name="tsize">タイルサイズ</param>
-        /// <returns></returns>
+        /// <param name="tsize">タイルサイズ</param>        
         public void CraeteInitialTipMap(Size tcount, Size tsize)
         {
-            //親構造の定義
-            this.StructureElement = new LayerStructureElement(this.LayerNo);            
-            ClarityAid.AddElement(EStructureCode.Layer, this.StructureElement);
-
             List<List<TipInfo>> anslist = new List<List<TipInfo>>(tcount.Height);
 
             //タイル数分のobjectを作成
@@ -73,36 +68,32 @@ namespace ClarityOrbit
                 List<TipInfo> xlist = new List<TipInfo>(tcount.Width);
                 for (int x = 0; x < tcount.Width; x++)
                 {
-                    TipInfo tinfo = new TipInfo(this, new System.Drawing.Point(x, y));
-                    xlist.Add(tinfo);
-                    ClarityEngine.AddManage(this.StructureElement, tinfo);                    
+                    TipInfo tinfo = new TipInfo(this, new System.Drawing.Point(x, y), tsize);
+                    xlist.Add(tinfo);                    
                 }
                 anslist.Add(xlist);
             }
 
-            this.TipMap = anslist;
-            //return anslist;
-        }
-
-    }
-
-    /// <summary>
-    /// レイヤー構造定義element
-    /// </summary>
-    internal class LayerStructureElement : BaseElement
-    {
-        public LayerStructureElement(int layno)
-        {
-            this.RenderBehavior = null;
-            this.LayerNo = layno;
+            this.TipMap = anslist;            
         }
 
         /// <summary>
-        /// 自身の管理番号()
+        /// レイヤー情報の削除
         /// </summary>
-        public int LayerNo { get; private set; }
-
+        public void RemoveLayer()
+        {
+            foreach (var dlist in this.TipMap)
+            {
+                foreach (var data in dlist)
+                {
+                    ClarityEngine.RemoveManage(data);
+                }
+            }
+        }
     }
+
+    
+
 
 
 
@@ -146,14 +137,16 @@ namespace ClarityOrbit
         /// <summary>
         /// Layerの追加
         /// </summary>
-        public void AddNewLayer()
+        /// <returns>追加したレイヤー情報</returns>
+        public LayerInfo AddNewLayer()
         {
             LayerInfo info = new LayerInfo(this.LayerList.Count);
 
             //チップを作成
-            info.CraeteInitialTipMap(this.Project.BaseInfo.TileCount, this.Project.BaseInfo.ImageSize);
-
+            info.CraeteInitialTipMap(this.Project.BaseInfo.TileCount, this.Project.BaseInfo.TileSize);
             this.LayerList.Add(info);
+
+            return info;
         }
 
         /// <summary>

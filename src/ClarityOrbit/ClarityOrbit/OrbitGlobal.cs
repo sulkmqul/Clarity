@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -28,7 +29,15 @@ namespace ClarityOrbit
         /// </summary>
         public const int OrbitWorldID = 0;
 
+        /// <summary>
+        /// 画像選択フィルター
+        /// </summary>
         public static readonly string ImageFileFilter = "ビットマップ(*.bmp)|*.bmp|Jpegファイル(*.jpg)|*.jpg|Pngファイル(*.png)|*.png|全てのファイル(*.*)|*.*";
+
+        /// <summary>
+        /// 最大構造内包の縦横サイズ
+        /// </summary>
+        public const int MAX_STRUCT_ELEMENT_COUNT = 20;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
         /// <summary>
@@ -40,6 +49,11 @@ namespace ClarityOrbit
         /// 操作情報
         /// </summary>
         private OrbitControlInfo _ControlInfo = new OrbitControlInfo();
+
+        /// <summary>
+        /// 全体制御管理
+        /// </summary>
+        private OrbitSubject _Subject = new OrbitSubject();
 
         /// <summary>
         /// 本体画面
@@ -73,7 +87,16 @@ namespace ClarityOrbit
             }
         }
 
-        
+        /// <summary>
+        /// Stream制御取得
+        /// </summary>
+        public static OrbitSubject Subject
+        {
+            get
+            {
+                return OrbitGlobal.Mana._Subject;
+            }
+        }
 
         /// <summary>
         /// 初期化

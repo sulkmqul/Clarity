@@ -13,14 +13,6 @@ using System.Drawing;
 
 namespace ClarityOrbit.EditView
 {
-    
-    internal class OrbitColType
-    {
-        public const int MouseColType = 1 << 0;
-        public const int GridColType = 1 << 2;
-    }
-
-
     /// <summary>
     /// マウス管理エレメント
     /// </summary>
@@ -57,39 +49,51 @@ namespace ClarityOrbit.EditView
             this.SetShaderCode(EShaderCode.System_NoTexture);            
             this.RenderBehavior = new GirdFrameRenderBehavior();
 
-            //当たり判定の追加
-            this.ColInfo = new Clarity.Collider.ColliderInfo(this);
-            this.ColInfo.ColType = OrbitColType.MouseColType;
-            this.ColInfo.TargetColType = OrbitColType.GridColType;
-            
-            Clarity.Collider.ColliderLine line = new Clarity.Collider.ColliderLine(new Vector3(0.0f), new Vector3(0.0f));                        
-            this.ColInfo.SrcColliderList.Add(line);
-
-            //当たり判定動作設定
-            this.ColliderBehavior = new MouseColBehavior();
+            //描画を初期化
+            this.SelectAreaRenderFlag = false;
 
             //所作は当たり判定を更新する物体が必要
             //これはscale rateなどの既存変換とは一線を画す処理であるため
             this.AddProcBehavior(new ActionBehavior((x) =>
             {
+                //描画を初期化
+                this.SelectAreaRenderFlag = false;
+
+                if (OrbitGlobal.Project == null)
+                {
+                    return;
+                }
+
                 //当たり判定位置を修正する
                 //マウス位置のworld座標を取得
                 Vector3 stpos = ClarityEngine.WindowToWorld(this.TransSet.WorldID, this.MInfo.NowPos.X, this.MInfo.NowPos.Y, 0.0f);
                 Vector3 edpos = ClarityEngine.WindowToWorld(this.TransSet.WorldID, this.MInfo.NowPos.X, this.MInfo.NowPos.Y, 1.0f);                
 
                 //当たり判定を作り直す
-                Vector3 dir = edpos - stpos;         
+                Vector3 dir = edpos - stpos;
+
+                //線の当たり位置取得
+                Vector3? cposs =  Clarity.Mathematics.ClarityMath.CalcuCrossPointInfinityPlaneLine(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 1.0f),
+                    stpos, dir);
+                if (cposs == null)
+                {
+                    return;
+                }
                 
-                this.ColInfo.SrcColliderList.Clear();
-                Clarity.Collider.ColliderLine line = new Clarity.Collider.ColliderLine(stpos, dir);
-                line.ColiderTransposeMode = Clarity.Collider.EColiderTransposeMode.None;    //自分でやるので変換不要
-                this.ColInfo.SrcColliderList.Add(line);
+                //マウス辺り位置から選択gridを算出
+                int ix = (int)Math.Round(-(cposs.Value.X + (OrbitGlobal.Project.BaseInfo.TileSize.Width * 0.5f)) / OrbitGlobal.Project.BaseInfo.TileSize.Width) + 1;
+                int iy = (int)Math.Round(-(cposs.Value.Y + (OrbitGlobal.Project.BaseInfo.TileSize.Height * 0.5f)) / OrbitGlobal.Project.BaseInfo.TileSize.Height) + 1;
+
+
+                int w = OrbitGlobal.ControlInfo.SrcSelectedInfo?.SelectedIndexRect.Width ?? 1;
+                int h = OrbitGlobal.ControlInfo.SrcSelectedInfo?.SelectedIndexRect.Height ?? 1;
+
+                //選択矩形情報を算出るう
+                OrbitEditViewControl.TempInfo.SelectTileRect = new Rectangle(ix, iy, w, h);
 
                 //描画を初期化
-                this.SelectAreaRenderFlag = false;
+                this.SelectAreaRenderFlag = true;
 
-                
-                
             }));
         }
 
@@ -127,23 +131,5 @@ namespace ClarityOrbit.EditView
             base.RenderElemenet();
         }
 
-    }
-
-    /// <summary>
-    /// エリア判定
-    /// </summary>
-    internal class MouseColBehavior : ColliderBehavior
-    {
-        public override void ProcColliderAction(ICollider obj, ICollider opptant)
-        {
-            MouseManageElement? mouse = obj as MouseManageElement;
-            OrbitGridFrame? grid = opptant as OrbitGridFrame;
-            if (mouse == null || grid == null)
-            {
-                return;
-            }
-            //当たったら描画しても良い
-            mouse.SelectAreaRenderFlag = true;
-        }
     }
 }

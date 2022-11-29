@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Numerics;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Clarity;
@@ -21,13 +23,23 @@ namespace ClarityOrbit.EditView
         /// <summary>
         /// グリッド構造の親()
         /// </summary>
-        public LayerStructureElement? GridParent = null;
-
+        public LayerStructureElement? GridParent = null;        //削除予定(構造に置き換え)
 
         /// <summary>
         /// グリッド一覧
         /// </summary>
-        public List<OrbitGridFrame> GridList = new List<OrbitGridFrame>();
+        public List<OrbitGridFrame> GridList = new List<OrbitGridFrame>();  //削除予定(構造に置き換え)
+
+
+        /// <summary>
+        /// 構造描画の頂点
+        /// </summary>
+        public SimpleElement? StructTreeTop = null;
+
+        /// <summary>
+        /// 描画構造一覧[y][x]
+        /// </summary>
+        public List<List<LayerStructureElement>> StructTreeList = new List<List<LayerStructureElement>>();
 
         /// <summary>
         /// カメラ
@@ -59,12 +71,15 @@ namespace ClarityOrbit.EditView
 
 
         /// <summary>
-        /// 有効View範囲Index
+        /// 有効View範囲Index(見えている範囲)
         /// </summary>
         public Rectangle ViewAreaIndexRect = new Rectangle(-1,-1,-1,-1);
 
     }
 
+    /// <summary>
+    /// EditViewロジック
+    /// </summary>
     internal class OrbitEditViewControlLogic : ClarityEnginePlugin
 
     {
@@ -85,8 +100,15 @@ namespace ClarityOrbit.EditView
         /// </summary>
         private OrbitEditViewData FData { get; init; }
 
-        //エンジン実行タスク
-        private Task EngineTask = null;
+        /// <summary>
+        /// 編集釣り
+        /// </summary>
+        private IDisposable EditSub;
+
+        /// <summary>
+        /// エンジン実行タスク
+        /// </summary>
+        private Task EngineTask;
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
@@ -126,6 +148,25 @@ namespace ClarityOrbit.EditView
             var wdata = this.CreateWorld(this.Con.panelDx.Width, this.Con.panelDx.Height);
             ClarityEngine.SetWorld(OrbitGlobal.OrbitWorldID, wdata);
 
+            //編集タスクを仕掛ける
+            this.EditSub = OrbitGlobal.Subject.TipEditSubject.Subscribe(x =>
+            {
+                TileEditCore.Edit(x);
+            });
+
+            //Layerが追加された時
+            OrbitGlobal.Subject.OperationSubject.Where(x => x.Operation == EOrbitOperation.LayerAdd).Subscribe(data =>
+            {
+                LayerInfo? linfo = data.Data as LayerInfo;
+                if (linfo == null)
+                {
+                    return;
+                }
+
+                //対象レイヤーの情報を構造へADDする
+                this.AddLayerStructure(linfo);
+
+            });
         }
 
 
@@ -138,23 +179,27 @@ namespace ClarityOrbit.EditView
         /// </remarks>
         public void InitInfoView()
         {
-            //既存のデータをクリアする
-            if (this.FData.GridParent != null)
+            if (OrbitGlobal.Project == null)
             {
-                ClarityEngine.RemoveManage(this.FData.GridParent);
+                return;
             }
 
-            //グリッドの再作成
-            this.FData.GridParent = new LayerStructureElement(0);
-            this.FData.GridList = this.CreateGridElement(OrbitGlobal.Project.BaseInfo.TileCount);
 
-            //EngineへADD
-            ClarityAid.AddElement(EStructureCode.Grid, this.FData.GridParent);
-            this.FData.GridList.ForEach(x =>
+            //既存のデータのクリアを行う
+            if (this.FData.StructTreeTop != null)
             {
-                ClarityEngine.AddManage(this.FData.GridParent, x);
-            });
-            
+                ClarityEngine.RemoveManage(this.FData.StructTreeTop);
+            }
+            //基礎構造の作成
+            this.FData.StructTreeTop = new SimpleElement();
+            this.FData.StructTreeList = this.CreateStructList(OrbitGlobal.Project.BaseInfo.TileCount, OrbitGlobal.Project.BaseInfo.TileSize);
+
+            //Gridの作成
+            this.CreateGrid(OrbitGlobal.Project.BaseInfo.TileCount);
+
+            ClarityAid.AddElement(EStructureCode.Grid, this.FData.StructTreeTop);
+            this.FData.StructTreeList.ForEach(x => x.ForEach(y => ClarityEngine.AddManage(this.FData.StructTreeTop, y)));
+
         }
 
 
@@ -218,29 +263,72 @@ namespace ClarityOrbit.EditView
      
 
         /// <summary>
-        /// グリッドの作成
+        /// グリッドの作成と追加
         /// </summary>
         /// <param name="tcount">タイル数</param>
-        private List<OrbitGridFrame> CreateGridElement(Size tcount)
+        private void CreateGrid(Size tcount)
         {
-            List<OrbitGridFrame> anslist = new List<OrbitGridFrame>();
-
-            //タイル数の取得           
-
-            for (int y = 0; y < tcount.Height; y++)
+            //構造の配下にgridを作成する
+            foreach (var slist in this.FData.StructTreeList)
             {
-                for (int x = 0; x < tcount.Width; x++)
+                foreach (LayerStructureElement st in slist)
                 {
-                    OrbitGridFrame og = new OrbitGridFrame(new Point(x, y));
-                    anslist.Add(og);
-
-
+                    st.ForEachTileIndex((x, y) =>
+                    {
+                        OrbitGridFrame og = new OrbitGridFrame(new Point(x, y));
+                        ClarityEngine.AddManage(st.GridParent, og);
+                    });
                 }
             }
 
-            return anslist;
         }
 
+        /// <summary>
+        /// 描画構造の作成
+        /// </summary>
+        /// <param name="tcount"></param>
+        /// <param name="tsize"></param>
+        /// <returns></returns>
+        private List<List<LayerStructureElement>> CreateStructList(Size tcount, Size tsize)
+        {
+            //作成サイズを算出する
+            int sizew = (int)Math.Ceiling((float)tcount.Width / (float)OrbitGlobal.MAX_STRUCT_ELEMENT_COUNT);
+            int sizeh = (int)Math.Ceiling((float)tcount.Height / (float)OrbitGlobal.MAX_STRUCT_ELEMENT_COUNT);
+
+            List<List<LayerStructureElement>> anslist = new List<List<LayerStructureElement>>();
+
+            for (int y = 0; y < sizeh; y++)
+            {
+                List<LayerStructureElement> alist = new List<LayerStructureElement>();
+
+                for (int x = 0; x < sizew; x++)
+                {
+                    //index範囲の計算
+                    int xi = x * OrbitGlobal.MAX_STRUCT_ELEMENT_COUNT;
+                    int yi = y * OrbitGlobal.MAX_STRUCT_ELEMENT_COUNT;
+
+                    Rectangle rc = new Rectangle(xi, yi, OrbitGlobal.MAX_STRUCT_ELEMENT_COUNT, OrbitGlobal.MAX_STRUCT_ELEMENT_COUNT);
+                    if (rc.Right > tcount.Width)
+                    {
+                        rc.Width = (tcount.Width - rc.Left);
+                    }
+                    if (rc.Bottom > tcount.Height)
+                    {
+                        rc.Height = (tcount.Height - rc.Top);
+                    }
+
+                    //親を作成
+                    LayerStructureElement a = new LayerStructureElement(rc, tsize);
+                    alist.Add(a);
+                }
+
+                anslist.Add(alist);
+                        
+            }
+
+            
+            return anslist;
+        }
 
         /// <summary>
         /// 適切なカメラ位置を算出
@@ -263,6 +351,28 @@ namespace ClarityOrbit.EditView
             }
 
             return ans;
+        }
+
+        /// <summary>
+        /// 対象レイヤーを構造へ追加する
+        /// </summary>
+        /// <param name="linfo">追加対象レイヤー情報</param>
+        private void AddLayerStructure(LayerInfo linfo)
+        {
+            //先頭がすでにClarityへ追加されているなら処理をしない
+            if (linfo.TipMap[0][0].IsManaged == true)
+            {
+                return;
+            }
+
+            //構造の配下に新規のレイヤー情報を追加する
+            foreach (var slist in this.FData.StructTreeList)
+            {
+                foreach (LayerStructureElement st in slist)
+                {
+                    st.AddLayer(linfo);
+                }
+            }
         }
     }
 }

@@ -14,8 +14,6 @@ using Clarity.Collider;
 
 namespace ClarityOrbit.EditView
 {
-    
-
     /// <summary>
     /// Gird描画Behavior
     /// </summary>
@@ -62,6 +60,9 @@ namespace ClarityOrbit.EditView
         public OrbitGridFrame(Point tpos) : base()
         {
             this.Pos = tpos;
+
+            var pro = new TipInfoControlBehavior();
+            pro.Execute(this);
         }
 
 
@@ -79,26 +80,8 @@ namespace ClarityOrbit.EditView
             //this.SetShaderCode(EShaderCode.FrameGrid);
             this.RenderBehavior = new GirdFrameRenderBehavior();
 
-            //当たり判定設定を行う
-            this.ColInfo = new Clarity.Collider.ColliderInfo(this);
-            {
-                
-
-                //頂点の取得               
-                List<Vector3> vlist = ClarityEngine.GetVertexList((int)EVertexCode.VGrid);
-                //矩形判定
-                Clarity.Collider.ColliderPlaneRect cpol = new Clarity.Collider.ColliderPlaneRect(vlist[0], vlist[1], vlist[3], vlist[2]);
-                cpol.ColiderTransposeMode = EColiderTransposeMode.Translation | EColiderTransposeMode.Scaling;
-                //当たり判定設定
-                this.ColInfo.ColType = OrbitColType.GridColType;
-                this.ColInfo.TargetColType = OrbitColType.MouseColType;                
-                this.ColInfo.SrcColliderList.Add(cpol);
-                this.ColliderBehavior = new GridFrameColliderBehavior();
-            }
-
-
             //タイル共通所作
-            this.AddProcBehavior(new TipInfoControlBehavior());
+            //this.AddProcBehavior(new TipInfoControlBehavior());
         }
 
 
@@ -106,39 +89,4 @@ namespace ClarityOrbit.EditView
     }
 
 
-    /// <summary>
-    /// Grid当たり判定(EditView編集処理)
-    /// </summary>
-    internal class GridFrameColliderBehavior : ColliderBehavior
-    {
-        public override void ProcColliderAction(ICollider obj, ICollider opptant)
-        {
-            //データ変換
-            MouseManageElement? me = opptant as MouseManageElement;
-            OrbitGridFrame? grid = obj as OrbitGridFrame;
-            if (grid == null || me== null)
-            {
-                return;
-            }
-            //マウス選択位置の更新
-            this.UpdateMouseSelectRect(grid);
-
-            //ClarityEngine.SetSystemText($"あたった({grid?.Pos.X},{grid?.Pos.Y})", 2);
-        }
-
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        /// <summary>
-        /// EditViewでの選択エリアの確定
-        /// </summary>
-        /// <param name="grid"></param>
-        private void UpdateMouseSelectRect(OrbitGridFrame grid)
-        {
-            int w = OrbitGlobal.ControlInfo.SrcSelectedInfo?.SelectedIndexRect.Width ?? 1;
-            int h = OrbitGlobal.ControlInfo.SrcSelectedInfo?.SelectedIndexRect.Height ?? 1;
-            OrbitEditViewControl.TempInfo.SelectTileRect = new Rectangle(grid.Pos.X, grid.Pos.Y, w, h);
-        }
-
-
-        
-    }
 }

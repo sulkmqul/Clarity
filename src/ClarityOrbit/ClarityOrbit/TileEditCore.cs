@@ -32,14 +32,16 @@ namespace ClarityOrbit
         /// </summary>
         /// <param name="selarea">EditView選択エリア</param>
         /// <returns>true=処理した</returns>
-        public static bool Edit(Rectangle selarea)
+        public static bool Edit(TileEditInfo tei)
         {
             if (OrbitGlobal.Project == null)
             {
                 return false;
             }
 
-            EOrbitMouseControlMode mode = OrbitGlobal.ControlInfo.ControlMode;
+            Rectangle selarea = tei.SelectedRect;
+            EOrbitMouseControlMode mode = tei.Mode;
+
             bool kef = core.EditProcDic.ContainsKey(mode);
             if (kef == false)
             {

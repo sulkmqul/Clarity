@@ -65,6 +65,7 @@
             this.toolStripButtonLayerAdd.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonLayerAdd.Text = "toolStripButton1";
             this.toolStripButtonLayerAdd.ToolTipText = "レイヤー追加";
+            this.toolStripButtonLayerAdd.Click += new System.EventHandler(this.toolStripButtonLayerAdd_Click);
             // 
             // toolStripButtonLayerRemove
             // 
@@ -75,6 +76,7 @@
             this.toolStripButtonLayerRemove.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonLayerRemove.Text = "toolStripButton1";
             this.toolStripButtonLayerRemove.ToolTipText = "レイヤー削除";
+            this.toolStripButtonLayerRemove.Click += new System.EventHandler(this.toolStripButtonLayerRemove_Click);
             // 
             // toolStripSeparator1
             // 
@@ -90,6 +92,7 @@
             this.toolStripButtonLayerUp.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonLayerUp.Text = "toolStripButton1";
             this.toolStripButtonLayerUp.ToolTipText = "上へ";
+            this.toolStripButtonLayerUp.Click += new System.EventHandler(this.toolStripButtonLayerUp_Click);
             // 
             // toolStripButtonLayerDown
             // 
@@ -100,6 +103,7 @@
             this.toolStripButtonLayerDown.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonLayerDown.Text = "toolStripButton1";
             this.toolStripButtonLayerDown.ToolTipText = "下へ";
+            this.toolStripButtonLayerDown.Click += new System.EventHandler(this.toolStripButtonLayerDown_Click);
             // 
             // dataGridViewLayerGird
             // 

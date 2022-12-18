@@ -1,390 +1,375 @@
-﻿using System;
+﻿using Clarity.GUI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Clarity;
-using Clarity.GUI;
-using Clarity.Util;
 
 namespace ClarityEmotion.LayerControl
 {
-
-    
-    
-
-
     /// <summary>
-    /// レイヤー一枚のコントロール
+    /// レイヤー管理
     /// </summary>
     public partial class LayerControl : UserControl
     {
         public LayerControl()
         {
             InitializeComponent();
-
-            this.DoubleBuffered = true;
-            this.SetStyle(ControlStyles.UserPaint, true);
         }
 
-        
-
-        class LayerMouseInfo : MouseInfo
+        class LayerControlData
         {
-            public EMouseMoveType DownType = EMouseMoveType.None;
+            /// <summary>
+            /// 管理コントロール一式
+            /// </summary>
+            public List<LayerEditControl> ControlList = new List<LayerEditControl>();
+
+            /// <summary>
+            /// 拡縮率テーブル
+            /// </summary>
+            public double[] FramePixelRateTable = { 0 };
+            /// <summary>
+            /// 拡縮率テーブル選択場所
+            /// </summary>
+            public int FramePixelRateTableIndex = 4;
+
+            /// <summary>
+            /// 1フレーム何Pixelで表示するかのレート
+            /// </summary>
+            public double FramePixelRate
+            {
+                get
+                {
+                    return this.FramePixelRateTable[this.FramePixelRateTableIndex];
+                }
+            }
+
+
+            public int ControlLeftPos = 10;
+
         }
 
-        /// <summary>
-        /// 端のマウス感応幅
-        /// </summary>
-        internal const int MouseMoveDetectWidth = 10;
-
-        
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
         /// <summary>
-        /// このコントロールの管理レイヤー番号
+        /// これのデータ
         /// </summary>
-        private int LayerNo = -1;
+        private LayerControlData FData = new LayerControlData();
 
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
-        /// これ管理データ
+        /// アニメの取得
         /// </summary>
-        private AnimeElement AData
+        private EmotionProjectDataAnime Anime
         {
             get
             {
-                if (this.LayerNo < 0)
-                {
-                    return null;
-                }
-
-                return EmotionProject.Mana.Anime.LayerList[this.LayerNo];
+                return CeGlobal.Project.Anime;
             }
         }
-        /// <summary>
-        /// マウス操作情報
-        /// </summary>
-        LayerMouseInfo Minfo = new LayerMouseInfo();
+        
 
-        /// <summary>
-        /// マウス処理アクション
-        /// </summary>
-        Action AnimeMouseMoveAction = null;
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
-        /// <summary>
-        /// 描画情報
-        /// </summary>
-        LayerControlDisplayData DispData = new LayerControlDisplayData();
-        /// <summary>
-        /// 描画者
-        /// </summary>
-        LayerControlRenderer Renderer = new LayerControlRenderer();
-
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 初期化
         /// </summary>
-        /// <param name="layerno"></param>
-        public void Init(int layerno, double pixel_rate, int max_frame)
+        public void Init()
         {
-            this.LayerNo = layerno;
-            this.SetScale(pixel_rate, max_frame);
+            //拡大率テーブルの作成
+            this.CreateScaleTable();            
 
-            this.DispData.Con = this;
+            //コントロール初期化
+            this.InitializeLayerControl();
+
+            this.Enabled = false;
+
+            //プロジェクトが作成された時
+            CeGlobal.Event.ValueChange.Where(x => (x.EventID & EEventID.CreateProject) == EEventID.CreateProject).Subscribe(x =>
+            {
+                this.Enabled = true;
+
+                //再描画
+                this.RefreshLayer();
+
+                //レイヤーを一つ追加する
+                this.AddNewLayer();
+            });
+
+            //フレーム位置が変更された時
+            CeGlobal.Event.FrameChange.Subscribe(x =>
+            {
+                this.toolStripLabelFramePos.Text = x.Frame.ToString();                
+            });
+
+        }
+
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+        /// <summary>
+        /// 拡縮率のテーブルを計算
+        /// </summary>
+        private void CreateScaleTable()
+        {
+            List<double> ratelist = new List<double>();
+            double[] invalvec = { 0.1, 0.25, 0.5, 0.75 };
+            ratelist.AddRange(invalvec);
+
+            double now = 1.0;
+            while (true)
+            {
+                ratelist.Add(now);
+                now += 0.5;
+
+                if (now > 30)
+                {
+                    break;
+                }
+            }
+
+            this.FData.FramePixelRateTable = ratelist.ToArray();
+
+
         }
 
         /// <summary>
-        /// 定期更新関数
+        /// LayerEditControlの追加
         /// </summary>
-        public void CylcleUpdate()
+        /// <param name="con"></param>
+        private void AddLayerEditControl(LayerEditControl con)
         {
-            this.Width = this.DispData.DisplayPixelRange;
+            this.FData.ControlList.Add(con);
+            this.panelLayer.Controls.Add(con);
+        }
 
-            //アニメ位置再計算
-            if (this.AData != null)
+        /// <summary>
+        /// LayerEditControlの削除
+        /// </summary>
+        /// <param name="con"></param>
+        private void RemoveLayerEditControl(LayerEditControl con)
+        {
+            this.FData.ControlList.Remove(con);
+            this.panelLayer.Controls.Remove(con);
+        }
+
+        /// <summary>
+        /// Layer表示部分の初期化
+        /// </summary>
+        private void InitializeLayerControl()
+        {
+            using (LayoutChangingState st = new LayoutChangingState(this))
             {
-                this.DispData.LayerData = this.AData;                
-                this.DispData.CalcuAnimeDisplayPos(this.AData.StartFrame, this.AData.EndFrame);
+                //目盛りの追加
+                LayerEditControl con = new LayerEditControl();
+                con.Init(null, 1, 0);
+                this.AddLayerEditControl(con);
+
+                //再配置
+                this.ReCalcuLayerControlPosition();
             }
+        }
+
+        /// <summary>
+        /// 既存のコントロールの位置を再計算
+        /// </summary>
+        /// <remarks>
+        /// LayoutChangingStateで囲うことが望ましい
+        /// </remarks>
+        private void ReCalcuLayerControlPosition()
+        {
+            int tpos = 0;
+            int tmergin = 1;
+            this.FData.ControlList.ForEach(x =>
+            {
+                x.Left = this.FData.ControlLeftPos;
+                x.Top = tpos;
+                tpos += x.Height + tmergin;
+            });
+
+        }
+
+
+        /// <summary>
+        /// レイヤーの追加
+        /// </summary>        
+        private void AddNewLayer()
+        {
+            AnimeElement ae = CeGlobal.Project.AddNewLayer();
+            LayerEditControl con = new LayerEditControl();
+            con.Init(ae, this.FData.FramePixelRate, CeGlobal.Project.BasicInfo.MaxFrame);
+            this.AddLayerEditControl(con);
+
+            CeGlobal.Event.SendValueChangeEvent(EEventID.AddLayer, ae);
+
+            //再配置
+            using (LayoutChangingState st = new LayoutChangingState(this))
+            {
+                this.ReCalcuLayerControlPosition();
+            }
+
+            //追加したレイヤーを選択
+            CeGlobal.Project.Info.SelectLayerNo = ae.LayerNo;
+            CeGlobal.Event.SendValueChangeEvent(EEventID.LayerSelectedChanged, ae);
+
+        }
+
+
+        /// <summary>
+        /// レイヤーの削除
+        /// </summary>
+        private void RemoveLayer()
+        {
+            //現在の選択レイヤーのコントロールを取得
+            var selc = this.FData.ControlList.Where(x => x.LayerNo == CeGlobal.Project.Info.SelectLayerNo && x.LayerNo >= 0).FirstOrDefault();
+            if (selc == null)
+            {
+                return;
+            }            
+            this.RemoveLayerEditControl(selc);
+            CeGlobal.Project.RemoveSelectLayer(selc.LayerNo);
+            //削除
+            CeGlobal.Event.SendValueChangeEvent(EEventID.RemoveLayer, null);
+
+            //レイヤーの再選択
+            CeGlobal.Project.Info.SelectLayerNo = -1;
+            CeGlobal.Event.SendValueChangeEvent(EEventID.LayerSelectedChanged, null);
+
+            //再計算
+            using (LayoutChangingState st = new LayoutChangingState(this))
+            {
+                this.ReCalcuLayerControlPosition();
+            }
+
+        }
+
+        /// <summary>
+        /// スケールの変更
+        /// </summary>
+        /// <param name="f">true=拡大 false=縮小</param>
+        public void ChangeScale(bool f)
+        {
+            //拡縮率選択異動
+            this.FData.FramePixelRateTableIndex = (f == true) ? this.FData.FramePixelRateTableIndex + 1 : this.FData.FramePixelRateTableIndex - 1;
+            if (this.FData.FramePixelRateTableIndex <= 0)
+            {
+                this.FData.FramePixelRateTableIndex = 0;
+            }
+            if (this.FData.FramePixelRateTable.Length <= this.FData.FramePixelRateTableIndex)
+            {
+                this.FData.FramePixelRateTableIndex = this.FData.FramePixelRateTable.Length - 1;
+            }
+            
 
             //再描画
-            this.Refresh();
+            this.RefreshLayer();
         }
 
         /// <summary>
-        /// 表示範囲の指定
+        /// レイヤーの再描画
         /// </summary>
-        /// <param name="pixel_rate"></param>
-        /// <param name="max_frame"></param>
-        public void SetScale(double pixel_rate, int max_frame)
+        public void RefreshLayer()
         {
-            this.DispData.PixelRate = pixel_rate;
-            this.DispData.MaxFrame = max_frame;
+            this.FData.ControlList.ForEach(x =>
+            {
+                x.SetScale(this.FData.FramePixelRate, CeGlobal.Project.BasicInfo.MaxFrame);
+            });
         }
-
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
-        /// 表示範囲の指定
-        /// </summary>
-        /// <param name="pixel_rate"></param>        
-        public void SetScale(double pixel_rate)
-        {
-            this.DispData.PixelRate = pixel_rate;
-        }
-               
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        
-        
-        /// <summary>
-        /// マウス位置から処理の割り出し
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <returns></returns>
-        private EMouseMoveType CalcuMoveType(Point pos)
-        {
-            if (this.DispData.LayerData == null)
-            {
-                return EMouseMoveType.None;
-            }
-
-            int clickrange = LayerControl.MouseMoveDetectWidth;
-
-            int px = pos.X;
-            int stpos = this.DispData.AnimeStartPos;
-            int edpos = this.DispData.AnimeEndPos;
-
-            //有効でない
-            if (this.DispData.LayerData.EaData.Enabled == false)
-            {
-                return EMouseMoveType.None;
-            }
-            //範囲外
-            if (px < stpos)
-            {
-                return EMouseMoveType.None;
-            }
-            if (px >= edpos)
-            {
-                return EMouseMoveType.None;
-            }
-
-            //開始地点
-            if (px < (stpos + clickrange))
-            {
-                return EMouseMoveType.Start;
-            }
-
-            if ((edpos - clickrange) < px)
-            {
-                return EMouseMoveType.End;
-            }
-
-            return EMouseMoveType.Move;
-        }
-
-        /// <summary>
-        /// マウスモードに応じたカーソルの変更
-        /// </summary>
-        /// <param name="mt"></param>
-        private void ChangeAnimePanelCursor(EMouseMoveType mt)
-        {
-            if (mt == EMouseMoveType.Start || mt == EMouseMoveType.End)
-            {
-                this.pictureBoxFrame.Cursor = Cursors.SizeWE;
-                return;
-            }
-            if (mt == EMouseMoveType.Move)
-            {
-                this.pictureBoxFrame.Cursor = Cursors.SizeAll;
-                return;
-            }
-
-            this.pictureBoxFrame.Cursor = Cursors.Default;
-        }
-        /// <summary>
-        /// マウス動作の確定
-        /// </summary>
-        /// <param name="mt"></param>
-        private void SelectAnimeMouseMoveAction(EMouseMoveType mt)
-        {
-            switch (mt)
-            {
-                case EMouseMoveType.Start:
-                    this.AnimeMouseMoveAction = this.AnimeMouseMoveActionStart;
-                    break;
-                case EMouseMoveType.End:
-                    this.AnimeMouseMoveAction = this.AnimeMouseMoveActionEnd;
-                    break;
-                case EMouseMoveType.Move:
-                    this.AnimeMouseMoveAction = this.AnimeMouseMoveActionMove;
-                    break;
-                default:
-                    this.AnimeMouseMoveAction = null;
-                    break;
-
-            }
-        }
-
-        private void AnimeMouseMoveActionStart()
-        {
-            //押した位置と今の位置のフレーム差を計算
-            int dpos = this.Minfo.DownPos.X;
-            int dframe = this.DispData.PixelXToFrame(dpos);
-
-            int npos = this.Minfo.NowPos.X;
-            int nframe = this.DispData.PixelXToFrame(npos);
-
-            int saframe = nframe - dframe;
-
-            //処理
-            int stf = this.Minfo.GetMemory<int>(0);            
-            this.AData.StartFrame = stf + saframe;            
-
-        }
-        private void AnimeMouseMoveActionEnd()
-        {
-            //押した位置と今の位置のフレーム差を計算
-            int dpos = this.Minfo.DownPos.X;
-            int dframe = this.DispData.PixelXToFrame(dpos);
-
-            int npos = this.Minfo.NowPos.X;
-            int nframe = this.DispData.PixelXToFrame(npos);
-
-            int saframe = nframe - dframe;
-
-            //処理            
-            int edf = this.Minfo.GetMemory<int>(1);            
-            this.AData.EndFrame = edf + saframe;
-        }
-
-        /// <summary>
-        /// アニメ動かす時
-        /// </summary>
-        private void AnimeMouseMoveActionMove()
-        {
-            //押した位置と今の位置のフレーム差を計算
-            int dpos = this.Minfo.DownPos.X;
-            int dframe = this.DispData.PixelXToFrame(dpos);
-
-            int npos = this.Minfo.NowPos.X;
-            int nframe = this.DispData.PixelXToFrame(npos);
-
-            int saframe = nframe - dframe;
-
-            //処理
-            int stf = this.Minfo.GetMemory<int>(0);
-            int edf = this.Minfo.GetMemory<int>(1);
-            this.AData.StartFrame = stf + saframe;
-            this.AData.EndFrame = edf + saframe;
-
-
-        }
-
-        /// <summary>
-        /// レイヤー選択通知
-        /// </summary>
-        private void SelectedLayer()
-        {
-            if (this.LayerNo < 0)
-            {
-                return;
-            }
-
-            EmotionProject.Mana.Info.SelectLayerNo = this.LayerNo;
-            this.Focus();
-        }
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//        
-        /// <summary>
-        /// マウスが押された時
+        /// 読み込まれた時
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void panelFrame_MouseDown(object sender, MouseEventArgs e)
+        private void LayerControl_Load(object sender, EventArgs e)
         {
-            this.SelectedLayer();
 
-            this.Minfo.DownMouse(e);
+        }
 
-            //位置を判定
-            this.DispData.MouseType = this.CalcuMoveType(e.Location);
-            if (this.DispData.MouseType == EMouseMoveType.None)
+        /// <summary>
+        /// レイヤー追加ボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButtonLayerAdd_Click(object sender, EventArgs e)
+        {
+            this.AddNewLayer();
+        }
+
+        /// <summary>
+        /// レイヤー削除ボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButtonLayerRemove_Click(object sender, EventArgs e)
+        {
+            this.RemoveLayer();
+        }
+
+        /// <summary>
+        /// 拡大ボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButtonZoomPlus_Click(object sender, EventArgs e)
+        {
+            this.ChangeScale(true);
+        }
+        /// <summary>
+        /// 縮小ボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButtonZoomMinus_Click(object sender, EventArgs e)
+        {
+            this.ChangeScale(false);
+        }
+
+        private void toolStripButtonPlayStart_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButtonPlayStop_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// フレーム位置のリセット
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButtonResetFrame_Click(object sender, EventArgs e)
+        {
+            CeGlobal.Project.FramePosition = 0;
+            CeGlobal.Event.SendFrameSelectEvent(0);
+
+        }
+
+        /// <summary>
+        /// フレーム位置クリック
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripLabelFramePos_Click(object sender, EventArgs e)
+        {
+            FramePosSettingForm f = new FramePosSettingForm();
+            f.FramePos = CeGlobal.Project.FramePosition;
+            DialogResult dret = f.ShowDialog(this);
+            if (dret != DialogResult.OK)
             {
                 return;
             }
-                        
-            this.Minfo.SetMemory(this.AData.StartFrame, 0);
-            this.Minfo.SetMemory(this.AData.EndFrame, 1);
-
-            //アクションの設定
-            this.SelectAnimeMouseMoveAction(this.DispData.MouseType);
-        }
-
-        /// <summary>
-        /// マウスが動いたとき
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void panelFrame_MouseMove(object sender, MouseEventArgs e)
-        {
-            //位置を判定
-            this.DispData.MouseType = this.CalcuMoveType(e.Location);                        
-
-            this.Minfo.MoveMouse(e);
-            if (this.Minfo.DownFlag == false)
-            {
-                //カーソル変更
-                this.ChangeAnimePanelCursor(this.DispData.MouseType);
-                return;
-            }
-            //処理の実行
-            this.AnimeMouseMoveAction?.Invoke();
-
-        }
-        /// <summary>
-        /// マウスが離された時
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void panelFrame_MouseUp(object sender, MouseEventArgs e)
-        {
-            this.Minfo.UpMouse(e);
-
-            //位置を判定
-            this.DispData.MouseType = this.CalcuMoveType(e.Location);
-
-            int m = this.Minfo.DownLength.X + this.Minfo.DownLength.Y;
-            if (m <= 0 && this.DispData.MouseType == EMouseMoveType.None)
-            {
-                int fpos = this.DispData.PixelXToFrame(this.Minfo.NowPos.X);
-                EmotionProject.Mana.FramePosition = fpos;
-            }
-        }
-
-        /// <summary>
-        /// 背景が描画されるとき
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void panelFrame_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics gra = e.Graphics;
-
-            this.Renderer.ClearColor = (EmotionProject.Mana.Info.SelectLayerNo == this.LayerNo) ? Color.White : Color.LightGray;
-            this.Renderer.ClearColor = (this.AData == null) ? Color.LightBlue : this.Renderer.ClearColor;
-            this.Renderer.RenderControl(gra, this.pictureBoxFrame, this.DispData, EmotionProject.Mana.FramePosition);
-        }
-
-
-        private void panelFrame_MouseLeave(object sender, EventArgs e)
-        {
-            this.DispData.MouseType = EMouseMoveType.None;               
-
+            CeGlobal.Project.FramePosition = f.FramePos;
+            CeGlobal.Event.SendFrameSelectEvent(f.FramePos);
         }
     }
 }

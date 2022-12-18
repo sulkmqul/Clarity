@@ -1,5 +1,5 @@
 ﻿
-namespace ClarityEmotion.LayerSetting
+namespace ClarityEmotion.LayerControl
 {
     partial class LayerSettingControl
     {
@@ -29,7 +29,6 @@ namespace ClarityEmotion.LayerSetting
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelLayerName = new System.Windows.Forms.Label();
             this.checkBoxEnabled = new System.Windows.Forms.CheckBox();
             this.comboBoxAnimeDefinition = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -39,7 +38,7 @@ namespace ClarityEmotion.LayerSetting
             this.numericUpDownStartFrame = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDownEndFrame = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownSpan = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.valueScrollControlSpeedRate = new Clarity.GUI.ValueScrollControl();
             this.label6 = new System.Windows.Forms.Label();
@@ -47,29 +46,23 @@ namespace ClarityEmotion.LayerSetting
             this.label7 = new System.Windows.Forms.Label();
             this.numericUpDownPosX = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
-            this.valueScrollControlScaleRate = new Clarity.GUI.ValueScrollControl();
             this.labelAnimeDefinitionFrame = new System.Windows.Forms.Label();
-            this.labelFrameSpan = new System.Windows.Forms.Label();
             this.numericUpDownFrameOffset = new System.Windows.Forms.NumericUpDown();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.comboBoxFlipState = new System.Windows.Forms.ComboBox();
+            this.numericUpDownDispSizeY = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownDispSizeX = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.textBoxLayerName = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartFrame)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEndFrame)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPosY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPosX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrameOffset)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDispSizeY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDispSizeX)).BeginInit();
             this.SuspendLayout();
-            // 
-            // labelLayerName
-            // 
-            this.labelLayerName.AutoSize = true;
-            this.labelLayerName.Location = new System.Drawing.Point(13, 9);
-            this.labelLayerName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelLayerName.Name = "labelLayerName";
-            this.labelLayerName.Size = new System.Drawing.Size(35, 15);
-            this.labelLayerName.TabIndex = 0;
-            this.labelLayerName.Text = "Layer";
             // 
             // checkBoxEnabled
             // 
@@ -81,6 +74,7 @@ namespace ClarityEmotion.LayerSetting
             this.checkBoxEnabled.TabIndex = 1;
             this.checkBoxEnabled.Text = "有効可否";
             this.checkBoxEnabled.UseVisualStyleBackColor = true;
+            this.checkBoxEnabled.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // comboBoxAnimeDefinition
             // 
@@ -115,6 +109,7 @@ namespace ClarityEmotion.LayerSetting
             this.valueScrollControlAlpha.Value = 100;
             this.valueScrollControlAlpha.ValueFixedPoint = 1D;
             this.valueScrollControlAlpha.ValueFormat = "{0:F2}";
+            this.valueScrollControlAlpha.ValueChanged += new System.EventHandler(this.valueScrollControl_ValueChanged);
             // 
             // label2
             // 
@@ -136,6 +131,7 @@ namespace ClarityEmotion.LayerSetting
             this.checkBoxLoopFlag.TabIndex = 6;
             this.checkBoxLoopFlag.Text = "ループ再生";
             this.checkBoxLoopFlag.UseVisualStyleBackColor = true;
+            this.checkBoxLoopFlag.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // numericUpDownStartFrame
             // 
@@ -154,7 +150,7 @@ namespace ClarityEmotion.LayerSetting
             this.numericUpDownStartFrame.Name = "numericUpDownStartFrame";
             this.numericUpDownStartFrame.Size = new System.Drawing.Size(93, 23);
             this.numericUpDownStartFrame.TabIndex = 7;
-            this.numericUpDownStartFrame.ValueChanged += new System.EventHandler(this.numericUpDownFrame_ValueChanged);
+            this.numericUpDownStartFrame.ValueChanged += new System.EventHandler(this.numericUpDownChanged);
             // 
             // label3
             // 
@@ -172,28 +168,28 @@ namespace ClarityEmotion.LayerSetting
             this.label4.Location = new System.Drawing.Point(111, 148);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(27, 15);
+            this.label4.Size = new System.Drawing.Size(33, 15);
             this.label4.TabIndex = 10;
-            this.label4.Text = "End";
+            this.label4.Text = "Span";
             // 
-            // numericUpDownEndFrame
+            // numericUpDownSpan
             // 
-            this.numericUpDownEndFrame.Location = new System.Drawing.Point(111, 165);
-            this.numericUpDownEndFrame.Margin = new System.Windows.Forms.Padding(2);
-            this.numericUpDownEndFrame.Maximum = new decimal(new int[] {
+            this.numericUpDownSpan.Location = new System.Drawing.Point(111, 165);
+            this.numericUpDownSpan.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDownSpan.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDownEndFrame.Minimum = new decimal(new int[] {
+            this.numericUpDownSpan.Minimum = new decimal(new int[] {
             10000,
             0,
             0,
             -2147483648});
-            this.numericUpDownEndFrame.Name = "numericUpDownEndFrame";
-            this.numericUpDownEndFrame.Size = new System.Drawing.Size(93, 23);
-            this.numericUpDownEndFrame.TabIndex = 9;
-            this.numericUpDownEndFrame.ValueChanged += new System.EventHandler(this.numericUpDownFrame_ValueChanged);
+            this.numericUpDownSpan.Name = "numericUpDownSpan";
+            this.numericUpDownSpan.Size = new System.Drawing.Size(93, 23);
+            this.numericUpDownSpan.TabIndex = 9;
+            this.numericUpDownSpan.ValueChanged += new System.EventHandler(this.numericUpDownChanged);
             // 
             // label5
             // 
@@ -218,6 +214,7 @@ namespace ClarityEmotion.LayerSetting
             this.valueScrollControlSpeedRate.Value = 10;
             this.valueScrollControlSpeedRate.ValueFixedPoint = 1D;
             this.valueScrollControlSpeedRate.ValueFormat = "{0:F1}";
+            this.valueScrollControlSpeedRate.ValueChanged += new System.EventHandler(this.valueScrollControl_ValueChanged);
             // 
             // label6
             // 
@@ -225,9 +222,9 @@ namespace ClarityEmotion.LayerSetting
             this.label6.Location = new System.Drawing.Point(111, 327);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(14, 15);
+            this.label6.Size = new System.Drawing.Size(33, 15);
             this.label6.TabIndex = 17;
-            this.label6.Text = "Y";
+            this.label6.Text = "PosY";
             // 
             // numericUpDownPosY
             // 
@@ -246,6 +243,7 @@ namespace ClarityEmotion.LayerSetting
             this.numericUpDownPosY.Name = "numericUpDownPosY";
             this.numericUpDownPosY.Size = new System.Drawing.Size(93, 23);
             this.numericUpDownPosY.TabIndex = 16;
+            this.numericUpDownPosY.ValueChanged += new System.EventHandler(this.numericUpDownChanged);
             // 
             // label7
             // 
@@ -253,9 +251,9 @@ namespace ClarityEmotion.LayerSetting
             this.label7.Location = new System.Drawing.Point(13, 327);
             this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(14, 15);
+            this.label7.Size = new System.Drawing.Size(33, 15);
             this.label7.TabIndex = 15;
-            this.label7.Text = "X";
+            this.label7.Text = "PosX";
             // 
             // numericUpDownPosX
             // 
@@ -274,6 +272,7 @@ namespace ClarityEmotion.LayerSetting
             this.numericUpDownPosX.Name = "numericUpDownPosX";
             this.numericUpDownPosX.Size = new System.Drawing.Size(93, 23);
             this.numericUpDownPosX.TabIndex = 14;
+            this.numericUpDownPosX.ValueChanged += new System.EventHandler(this.numericUpDownChanged);
             // 
             // label8
             // 
@@ -281,23 +280,9 @@ namespace ClarityEmotion.LayerSetting
             this.label8.Location = new System.Drawing.Point(13, 376);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(43, 15);
+            this.label8.Size = new System.Drawing.Size(34, 15);
             this.label8.TabIndex = 18;
-            this.label8.Text = "拡大率";
-            // 
-            // valueScrollControlScaleRate
-            // 
-            this.valueScrollControlScaleRate.FixedPoint = 10;
-            this.valueScrollControlScaleRate.Location = new System.Drawing.Point(13, 396);
-            this.valueScrollControlScaleRate.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
-            this.valueScrollControlScaleRate.MaxValue = 20;
-            this.valueScrollControlScaleRate.MinValue = 1;
-            this.valueScrollControlScaleRate.Name = "valueScrollControlScaleRate";
-            this.valueScrollControlScaleRate.Size = new System.Drawing.Size(220, 25);
-            this.valueScrollControlScaleRate.TabIndex = 19;
-            this.valueScrollControlScaleRate.Value = 10;
-            this.valueScrollControlScaleRate.ValueFixedPoint = 1D;
-            this.valueScrollControlScaleRate.ValueFormat = "x {0:F1}";
+            this.label8.Text = "SizeX";
             // 
             // labelAnimeDefinitionFrame
             // 
@@ -308,16 +293,6 @@ namespace ClarityEmotion.LayerSetting
             this.labelAnimeDefinitionFrame.Size = new System.Drawing.Size(17, 15);
             this.labelAnimeDefinitionFrame.TabIndex = 20;
             this.labelAnimeDefinitionFrame.Text = "--";
-            // 
-            // labelFrameSpan
-            // 
-            this.labelFrameSpan.AutoSize = true;
-            this.labelFrameSpan.Location = new System.Drawing.Point(209, 166);
-            this.labelFrameSpan.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelFrameSpan.Name = "labelFrameSpan";
-            this.labelFrameSpan.Size = new System.Drawing.Size(17, 15);
-            this.labelFrameSpan.TabIndex = 21;
-            this.labelFrameSpan.Text = "--";
             // 
             // numericUpDownFrameOffset
             // 
@@ -331,6 +306,7 @@ namespace ClarityEmotion.LayerSetting
             this.numericUpDownFrameOffset.Name = "numericUpDownFrameOffset";
             this.numericUpDownFrameOffset.Size = new System.Drawing.Size(93, 23);
             this.numericUpDownFrameOffset.TabIndex = 22;
+            this.numericUpDownFrameOffset.ValueChanged += new System.EventHandler(this.numericUpDownChanged);
             // 
             // label9
             // 
@@ -361,18 +337,77 @@ namespace ClarityEmotion.LayerSetting
             this.comboBoxFlipState.Name = "comboBoxFlipState";
             this.comboBoxFlipState.Size = new System.Drawing.Size(174, 23);
             this.comboBoxFlipState.TabIndex = 25;
+            this.comboBoxFlipState.SelectedIndexChanged += new System.EventHandler(this.comboBoxFlipState_SelectedIndexChanged);
+            // 
+            // numericUpDownDispSizeY
+            // 
+            this.numericUpDownDispSizeY.Location = new System.Drawing.Point(111, 393);
+            this.numericUpDownDispSizeY.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDownDispSizeY.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownDispSizeY.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownDispSizeY.Name = "numericUpDownDispSizeY";
+            this.numericUpDownDispSizeY.Size = new System.Drawing.Size(93, 23);
+            this.numericUpDownDispSizeY.TabIndex = 27;
+            this.numericUpDownDispSizeY.ValueChanged += new System.EventHandler(this.numericUpDownChanged);
+            // 
+            // numericUpDownDispSizeX
+            // 
+            this.numericUpDownDispSizeX.Location = new System.Drawing.Point(13, 393);
+            this.numericUpDownDispSizeX.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDownDispSizeX.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownDispSizeX.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownDispSizeX.Name = "numericUpDownDispSizeX";
+            this.numericUpDownDispSizeX.Size = new System.Drawing.Size(93, 23);
+            this.numericUpDownDispSizeX.TabIndex = 26;
+            this.numericUpDownDispSizeX.ValueChanged += new System.EventHandler(this.numericUpDownChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(111, 376);
+            this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(34, 15);
+            this.label11.TabIndex = 18;
+            this.label11.Text = "SizeY";
+            // 
+            // textBoxLayerName
+            // 
+            this.textBoxLayerName.Location = new System.Drawing.Point(13, 3);
+            this.textBoxLayerName.Name = "textBoxLayerName";
+            this.textBoxLayerName.Size = new System.Drawing.Size(197, 23);
+            this.textBoxLayerName.TabIndex = 28;
+            this.textBoxLayerName.TextChanged += new System.EventHandler(this.textBoxLayerName_TextChanged);
             // 
             // LayerSettingControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.textBoxLayerName);
+            this.Controls.Add(this.numericUpDownDispSizeY);
+            this.Controls.Add(this.numericUpDownDispSizeX);
             this.Controls.Add(this.comboBoxFlipState);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.numericUpDownFrameOffset);
-            this.Controls.Add(this.labelFrameSpan);
             this.Controls.Add(this.labelAnimeDefinitionFrame);
-            this.Controls.Add(this.valueScrollControlScaleRate);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.numericUpDownPosY);
@@ -381,7 +416,7 @@ namespace ClarityEmotion.LayerSetting
             this.Controls.Add(this.valueScrollControlSpeedRate);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.numericUpDownEndFrame);
+            this.Controls.Add(this.numericUpDownSpan);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.numericUpDownStartFrame);
             this.Controls.Add(this.checkBoxLoopFlag);
@@ -390,23 +425,21 @@ namespace ClarityEmotion.LayerSetting
             this.Controls.Add(this.label1);
             this.Controls.Add(this.checkBoxEnabled);
             this.Controls.Add(this.comboBoxAnimeDefinition);
-            this.Controls.Add(this.labelLayerName);
             this.Name = "LayerSettingControl";
             this.Size = new System.Drawing.Size(300, 600);
-            this.Load += new System.EventHandler(this.LayerSettingControl_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartFrame)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEndFrame)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpan)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPosY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPosX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrameOffset)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDispSizeY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDispSizeX)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label labelLayerName;
         private System.Windows.Forms.CheckBox checkBoxEnabled;
         private System.Windows.Forms.ComboBox comboBoxAnimeDefinition;
         private System.Windows.Forms.Label label1;
@@ -416,7 +449,7 @@ namespace ClarityEmotion.LayerSetting
         private System.Windows.Forms.NumericUpDown numericUpDownStartFrame;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown numericUpDownEndFrame;
+        private System.Windows.Forms.NumericUpDown numericUpDownSpan;
         private System.Windows.Forms.Label label5;
         private Clarity.GUI.ValueScrollControl valueScrollControlSpeedRate;
         private System.Windows.Forms.Label label6;
@@ -424,12 +457,14 @@ namespace ClarityEmotion.LayerSetting
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.NumericUpDown numericUpDownPosX;
         private System.Windows.Forms.Label label8;
-        private Clarity.GUI.ValueScrollControl valueScrollControlScaleRate;
         private System.Windows.Forms.Label labelAnimeDefinitionFrame;
-        private System.Windows.Forms.Label labelFrameSpan;
         private System.Windows.Forms.NumericUpDown numericUpDownFrameOffset;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox comboBoxFlipState;
+        private NumericUpDown numericUpDownDispSizeY;
+        private NumericUpDown numericUpDownDispSizeX;
+        private Label label11;
+        private TextBox textBoxLayerName;
     }
 }

@@ -8,47 +8,48 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClarityEmotion
+namespace ClarityEmotion.LayerControl
 {
     /// <summary>
-    /// 新規作成画面
+    /// フレーム位置設定画面
     /// </summary>
-    public partial class NewProjectForm : Form
+    public partial class FramePosSettingForm : Form
     {
-        public NewProjectForm()
+        public FramePosSettingForm()
         {
             InitializeComponent();
         }
 
-
         /// <summary>
-        /// 入力の取得
+        /// 結果
         /// </summary>
-        /// <returns></returns>
-        public EmotionProjectDataBasic GetInputData()
+        public int FramePos
         {
-            EmotionProjectDataBasic ans = new EmotionProjectDataBasic();
-            ans.ImageWidth = Convert.ToInt32(this.numericUpDownImageWidth.Value);
-            ans.ImageHeight = Convert.ToInt32(this.numericUpDownImageHeight.Value);
-            ans.MaxFrame = Convert.ToInt32(this.numericUpDownMaxFrame.Value);
-            return ans;
+            get
+            {
+                int n = Convert.ToInt32(this.numericUpDownFramePos.Value);
+                return n;
+            }
+            set
+            {
+                this.numericUpDownFramePos.Value = value;
+            }
         }
 
-
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 読み込まれた時
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void NewProjectForm_Load(object sender, EventArgs e)
+        private void FramePosSettingForm_Load(object sender, EventArgs e)
         {
+            this.numericUpDownFramePos.Minimum = 0;
+            this.numericUpDownFramePos.Maximum = CeGlobal.Project.BasicInfo.MaxFrame;
 
         }
 
         /// <summary>
-        /// OKボタンが押された時
+        /// okが押された時
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

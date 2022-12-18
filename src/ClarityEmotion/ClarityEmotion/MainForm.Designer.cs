@@ -1,5 +1,4 @@
-﻿
-namespace ClarityEmotion
+﻿namespace ClarityEmotion
 {
     partial class MainForm
     {
@@ -38,42 +37,36 @@ namespace ClarityEmotion
             this.出力ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.閉じるToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.編集ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.アニメ定義ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.アニメーション定義ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.設定ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ツールToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ログ表示ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelImageControl = new System.Windows.Forms.Panel();
-            this.layerSettingControl1 = new ClarityEmotion.LayerSetting.LayerSettingControl();
-            this.panelMain = new System.Windows.Forms.Panel();
-            this.panelMainView = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.animeEditViewControl1 = new ClarityEmotion.EditView.AnimeEditViewControl();
-            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.panelLayerDock = new System.Windows.Forms.Panel();
+            this.layerControl1 = new ClarityEmotion.LayerControl.LayerControl();
+            this.panelMainDock = new System.Windows.Forms.Panel();
+            this.panelMainViewDock = new System.Windows.Forms.Panel();
+            this.clarityViewer1 = new Clarity.GUI.ClarityViewer();
             this.splitter2 = new System.Windows.Forms.Splitter();
-            this.panelAnimeConrol = new System.Windows.Forms.Panel();
-            this.layerAnimeControl1 = new ClarityEmotion.LayerControl.LayerAnimeControl();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.layer初期化ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelControlDock = new System.Windows.Forms.Panel();
+            this.layerSettingControl1 = new ClarityEmotion.LayerControl.LayerSettingControl();
+            this.splitter1 = new System.Windows.Forms.Splitter();
             this.menuStrip1.SuspendLayout();
-            this.panelImageControl.SuspendLayout();
-            this.panelMain.SuspendLayout();
-            this.panelMainView.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.panelAnimeConrol.SuspendLayout();
+            this.panelLayerDock.SuspendLayout();
+            this.panelMainDock.SuspendLayout();
+            this.panelMainViewDock.SuspendLayout();
+            this.panelControlDock.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ファイルToolStripMenuItem,
-            this.編集ToolStripMenuItem,
+            this.アニメ定義ToolStripMenuItem,
             this.ツールToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1264, 29);
+            this.menuStrip1.Size = new System.Drawing.Size(784, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -88,76 +81,75 @@ namespace ClarityEmotion
             this.toolStripSeparator2,
             this.閉じるToolStripMenuItem});
             this.ファイルToolStripMenuItem.Name = "ファイルToolStripMenuItem";
-            this.ファイルToolStripMenuItem.Size = new System.Drawing.Size(67, 25);
-            this.ファイルToolStripMenuItem.Text = "ファイル";
+            this.ファイルToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.ファイルToolStripMenuItem.Text = "ファイル(&F)";
             // 
             // 新規作成ToolStripMenuItem
             // 
             this.新規作成ToolStripMenuItem.Name = "新規作成ToolStripMenuItem";
-            this.新規作成ToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.新規作成ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.新規作成ToolStripMenuItem.Text = "新規作成";
             this.新規作成ToolStripMenuItem.Click += new System.EventHandler(this.新規作成ToolStripMenuItem_Click);
             // 
             // 開くToolStripMenuItem
             // 
             this.開くToolStripMenuItem.Name = "開くToolStripMenuItem";
-            this.開くToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.開くToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.開くToolStripMenuItem.Text = "開く";
             this.開くToolStripMenuItem.Click += new System.EventHandler(this.開くToolStripMenuItem_Click);
             // 
             // 保存ToolStripMenuItem
             // 
             this.保存ToolStripMenuItem.Name = "保存ToolStripMenuItem";
-            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.保存ToolStripMenuItem.Text = "保存";
             this.保存ToolStripMenuItem.Click += new System.EventHandler(this.保存ToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(119, 6);
             // 
             // 出力ToolStripMenuItem
             // 
             this.出力ToolStripMenuItem.Name = "出力ToolStripMenuItem";
-            this.出力ToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
+            this.出力ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.出力ToolStripMenuItem.Text = "出力";
             this.出力ToolStripMenuItem.Click += new System.EventHandler(this.出力ToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(119, 6);
             // 
             // 閉じるToolStripMenuItem
             // 
             this.閉じるToolStripMenuItem.Name = "閉じるToolStripMenuItem";
-            this.閉じるToolStripMenuItem.Size = new System.Drawing.Size(144, 26);
-            this.閉じるToolStripMenuItem.Text = "閉じる";
+            this.閉じるToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.閉じるToolStripMenuItem.Text = "閉じる(&X)";
             this.閉じるToolStripMenuItem.Click += new System.EventHandler(this.閉じるToolStripMenuItem_Click);
-            // 
-            // 編集ToolStripMenuItem
-            // 
-            this.編集ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.アニメ定義ToolStripMenuItem,
-            this.設定ToolStripMenuItem,
-            this.layer初期化ToolStripMenuItem});
-            this.編集ToolStripMenuItem.Name = "編集ToolStripMenuItem";
-            this.編集ToolStripMenuItem.Size = new System.Drawing.Size(54, 25);
-            this.編集ToolStripMenuItem.Text = "編集";
             // 
             // アニメ定義ToolStripMenuItem
             // 
+            this.アニメ定義ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.アニメーション定義ToolStripMenuItem,
+            this.設定ToolStripMenuItem});
             this.アニメ定義ToolStripMenuItem.Name = "アニメ定義ToolStripMenuItem";
-            this.アニメ定義ToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
-            this.アニメ定義ToolStripMenuItem.Text = "アニメ定義";
-            this.アニメ定義ToolStripMenuItem.Click += new System.EventHandler(this.アニメ定義ToolStripMenuItem_Click);
+            this.アニメ定義ToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.アニメ定義ToolStripMenuItem.Text = "編集";
+            // 
+            // アニメーション定義ToolStripMenuItem
+            // 
+            this.アニメーション定義ToolStripMenuItem.Name = "アニメーション定義ToolStripMenuItem";
+            this.アニメーション定義ToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.アニメーション定義ToolStripMenuItem.Text = "アニメーション定義";
+            this.アニメーション定義ToolStripMenuItem.Click += new System.EventHandler(this.アニメーション定義ToolStripMenuItem_Click);
             // 
             // 設定ToolStripMenuItem
             // 
             this.設定ToolStripMenuItem.Name = "設定ToolStripMenuItem";
-            this.設定ToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
-            this.設定ToolStripMenuItem.Text = "アニメ設定";
+            this.設定ToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
             // 
             // ツールToolStripMenuItem
@@ -165,151 +157,129 @@ namespace ClarityEmotion
             this.ツールToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ログ表示ToolStripMenuItem});
             this.ツールToolStripMenuItem.Name = "ツールToolStripMenuItem";
-            this.ツールToolStripMenuItem.Size = new System.Drawing.Size(57, 25);
+            this.ツールToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.ツールToolStripMenuItem.Text = "ツール";
             // 
             // ログ表示ToolStripMenuItem
             // 
             this.ログ表示ToolStripMenuItem.Name = "ログ表示ToolStripMenuItem";
-            this.ログ表示ToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
+            this.ログ表示ToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.ログ表示ToolStripMenuItem.Text = "ログ表示";
+            this.ログ表示ToolStripMenuItem.Click += new System.EventHandler(this.ログ表示ToolStripMenuItem_Click);
             // 
-            // panelImageControl
+            // panelLayerDock
             // 
-            this.panelImageControl.Controls.Add(this.layerSettingControl1);
-            this.panelImageControl.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelImageControl.Location = new System.Drawing.Point(914, 0);
-            this.panelImageControl.Name = "panelImageControl";
-            this.panelImageControl.Size = new System.Drawing.Size(350, 629);
-            this.panelImageControl.TabIndex = 1;
+            this.panelLayerDock.Controls.Add(this.layerControl1);
+            this.panelLayerDock.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelLayerDock.Location = new System.Drawing.Point(0, 311);
+            this.panelLayerDock.Name = "panelLayerDock";
+            this.panelLayerDock.Size = new System.Drawing.Size(784, 250);
+            this.panelLayerDock.TabIndex = 1;
             // 
-            // layerSettingControl1
+            // layerControl1
             // 
-            this.layerSettingControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.layerSettingControl1.Font = new System.Drawing.Font("Yu Gothic UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.layerSettingControl1.Location = new System.Drawing.Point(0, 0);
-            this.layerSettingControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.layerSettingControl1.Name = "layerSettingControl1";
-            this.layerSettingControl1.Size = new System.Drawing.Size(350, 629);
-            this.layerSettingControl1.TabIndex = 0;
+            this.layerControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layerControl1.Location = new System.Drawing.Point(0, 0);
+            this.layerControl1.Name = "layerControl1";
+            this.layerControl1.Size = new System.Drawing.Size(784, 250);
+            this.layerControl1.TabIndex = 0;
             // 
-            // panelMain
+            // panelMainDock
             // 
-            this.panelMain.Controls.Add(this.panelMainView);
-            this.panelMain.Controls.Add(this.splitter2);
-            this.panelMain.Controls.Add(this.panelAnimeConrol);
-            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMain.Location = new System.Drawing.Point(0, 29);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(1264, 832);
-            this.panelMain.TabIndex = 3;
+            this.panelMainDock.Controls.Add(this.panelMainViewDock);
+            this.panelMainDock.Controls.Add(this.splitter2);
+            this.panelMainDock.Controls.Add(this.panelControlDock);
+            this.panelMainDock.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMainDock.Location = new System.Drawing.Point(0, 24);
+            this.panelMainDock.Name = "panelMainDock";
+            this.panelMainDock.Size = new System.Drawing.Size(784, 287);
+            this.panelMainDock.TabIndex = 2;
             // 
-            // panelMainView
+            // panelMainViewDock
             // 
-            this.panelMainView.AutoScroll = true;
-            this.panelMainView.Controls.Add(this.panel1);
-            this.panelMainView.Controls.Add(this.splitter1);
-            this.panelMainView.Controls.Add(this.panelImageControl);
-            this.panelMainView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMainView.Location = new System.Drawing.Point(0, 0);
-            this.panelMainView.Name = "panelMainView";
-            this.panelMainView.Size = new System.Drawing.Size(1264, 629);
-            this.panelMainView.TabIndex = 2;
+            this.panelMainViewDock.Controls.Add(this.clarityViewer1);
+            this.panelMainViewDock.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMainViewDock.Location = new System.Drawing.Point(0, 0);
+            this.panelMainViewDock.Name = "panelMainViewDock";
+            this.panelMainViewDock.Size = new System.Drawing.Size(531, 287);
+            this.panelMainViewDock.TabIndex = 3;
             // 
-            // panel1
+            // clarityViewer1
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.animeEditViewControl1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(911, 629);
-            this.panel1.TabIndex = 3;
-            // 
-            // animeEditViewControl1
-            // 
-            this.animeEditViewControl1.AutoScroll = true;
-            this.animeEditViewControl1.Location = new System.Drawing.Point(0, 0);
-            this.animeEditViewControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.animeEditViewControl1.Name = "animeEditViewControl1";
-            this.animeEditViewControl1.Size = new System.Drawing.Size(201, 200);
-            this.animeEditViewControl1.TabIndex = 0;
-            // 
-            // splitter1
-            // 
-            this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.splitter1.Location = new System.Drawing.Point(911, 0);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 629);
-            this.splitter1.TabIndex = 2;
-            this.splitter1.TabStop = false;
+            this.clarityViewer1.ClearColor = System.Drawing.SystemColors.Control;
+            this.clarityViewer1.DisplayAreaLineColor = System.Drawing.Color.Red;
+            this.clarityViewer1.DisplayAreaLineWidth = 1F;
+            this.clarityViewer1.DisplayerRendering = true;
+            this.clarityViewer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clarityViewer1.DoubleClickFitCentering = true;
+            this.clarityViewer1.ImageClippingEnabled = true;
+            this.clarityViewer1.ImageInterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+            this.clarityViewer1.Location = new System.Drawing.Point(0, 0);
+            this.clarityViewer1.MinimapBackColor = System.Drawing.Color.White;
+            this.clarityViewer1.MinimapDisplayMerginRate = 0.05F;
+            this.clarityViewer1.MinimapVisible = false;
+            this.clarityViewer1.Name = "clarityViewer1";
+            this.clarityViewer1.Size = new System.Drawing.Size(531, 287);
+            this.clarityViewer1.SrcBackColor = System.Drawing.Color.Black;
+            this.clarityViewer1.TabIndex = 0;
             // 
             // splitter2
             // 
             this.splitter2.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.splitter2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.splitter2.Location = new System.Drawing.Point(0, 629);
+            this.splitter2.Dock = System.Windows.Forms.DockStyle.Right;
+            this.splitter2.Location = new System.Drawing.Point(531, 0);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(1264, 3);
-            this.splitter2.TabIndex = 1;
+            this.splitter2.Size = new System.Drawing.Size(3, 287);
+            this.splitter2.TabIndex = 2;
             this.splitter2.TabStop = false;
             // 
-            // panelAnimeConrol
+            // panelControlDock
             // 
-            this.panelAnimeConrol.Controls.Add(this.layerAnimeControl1);
-            this.panelAnimeConrol.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelAnimeConrol.Location = new System.Drawing.Point(0, 632);
-            this.panelAnimeConrol.Name = "panelAnimeConrol";
-            this.panelAnimeConrol.Size = new System.Drawing.Size(1264, 200);
-            this.panelAnimeConrol.TabIndex = 0;
+            this.panelControlDock.Controls.Add(this.layerSettingControl1);
+            this.panelControlDock.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelControlDock.Location = new System.Drawing.Point(534, 0);
+            this.panelControlDock.Name = "panelControlDock";
+            this.panelControlDock.Size = new System.Drawing.Size(250, 287);
+            this.panelControlDock.TabIndex = 1;
             // 
-            // layerAnimeControl1
+            // layerSettingControl1
             // 
-            this.layerAnimeControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.layerAnimeControl1.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.layerAnimeControl1.Location = new System.Drawing.Point(0, 0);
-            this.layerAnimeControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.layerAnimeControl1.Name = "layerAnimeControl1";
-            this.layerAnimeControl1.Size = new System.Drawing.Size(1264, 200);
-            this.layerAnimeControl1.TabIndex = 0;
+            this.layerSettingControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layerSettingControl1.Location = new System.Drawing.Point(0, 0);
+            this.layerSettingControl1.Name = "layerSettingControl1";
+            this.layerSettingControl1.Size = new System.Drawing.Size(250, 287);
+            this.layerSettingControl1.TabIndex = 0;
             // 
-            // openFileDialog1
+            // splitter1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // layer初期化ToolStripMenuItem
-            // 
-            this.layer初期化ToolStripMenuItem.Name = "layer初期化ToolStripMenuItem";
-            this.layer初期化ToolStripMenuItem.Size = new System.Drawing.Size(180, 26);
-            this.layer初期化ToolStripMenuItem.Text = "Layer初期化";
-            this.layer初期化ToolStripMenuItem.Click += new System.EventHandler(this.layer初期化ToolStripMenuItem_Click);
+            this.splitter1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.splitter1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.splitter1.Location = new System.Drawing.Point(0, 308);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(784, 3);
+            this.splitter1.TabIndex = 0;
+            this.splitter1.TabStop = false;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 861);
-            this.Controls.Add(this.panelMain);
+            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.splitter1);
+            this.Controls.Add(this.panelMainDock);
+            this.Controls.Add(this.panelLayerDock);
             this.Controls.Add(this.menuStrip1);
-            this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Clarity E-Motion";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.panelImageControl.ResumeLayout(false);
-            this.panelMain.ResumeLayout(false);
-            this.panelMainView.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panelAnimeConrol.ResumeLayout(false);
+            this.panelLayerDock.ResumeLayout(false);
+            this.panelMainDock.ResumeLayout(false);
+            this.panelMainViewDock.ResumeLayout(false);
+            this.panelControlDock.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -317,33 +287,28 @@ namespace ClarityEmotion
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem ファイルToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 新規作成ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 開くToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 保存ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem 出力ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem 閉じるToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 編集ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem アニメ定義ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ツールToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ログ表示ToolStripMenuItem;
-        private System.Windows.Forms.Panel panelImageControl;
-        private System.Windows.Forms.Panel panelMain;
-        private System.Windows.Forms.Panel panelMainView;
-        private System.Windows.Forms.Splitter splitter2;
-        private System.Windows.Forms.Panel panelAnimeConrol;
-        private System.Windows.Forms.Splitter splitter1;
-        internal LayerControl.LayerAnimeControl layerAnimeControl1;
-        internal EditView.AnimeEditViewControl animeEditViewControl1;
-        internal LayerSetting.LayerSettingControl layerSettingControl1;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ToolStripMenuItem 設定ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem layer初期化ToolStripMenuItem;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem ファイルToolStripMenuItem;
+        private ToolStripMenuItem 新規作成ToolStripMenuItem;
+        private ToolStripMenuItem 開くToolStripMenuItem;
+        private ToolStripMenuItem 保存ToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem 出力ToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem 閉じるToolStripMenuItem;
+        private ToolStripMenuItem アニメ定義ToolStripMenuItem;
+        private ToolStripMenuItem アニメーション定義ToolStripMenuItem;
+        private ToolStripMenuItem 設定ToolStripMenuItem;
+        private ToolStripMenuItem ツールToolStripMenuItem;
+        private ToolStripMenuItem ログ表示ToolStripMenuItem;
+        private Panel panelLayerDock;
+        private Panel panelMainDock;
+        private Splitter splitter1;
+        private Panel panelMainViewDock;
+        private Splitter splitter2;
+        private Panel panelControlDock;
+        private LayerControl.LayerControl layerControl1;
+        private LayerControl.LayerSettingControl layerSettingControl1;
+        private Clarity.GUI.ClarityViewer clarityViewer1;
     }
 }
-

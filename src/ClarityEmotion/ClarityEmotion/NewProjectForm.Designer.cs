@@ -35,8 +35,11 @@ namespace ClarityEmotion
             this.label2 = new System.Windows.Forms.Label();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.numericUpDownMaxFrame = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownImageWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownImageHeight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFrame)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -51,7 +54,7 @@ namespace ClarityEmotion
             // 
             // numericUpDownImageWidth
             // 
-            this.numericUpDownImageWidth.Location = new System.Drawing.Point(74, 41);
+            this.numericUpDownImageWidth.Location = new System.Drawing.Point(74, 35);
             this.numericUpDownImageWidth.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -73,7 +76,7 @@ namespace ClarityEmotion
             // 
             // numericUpDownImageHeight
             // 
-            this.numericUpDownImageHeight.Location = new System.Drawing.Point(274, 41);
+            this.numericUpDownImageHeight.Location = new System.Drawing.Point(274, 35);
             this.numericUpDownImageHeight.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -96,7 +99,7 @@ namespace ClarityEmotion
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(242, 43);
+            this.label2.Location = new System.Drawing.Point(242, 37);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(21, 21);
@@ -105,7 +108,7 @@ namespace ClarityEmotion
             // 
             // buttonOk
             // 
-            this.buttonOk.Location = new System.Drawing.Point(129, 93);
+            this.buttonOk.Location = new System.Drawing.Point(139, 118);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(90, 35);
             this.buttonOk.TabIndex = 4;
@@ -115,7 +118,7 @@ namespace ClarityEmotion
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(225, 93);
+            this.buttonCancel.Location = new System.Drawing.Point(235, 118);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(90, 35);
             this.buttonCancel.TabIndex = 4;
@@ -123,15 +126,49 @@ namespace ClarityEmotion
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(173, 72);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(86, 21);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Max Frame";
+            // 
+            // numericUpDownMaxFrame
+            // 
+            this.numericUpDownMaxFrame.Location = new System.Drawing.Point(274, 70);
+            this.numericUpDownMaxFrame.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxFrame.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownMaxFrame.Name = "numericUpDownMaxFrame";
+            this.numericUpDownMaxFrame.Size = new System.Drawing.Size(120, 29);
+            this.numericUpDownMaxFrame.TabIndex = 1;
+            this.numericUpDownMaxFrame.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            // 
             // NewProjectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 148);
+            this.ClientSize = new System.Drawing.Size(464, 165);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.numericUpDownImageHeight);
             this.Controls.Add(this.label2);
+            this.Controls.Add(this.numericUpDownMaxFrame);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.numericUpDownImageWidth);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -142,6 +179,7 @@ namespace ClarityEmotion
             this.Load += new System.EventHandler(this.NewProjectForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownImageWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownImageHeight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFrame)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -155,5 +193,7 @@ namespace ClarityEmotion
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
+        private Label label3;
+        private NumericUpDown numericUpDownMaxFrame;
     }
 }

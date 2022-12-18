@@ -78,7 +78,7 @@ namespace ClarityEmotion
 
 
     /// <summary>
-    /// 情報(保存しない、一時情報も含まれる)
+    /// 情報(保存しない、一時情報が含まれる)
     /// </summary>    
     public class EmotionProjectDataInfo
     {
@@ -140,21 +140,40 @@ namespace ClarityEmotion
 
 
 
+
+
+
     /// <summary>
     /// 管理データ本体
     /// </summary>    
-    public class EmotionProject : BaseClaritySingleton<EmotionProject>
+    public class EmotionProject
     {
         public EmotionProject()
         {
 
         }
 
+
+        class LayerSeq
+        {
+            private static int LayerNo = 0;
+            public int Next()
+            {
+                return LayerSeq.LayerNo++;
+            }
+
+        }
+
+
         /// <summary>
         /// 生データ
         /// </summary>
         private EmotionProjectData PData = new EmotionProjectData();
 
+        /// <summary>
+        /// レイヤー番号
+        /// </summary>
+        private LayerSeq Seq = new LayerSeq();
 
         /// <summary>
         /// 基本情報
@@ -218,7 +237,7 @@ namespace ClarityEmotion
         /// <summary>
         /// 選択レイヤ情報の取得
         /// </summary>
-        public AnimeElement SelectLayerData
+        public AnimeElement? SelectLayerData
         {
             get
             {
@@ -247,52 +266,8 @@ namespace ClarityEmotion
             }
         }
 
-                
-        /// <summary>
-        /// 再生スレッド
-        /// </summary>
-        private System.Threading.Thread PlayThread = null;
-        /// <summary>
-        /// 再生スレッド生存フラグ
-        /// </summary>
-        private bool PlayThreadFlag = false;
+               
 
-        #region 作成解放
-        /// <summary>
-        /// 新規作成
-        /// </summary>
-        public static void Init()
-        {
-            if (Instance == null)
-            {
-                Instance = new EmotionProject();
-            }
-
-            //サイクル開始
-            if (Instance.PlayThread == null)
-            {
-                Instance.StartPlayThread();
-            }
-
-            Instance.CreteDefault();
-        }
-
-        /// <summary>
-        /// 削除処理
-        /// </summary>
-        public static void Release()
-        {
-            foreach (var data in Instance.Anime.AnimeDefinitionDic.Values)
-            {
-                data.Dispose();
-            }
-            Instance.Anime.AnimeDefinitionDic.Clear();
-
-            //再生スレッド削除
-            Instance.PlayThreadFlag = false;
-            Instance.PlayThread.Join();
-        }
-        #endregion
 
         /// <summary>
         /// アニメ定義dicの作成
@@ -311,9 +286,6 @@ namespace ClarityEmotion
         {
             //プロジェクト設定
             this.BasicInfo = bdata;
-
-            //他のデータを初期化する
-            this.CreteDefault();
         }
 
 
@@ -348,77 +320,30 @@ namespace ClarityEmotion
             }
         }
 
-        /// <summary>
-        /// デフォルトレイヤーの作成
-        /// </summary>
-        public void CreateDefaultLayer()
-        {
-            //レイヤー情報の初期化
-            this.Anime.LayerList = new List<AnimeElement>();
-            for (int i = 0; i < 50; i++)
-            {
-                AnimeElement data = new AnimeElement(i);
-                data.EaData.Enabled = true;
-                data.StartFrame = 10;
-                data.EndFrame = 100;
 
-                this.Anime.LayerList.Add(data);
-            }
+        /// <summary>
+        /// 新しいレイヤーの追加
+        /// </summary>
+        /// <returns>追加したレイヤー</returns>
+        public AnimeElement AddNewLayer()
+        {
+            AnimeElement ans = new AnimeElement(this.Seq.Next());
+            this.Anime.LayerList.Add(ans);
+            return ans;
+        }
+
+        /// <summary>
+        /// 指定レイヤーの削除
+        /// </summary>
+        /// <param name="layno"></param>
+        public void RemoveSelectLayer(int layno)
+        {
+            var da = this.Anime.LayerList.Where(x => x.LayerNo == layno).First();
+            this.Anime.LayerList.Remove(da);
+
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        /// <summary>
-        /// デフォルトデータの作成
-        /// </summary>
-        private void CreteDefault()
-        {
-            //レイヤー作成
-            this.CreateDefaultLayer();
-        }
-
-
-        /// <summary>
-        /// 再生スレッドの作成
-        /// </summary>
-        private void StartPlayThread()
-        {
-            this.PlayThreadFlag = true;
-            this.PlayThread = new System.Threading.Thread(() =>
-            {
-                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-                sw.Start();
-
-                //60fpsの場合
-                double basespan = (1000.0 / 60.0);
-                double prevms = 0;
-
-                while (this.PlayThreadFlag)
-                {
-                    System.Threading.Thread.Sleep(1);
-
-                    //時間が経過したか？
-                    double nowms = sw.ElapsedMilliseconds;
-                    double sp = nowms - prevms;
-                    if (sp < basespan)
-                    {
-                        continue;
-                    }
-
-                    prevms += basespan;
-
-                    if (this.Info.PlayFlag == true)
-                    {
-                        //時間経過ならフレームを進める
-                        this.FramePosition += 1;
-                        this.FramePosition = this.FramePosition % this.BasicInfo.MaxFrame;
-                    }
-                    
-                    //System.Diagnostics.Trace.WriteLine($"const={basespan} span={sp}");
-                }
-
-            });
-
-            this.PlayThread.Start();
-        }
+    
     
     }
 }

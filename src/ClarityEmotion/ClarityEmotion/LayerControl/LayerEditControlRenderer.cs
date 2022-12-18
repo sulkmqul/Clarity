@@ -35,7 +35,7 @@ namespace ClarityEmotion.LayerControl
         /// <summary>
         /// 親情報
         /// </summary>
-        public AnimeElement LayerData;
+        public AnimeElement? LayerData = null;
 
         /// <summary>
         /// 最大フレーム数
@@ -111,7 +111,7 @@ namespace ClarityEmotion.LayerControl
     }
 
 
-    class LayerControlRenderer
+    class LayerEditControlRenderer
     {
         public Color ClearColor = Color.White;
 
@@ -227,7 +227,7 @@ namespace ClarityEmotion.LayerControl
 
             {
                 //マウスが反応する端を演出
-                int wid = LayerControl.MouseMoveDetectWidth;
+                int wid = LayerEditControl.MouseMoveDetectWidth;
                 using (SolidBrush bru = new SolidBrush(Color.DarkSeaGreen))
                 {
                     gra.FillRectangle(bru, new Rectangle(data.AnimeStartPos, 0, wid, height));
@@ -241,7 +241,8 @@ namespace ClarityEmotion.LayerControl
             using (SolidBrush bru = new SolidBrush(Color.Black))
             {
                 //描く位置の計算                
-                string title = data.LayerData.SelectAnime?.Name;
+                //string title = data.LayerData.SelectAnime?.Name;
+                string title = "";
                 var size = gra.MeasureString(title, fo);
 
                 int posy = (int)((height - size.Height) / 2.0f);

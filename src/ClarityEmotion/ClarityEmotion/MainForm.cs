@@ -1,217 +1,147 @@
-ï»¿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using ClarityEmotion.AnimeDefinition;
+using System.Configuration;
 
 namespace ClarityEmotion
 {
+
+    /// <summary>
+    /// ƒƒCƒ“‰æ–Ê
+    /// </summary>
     public partial class MainForm : Form
     {
         public MainForm()
         {
             InitializeComponent();
 
-            this.FData = new MainFormData();
-            this.Logic = new MainFormLogic(this, this.FData);
+            this.Logic = new MainFormLogic(this);
+            this.ViewMana = new EditViewManager(this.clarityViewer1);
         }
 
-
-        private MainFormData FData = null;
-        private MainFormLogic Logic = null;
-
-
         /// <summary>
-        /// ç”»é¢ã®åˆæœŸåŒ–
+        /// 
         /// </summary>
-        private void Init()
-        {
-            //ãƒ­ã‚°ç”»é¢ã®è¡¨ç¤º
-            //Clarity.ClarityLog.ShowLogForm();
+        internal MainFormData FData = new MainFormData();
+        internal MainFormLogic Logic;
 
-            //åˆæœŸåŒ–
-            this.Logic.Init();
-
-        }
-
-
+        internal EditViewManager ViewMana;
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
-        /// èª­ã¿è¾¼ã¾ã‚ŒãŸæ™‚
+        /// ‰Šú‰»‚³‚ê‚½
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            this.Init();
+            CeGlobal.Create();
+
+            //ƒRƒ“ƒgƒ[ƒ‹‚Ìˆê”­–Ú‚Ì‰Šú‰»
+            this.layerControl1.Init();
+            this.layerSettingControl1.Init();
+            this.ViewMana.Init();
+
         }
 
         /// <summary>
-        /// ä½•ã‹æŠ¼ã•ã‚ŒãŸæ™‚
+        /// ƒvƒƒWƒFƒNƒgì¬
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        private void V‹Kì¬ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Space)
+            try
             {
-                EmotionProject.Mana.Info.PlayFlag = !EmotionProject.Mana.Info.PlayFlag;
-            }
-            if (e.KeyCode == Keys.W)
-            {
-                EmotionProject.Mana.Info.FramePosition = 0;
-            }
+                //V‹Kì¬
+                NewProjectForm f = new NewProjectForm();
+                DialogResult dret = f.ShowDialog(this);
+                if (dret != DialogResult.OK)
+                {
+                    return;
+                }
 
-            if (e.KeyCode == Keys.Escape)
-            {
-                //Clarity.ClarityLog.Log.Dispose();
-                this.Close();
+                //ƒvƒƒWƒFƒNƒg“ü—Íî•ñ‚Ìæ“¾
+                EmotionProjectDataBasic idata = f.GetInputData();
+                this.Logic.CreateNewProject(idata);
             }
-            
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
-        /// é–‰ã˜ã‚‰ã‚ŒãŸæ™‚
+        /// ŠJ‚­‚Æ‚«
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void ŠJ‚­ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Logic.Release();
+
         }
 
         /// <summary>
-        /// æ–°è¦ä½œæˆãƒ¡ãƒ‹ãƒ¥ãƒ¼
+        /// •Û‘¶‚·‚é‚Æ‚«
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void æ–°è¦ä½œæˆToolStripMenuItem_Click(object sender, EventArgs e)
+        private void •Û‘¶ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            NewProjectForm f = new NewProjectForm();
+
+        }
+
+        /// <summary>
+        /// o—Í‚·‚é‚Æ‚«
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void o—ÍToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+        /// <summary>
+        /// •Â‚¶‚éƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void •Â‚¶‚éToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+        }
+
+        /// <summary>
+        /// ƒAƒjƒ’è‹`İ’èƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ƒAƒjƒ[ƒVƒ‡ƒ“’è‹`ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //ƒAƒjƒ’è‹`•ÒW‰æ–Ê‚Ì•\¦
+            AnimeDefinitionEditForm f = new AnimeDefinitionEditForm();
             DialogResult dret = f.ShowDialog(this);
             if (dret != DialogResult.OK)
             {
                 return;
             }
-
-            //å…¥åŠ›ã‚’å–å¾—ã—ä½œæˆ
-            var fd = f.GetInputData();
-            this.Logic.CreateNewProject(fd);
+            //“ü—Í‚Ìæ“¾
+            var idata = f.GetInputData();
+            //’è‹`‚Ìì¬
+            CeGlobal.Project.Anime.CreateAnimeDefinitionDic(idata);
+            CeGlobal.Event.SendValueChangeEvent(EEventID.AnimeDefinitionUpdate, CeGlobal.Project.Anime);
         }
 
-        /// <summary>
-        /// é–‰ã˜ã‚‹ã¨ã
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void é–‰ã˜ã‚‹ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void İ’èToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+
         }
 
-        /// <summary>
-        /// ã‚¢ãƒ‹ãƒ¡å®šç¾©ãƒ¡ãƒ‹ãƒ¥ãƒ¼
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ã‚¢ãƒ‹ãƒ¡å®šç¾©ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ƒƒO•\¦ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Logic.SetupAnimeDefinitionEditForm();
 
-            
-        }
-
-        /// <summary>
-        /// ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void é–‹ãToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DialogResult dret = this.openFileDialog1.ShowDialog(this);
-            if (dret != DialogResult.OK)
-            {
-                return;
-            }
-
-            try
-            {
-                string pfpath = this.openFileDialog1.FileName;
-                this.Logic.LoadProject(pfpath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("èª­ã¿è¾¼ã¿å¤±æ•—");
-            }
-        }
-
-        /// <summary>
-        /// ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã™ã‚‹
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ä¿å­˜ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DialogResult dret = this.saveFileDialog1.ShowDialog(this);
-            if (dret != DialogResult.OK)
-            {
-                return;
-            }
-
-            try
-            {
-                string sfpath = this.saveFileDialog1.FileName;
-                EmotionProject.Mana.SaveProject(sfpath);
-            }
-            catch (Exception ex)
-            {                
-                MessageBox.Show("ä¿å­˜å¤±æ•—");
-            }
-        }
-
-        /// <summary>
-        /// å‡ºåŠ›ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸæ™‚
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void å‡ºåŠ›ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ExportForm f = new ExportForm();
-            f.ShowDialog(this);
-        }
-
-        /// <summary>
-        /// ã‚¢ãƒ‹ãƒ¡è¨­å®šãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸæ™‚
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void è¨­å®šToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AnimeSettingForm f = new AnimeSettingForm();
-            DialogResult dret = f.ShowDialog(this);
-            if (dret != DialogResult.OK)
-            {
-                return;
-            }
-
-            //è¨­å®šæ›´æ–°
-            this.Logic.ChangeAnimeSetting();
-        }
-
-        /// <summary>
-        /// ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åˆæœŸåŒ–
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void layeråˆæœŸåŒ–ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Logic.InitLayer();
         }
     }
 }
-

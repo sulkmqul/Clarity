@@ -332,14 +332,28 @@ namespace ClarityEmotion.LayerControl
             this.ChangeScale(false);
         }
 
+        /// <summary>
+        /// 再生ボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void toolStripButtonPlayStart_Click(object sender, EventArgs e)
         {
-
+            CeGlobal.Player.Play(true);
+            CeGlobal.Player.StopSubject.Subscribe(async x =>
+            {
+                await CeGlobal.Player.Stop();                
+            });
         }
 
-        private void toolStripButtonPlayStop_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 停止ボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void toolStripButtonPlayStop_Click(object sender, EventArgs e)
         {
-
+            await CeGlobal.Player.Stop();            
         }
 
         /// <summary>

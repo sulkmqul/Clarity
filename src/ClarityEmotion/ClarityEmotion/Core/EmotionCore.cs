@@ -88,18 +88,20 @@ namespace ClarityEmotion.Core
         /// <param name="ivt"></param>        
         private void RenderLayerImage(CoreData data, int frame, Graphics gra, ImageViewerTranslator ivt)
         {
+            var edata = data.SrcData.EaData;
+            PointF pos = ivt.SrcPointToDispPoint(edata.Pos2D);
+            PointF size = ivt.SrcPointToViewPoint(new Point(edata.DispSize.Width, edata.DispSize.Height));
+            data.DisplayRect = new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y);
+
+
             //フレーム情報取得
             Bitmap? img = data.SrcData.GetFrameImage(frame);
             if (img == null)
             {
                 return;
             }
-            var edata = data.SrcData.EaData;
-            img = this.FlipBitmap(edata.FlipType, img);
-
-            PointF pos = ivt.SrcPointToDispPoint(edata.Pos2D);
-            PointF size = ivt.SrcPointToViewPoint(new Point(edata.DispSize.Width, edata.DispSize.Height));
-            data.DisplayRect = new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y);
+            
+            img = this.FlipBitmap(edata.FlipType, img);            
 
             //透明設定
             ColorMatrix cmat = new ColorMatrix();

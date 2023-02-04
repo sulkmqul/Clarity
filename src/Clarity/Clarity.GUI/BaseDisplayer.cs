@@ -27,6 +27,17 @@ namespace Clarity.GUI
     /// </summary>
     public class ImageViewerTranslator
     {
+        public ImageViewerTranslator()
+        {
+        }
+
+        public ImageViewerTranslator(SizeF src, SizeF view, SizeF disp)
+        {
+            this.SrcSize = src;
+            this.ViewSize = view;
+            this.DispSize = disp;
+        }
+
         #region 領域取得設定        
         /// <summary>
         /// 表示エリア領域

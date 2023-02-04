@@ -46,6 +46,21 @@ namespace ClarityEmotion
             }
         }
 
+        /// <summary>
+        /// 再生管理
+        /// </summary>
+        public EmotionPlayer PlayerData { get; } = new EmotionPlayer();
+        /// <summary>
+        /// 再生管理
+        /// </summary>
+        public static EmotionPlayer Player
+        {
+            get
+            {
+                return Instance.PlayerData;
+            }
+        }
+
         public static void Create()
         {
             CeGlobal.Instance = new CeGlobal();            

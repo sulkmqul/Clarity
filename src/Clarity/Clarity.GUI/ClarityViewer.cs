@@ -368,6 +368,17 @@ namespace Clarity.GUI
         }
 
         /// <summary>
+        /// 画像の差し替え
+        /// </summary>
+        /// <param name="idata">差し替え画像(初期化サイズと同じであること)</param>
+        public void ReplaceImage(Image idata)
+        {
+            this.SrcImage = idata;
+            this.Refresh();
+        }
+
+
+        /// <summary>
         /// 一段階拡縮
         /// </summary>
         /// <param name="f">true=拡大 false=縮小</param>
@@ -432,6 +443,15 @@ namespace Clarity.GUI
             this.Refresh();
 
         }
+
+        /// <summary>
+        /// 描画者のクリア
+        /// </summary>
+        public void ClearDisplayer()
+        {
+            this.DisplayerList.Clear();
+            this.clarityViewerMinimapView.ClearDisplayer();
+        }
         #endregion
 
 
@@ -480,6 +500,9 @@ namespace Clarity.GUI
             //minimapの初期化
             this.clarityViewerMinimapView.Init(this.SrcImage, this.SrcRect);
             this.clarityViewerMinimapView.Relocate(this.DispRect);
+
+            //これまでの描画者の登録解除b
+            this.ClearDisplayer();
 
             //描画サイズを設定
             this.ZoomRate = this.CalcuFitRate();
@@ -812,16 +835,18 @@ namespace Clarity.GUI
                     //描画処理本体
                     this.Render(gra);
 
-                    //{
-                    //    //デバッグで座標表示
-                    //    using (SolidBrush sb = new SolidBrush(Color.Red))
-                    //    {
-                    //        gra.DrawString($"ViewX={this.Ivt.DispXToViewX(this.MInfo.NowPos.X)}" +
-                    //            $"ViewY={this.Ivt.DispYToViewY(this.MInfo.NowPos.Y)}" +
-                    //            $"ImageX={this.Ivt.DispXToImageX(this.MInfo.NowPos.X)}" +
-                    //            $"ImageY={this.Ivt.DispYToImageY(this.MInfo.NowPos.Y)}", new Font("Ariel", 16.0f, FontStyle.Regular), sb, new Point(0, 0));
-                    //    }
-                    //}
+                    {
+                        //デバッグで座標表示
+#if false
+                        using (SolidBrush sb = new SolidBrush(Color.Red))
+                        {
+                            gra.DrawString($"ViewX={this.Ivt.DispXToViewX(this.MInfo.NowPos.X)}" +
+                                $"ViewY={this.Ivt.DispYToViewY(this.MInfo.NowPos.Y)}" +
+                                $"ImageX={this.Ivt.DispXToImageX(this.MInfo.NowPos.X)}" +
+                                $"ImageY={this.Ivt.DispYToImageY(this.MInfo.NowPos.Y)}", new Font("Ariel", 16.0f, FontStyle.Regular), sb, new Point(0, 0));
+                        }
+#endif
+                    }
                 }
                 buf.Render();
             }

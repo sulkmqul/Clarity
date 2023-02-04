@@ -182,6 +182,14 @@ namespace Clarity.GUI
         {
             this.DisplayerList.Remove(dp);
         }
+
+        /// <summary>
+        /// 描画者登録全解除
+        /// </summary>
+        public void ClearDisplayer()
+        {
+            this.DisplayerList.Clear();
+        }
         #endregion
 
 

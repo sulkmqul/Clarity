@@ -133,7 +133,7 @@ namespace ClarityEmotion.LayerControl
 
                 //選択フレームの変更
                 CeGlobal.Event.ValueChange.Where(x => x.EventID == EEventID.LayerSelectedChanged).Subscribe(x =>
-                {
+                {   
                     this.Refresh();
                 });
             }

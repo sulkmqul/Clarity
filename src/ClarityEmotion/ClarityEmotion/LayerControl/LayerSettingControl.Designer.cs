@@ -214,7 +214,7 @@ namespace ClarityEmotion.LayerControl
             this.valueScrollControlSpeedRate.Value = 10;
             this.valueScrollControlSpeedRate.ValueFixedPoint = 1D;
             this.valueScrollControlSpeedRate.ValueFormat = "{0:F1}";
-            this.valueScrollControlSpeedRate.ValueChanged += new System.EventHandler(this.valueScrollControl_ValueChanged);
+            this.valueScrollControlSpeedRate.ValueChanged += new System.EventHandler(this.valueScrollControlSpeedRate_ValueChanged);
             // 
             // label6
             // 

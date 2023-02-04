@@ -317,5 +317,23 @@ namespace ClarityEmotion.LayerControl
         {
             this.ChangeValueProcess();
         }
+
+        /// <summary>
+        /// 再生速度が変更された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void valueScrollControlSpeedRate_ValueChanged(object sender, EventArgs e)
+        {
+            if (this.SelectedData == null)
+            {
+                return;
+            }
+
+            double baseframe = this.SelectedData.SelectAnime?.ImageDataList.Count ?? 0.0;
+            int newspan = Convert.ToInt32(baseframe * this.valueScrollControlSpeedRate.ValueFixedPoint);
+            this.numericUpDownSpan.Value = newspan;
+
+        }
     }
 }

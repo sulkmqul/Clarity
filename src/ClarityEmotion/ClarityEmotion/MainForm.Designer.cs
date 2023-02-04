@@ -219,6 +219,7 @@
             this.clarityViewer1.MinimapDisplayMerginRate = 0.05F;
             this.clarityViewer1.MinimapVisible = false;
             this.clarityViewer1.Name = "clarityViewer1";
+            this.clarityViewer1.PosMode = Clarity.GUI.EClarityViewerPositionMode.LeftTop;
             this.clarityViewer1.Size = new System.Drawing.Size(531, 287);
             this.clarityViewer1.SrcBackColor = System.Drawing.Color.Black;
             this.clarityViewer1.TabIndex = 0;

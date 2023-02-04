@@ -70,7 +70,7 @@ namespace ClarityEmotion
             if(CeGlobal.Project.SelectLayerData == null) { return; }
 
             //drag中
-            if (minfo.DownFlag == true)
+            if (minfo.DownFlag == true && minfo.DownButton == MouseButtons.Left)
             {                
                 PointF p = minfo.DownLength;
 

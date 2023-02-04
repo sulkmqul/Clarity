@@ -385,5 +385,10 @@ namespace ClarityEmotion.LayerControl
             CeGlobal.Project.FramePosition = f.FramePos;
             CeGlobal.Event.SendFrameSelectEvent(f.FramePos);
         }
+
+        private void LayerControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            
+        }
     }
 }

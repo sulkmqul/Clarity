@@ -179,6 +179,7 @@
             this.Name = "LayerControl";
             this.Size = new System.Drawing.Size(605, 202);
             this.Load += new System.EventHandler(this.LayerControl_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.LayerControl_KeyUp);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);

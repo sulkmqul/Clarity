@@ -206,6 +206,8 @@
             // 
             // clarityViewer1
             // 
+            this.clarityViewer1.BorderLineColor = System.Drawing.Color.Aqua;
+            this.clarityViewer1.BorderLineRendering = true;
             this.clarityViewer1.ClearColor = System.Drawing.SystemColors.Control;
             this.clarityViewer1.DisplayAreaLineColor = System.Drawing.Color.Red;
             this.clarityViewer1.DisplayAreaLineWidth = 1F;
@@ -215,9 +217,9 @@
             this.clarityViewer1.ImageClippingEnabled = true;
             this.clarityViewer1.ImageInterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
             this.clarityViewer1.Location = new System.Drawing.Point(0, 0);
-            this.clarityViewer1.MinimapBackColor = System.Drawing.Color.White;
+            this.clarityViewer1.MinimapBackColor = System.Drawing.Color.Black;
             this.clarityViewer1.MinimapDisplayMerginRate = 0.05F;
-            this.clarityViewer1.MinimapVisible = false;
+            this.clarityViewer1.MinimapVisible = true;
             this.clarityViewer1.Name = "clarityViewer1";
             this.clarityViewer1.PosMode = Clarity.GUI.EClarityViewerPositionMode.LeftTop;
             this.clarityViewer1.Size = new System.Drawing.Size(531, 287);
@@ -270,11 +272,13 @@
             this.Controls.Add(this.panelMainDock);
             this.Controls.Add(this.panelLayerDock);
             this.Controls.Add(this.menuStrip1);
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Clarity E-Motion";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.panelLayerDock.ResumeLayout(false);

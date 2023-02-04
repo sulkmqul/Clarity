@@ -373,7 +373,7 @@ namespace Clarity.GUI
     public abstract class BaseDisplayer : ImageViewerTranslator
     {
         /// <summary>
-        /// 管理リンク()
+        /// 管理リンク(minidipalyerのリンク)
         /// </summary>
         internal BaseDisplayer? ManageLink { get; set; } = null;
 

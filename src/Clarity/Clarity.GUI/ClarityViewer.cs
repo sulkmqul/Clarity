@@ -191,6 +191,34 @@ namespace Clarity.GUI
                 this.clarityViewerMinimapView.DisplayerRendering = value;
             }
         }
+
+        [Category(MinimapDescriptionCategory)]
+        [Description("境界線描画可否")]
+        public bool BorderLineRendering
+        {
+            get
+            {
+                return this.clarityViewerMinimapView.BorderLineRendering;
+            }
+            set
+            {
+                this.clarityViewerMinimapView.BorderLineRendering = value;
+            }
+        }
+
+        [Category(MinimapDescriptionCategory)]
+        [Description("境界線描画色")]
+        public Color BorderLineColor
+        {
+            get
+            {
+                return this.clarityViewerMinimapView.BorderLineColor;
+            }
+            set
+            {
+                this.clarityViewerMinimapView.BorderLineColor = value;
+            }
+        }
         #endregion
 
         #endregion
@@ -421,13 +449,15 @@ namespace Clarity.GUI
         {
             this.DisplayerList.Add(dp);
 
-            Type a = dp.GetType();
-            BaseDisplayer? minidp = (BaseDisplayer?)Activator.CreateInstance(a);
-            if (minidp != null)
-            {
-                dp.ManageLink = minidp;
-                this.clarityViewerMinimapView.AddDisplayer(minidp);
-            }
+            //Type a = dp.GetType();
+            //BaseDisplayer? minidp = (BaseDisplayer?)Activator.CreateInstance(a);
+            //if (minidp != null)
+            //{
+            //    dp.ManageLink = minidp;
+            //    this.clarityViewerMinimapView.AddDisplayer(minidp);
+            //}
+            dp.ManageLink = dp;
+            this.clarityViewerMinimapView.AddDisplayer(dp);
             this.Refresh();
         }
 

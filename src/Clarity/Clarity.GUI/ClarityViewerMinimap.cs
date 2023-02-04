@@ -53,6 +53,15 @@ namespace Clarity.GUI
         [Description("登録Displayer描画可否")]
         public bool DisplayerRendering { get; set; } = true;
 
+        [Category(CategoryName)]
+        [Description("境界線描画可否")]
+        public bool BorderLineRendering { get; set; } = false;
+
+        [Category(CategoryName)]
+        [Description("境界線描画色")]
+        public Color BorderLineColor { get; set; } = Color.Red;
+
+
 
         [Browsable(false)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -226,15 +235,24 @@ namespace Clarity.GUI
                 float y = this.Ivt.SrcYToDispY(this.DispArea.Top);
                 float w = this.Ivt.SrcXToDispX(this.DispArea.Width);
                 float h = this.Ivt.SrcYToDispY(this.DispArea.Height);
-                
+
                 //描画矩形を保存
                 this.RenderRect = new RectangleF(x, y, w, h);
 
                 gra.DrawRectangle(pe, x, y, w, h);
             }
 
+            //境界線の描画
+            if (this.BorderLineRendering == true)
+            {
+                using (Pen pe = new Pen(this.BorderLineColor, 1.0f))
+                {
+                    Rectangle brc = new Rectangle(0, 0, this.Size.Width-1, this.Size.Height -1);
+                    gra.DrawRectangle(pe, brc);
+                }
+            }
 
-            
+
 
         }
         

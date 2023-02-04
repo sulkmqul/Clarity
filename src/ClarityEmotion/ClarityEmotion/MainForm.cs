@@ -143,5 +143,27 @@ namespace ClarityEmotion
         {
 
         }
+
+        private async void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.W)
+            {
+                CeGlobal.Event.SendFrameSelectEvent(0);
+                return;
+            }
+
+            if (e.KeyCode == Keys.Space)
+            {
+                if (CeGlobal.Player.IsPlay == false)
+                {
+                    CeGlobal.Player.Play(true);
+                }
+                else
+                {
+                    await CeGlobal.Player.Stop();
+                }
+                return;
+            }
+        }
     }
 }

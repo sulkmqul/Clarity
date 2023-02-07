@@ -15,6 +15,7 @@ namespace ClarityEmotion
     {
 
         CreateProject = Create | Project,   //EmotionProject
+        OpenProject = CreateProject,
         AddLayer =  Create| Layer,
         RemoveLayer = Delete| Layer,
         LayerSelectedChanged = Select | Update | Layer, //AnimeElement

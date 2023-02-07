@@ -31,6 +31,12 @@ namespace Clarity.GUI
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="src">元サイズ</param>
+        /// <param name="view">描画サイス</param>
+        /// <param name="disp">表示サイズ</param>
         public ImageViewerTranslator(SizeF src, SizeF view, SizeF disp)
         {
             this.SrcSize = src;
@@ -58,13 +64,13 @@ namespace Clarity.GUI
         /// <summary>
         /// 表示サイズの設定
         /// </summary>
-        internal SizeF DispSize
+        public SizeF DispSize
         {
             get
             {
                 return this.DispRect.Size;
             }
-            set
+            internal set
             {
                 this.DispRect = new RectangleF(this.DispRect.Left, this.DispRect.Top, value.Width, value.Height);
             }
@@ -73,13 +79,13 @@ namespace Clarity.GUI
         /// <summary>
         /// 画像サイズの設定
         /// </summary>
-        internal SizeF ViewSize
+        public SizeF ViewSize
         {
             get
             {
                 return this.ViewRect.Size;
             }
-            set
+            internal set
             {
                 this.ViewRect = new RectangleF(this.ViewRect.Left, this.ViewRect.Top, value.Width, value.Height);
             }
@@ -111,13 +117,13 @@ namespace Clarity.GUI
         /// <summary>
         /// 元サイズの設定
         /// </summary>
-        internal SizeF SrcSize
+        public SizeF SrcSize
         {
             get
             {
                 return this.SrcRect.Size;
             }
-            set
+            internal set
             {
                 this.SrcRect = new RectangleF(this.SrcRect.Left, this.SrcRect.Top, value.Width, value.Height);
             }

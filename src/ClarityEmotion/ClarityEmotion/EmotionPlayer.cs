@@ -5,17 +5,23 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
+using Clarity.Util;
 
 namespace ClarityEmotion
 {
+    
+
+
+
     /// <summary>
     /// データ再生管理
     /// </summary>
     internal class EmotionPlayer
     {
-
-        private Task? PlayTask = null;
-        public CancellationTokenSource PlayCancelSource;
+        /// <summary>
+        /// 実行タスク
+        /// </summary>
+        private ClarityCycling PlayCycle = new ClarityCycling();
 
         public Subject<int> StopSubject = new Subject<int>();
 
@@ -23,11 +29,8 @@ namespace ClarityEmotion
         {
             get
             {
-                if (this.PlayTask == null)
-                {
-                    return false;
-                }
-                return true;
+                return this.PlayCycle.IsClycling;
+
             }
         }
 
@@ -38,12 +41,11 @@ namespace ClarityEmotion
         /// <returns></returns>
         public void Play(bool loopflag)
         {
-            if (PlayTask != null)
-            {
-                return;
-            }
-            this.PlayCancelSource = new CancellationTokenSource();
-            this.PlayTask = this.PlayLoop(loopflag, this.PlayCancelSource.Token);
+            
+            double fps = 1000.0 / (double)CeGlobal.Project.Info.FPS;
+
+            //this.PlayCycle= new ClarityCycling();
+            this.PlayCycle.StartCycling((double a) => this.PlayProc(a, loopflag), fps);
         }
 
         /// <summary>
@@ -52,90 +54,41 @@ namespace ClarityEmotion
         /// <returns></returns>
         public async Task Stop()
         {
-            if (this.PlayTask == null)
-            {
-                return;
-            }
-
-            try
-            {
-                this.PlayCancelSource.Cancel();
-                await this.PlayTask;                
-            }
-            catch (OperationCanceledException ce)
-            {
-                //これは無視                
-
-            }
-            this.PlayTask = null;
+            await this.PlayCycle.Stop();
         }
 
-
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 再生処理
         /// </summary>
-        /// <param name="loopflag">ループ処理を行うか？ true=loopする</param>
-        /// <param name="ct"></param>
+        /// <param name="ms">実行時間</param>
+        /// <param name="loopflag">ループ処理を行うか？ true=loopする</param>        
         /// <returns></returns>
-        private async Task PlayLoop(bool loopflag, CancellationToken ct)
+        private void PlayProc(double ms, bool loopflag)
         {
-            int start = CeGlobal.Project.Info.FramePosition;
             int end = CeGlobal.Project.BasicInfo.MaxFrame;
 
-            //FPSの計算
-            double fps = 1000.0 / 60.0;
-
-
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            
-            //次の時間
-            double nexttime = fps;
-            sw.Start();
-            while (true)
+            //フレーム表示
+            CeGlobal.Project.Info.FramePosition += 1;
+            //最後まで行った時の動作を規定
+            if (CeGlobal.Project.Info.FramePosition >= end)
             {
-                //キャンセルされていたら例外を投げる
-                ct.ThrowIfCancellationRequested();
-
-                //FPS処理
-                //時が来ているか？
-                double nowtime = (double)sw.ElapsedMilliseconds;
-                if (nowtime < nexttime)
+                if (loopflag == true)
                 {
-                    //時間が来ていないならsleep
-                    //こっちのほうがちょっとだけ精度が良い？
-                    await Task.Run(() => System.Threading.Thread.Sleep(1));
-                    //await Task.Delay(1);
-                    continue;
+                    CeGlobal.Project.Info.FramePosition = 0;
                 }
-
-                //フレーム表示
-                CeGlobal.Project.Info.FramePosition += 1;
-                //最後まで行った時の動作を規定
-                if (CeGlobal.Project.Info.FramePosition >= end)
+                else
                 {
-                    if (loopflag == true)
-                    {
-                        CeGlobal.Project.Info.FramePosition = 0;
-                    }
-                    else
-                    {
-                        //ストップ通知が望ましい？
-                        this.StopSubject.OnNext(CeGlobal.Project.Info.FramePosition);
-                        break;
-                    }
+                    //ストップ通知が望ましい？
+                    this.StopSubject.OnNext(CeGlobal.Project.Info.FramePosition);
+                    return;
                 }
-                CeGlobal.Event.SendFrameSelectEvent(CeGlobal.Project.Info.FramePosition);
-
-                //精度評価
-                //if ((start + 60) == CeGlobal.Project.Info.FramePosition)
-                //{
-                //    System.Diagnostics.Trace.WriteLine(sw.ElapsedMilliseconds);
-                //}
-
-                //次の時間を設定
-                nexttime += fps;
-
             }
+            CeGlobal.Event.SendFrameSelectEvent(CeGlobal.Project.Info.FramePosition);
+
+            //精度評価            
+            //System.Diagnostics.Trace.WriteLine($"{CeGlobal.Project.Info.FramePosition}:{ms}");
+            
         }
 
     }

@@ -56,8 +56,58 @@ namespace ClarityEmotion
             CeGlobal.Event.SendValueChangeEvent(EEventID.CreateProject, CeGlobal.Project);
         }
 
+        /// <summary>
+        /// MotionJpegの出力
+        /// </summary>
+        /// <param name="filepath">出力ファイルパス</param>
+        /// <returns></returns>
+        public async Task ExportMotionJpeg(string filepath)
+        {
+
+            EmotionWriter ew = new EmotionWriter();
+            await ew.ExportMJpeg(filepath, (int max, int now) =>
+            {
+                System.Diagnostics.Trace.WriteLine($"{now}/{max}");
+            }); 
+        }
+
+        /// <summary>
+        /// 連番画像の出力
+        /// </summary>
+        /// <param name="folpath">連番画像の出力フォルダ</param>
+        /// <returns></returns>
+        public async Task ExportSerialImages(string folpath)
+        {
+            EmotionWriter ew = new EmotionWriter();
+            await ew.ExportImages(folpath, System.Drawing.Imaging.ImageFormat.Png, "", (int max, int now) =>
+            {
+                System.Diagnostics.Trace.WriteLine($"{now}/{max}");
+            });
+        }
 
 
+
+        /// <summary>
+        /// プロジェクトの保存
+        /// </summary>
+        /// <param name="filepath"></param>
+        public void SaveProject(string filepath)
+        {
+            CeGlobal.Project.SaveProject(filepath);
+        }
+
+        /// <summary>
+        /// プロジェクト読み込み
+        /// </summary>
+        /// <param name="filepath"></param>
+        public void OpenProject(string filepath)
+        {
+            CeGlobal.Project.LoadProject(filepath);
+
+            //必要な情報を流す
+            CeGlobal.Event.SendValueChangeEvent(EEventID.AnimeDefinitionUpdate, CeGlobal.Project);
+            CeGlobal.Event.SendValueChangeEvent(EEventID.OpenProject, CeGlobal.Project);
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
     }

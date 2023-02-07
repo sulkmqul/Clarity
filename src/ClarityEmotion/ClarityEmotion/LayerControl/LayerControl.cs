@@ -89,15 +89,24 @@ namespace ClarityEmotion.LayerControl
             this.Enabled = false;
 
             //プロジェクトが作成された時
-            CeGlobal.Event.ValueChange.Where(x => (x.EventID & EEventID.CreateProject) == EEventID.CreateProject).Subscribe(x =>
+            CeGlobal.Event.ValueChange.Where(x => (x.EventID & EEventID.CreateProject) == EEventID.CreateProject).Subscribe(y =>
             {
                 this.Enabled = true;
 
                 //再描画
                 this.RefreshLayer();
 
-                //レイヤーを一つ追加する
-                this.AddNewLayer();
+                CeGlobal.Project.Anime.LayerList.ForEach(x =>
+                {
+                    this.AddExistsLayer(x);
+                });
+
+                if (CeGlobal.Project.Anime.LayerList.Count <= 0)
+                {
+
+                    //レイヤーを一つ追加する
+                    this.AddNewLayer();
+                }
             });
 
             //フレーム位置が変更された時
@@ -200,6 +209,16 @@ namespace ClarityEmotion.LayerControl
         private void AddNewLayer()
         {
             AnimeElement ae = CeGlobal.Project.AddNewLayer();
+            this.AddExistsLayer(ae);
+
+        }
+
+        /// <summary>
+        /// 既存レイヤの追加
+        /// </summary>
+        /// <param name="ae"></param>
+        private void AddExistsLayer(AnimeElement ae)
+        {
             LayerEditControl con = new LayerEditControl();
             con.Init(ae, this.FData.FramePixelRate, CeGlobal.Project.BasicInfo.MaxFrame);
             this.AddLayerEditControl(con);
@@ -215,7 +234,6 @@ namespace ClarityEmotion.LayerControl
             //追加したレイヤーを選択
             CeGlobal.Project.Info.SelectLayerNo = ae.LayerNo;
             CeGlobal.Event.SendValueChangeEvent(EEventID.LayerSelectedChanged, ae);
-
         }
 
 

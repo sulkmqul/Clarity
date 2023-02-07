@@ -20,8 +20,15 @@ namespace ClarityEmotion
         //最大編集フレーム
         public int MaxFrame = 600;
 
+        /// <summary>
+        /// 画像サイズ
+        /// </summary>
         public int ImageWidth = 1;
+        /// <summary>
+        /// 画像サイズ
+        /// </summary>
         public int ImageHeight = 1;
+                
     }
 
     /// <summary>
@@ -97,7 +104,13 @@ namespace ClarityEmotion
         /// 再生中フラグ
         /// </summary>
         public bool PlayFlag = false;
-                
+
+
+        /// <summary>
+        /// FPS
+        /// </summary>
+        public int FPS = 60;
+
     }
 
 

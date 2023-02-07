@@ -206,7 +206,7 @@ namespace ClarityEmotion.LayerControl
             this.valueScrollControlSpeedRate.FixedPoint = 10;
             this.valueScrollControlSpeedRate.Location = new System.Drawing.Point(13, 214);
             this.valueScrollControlSpeedRate.Margin = new System.Windows.Forms.Padding(4);
-            this.valueScrollControlSpeedRate.MaxValue = 100;
+            this.valueScrollControlSpeedRate.MaxValue = 200;
             this.valueScrollControlSpeedRate.MinValue = 1;
             this.valueScrollControlSpeedRate.Name = "valueScrollControlSpeedRate";
             this.valueScrollControlSpeedRate.Size = new System.Drawing.Size(216, 25);

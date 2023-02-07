@@ -35,6 +35,7 @@
             this.保存ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.出力ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.出力連番ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.閉じるToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.アニメ定義ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,6 +79,7 @@
             this.保存ToolStripMenuItem,
             this.toolStripSeparator1,
             this.出力ToolStripMenuItem,
+            this.出力連番ToolStripMenuItem,
             this.toolStripSeparator2,
             this.閉じるToolStripMenuItem});
             this.ファイルToolStripMenuItem.Name = "ファイルToolStripMenuItem";
@@ -87,45 +89,52 @@
             // 新規作成ToolStripMenuItem
             // 
             this.新規作成ToolStripMenuItem.Name = "新規作成ToolStripMenuItem";
-            this.新規作成ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.新規作成ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.新規作成ToolStripMenuItem.Text = "新規作成";
             this.新規作成ToolStripMenuItem.Click += new System.EventHandler(this.新規作成ToolStripMenuItem_Click);
             // 
             // 開くToolStripMenuItem
             // 
             this.開くToolStripMenuItem.Name = "開くToolStripMenuItem";
-            this.開くToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.開くToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.開くToolStripMenuItem.Text = "開く";
             this.開くToolStripMenuItem.Click += new System.EventHandler(this.開くToolStripMenuItem_Click);
             // 
             // 保存ToolStripMenuItem
             // 
             this.保存ToolStripMenuItem.Name = "保存ToolStripMenuItem";
-            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.保存ToolStripMenuItem.Text = "保存";
             this.保存ToolStripMenuItem.Click += new System.EventHandler(this.保存ToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // 出力ToolStripMenuItem
             // 
             this.出力ToolStripMenuItem.Name = "出力ToolStripMenuItem";
-            this.出力ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.出力ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.出力ToolStripMenuItem.Text = "出力";
             this.出力ToolStripMenuItem.Click += new System.EventHandler(this.出力ToolStripMenuItem_Click);
+            // 
+            // 出力連番ToolStripMenuItem
+            // 
+            this.出力連番ToolStripMenuItem.Name = "出力連番ToolStripMenuItem";
+            this.出力連番ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.出力連番ToolStripMenuItem.Text = "出力（連番ファイル）";
+            this.出力連番ToolStripMenuItem.Click += new System.EventHandler(this.出力連番ToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // 閉じるToolStripMenuItem
             // 
             this.閉じるToolStripMenuItem.Name = "閉じるToolStripMenuItem";
-            this.閉じるToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.閉じるToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.閉じるToolStripMenuItem.Text = "閉じる(&X)";
             this.閉じるToolStripMenuItem.Click += new System.EventHandler(this.閉じるToolStripMenuItem_Click);
             // 
@@ -141,14 +150,14 @@
             // アニメーション定義ToolStripMenuItem
             // 
             this.アニメーション定義ToolStripMenuItem.Name = "アニメーション定義ToolStripMenuItem";
-            this.アニメーション定義ToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.アニメーション定義ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.アニメーション定義ToolStripMenuItem.Text = "アニメーション定義";
             this.アニメーション定義ToolStripMenuItem.Click += new System.EventHandler(this.アニメーション定義ToolStripMenuItem_Click);
             // 
             // 設定ToolStripMenuItem
             // 
             this.設定ToolStripMenuItem.Name = "設定ToolStripMenuItem";
-            this.設定ToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.設定ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.設定ToolStripMenuItem.Text = "設定";
             this.設定ToolStripMenuItem.Click += new System.EventHandler(this.設定ToolStripMenuItem_Click);
             // 
@@ -219,7 +228,7 @@
             this.clarityViewer1.Location = new System.Drawing.Point(0, 0);
             this.clarityViewer1.MinimapBackColor = System.Drawing.Color.Black;
             this.clarityViewer1.MinimapDisplayMerginRate = 0.05F;
-            this.clarityViewer1.MinimapVisible = true;
+            this.clarityViewer1.MinimapVisible = false;
             this.clarityViewer1.Name = "clarityViewer1";
             this.clarityViewer1.PosMode = Clarity.GUI.EClarityViewerPositionMode.LeftTop;
             this.clarityViewer1.Size = new System.Drawing.Size(531, 287);
@@ -315,5 +324,6 @@
         private LayerControl.LayerControl layerControl1;
         private LayerControl.LayerSettingControl layerSettingControl1;
         private Clarity.GUI.ClarityViewer clarityViewer1;
+        private ToolStripMenuItem 出力連番ToolStripMenuItem;
     }
 }

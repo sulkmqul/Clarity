@@ -79,6 +79,24 @@ namespace ClarityEmotion
         /// <param name="e"></param>
         private void 開くToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OpenFileDialog diag = new OpenFileDialog();
+            diag.Filter = "Emotion project file|*.epf|All Files|*.*";
+
+            var dret = diag.ShowDialog(this);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                this.Logic.OpenProject(diag.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
         }
 
@@ -89,7 +107,24 @@ namespace ClarityEmotion
         /// <param name="e"></param>
         private void 保存ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SaveFileDialog diag = new SaveFileDialog();
+            diag.Filter = "Emotion project file|*.epf|All Files|*.*";
+            diag.DefaultExt = ".epf";
+            var dret = diag.ShowDialog(this);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
 
+            try
+            {
+                this.Logic.SaveProject(diag.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
         }
 
         /// <summary>
@@ -97,8 +132,58 @@ namespace ClarityEmotion
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void 出力ToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void 出力ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SaveFileDialog diag = new SaveFileDialog();
+            diag.Filter = "MotionJpeg|*.mjpg|All Files|*.*";
+            diag.DefaultExt = ".mjpg";
+            var dret = diag.ShowDialog(this);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                //
+                await this.Logic.ExportMotionJpeg(diag.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+            MessageBox.Show("Success");
+
+        }
+
+        /// <summary>
+        /// 連番ファイルの出力
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void 出力連番ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog diag = new FolderBrowserDialog();
+            var dret = diag.ShowDialog(this);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                //
+                await this.Logic.ExportSerialImages(diag.SelectedPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+            MessageBox.Show("Success");
 
         }
 
@@ -122,6 +207,7 @@ namespace ClarityEmotion
         {
             //アニメ定義編集画面の表示
             AnimeDefinitionEditForm f = new AnimeDefinitionEditForm();
+            f.Init(CeGlobal.Project.Anime.AnimeDefinitionDic.Values.ToList());
             DialogResult dret = f.ShowDialog(this);
             if (dret != DialogResult.OK)
             {
@@ -165,5 +251,7 @@ namespace ClarityEmotion
                 return;
             }
         }
+
+        
     }
 }

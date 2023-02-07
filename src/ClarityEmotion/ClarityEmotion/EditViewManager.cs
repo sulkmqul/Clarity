@@ -51,20 +51,20 @@ namespace ClarityEmotion
             });
 
             //プロジェクト作成
-            CeGlobal.Event.ValueChange.Where(x => (x.EventID | EEventID.CreateProject) == EEventID.CreateProject).Subscribe(x =>
+            CeGlobal.Event.ValueChange.Where(x => (x.EventID & EEventID.CreateProject) == EEventID.CreateProject).Subscribe(x =>
             {
                 this.Viewer.Init(new SizeF(CeGlobal.Project.BasicInfo.ImageWidth, CeGlobal.Project.BasicInfo.ImageHeight));
                 this.Viewer.AddDisplayer(this.Renderer);
             });
 
             //値変更時
-            CeGlobal.Event.ValueChange.Where(x => (x.EventID | EEventID.LayerUpdate) == EEventID.LayerUpdate).Subscribe(x =>
+            CeGlobal.Event.ValueChange.Where(x => (x.EventID & EEventID.LayerUpdate) == EEventID.LayerUpdate).Subscribe(x =>
             {
                 this.Viewer.Refresh();
             });
 
             //レイヤーの追加、削除
-            CeGlobal.Event.ValueChange.Where(x => (x.EventID | EEventID.AddLayer) == EEventID.AddLayer || (x.EventID | EEventID.RemoveLayer) == EEventID.RemoveLayer).Subscribe(x =>
+            CeGlobal.Event.ValueChange.Where(x => (x.EventID & EEventID.AddLayer) == EEventID.AddLayer || (x.EventID & EEventID.RemoveLayer) == EEventID.RemoveLayer).Subscribe(x =>
             {
                 this.Renderer.Core.Init(CeGlobal.Project.Anime.LayerList);
 

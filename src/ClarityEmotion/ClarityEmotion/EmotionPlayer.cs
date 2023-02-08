@@ -46,6 +46,8 @@ namespace ClarityEmotion
 
             //this.PlayCycle= new ClarityCycling();
             this.PlayCycle.StartCycling((double a) => this.PlayProc(a, loopflag), fps);
+
+            CeGlobal.Event.SendValueChangeEvent(EEventID.PlayerStart, this.IsPlay);
         }
 
         /// <summary>
@@ -55,6 +57,8 @@ namespace ClarityEmotion
         public async Task Stop()
         {
             await this.PlayCycle.Stop();
+
+            CeGlobal.Event.SendValueChangeEvent(EEventID.PlayerStop, this.IsPlay);
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

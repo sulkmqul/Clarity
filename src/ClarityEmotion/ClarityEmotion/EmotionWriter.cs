@@ -2,6 +2,7 @@
 using ClarityEmotion.Core;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -54,38 +55,44 @@ namespace ClarityEmotion
 
 
 
-
-        public async Task ExportMJpeg(string filepath, Action<int, int>? acprogress = null)
+        /// <summary>
+        /// 全ての画像をまとめたZipファイルの作成
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <param name="acprogress"></param>
+        /// <returns></returns>
+        public async Task ExportArchive(string filepath, Action<int, int>? acprogress = null)
         {
-            //全フレーム数
-            int end = CeGlobal.Project.BasicInfo.MaxFrame;
-            int iw = CeGlobal.Project.BasicInfo.ImageWidth;
-            int ih = CeGlobal.Project.BasicInfo.ImageHeight;
+            using (ZipArchive zip = ZipFile.Open(filepath, ZipArchiveMode.Create))
+            {
+                //全フレーム数
+                int end = CeGlobal.Project.BasicInfo.MaxFrame;
+                int iw = CeGlobal.Project.BasicInfo.ImageWidth;
+                int ih = CeGlobal.Project.BasicInfo.ImageHeight;
 
-            //変換の作成
-            ImageViewerTranslator ivt = new ImageViewerTranslator(new SizeF(iw, ih), new SizeF(iw, ih), new SizeF(iw, ih));
+                //変換の作成
+                ImageViewerTranslator ivt = new ImageViewerTranslator(new SizeF(iw, ih), new SizeF(iw, ih), new SizeF(iw, ih));
 
-            //出力の初期化
-            EmotionCore core = new EmotionCore();
-            core.Init(CeGlobal.Project.Anime.LayerList);
+                //出力の初期化
+                EmotionCore core = new EmotionCore();
+                core.Init(CeGlobal.Project.Anime.LayerList);
 
-            using (FileStream fp = new FileStream(filepath, FileMode.Create, FileAccess.Write))
-            {   
                 //全フレームを出力する
                 for (int i = 0; i < end; i++)
                 {
                     //フレーム画像作成
                     Bitmap bit = await this.CreateFrameImage(i, core, ivt);
 
-                    using (MemoryStream mst = new MemoryStream())
+
+                    string name = $"{i,00000000}.png";
+                    var zent = zip.CreateEntry(name);
+                    using (var sr = zent.Open())
                     {
-                        bit.Save(mst, System.Drawing.Imaging.ImageFormat.Jpeg);
-                        await fp.WriteAsync(mst.ToArray());
+                        bit.Save(sr, System.Drawing.Imaging.ImageFormat.Png);
                     }
+
                     acprogress?.Invoke(end, i);
                 }
-
-                
             }
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

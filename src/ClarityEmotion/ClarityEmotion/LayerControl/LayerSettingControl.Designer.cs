@@ -55,6 +55,8 @@ namespace ClarityEmotion.LayerControl
             this.numericUpDownDispSizeX = new System.Windows.Forms.NumericUpDown();
             this.label11 = new System.Windows.Forms.Label();
             this.textBoxLayerName = new System.Windows.Forms.TextBox();
+            this.buttonCenteringX = new System.Windows.Forms.Button();
+            this.buttonCenteringY = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartFrame)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPosY)).BeginInit();
@@ -277,7 +279,7 @@ namespace ClarityEmotion.LayerControl
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(13, 376);
+            this.label8.Location = new System.Drawing.Point(13, 409);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(34, 15);
@@ -321,7 +323,7 @@ namespace ClarityEmotion.LayerControl
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(13, 427);
+            this.label10.Location = new System.Drawing.Point(13, 460);
             this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(26, 15);
@@ -332,7 +334,7 @@ namespace ClarityEmotion.LayerControl
             // 
             this.comboBoxFlipState.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxFlipState.FormattingEnabled = true;
-            this.comboBoxFlipState.Location = new System.Drawing.Point(13, 444);
+            this.comboBoxFlipState.Location = new System.Drawing.Point(13, 477);
             this.comboBoxFlipState.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxFlipState.Name = "comboBoxFlipState";
             this.comboBoxFlipState.Size = new System.Drawing.Size(174, 23);
@@ -341,7 +343,7 @@ namespace ClarityEmotion.LayerControl
             // 
             // numericUpDownDispSizeY
             // 
-            this.numericUpDownDispSizeY.Location = new System.Drawing.Point(111, 393);
+            this.numericUpDownDispSizeY.Location = new System.Drawing.Point(111, 426);
             this.numericUpDownDispSizeY.Margin = new System.Windows.Forms.Padding(2);
             this.numericUpDownDispSizeY.Maximum = new decimal(new int[] {
             10000,
@@ -360,7 +362,7 @@ namespace ClarityEmotion.LayerControl
             // 
             // numericUpDownDispSizeX
             // 
-            this.numericUpDownDispSizeX.Location = new System.Drawing.Point(13, 393);
+            this.numericUpDownDispSizeX.Location = new System.Drawing.Point(13, 426);
             this.numericUpDownDispSizeX.Margin = new System.Windows.Forms.Padding(2);
             this.numericUpDownDispSizeX.Maximum = new decimal(new int[] {
             10000,
@@ -380,7 +382,7 @@ namespace ClarityEmotion.LayerControl
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(111, 376);
+            this.label11.Location = new System.Drawing.Point(111, 409);
             this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(34, 15);
@@ -395,10 +397,32 @@ namespace ClarityEmotion.LayerControl
             this.textBoxLayerName.TabIndex = 28;
             this.textBoxLayerName.TextChanged += new System.EventHandler(this.textBoxLayerName_TextChanged);
             // 
+            // buttonCenteringX
+            // 
+            this.buttonCenteringX.Location = new System.Drawing.Point(13, 372);
+            this.buttonCenteringX.Name = "buttonCenteringX";
+            this.buttonCenteringX.Size = new System.Drawing.Size(45, 23);
+            this.buttonCenteringX.TabIndex = 29;
+            this.buttonCenteringX.Text = "←→";
+            this.buttonCenteringX.UseVisualStyleBackColor = true;
+            this.buttonCenteringX.Click += new System.EventHandler(this.buttonCenteringX_Click);
+            // 
+            // buttonCenteringY
+            // 
+            this.buttonCenteringY.Location = new System.Drawing.Point(59, 372);
+            this.buttonCenteringY.Name = "buttonCenteringY";
+            this.buttonCenteringY.Size = new System.Drawing.Size(45, 23);
+            this.buttonCenteringY.TabIndex = 30;
+            this.buttonCenteringY.Text = "↑↓";
+            this.buttonCenteringY.UseVisualStyleBackColor = true;
+            this.buttonCenteringY.Click += new System.EventHandler(this.buttonCenteringY_Click);
+            // 
             // LayerSettingControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.buttonCenteringY);
+            this.Controls.Add(this.buttonCenteringX);
             this.Controls.Add(this.textBoxLayerName);
             this.Controls.Add(this.numericUpDownDispSizeY);
             this.Controls.Add(this.numericUpDownDispSizeX);
@@ -466,5 +490,7 @@ namespace ClarityEmotion.LayerControl
         private NumericUpDown numericUpDownDispSizeX;
         private Label label11;
         private TextBox textBoxLayerName;
+        private Button buttonCenteringX;
+        private Button buttonCenteringY;
     }
 }

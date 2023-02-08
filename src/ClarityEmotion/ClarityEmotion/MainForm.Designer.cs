@@ -47,7 +47,7 @@
             this.layerControl1 = new ClarityEmotion.LayerControl.LayerControl();
             this.panelMainDock = new System.Windows.Forms.Panel();
             this.panelMainViewDock = new System.Windows.Forms.Panel();
-            this.clarityViewer1 = new Clarity.GUI.ClarityViewer();
+            this.clarityViewer1 = new Clarity.GUI.ClarityImageViewer();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.panelControlDock = new System.Windows.Forms.Panel();
             this.layerSettingControl1 = new ClarityEmotion.LayerControl.LayerSettingControl();
@@ -230,7 +230,7 @@
             this.clarityViewer1.MinimapDisplayMerginRate = 0.05F;
             this.clarityViewer1.MinimapVisible = false;
             this.clarityViewer1.Name = "clarityViewer1";
-            this.clarityViewer1.PosMode = Clarity.GUI.EClarityViewerPositionMode.LeftTop;
+            this.clarityViewer1.PosMode = Clarity.GUI.EClarityImageViewerPositionMode.LeftTop;
             this.clarityViewer1.Size = new System.Drawing.Size(531, 287);
             this.clarityViewer1.SrcBackColor = System.Drawing.Color.Black;
             this.clarityViewer1.TabIndex = 0;
@@ -323,7 +323,7 @@
         private Panel panelControlDock;
         private LayerControl.LayerControl layerControl1;
         private LayerControl.LayerSettingControl layerSettingControl1;
-        private Clarity.GUI.ClarityViewer clarityViewer1;
+        private Clarity.GUI.ClarityImageViewer clarityViewer1;
         private ToolStripMenuItem 出力連番ToolStripMenuItem;
     }
 }

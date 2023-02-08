@@ -1,6 +1,6 @@
 ﻿namespace Clarity.GUI
 {
-    partial class ClarityViewer
+    partial class ClarityImageViewer
     {
         /// <summary> 
         /// 必要なデザイナー変数です。
@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClarityViewer));
-            this.clarityViewerMinimapView = new Clarity.GUI.ClarityViewerMinimap();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClarityImageViewer));
+            this.clarityViewerMinimapView = new Clarity.GUI.ClarityImageViewerMinimap();
             this.SuspendLayout();
             // 
             // clarityViewerMinimapView
@@ -48,7 +48,7 @@
             this.clarityViewerMinimapView.SrcRect = ((System.Drawing.RectangleF)(resources.GetObject("clarityViewerMinimapView.SrcRect")));
             this.clarityViewerMinimapView.TabIndex = 0;
             this.clarityViewerMinimapView.Visible = false;
-            this.clarityViewerMinimapView.PositonSelectEvent += new Clarity.GUI.ClarityViewerMinimap.PositonSelectDelegate(this.clarityViewerMinimapView_PositonSelectEvent);
+            this.clarityViewerMinimapView.PositonSelectEvent += new Clarity.GUI.ClarityImageViewerMinimap.PositonSelectDelegate(this.clarityViewerMinimapView_PositonSelectEvent);
             // 
             // ClarityViewer
             // 
@@ -71,6 +71,6 @@
 
         #endregion
 
-        private ClarityViewerMinimap clarityViewerMinimapView;
+        private ClarityImageViewerMinimap clarityViewerMinimapView;
     }
 }

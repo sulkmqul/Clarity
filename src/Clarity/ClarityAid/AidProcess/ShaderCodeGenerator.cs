@@ -26,7 +26,7 @@ namespace ClarityAid.AidProcess
             List<ShaderListFileDataRoot> rdatalist = this.ReadShaderListFile(inputlist);
 
             //BuildInIndexの作成
-            List<IdData> idlist = IAidProcess.CreateSystemConst(typeof(Clarity.Engine.Core.BuildInShaderIndex));
+            List<IdData> idlist = IAidProcess.CreateSystemConst(typeof(Clarity.Engine.ClarityEngine.BuildInShaderIndex));
 
             //全IDの追加
             rdatalist.ForEach(x =>

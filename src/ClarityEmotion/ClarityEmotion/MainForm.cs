@@ -135,8 +135,8 @@ namespace ClarityEmotion
         private async void èoóÕToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog diag = new SaveFileDialog();
-            diag.Filter = "MotionJpeg|*.mjpg|All Files|*.*";
-            diag.DefaultExt = ".mjpg";
+            diag.Filter = "Zip|*.zip|All Files|*.*";
+            diag.DefaultExt = ".zip";
             var dret = diag.ShowDialog(this);
             if (dret != DialogResult.OK)
             {
@@ -146,7 +146,7 @@ namespace ClarityEmotion
             try
             {
                 //
-                await this.Logic.ExportMotionJpeg(diag.FileName);
+                await this.Logic.ExportArchive(diag.FileName);
             }
             catch (Exception ex)
             {

@@ -35,8 +35,11 @@ namespace ClarityEmotion
         Layer = 1 << 8,
         AnimeDefinition = 1 << 9,
 
-        
-        
+        Player = 1 << 10,
+        PlayerStart = Player | Create,
+        PlayerStop = Player | Delete,
+
+
         //--------------------------------------------
         None = 0,
     }

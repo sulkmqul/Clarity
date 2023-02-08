@@ -17,7 +17,7 @@ namespace Clarity.GUI
     /// <summary>
     /// 拡縮モード
     /// </summary>
-    public enum EClarityViewerZoomMode
+    public enum EClarityImageViewerZoomMode
     {
         LimitFit,
         FitOnly,
@@ -27,7 +27,7 @@ namespace Clarity.GUI
     /// <summary>
     /// 位置モード
     /// </summary>
-    public enum EClarityViewerPositionMode
+    public enum EClarityImageViewerPositionMode
     {
         LeftTop,
         //Center,
@@ -38,9 +38,9 @@ namespace Clarity.GUI
     /// <summary>
     /// 画像表示コントロール
     /// </summary>
-    public partial class ClarityViewer : UserControl
+    public partial class ClarityImageViewer : UserControl
     {
-        public ClarityViewer()
+        public ClarityImageViewer()
         {
             InitializeComponent();
 
@@ -83,13 +83,13 @@ namespace Clarity.GUI
 
         [Category(CommonDescriptionCategory)]
         [Description("拡縮モード")]
-        [DefaultValue(EClarityViewerZoomMode.Unlimit)]
-        public EClarityViewerZoomMode ZoomMode { get; set; } = EClarityViewerZoomMode.Unlimit;
+        [DefaultValue(EClarityImageViewerZoomMode.Unlimit)]
+        public EClarityImageViewerZoomMode ZoomMode { get; set; } = EClarityImageViewerZoomMode.Unlimit;
 
         [Category(CommonDescriptionCategory)]
         [Description("位置モード")]
-        [DefaultValue(EClarityViewerPositionMode.Unlimit)]
-        public EClarityViewerPositionMode PosMode { get; set; } = EClarityViewerPositionMode.Unlimit;
+        [DefaultValue(EClarityImageViewerPositionMode.Unlimit)]
+        public EClarityImageViewerPositionMode PosMode { get; set; } = EClarityImageViewerPositionMode.Unlimit;
         #endregion
 
         #region Minimap
@@ -680,7 +680,7 @@ namespace Clarity.GUI
             {
                 this.Ivt.ViewRect.Height = h ?? 0;
             }
-            if (this.PosMode == EClarityViewerPositionMode.LeftTop)
+            if (this.PosMode == EClarityImageViewerPositionMode.LeftTop)
             {
                 if (this.Ivt.ViewRect.X > 0)
                 {
@@ -726,13 +726,13 @@ namespace Clarity.GUI
             }
 
             //Fit最小の場合、Fit以下を削除する
-            if (this.ZoomMode == EClarityViewerZoomMode.LimitFit)
+            if (this.ZoomMode == EClarityImageViewerZoomMode.LimitFit)
             {
                 var a = zrlist.Where(x => x < fitrate).ToList();
                 a.ForEach(x => zrlist.Remove(x));
             }
             //Fitのみの場合は拡縮自体を許可しない
-            if (this.ZoomMode == EClarityViewerZoomMode.FitOnly)
+            if (this.ZoomMode == EClarityImageViewerZoomMode.FitOnly)
             {
                 zrlist = new List<double>();
                 zrlist.Add(fitrate);

@@ -25,7 +25,7 @@ namespace ClarityAid.AidProcess
             List<PolygonListFileDataRoot> polist = this.ReadPolygonList(inputlist);
 
             //buildinのデータ取得
-            List<IdData> idlist = IAidProcess.CreateSystemConst(typeof(Clarity.Engine.Core.BuildInPolygonModelIndex));
+            List<IdData> idlist = IAidProcess.CreateSystemConst(typeof(Clarity.Engine.ClarityEngine.BuildInPolygonModelIndex));
 
             //IDの作成
             polist.ForEach(x =>

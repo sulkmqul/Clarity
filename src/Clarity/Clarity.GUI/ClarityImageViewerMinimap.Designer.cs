@@ -1,6 +1,6 @@
 ﻿namespace Clarity.GUI
 {
-    internal partial class ClarityViewerMinimap
+    internal partial class ClarityImageViewerMinimap
     {
         /// <summary> 
         /// 必要なデザイナー変数です。

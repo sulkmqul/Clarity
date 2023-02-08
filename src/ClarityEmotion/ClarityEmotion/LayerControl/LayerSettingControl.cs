@@ -8,6 +8,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Resources;
 using System.Security.Cryptography.Xml;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -241,9 +242,34 @@ namespace ClarityEmotion.LayerControl
             this.CollectInputData();
 
             CeGlobal.Event.SendValueChangeEvent(EEventID.LayerUpdate, this.SelectedData);
-
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mode">0:Xのみ 1:Yのよみ 2:全部</param>
+        private void CenteringDisplay(int mode)
+        {
+            int iw = (int)this.numericUpDownDispSizeX.Value / 2;
+            int ih = (int)this.numericUpDownDispSizeY.Value / 2;
+
+            int w = CeGlobal.Project.BasicInfo.ImageWidth;
+            int h = CeGlobal.Project.BasicInfo.ImageHeight;
+
+            //中心位置の割り出し
+            int cx = Convert.ToInt32(((double)w * 0.5));
+            int cy = Convert.ToInt32(((double)h * 0.5));
+
+            if (mode == 0 || mode == 2)
+            {
+                this.numericUpDownPosX.Value = cx - iw;
+            }
+            if (mode == 1 || mode == 2)
+            {
+                this.numericUpDownPosY.Value = cy - ih;
+            }
+
+        }
         //---------------------------------------------------------------------------------------------------
         //以下は値変更検知
         /// <summary>
@@ -334,6 +360,26 @@ namespace ClarityEmotion.LayerControl
             int newspan = Convert.ToInt32(baseframe * this.valueScrollControlSpeedRate.ValueFixedPoint);
             this.numericUpDownSpan.Value = newspan;
 
+        }
+
+        /// <summary>
+        /// センター表示Xボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonCenteringX_Click(object sender, EventArgs e)
+        {
+            this.CenteringDisplay(0);
+        }
+
+        /// <summary>
+        /// センター表示Yボタンが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonCenteringY_Click(object sender, EventArgs e)
+        {
+            this.CenteringDisplay(1);
         }
     }
 }

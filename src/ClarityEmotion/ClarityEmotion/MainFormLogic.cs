@@ -57,15 +57,15 @@ namespace ClarityEmotion
         }
 
         /// <summary>
-        /// MotionJpegの出力
+        /// データをまとめたzipの出力
         /// </summary>
         /// <param name="filepath">出力ファイルパス</param>
         /// <returns></returns>
-        public async Task ExportMotionJpeg(string filepath)
+        public async Task ExportArchive(string filepath)
         {
 
             EmotionWriter ew = new EmotionWriter();
-            await ew.ExportMJpeg(filepath, (int max, int now) =>
+            await ew.ExportArchive(filepath, (int max, int now) =>
             {
                 System.Diagnostics.Trace.WriteLine($"{now}/{max}");
             }); 

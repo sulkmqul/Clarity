@@ -20,7 +20,7 @@ namespace ClarityEmotion
         /// コンストラクタ
         /// </summary>
         /// <param name="cv">管理Viewer</param>
-        public EditViewManager(ClarityViewer cv)
+        public EditViewManager(ClarityImageViewer cv)
         {
             this.Viewer = cv;
         }
@@ -28,7 +28,7 @@ namespace ClarityEmotion
         /// <summary>
         /// 管理View
         /// </summary>
-        private ClarityViewer Viewer;
+        private ClarityImageViewer Viewer;
 
         EditViewRenderer Renderer = new EditViewRenderer();
 
@@ -68,6 +68,12 @@ namespace ClarityEmotion
             {
                 this.Renderer.Core.Init(CeGlobal.Project.Anime.LayerList);
 
+            });
+
+            CeGlobal.Event.ValueChange.Where(x => (x.EventID & EEventID.Player) == EEventID.Player).Subscribe(x =>
+            {
+                this.Renderer.EditFlag = !((bool)x.Data);
+                this.Viewer.Refresh();
             });
 
 

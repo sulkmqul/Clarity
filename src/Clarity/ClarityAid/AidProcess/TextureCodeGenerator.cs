@@ -26,7 +26,7 @@ namespace ClarityAid.AidProcess
             List<string> inputpath = param.GetInputList();
 
             //エンジン側の定義を取得
-            List<IdData> idlist = IAidProcess.CreateSystemConst(typeof(Clarity.Engine.Core.BuildInTextureIndex));
+            List<IdData> idlist = IAidProcess.CreateSystemConst(typeof(Clarity.Engine.ClarityEngine.BuildInTextureIndex));
 
             //一覧の一括読み込み
             TextureManager.Create();

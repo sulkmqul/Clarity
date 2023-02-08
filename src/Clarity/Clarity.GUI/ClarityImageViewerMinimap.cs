@@ -14,9 +14,9 @@ namespace Clarity.GUI
     /// ClarityViewerのminimap管理
     /// </summary>    
     [ToolboxItem(false)]
-    partial class ClarityViewerMinimap : UserControl
+    partial class ClarityImageViewerMinimap : UserControl
     {
-        public ClarityViewerMinimap()
+        public ClarityImageViewerMinimap()
         {
             InitializeComponent();
         }

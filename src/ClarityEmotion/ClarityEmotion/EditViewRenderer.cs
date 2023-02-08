@@ -21,6 +21,11 @@ namespace ClarityEmotion
         /// </summary>
         public EmotionCore Core { get; private set; } = new EmotionCore();
 
+
+        /// <summary>
+        /// 編集可否
+        /// </summary>
+        public bool EditFlag { get; set; } = true;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 描画されるとき
@@ -29,7 +34,7 @@ namespace ClarityEmotion
         public override void Render(Graphics gra)
         {
             //base.Render(gra);
-            this.Core.GenerateEmotion(this.Frame, gra, this, true, CeGlobal.Project.SelectLayerData?.LayerNo ?? -1);
+            this.Core.GenerateEmotion(this.Frame, gra, this, this.EditFlag, CeGlobal.Project.SelectLayerData?.LayerNo ?? -1);
         }
 
 

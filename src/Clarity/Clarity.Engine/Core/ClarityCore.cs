@@ -131,7 +131,7 @@ namespace Clarity.Engine.Core
             //その他初期情報の取得
             {
                 //当たり判定描画可否
-                this.FData.RenderColliderFlag = ClarityEngine.EngineSetting.GetBool("Debug.Collider.Visible", false);
+                this.FData.RenderColliderFlag = ClarityEngine.EngineSetting.GetBool("Debug.Collider.Visible");
                 this.FData.RenderColBh = new RenderColliderBehavior();
             }
         }
@@ -201,26 +201,22 @@ namespace Clarity.Engine.Core
 
 
         /// <summary>
-        /// ClarityEngineメイン処理開始  StartClarityのAsync版　もう少し何とかしたいが・・・
-        /// </summary> 
-        /// <param name="cep">追加動作</param>
-        public async Task StartClarityAsync(ClarityEnginePlugin cep)
+        /// 公開用処理
+        /// </summary>
+        internal void Process()
         {
-            this.FData.ExProc = cep;
-
-            //リサイズ処理の設定            
-            this.FData.Con.Resize += Control_Resize;
-
-            //初期化
-            ClarityEngineInitParam ceip = new ClarityEngineInitParam() { Con = this.FData.Con };
-            this.FData.ExProc?.Init(ceip);
-
-            //メインループ
-            await this.LoopAsync();
-
-            //
-            this.FData.ExProc?.Dispose();
+            FrameInfo f = new FrameInfo(0, 1);
+            this.ProcFrame(f);
         }
+
+        /// <summary>
+        /// 公開用描画
+        /// </summary>
+        internal void Rendering()
+        {
+            this.RenderFrame();
+        }
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -236,11 +232,11 @@ namespace Clarity.Engine.Core
 
             long prev_time = 0;
 
-            float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit", 0.0f);
+            float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit");
             double nexttime = limittile;
 
             //デバッグ可否
-            bool deflag = ClarityEngine.EngineSetting.GetBool("Debug.Enabled", false);
+            bool deflag = ClarityEngine.EngineSetting.GetBool("Debug.Enabled");
 
             //実行ループ
             ClarityLoop.Run(this.FData.Con, () =>
@@ -308,95 +304,6 @@ namespace Clarity.Engine.Core
 
 
         /// <summary>
-        /// 実行ループ処理、非同期版 LoopからClarityLoopを除いただけ、コピペなので作り変えが必要
-        /// </summary>
-        /// <returns></returns>
-        private async Task LoopAsync()
-        {
-            //FPS計算用
-            FrameRateCalcuData fps = new FrameRateCalcuData();
-
-            //時間管理開始
-            ClarityTimeManager.Mana.Start();
-
-            long prev_time = 0;
-
-            float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit", 0.0f);
-            double nexttime = limittile;
-
-            //デバッグ可否
-            bool deflag = ClarityEngine.EngineSetting.GetBool("Debug.Enabled", false);
-
-            //実行ループ
-            while(true)
-            {
-                //時間経過判断
-                long time = ClarityTimeManager.TotalMilliseconds;
-                if (nexttime > time)
-                {
-                    await Task.Delay(1);
-                    continue;
-                }
-
-                FrameInfo finfo = new FrameInfo(time, time - prev_time);
-                                
-                //フレーム処理
-                await Task.Run(() =>
-                {
-                    this.ProcFrame(finfo);
-                    fps.ProcCount++;
-                });
-
-                this.FData.ExProc?.CyclingProc(new ClarityEngineCyclingParam() { Con = this.FData.Con, Frame = finfo });
-
-                //フレーム描画処理
-                //if (renderskip == false)
-                {
-                    this.RenderFrame();
-                    fps.RenderCount++;
-                }
-
-                //今回のフレーム時間を保存
-                prev_time = finfo.FrameTime;
-
-
-
-
-                #region FPSの計算
-                if (deflag == true)
-                {
-                    long fpsbasetime = ClarityTimeManager.TotalMilliseconds;
-                    long dur = fpsbasetime - fps.PrevCalcuMs;
-                    if (dur > 1000)
-                    {
-                        //FPSの表示
-                        var data = fps.CalcuFPS(fpsbasetime);
-                        string fpsstring = string.Format("Proc:{0:F} Render:{1:F}", data.proc, data.render);
-                        ClarityEngine.SetSystemTextForEngine(fpsstring, 0);
-
-                        //現在の管理object数の計算
-                        int m = ElementManager.Mana.CountElement();
-                        ClarityEngine.SetSystemTextForEngine($"Object Count ={m}", 1);
-
-                        //初期化
-                        fps.ProcCount = 0;
-                        fps.RenderCount = 0;
-                        fps.PrevCalcuMs = fpsbasetime;
-                    }
-                }
-                #endregion
-
-                nexttime += limittile;
-
-
-                await Task.Delay(1);
-
-
-            }
-        }
-
-
-        /// <summary>
         /// フレーム処理
         /// </summary>
         private void ProcFrame(FrameInfo finfo)
@@ -409,8 +316,6 @@ namespace Clarity.Engine.Core
 
             //処理外SwapChaiの処理
             this.FData.SwapChainElement.Proc(0, finfo);
-
-
         }
 
 
@@ -494,8 +399,14 @@ namespace Clarity.Engine.Core
         {
             #region エンジン管理クラスの作成
             //DirectXの初期化           
-            Vector2 rvsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize", new Vector2(-1.0f, -1.0f));
-            DxManager.Init(this.FData.Con, new System.Drawing.Size((int)rvsize.X, (int)rvsize.Y));
+            Vector2 rvsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize");
+            bool frvf = ClarityEngine.EngineSetting.GetBool("CE.FixedRenderingViewSize");
+            System.Drawing.Size? gsize = null;
+            if (frvf == true)
+            {
+                gsize = new System.Drawing.Size((int)rvsize.X, (int)rvsize.Y);
+            }
+            DxManager.Init(this.FData.Con, gsize);
 
             //時間管理
             ClarityTimeManager.Create();
@@ -528,7 +439,7 @@ namespace Clarity.Engine.Core
             #endregion
 
             //全体デフォルト
-            Vector2 vsize = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize", new Vector2(this.FData.Con.ClientSize.Width, this.FData.Con.ClientSize.Height));
+            Vector2 vsize = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize");
             WorldManager.Mana.CreateSystemViewWorld((int)vsize.X, (int)vsize.Y);
 
             //基本世界の作成
@@ -541,9 +452,7 @@ namespace Clarity.Engine.Core
         /// </summary>
         private void CreateDefaultWorld()
         {
-            Vector2 vsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize", new Vector2(this.FData.Con.ClientSize.Width, this.FData.Con.ClientSize.Height));
-
-            
+            Vector2 vsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize");            
             
             
             //デフォルト世界の登録

@@ -79,19 +79,19 @@ namespace Clarity.Engine.Core
         {
             get
             {
-                if (this.GameSizeParam.Width < 0 || this.GameSize.Height < 0)
+                if (this.GameSizeParam == null)
                 {
                     return this.WindowSize;
                 }
 
-                return this.GameSizeParam;
+                return this.GameSizeParam.Value;
             }
         }
 
         /// <summary>
         /// ゲーム解像度の設定値
         /// </summary>
-        private Size GameSizeParam;
+        private Size? GameSizeParam;
 
         /// <summary>
         /// 画面サイズ
@@ -247,8 +247,8 @@ namespace Clarity.Engine.Core
         /// 総合初期化
         /// </summary>
         /// <param name="mc">親画面</param>
-        /// <param name="gsize">ゲーム解像度</param>
-        public static void Init(Control mc, Size gsize)
+        /// <param name="gsize">ゲーム解像度 nullでWindowサイズに合わせて動的に変更</param>
+        public static void Init(Control mc, Size? gsize)
         {
             try
             {

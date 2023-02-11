@@ -23,10 +23,10 @@ namespace Clarity.Engine.Core
 
             //初期情報の取得
             {
-                Vector3 defcol = ClarityEngine.EngineSetting.GetVec3("Debug.Collider.DefaultColor", new Vector3(0.0f));
+                Vector3 defcol = ClarityEngine.EngineSetting.GetVec3("Debug.Collider.DefaultColor");
                 this.DefaultColor = new Color4(defcol, 1.0f);
 
-                Vector3 ccol = ClarityEngine.EngineSetting.GetVec3("Debug.Collider.ContactColor", new Vector3(1.0f));
+                Vector3 ccol = ClarityEngine.EngineSetting.GetVec3("Debug.Collider.ContactColor");
                 this.ContanctColor = new Color4(ccol, 1.0f);
             }
 

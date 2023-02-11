@@ -59,7 +59,7 @@ namespace Clarity
         /// <param name="epath">親のパス</param>
         /// <param name="ele">解析対象</param>
         /// <returns></returns>
-        protected ClaritySettingData AnalyzeNode(ClaritySettingData parent, XElement ele)
+        protected ClaritySettingData? AnalyzeNode(ClaritySettingData? parent, XElement ele)
         {
             ClaritySettingData ans = new ClaritySettingData();
             try
@@ -76,7 +76,7 @@ namespace Clarity
                 //データコード
                 {
                     
-                    XAttribute atype = ele.Attribute("type");
+                    XAttribute? atype = ele.Attribute("type");
                     if (atype == null)
                     {
                         return null;
@@ -92,7 +92,7 @@ namespace Clarity
                 {
                     if (ans.DataType == EClaritySettingDataType.Array)
                     {
-                        XAttribute asubtype = ele.Attribute("subtype");
+                        XAttribute? asubtype = ele.Attribute("subtype");
                         if (asubtype == null)
                         {
                             throw new FormatException($"tag={ans.Code} pelase set subtype");
@@ -127,7 +127,7 @@ namespace Clarity
         /// <param name="epath">親名</param>
         /// <param name="ele">名前</param>
         /// <returns></returns>
-        private string CreateElementCode(ClaritySettingData parent, XElement ele)
+        private string CreateElementCode(ClaritySettingData? parent, XElement ele)
         {
             string ans = (parent != null) ? parent.Code + PathDev + ele.Name : ele.Name.LocalName;
             return ans;
@@ -264,7 +264,7 @@ namespace Clarity
             var nodes = ele.Nodes();
             foreach (XNode node in nodes)
             {
-                XElement em = node as XElement;
+                XElement? em = node as XElement;
                 if (em == null)
                 {
                     continue;
@@ -320,7 +320,7 @@ namespace Clarity
         /// <summary>
         /// 親ノード
         /// </summary>
-        internal ClaritySettingData Parent  = null;
+        internal ClaritySettingData? Parent  = null;
         /// <summary>
         /// 子供一式
         /// </summary>
@@ -624,7 +624,7 @@ namespace Clarity
             }
             catch (Exception e)
             {
-                throw new Exception("ClarityUserSettingFile ReadSetting", e);
+                throw new Exception("ClaritySettingFile ReadSetting", e);
             }
 
             return anslist;
@@ -652,7 +652,7 @@ namespace Clarity
             }
             catch (Exception e)
             {
-                throw new Exception("ClarityUserSettingFile ReadSetting", e);
+                throw new Exception("ClaritySettingFile ReadSetting", e);
             }
 
             return anslist;
@@ -666,7 +666,7 @@ namespace Clarity
         /// <param name="ele">読み込みノード</param>
         /// <param name="adf">自身のパスを付与するか？ false=下にはepathnullで渡す(root用)</param>
         /// <returns></returns>
-        private List<ClaritySettingData> ReadNodes(ClaritySettingData parent, XElement ele, bool adp)
+        private List<ClaritySettingData> ReadNodes(ClaritySettingData? parent, XElement ele, bool adp)
         {
             List<ClaritySettingData> anslist = new List<ClaritySettingData>();
 
@@ -700,7 +700,7 @@ namespace Clarity
             var nodes = ele.Nodes();
             foreach (XNode node in nodes)
             {
-                XElement em = node as XElement;
+                XElement? em = node as XElement;
                 if (em == null)
                 {
                     continue;

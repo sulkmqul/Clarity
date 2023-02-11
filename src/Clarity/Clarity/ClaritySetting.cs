@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using System.Drawing.Text;
+using System.Security.AccessControl;
+using System.Diagnostics.CodeAnalysis;
+using System.Configuration;
 
 namespace Clarity
 {
@@ -17,12 +21,12 @@ namespace Clarity
         /// <summary>
         /// 管理データ AddManage関数を利用してADDする
         /// </summary>
-        private Dictionary<int, ClaritySettingData> DataDic = null;
+        private Dictionary<int, ClaritySettingData> DataDic = new Dictionary<int, ClaritySettingData>();
 
         /// <summary>
         /// 管理データ(文字をそのまま DataDicと内容は同等、キーアクセスを早くするための処置) AddManage関数を利用してADDする
         /// </summary>
-        private Dictionary<string, ClaritySettingData> DataDicKeyString = null;
+        private Dictionary<string, ClaritySettingData> DataDicKeyString = new Dictionary<string, ClaritySettingData>();
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
 
@@ -62,8 +66,8 @@ namespace Clarity
         /// <summary>
         /// デフォルトデータの挿入
         /// </summary>
-        /// <param name="datalist"></param>
-        internal void InitDefault(List<(string code, object data)> datalist, bool overwrite)
+        /// <param name="datalist">挿入データ組リスト</param>
+        internal void InitDefault(List<(string code, object data)> datalist)
         {
             //データの作成
             this.DataDic = new Dictionary<int, ClaritySettingData>();
@@ -96,6 +100,54 @@ namespace Clarity
             return this.DataDic.Select(x => (x.Value.Id, x.Value.Code)).ToList();
         }
 
+
+        /// <summary>
+        /// 指定のIDが登録されているかをチェックする。
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>true=登録済み</returns>
+        public bool CheckExists(int id)
+        {
+            //IDのから値を取得
+            ClaritySettingData? sdata = null;
+            bool f = this.DataDic.TryGetValue(id, out sdata);
+            if (f == false)
+            {
+                return false;
+            }
+            
+            //念のため双方に存在するかを確認
+            f = this.DataDicKeyString.ContainsKey(sdata?.Code ?? "");
+            if (f == false)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 指定のCodeが登録されているかをチェックする
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns>true=登録済み</returns>
+        public bool CheckExists(string code)
+        {
+            //IDのから値を取得
+            ClaritySettingData? sdata = null;
+            bool f = this.DataDicKeyString.TryGetValue(code, out sdata);
+            if (f == false)
+            {
+                return false;
+            }
+
+            //念のため双方に存在するかを確認
+            f = this.DataDic.ContainsKey(sdata?.Id ?? int.MinValue);
+            if (f == false)
+            {
+                return false;
+            }
+            return true;
+        }
 
         #region 設定値の取得
 
@@ -235,11 +287,29 @@ namespace Clarity
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
+        public bool GetBool(string code)
+        {
+            return this.GetSetting<bool>(code);
+        }
+        /// <summary>
+        /// boolの取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public bool GetBool(string code, bool def)
         {
             return this.GetSetting<bool>(code, def);
         }
 
+        /// <summary>
+        /// Integer設定の取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public int GetInteger(string code)
+        {
+            return this.GetSetting<int>(code);
+        }
         /// <summary>
         /// Integer設定の取得
         /// </summary>
@@ -255,9 +325,28 @@ namespace Clarity
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
+        public float GetFloat(string code)
+        {
+            return this.GetSetting<float>(code);
+        }
+        /// <summary>
+        /// Float設定の取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public float GetFloat(string code, float def)
         {
             return this.GetSetting<float>(code, def);
+        }
+
+        /// <summary>
+        /// String設定の取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public string GetString(string code)
+        {
+            return this.GetSetting<string>(code);
         }
 
         /// <summary>
@@ -275,9 +364,29 @@ namespace Clarity
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
+        public Vector2 GetVec2(string code)
+        {
+            return this.GetSetting<Vector2>(code);
+        }
+
+        /// <summary>
+        /// Vector2設定の取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public Vector2 GetVec2(string code, Vector2 def)
         {
             return this.GetSetting<Vector2>(code, def);
+        }
+
+        /// <summary>
+        /// Vector3設定の取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public Vector3 GetVec3(string code)
+        {
+            return this.GetSetting<Vector3>(code);
         }
 
         /// <summary>
@@ -289,8 +398,6 @@ namespace Clarity
         {
             return this.GetSetting<Vector3>(code, def);
         }
-
-
 
         /// <summary>
         /// Integer設定配列の取得
@@ -348,19 +455,151 @@ namespace Clarity
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        public T GetEnum<T>(string code, T def) where T : Enum
+        public T GetEnum<T>(string code) where T : Enum
         {
-            string m = this.GetString(code, def.ToString());
-
+            string m = this.GetString(code);
             T ans = (T)Enum.Parse(typeof(T), m);
             return ans;
         }
 
+        /// <summary>
+        /// Enum値の取得
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="code"></param>
+        /// <param name="def"></param>
+        /// <returns></returns>
+        public T GetEnum<T>(string code, T def) where T : Enum
+        {
+            try
+            {
+                return this.GetEnum<T>(code);
+            }
+            catch
+            {
+                return def;
+            }
+        }
         #endregion
 
 
 
-        
+
+        #endregion
+
+        #region 設定値の設定
+        /// <summary>
+        /// 手動設定
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="code">Code</param>
+        /// <param name="data">設定データ</param>
+        /// <returns>設定成功可否 true=成功</returns>
+        public bool SetData(int id, string code, object data)
+        {
+            ClaritySettingData cs = new ClaritySettingData();
+            bool exid = this.DataDic.ContainsKey(id);
+            bool excode = this.DataDicKeyString.ContainsKey(code);
+            //片方だけにあるなら不正
+            if (exid != excode)
+            {
+                return false;
+
+            }
+            if (exid == excode == true)
+            {
+                cs = this.DataDic[id];
+                //キーが見つかったけど不正Codeだった
+                if (cs.Code != code)
+                {
+                    return false;
+                }
+            }
+
+
+            //値の設定
+            cs.Id = id;
+            cs.Code = code;
+
+            //データtypeの割り出し
+            Type t = data.GetType();            
+            this.GetClaritySettingFileDataType(t, out cs.DataType, out cs.SubDataType);
+            cs.Data = data;
+
+            //追加
+            this.AddManage(cs, true);
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// IDを使用して値を設定する。
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="data">設定値</param>
+        /// <returns>設定成功可否 true=成功</returns>
+        public bool SetData(int id, object data)
+        {
+            ClaritySettingData cs = new ClaritySettingData();
+            //IDとCodeの設定
+            cs.Id = id;
+            cs.Code = id.ToString();
+
+            //既存物がある場合上書き
+            bool exid = this.DataDic.ContainsKey(id);                        
+            if (exid == true)
+            {
+                cs = this.DataDic[id];                
+            }
+
+            
+
+            //データtypeの割り出し
+            Type t = data.GetType();
+            this.GetClaritySettingFileDataType(t, out cs.DataType, out cs.SubDataType);
+            cs.Data = data;
+
+            //追加
+            this.AddManage(cs, true);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Codeを使用して値を設定する
+        /// </summary>
+        /// <param name="code">Code</param>
+        /// <param name="data">設定値</param>
+        /// <returns>設定成功可否</returns>
+        public bool SetData(string code, object data)
+        {
+            ClaritySettingData cs = new ClaritySettingData();
+            cs.Id = this.DataDic.Count;
+            cs.Code = code;
+
+            //既存品がある場合上書き
+            bool excode = this.DataDicKeyString.ContainsKey(code);
+            if (excode == true)
+            {
+                cs = this.DataDicKeyString[code];
+            }
+
+            
+            
+
+            //データtypeの割り出し
+            Type t = data.GetType();
+            this.GetClaritySettingFileDataType(t, out cs.DataType, out cs.SubDataType);
+            cs.Data = data;
+
+            //追加
+            this.AddManage(cs, true);
+
+
+            return true;
+        }
+
         #endregion
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -398,7 +637,6 @@ namespace Clarity
         private T GetSetting<T>(int id)
         {
             ClaritySettingData data = this.DataDic[id];
-
             T ans = (T)data.Data;
             return ans;
         }
@@ -429,16 +667,26 @@ namespace Clarity
         {
             try
             {
-                ClaritySettingData data = this.DataDicKeyString[code];
-
-                T ans = (T)data.Data;
-                return ans;
+                return this.GetSetting<T>(code);
             }
             catch
             {
                 return def;
             }
 
+        }
+
+        /// <summary>
+        /// 設定値の取得
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        private T GetSetting<T>(string code)
+        {            
+            ClaritySettingData data = this.DataDicKeyString[code];
+            T ans = (T)data.Data;
+            return ans;
         }
 
         /// <summary>
@@ -517,6 +765,7 @@ namespace Clarity
 
             Dictionary<Type, EClaritySettingDataType> datadic = new Dictionary<Type, EClaritySettingDataType>();
             {
+                datadic.Add(typeof(bool), EClaritySettingDataType.Bool);
                 datadic.Add(typeof(int), EClaritySettingDataType.Int);
                 datadic.Add(typeof(float), EClaritySettingDataType.Float);
                 datadic.Add(typeof(string), EClaritySettingDataType.String);

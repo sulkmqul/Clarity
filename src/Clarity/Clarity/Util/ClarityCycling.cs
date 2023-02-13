@@ -58,7 +58,7 @@ namespace Clarity.Util
 
             //実行開始
             this.CycleCancelSource = new CancellationTokenSource();
-            this.CycleTask = this.PlayLoop(ac, ms, this.CycleCancelSource.Token);
+            this.CycleTask = this.Cycling(ac, ms, this.CycleCancelSource.Token);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Clarity.Util
         /// <param name="fps">起動間隔(ms)</param>
         /// <param name="ct">キャンセル</param>
         /// <returns></returns>
-        private async Task PlayLoop(Action<double> ac, double fps, CancellationToken ct)
+        private async Task Cycling(Action<double> ac, double fps, CancellationToken ct)
         {
 
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();

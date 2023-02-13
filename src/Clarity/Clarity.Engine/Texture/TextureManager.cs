@@ -127,8 +127,8 @@ namespace Clarity.Engine.Texture
         /// <returns></returns>
         protected ID3D11ShaderResourceView ReadTexture(Bitmap srcbit, System.Drawing.Color? transcol)
         {
-            ID3D11ShaderResourceView ans = null;
-
+            ID3D11ShaderResourceView ans;
+            
             try
             {
                 System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, srcbit.Width, srcbit.Height);

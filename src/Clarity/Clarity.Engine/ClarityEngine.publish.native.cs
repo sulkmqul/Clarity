@@ -32,6 +32,26 @@ namespace Clarity.Engine
             {
                 ClarityEngine.Engine?.Core.Rendering();
             }
+
+
+            /// <summary>
+            /// 処理と描画を同時に呼び出す
+            /// </summary>
+            public static void ProcessRendering()
+            {
+                Native.Process();
+                Native.Rendering();
+            }
+
+            /// <summary>
+            /// 解放
+            /// </summary>
+            public static void Dispose()
+            {
+                ClarityEngine.Engine?.Core.Dispose();
+                ClarityEngine.Engine = null;
+            }
+
         }
     }
 }

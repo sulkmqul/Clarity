@@ -68,22 +68,22 @@ namespace Clarity.Engine.Core
             /// <summary>
             /// 管理コントロール
             /// </summary>
-            public Control Con = null;
+            public Control Con;
 
             /// <summary>
             /// 実行プラグイン
             /// </summary>
-            public ClarityEnginePlugin ExProc = null;
+            public ClarityEnginePlugin ExProc;
 
 
             /// <summary>
             /// SwapChainに描画する物体一覧
             /// </summary>
-            public Element.ClarityStructure SwapChainElement = null;
+            public Element.ClarityStructure SwapChainElement;
             /// <summary>
             /// 描画View
             /// </summary>
-            public SystemViewElement SystemView = null;
+            public SystemViewElement SystemView;
 
             /// <summary>
             /// 当たり判定描画可否
@@ -92,13 +92,13 @@ namespace Clarity.Engine.Core
             /// <summary>
             /// 当たり判定描画所作
             /// </summary>
-            public RenderColliderBehavior RenderColBh = null;
+            public RenderColliderBehavior RenderColBh;
         }
 
         /// <summary>
         /// エンジンデータ
         /// </summary>
-        private ClarityCoreData FData = null;
+        private ClarityCoreData FData;
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -166,28 +166,28 @@ namespace Clarity.Engine.Core
         /// </summary>
         public void Dispose()
         {
-            //オブジェクト管理
-            //Element.ElementManager.Mana.Clear(true);
+            //オブジェクト管理            
+            ElementManager.Clear();
 
             //世界管理
-            WorldManager.Mana.Dispose();
+            WorldManager.Mana?.Dispose();
 
             //入力管理
             //InputManager.Mana.Dispose();
 
             //テクスチャアニメーション
-            Texture.TextureAnimeFactory.Mana.Dispose();
+            Texture.TextureAnimeFactory.Mana?.Dispose();
             //テクスチャ
-            Texture.TextureManager.Mana.Dispose();
+            Texture.TextureManager.Mana?.Dispose();
 
             //頂点
-            Vertex.VertexManager.Mana.Dispose();
+            Vertex.VertexManager.Mana?.Dispose();
 
             //Shader管理
-            Shader.ShaderManager.Mana.Dispose();
+            Shader.ShaderManager.Mana?.Dispose();
 
             //DirectX
-            DxManager.Mana.Dispose();
+            DxManager.Mana?.Dispose();
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Clarity.Engine.Core
             FrameRateCalcuData fps = new FrameRateCalcuData();
             
             //時間管理開始
-            ClarityTimeManager.Mana.Start();
+            ClarityTimeManager.Mana?.Start();
 
             long prev_time = 0;
 
@@ -330,7 +330,7 @@ namespace Clarity.Engine.Core
             //システム描画
             this.RenderSwapChain();
 
-            DxManager.Mana.SwapChainPresent();
+            DxManager.Mana?.SwapChainPresent();
         }
 
 
@@ -482,14 +482,14 @@ namespace Clarity.Engine.Core
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <exception cref="NotImplementedException"></exception>
-        private void Control_Resize(object sender, EventArgs e)
+        private void Control_Resize(object? sender, EventArgs e)
         {
 
             //デバイスの初期化を行う            
-            DxManager.Mana.ResizeSwapChain();
+            DxManager.Mana?.ResizeSwapChain();
 
             //SystemViewの作り直し
-            WorldManager.Mana.CreateSystemViewWorld(this.FData.Con.Width, this.FData.Con.Height);
+            WorldManager.Mana?.CreateSystemViewWorld(this.FData.Con.Width, this.FData.Con.Height);
 
             //リサイズ処理
             this.FData.ExProc?.ResizeView(this.FData.Con.Size);

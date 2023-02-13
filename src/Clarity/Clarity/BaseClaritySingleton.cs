@@ -21,18 +21,46 @@ namespace Clarity
         /// <summary>
         /// 本体
         /// </summary>
-        protected static T Instance = null;
+        protected static T? Instance = null;
 
 
-        public static T Mana
+        public static T? Mana
         {
             get
             {
                 return Instance;
             }
         }
+
+
+        public static void Clear()
+        {
+            Instance = null;
+        }
     }
 
+    /// <summary>
+    /// 取得時にnewを行い、初期化忘れが存在しないsingleton
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class BaseClarityConstSingleton<T> : BaseClaritySingleton<T> where T : BaseClarityConstSingleton<T>, new()
+    {
+        protected BaseClarityConstSingleton() : base()
+        {
+        }
+
+        public static new T Mana
+        {
+            get
+            {
+                if (Instance == null)
+                {
+                    Instance = new T();
+                }
+                return Instance;
+            }
+        }
+    }
 
     /// <summary>
     /// ゲーム内資源管理クラス基底

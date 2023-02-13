@@ -1,6 +1,6 @@
 ﻿namespace ClarityMovement.Viewer
 {
-    partial class ClarityDxViewer
+    partial class ClarityEngineViewer
     {
         /// <summary> 
         /// 必要なデザイナー変数です。

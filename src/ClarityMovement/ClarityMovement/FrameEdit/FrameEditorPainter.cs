@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Permissions;
 using System.Text;
@@ -7,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ClarityMovement.FrameEdit
 {
+    /// <summary>
+    /// エディタのパラメータ
+    /// </summary>
     public class FrameEditorParam
     {
         /// <summary>
@@ -17,19 +21,19 @@ namespace ClarityMovement.FrameEdit
         /// <summary>
         /// 描画開始位置
         /// </summary>
-        public Point LeftTop = new Point(0, 0);
+        public Point LeftTop = new Point(50, 50);
 
 
         /// <summary>
-        /// 計測目盛りサイズ(フレーム値の描画)
+        /// 計測目盛り縦サイズ(フレーム値の描画)
         /// </summary>
         public int MeasureSize { get; set; } = 20;
 
 
         /// <summary>
-        /// フレーム画像表示エリアサイズ
+        /// フレーム画像表示エリア縦サイズ
         /// </summary>
-        public int ImageSize { get; set; } = 50;
+        public int ImageSize { get; set; } = 80;
 
         /// <summary>
         /// タグの高さ
@@ -40,6 +44,24 @@ namespace ClarityMovement.FrameEdit
         /// 最大タグ数 
         /// </summary>
         public int MaxTagCount { get; } = 10;
+
+
+        /// <summary>
+        /// 線の色
+        /// </summary>
+        public Color BaseLineColor { get; set; } = Color.Gray;
+    }
+
+    /// <summary>
+    /// エリア種別
+    /// </summary>
+    enum EEditorAreaType
+    {
+        Frame = 0,
+        Image,
+        Tag,
+
+        None = 999,
     }
 
 
@@ -78,6 +100,8 @@ namespace ClarityMovement.FrameEdit
         public Rectangle TagArea { get; private set; } = new Rectangle();
 
 
+        
+
         /// <summary>
         /// 初期化されるとき
         /// </summary>        
@@ -98,19 +122,23 @@ namespace ClarityMovement.FrameEdit
             //全体横幅の計算
             int width = maxframe * fe.FrameSize;
 
+
             //フレーム領域の計算
+            int bottom = 0;
             {
                 this.MeasureArea = new Rectangle(0, 0, width, fe.MeasureSize);
+                bottom = this.MeasureArea.Bottom;
             }
             //フレーム画像領域の計算
             {
-                this.ImageArea = new Rectangle(0, this.MeasureArea.Bottom, width, fe.ImageSize);
+                this.ImageArea = new Rectangle(0, bottom, width, fe.ImageSize);
+                bottom = this.ImageArea.Bottom;
             }
             //タグサイズ
             {
                 //タグ領域の高さ計算
                 int th = fe.TagSize * fe.MaxTagCount;
-                this.TagArea = new Rectangle(0, this.ImageArea.Bottom, width, th);
+                this.TagArea = new Rectangle(0, bottom, width, th);
             }
 
             //とりあえず開始位置オフセット
@@ -129,32 +157,109 @@ namespace ClarityMovement.FrameEdit
         /// 描画処理本体
         /// </summary>
         /// <param name="gra">描画物</param>        
-        public void Paint(Graphics gra)
+        /// <param name="maxframe">最大フレーム数</param>
+        public void Paint(Graphics gra, int maxframe)
         {
             gra.Clear(Color.White);
 
-            //裏のフレームの区切りを描画
+            //フレーム目盛りの描画
+            
 
             //設定フレーム画像の描画
 
             //設定イベントの描画
 
             {
-                using (SolidBrush bru = new SolidBrush(Color.Pink))
+
+                //背景クリア
+                using (SolidBrush bru = new SolidBrush(Color.FromArgb(255, 210, 210)))
                 {
                     gra.FillRectangle(bru, this.MeasureArea);
                 }
 
-                using (SolidBrush bru = new SolidBrush(Color.SkyBlue))
+                using (SolidBrush bru = new SolidBrush(Color.FromArgb(210, 230, 255)))
                 {
                     gra.FillRectangle(bru, this.ImageArea);
                 }
 
-                using (SolidBrush bru = new SolidBrush(Color.Olive))
+                using (SolidBrush bru = new SolidBrush(Color.AntiqueWhite))
                 {
                     gra.FillRectangle(bru, this.TagArea);
                 }
             }
+
+            this.PaintMeasureArea(gra, maxframe);
+        }
+
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// フレームの目盛りエリアの描画
+        /// </summary>
+        /// <param name="gra"></param>
+        private void PaintMeasureArea(Graphics gra, int maxframe)
+        {
+            Rectangle area = this.MeasureArea;
+
+           
+
+            //線の描画
+            var param = this.Parent.SizeParam;
+            using (Pen pe = new Pen(param.BaseLineColor, 1))
+            {
+                using (SolidBrush bru = new SolidBrush(Color.Black))
+                {
+                    Font font = new Font("Tohoma", 10.0f);
+
+                    //各フレーム枠の表示
+                    for (int i = 0; i < maxframe; i++)
+                    {
+                        int left = i * param.FrameSize + area.X;
+
+                        Rectangle cell = new Rectangle();
+                        #region 目盛り
+                        cell = new Rectangle(left, area.Top, param.FrameSize, param.MeasureSize);
+                        gra.DrawRectangle(pe, cell);
+
+
+                        //フレーム番号の表示
+                        string text = (i + 1).ToString();
+                        SizeF fs = gra.MeasureString(text, font);
+                        Rectangle iarea = this.ImageArea;
+                        if (fs.Width > param.FrameSize)
+                        {
+                            text = "..";
+                        }
+                        gra.DrawString(text, font, bru, cell.Left, cell.Bottom - fs.Height);
+                        #endregion
+
+
+                        #region 目盛り
+                        {                            
+                            cell = new Rectangle(left, iarea.Top, param.FrameSize, param.ImageSize);
+                            gra.DrawRectangle(pe, cell);
+                        }
+                        #endregion
+
+
+                        #region tag
+                        {
+                            Rectangle tarea = this.TagArea;
+
+                            for (int tc = 0; tc < param.MaxTagCount; tc++)
+                            {
+                                int top = tarea.Top + (param.TagSize * tc);
+
+                                cell = new Rectangle(left, top, param.FrameSize, param.TagSize);
+                                gra.DrawRectangle(pe, cell);
+                            }
+                        }
+                        #endregion
+                    }
+                }
+            }
+
         }
     }
 }

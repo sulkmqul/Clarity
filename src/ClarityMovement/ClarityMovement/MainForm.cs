@@ -149,6 +149,23 @@ namespace ClarityMovement
             var dret = f.ShowDialog(this);
         }
 
-        
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //EditorToolèàóù
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButtonEditZoomPlus_Click(object sender, EventArgs e)
+        {
+            this.frameEditControlEditor.Zoom(true);
+        }
+
+        private void toolStripButtonEditZoomMinus_Click(object sender, EventArgs e)
+        {
+            this.frameEditControlEditor.Zoom(false);
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
     }
 }

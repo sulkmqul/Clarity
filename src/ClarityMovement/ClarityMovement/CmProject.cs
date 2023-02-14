@@ -41,7 +41,7 @@ namespace ClarityMovement
         /// <summary>
         /// 最大フレーム数
         /// </summary>
-        public int Frame { get; set; } = 10;
+        public int Frame { get; set; } = 600;
         
 
     }

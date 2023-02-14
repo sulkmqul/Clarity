@@ -28,11 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.panelMainView = new System.Windows.Forms.Panel();
             this.clarityDxViewer1 = new ClarityMovement.Viewer.ClarityEngineViewer();
             this.panelContoller = new System.Windows.Forms.Panel();
+            this.panelEditorScroll = new System.Windows.Forms.Panel();
             this.frameEditControlEditor = new ClarityMovement.FrameEdit.FrameEditControl();
+            this.toolStripEditor = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonEditZoomPlus = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonEditZoomMinus = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.ファイルFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.新規作成NToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +52,8 @@
             this.フレーム画像追加ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelMainView.SuspendLayout();
             this.panelContoller.SuspendLayout();
+            this.panelEditorScroll.SuspendLayout();
+            this.toolStripEditor.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,20 +85,61 @@
             // 
             // panelContoller
             // 
-            this.panelContoller.AutoScroll = true;
-            this.panelContoller.Controls.Add(this.frameEditControlEditor);
+            this.panelContoller.Controls.Add(this.panelEditorScroll);
+            this.panelContoller.Controls.Add(this.toolStripEditor);
             this.panelContoller.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelContoller.Location = new System.Drawing.Point(0, 361);
             this.panelContoller.Name = "panelContoller";
             this.panelContoller.Size = new System.Drawing.Size(784, 200);
             this.panelContoller.TabIndex = 0;
             // 
+            // panelEditorScroll
+            // 
+            this.panelEditorScroll.AutoScroll = true;
+            this.panelEditorScroll.Controls.Add(this.frameEditControlEditor);
+            this.panelEditorScroll.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelEditorScroll.Location = new System.Drawing.Point(0, 25);
+            this.panelEditorScroll.Name = "panelEditorScroll";
+            this.panelEditorScroll.Size = new System.Drawing.Size(784, 175);
+            this.panelEditorScroll.TabIndex = 2;
+            // 
             // frameEditControlEditor
             // 
-            this.frameEditControlEditor.Location = new System.Drawing.Point(0, 0);
+            this.frameEditControlEditor.Location = new System.Drawing.Point(3, 3);
             this.frameEditControlEditor.Name = "frameEditControlEditor";
-            this.frameEditControlEditor.Size = new System.Drawing.Size(200, 1000);
+            this.frameEditControlEditor.Size = new System.Drawing.Size(100, 100);
             this.frameEditControlEditor.TabIndex = 0;
+            // 
+            // toolStripEditor
+            // 
+            this.toolStripEditor.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonEditZoomPlus,
+            this.toolStripButtonEditZoomMinus});
+            this.toolStripEditor.Location = new System.Drawing.Point(0, 0);
+            this.toolStripEditor.Name = "toolStripEditor";
+            this.toolStripEditor.Size = new System.Drawing.Size(784, 25);
+            this.toolStripEditor.TabIndex = 1;
+            this.toolStripEditor.Text = "toolStrip1";
+            // 
+            // toolStripButtonEditZoomPlus
+            // 
+            this.toolStripButtonEditZoomPlus.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonEditZoomPlus.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonEditZoomPlus.Image")));
+            this.toolStripButtonEditZoomPlus.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonEditZoomPlus.Name = "toolStripButtonEditZoomPlus";
+            this.toolStripButtonEditZoomPlus.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonEditZoomPlus.Text = "+";
+            this.toolStripButtonEditZoomPlus.Click += new System.EventHandler(this.toolStripButtonEditZoomPlus_Click);
+            // 
+            // toolStripButtonEditZoomMinus
+            // 
+            this.toolStripButtonEditZoomMinus.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonEditZoomMinus.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonEditZoomMinus.Image")));
+            this.toolStripButtonEditZoomMinus.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonEditZoomMinus.Name = "toolStripButtonEditZoomMinus";
+            this.toolStripButtonEditZoomMinus.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonEditZoomMinus.Text = "-";
+            this.toolStripButtonEditZoomMinus.Click += new System.EventHandler(this.toolStripButtonEditZoomMinus_Click);
             // 
             // menuStrip1
             // 
@@ -202,6 +250,10 @@
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.panelMainView.ResumeLayout(false);
             this.panelContoller.ResumeLayout(false);
+            this.panelContoller.PerformLayout();
+            this.panelEditorScroll.ResumeLayout(false);
+            this.toolStripEditor.ResumeLayout(false);
+            this.toolStripEditor.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -228,5 +280,9 @@
         private FrameEdit.FrameEditControl frameEditControlEditor;
         private ToolStripMenuItem 編集EToolStripMenuItem;
         private ToolStripMenuItem フレーム画像追加ToolStripMenuItem;
+        private ToolStrip toolStripEditor;
+        private ToolStripButton toolStripButtonEditZoomPlus;
+        private ToolStripButton toolStripButtonEditZoomMinus;
+        private Panel panelEditorScroll;
     }
 }

@@ -123,6 +123,8 @@ namespace ClarityMovement.FrameEdit
 
             //領域再計算処理
             this.ResizeControl();
+
+            this.Refresh();
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -147,8 +149,8 @@ namespace ClarityMovement.FrameEdit
             Size csize = this.Painter.ResizeArea(maxframe, this.SizeParam);
 
             //サイズの規定
-            this.Width = csize.Width;
-            this.Height = csize.Height; 
+            this.Width = csize.Width + 1;
+            this.Height = csize.Height + 1; 
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -171,7 +173,15 @@ namespace ClarityMovement.FrameEdit
         /// <param name="e"></param>
         private void pictureBoxCanvas_Paint(object sender, PaintEventArgs e)
         {
-            this.Painter?.Paint(e.Graphics);
+            if (CmGlobal.Project.Value == null)
+            {
+                return;
+            }
+            //フレームの取得
+            var proj = CmGlobal.Project.Value;
+            int maxframe = proj.Frame;
+
+            this.Painter?.Paint(e.Graphics, maxframe);
         }
 
 

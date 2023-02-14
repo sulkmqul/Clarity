@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClarityAid", "ClarityAid\Cl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clarity.GUI", "Clarity.GUI\Clarity.GUI.csproj", "{3121AFBC-0637-4E1C-9E74-19AEF4787297}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.DB", "Clarity.DB\Clarity.DB.csproj", "{CDDC22DA-537A-4C44-918A-DCF64947C3BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clarity.DB", "Clarity.DB\Clarity.DB.csproj", "{CDDC22DA-537A-4C44-918A-DCF64947C3BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

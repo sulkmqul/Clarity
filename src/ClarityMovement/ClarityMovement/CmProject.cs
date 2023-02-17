@@ -86,6 +86,12 @@ namespace ClarityMovement
         /// 設定フレーム
         /// </summary>
         public int Frame { get; set; } = 0;
+
+
+        /// <summary>
+        /// 設定フレーム長b
+        /// </summary>
+        public int FrameSpan { get; set; } = 1;
     }
 
 
@@ -97,11 +103,6 @@ namespace ClarityMovement
         public FrameImageModifier() : base(ETagType.Image)
         {
         }
-
-        /// <summary>
-        /// 表示フレーム数
-        /// </summary>
-        public int FrameSpan { get; set; } = 1;
 
         /// <summary>
         /// 表示対象画像ID

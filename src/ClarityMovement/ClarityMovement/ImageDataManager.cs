@@ -93,7 +93,8 @@ namespace ClarityMovement
             //テクスチャの読み込み
             ClarityEngine.Texture.LoadTexture(idata.CmImageID, bit);
 
-
+            //追加
+            this.ImageDic.Add(idata.CmImageID, idata);
         }
 
 

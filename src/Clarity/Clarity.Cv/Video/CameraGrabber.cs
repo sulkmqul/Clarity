@@ -395,12 +395,13 @@ namespace Clarity.Cv.Video
 
                 //パラメータの設定
                 if (x.Resulution != null)
-                {
-
-                    vcap.Set(VideoCaptureProperties.FrameWidth, x.Resulution?.Width ?? 0);
+                {   
+                    vcap.Set(VideoCaptureProperties.FrameWidth, x.Resulution?.Width ?? 0);                 
                     vcap.Set(VideoCaptureProperties.FrameHeight, x.Resulution?.Height ?? 0);
 
-                    vcap.Set(VideoCaptureProperties.Fps, 30.0);
+                    //FPSが設定できない？手持ちのカメラでは解像度によって固定されてしまう。
+                    vcap.Fps = 30.0;
+
                 }
 
                 

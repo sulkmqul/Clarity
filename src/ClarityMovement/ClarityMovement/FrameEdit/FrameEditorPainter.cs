@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reactive.Disposables;
 using System.Drawing;
+using Clarity;
+using System.IO.Pipes;
 
 namespace ClarityMovement.FrameEdit
 {
@@ -57,11 +59,10 @@ namespace ClarityMovement.FrameEdit
         public Color HeaderColor { get; set; } = Color.FromArgb(220, 220, 220);
     }
 
+
+
+
     
-
-
-    
-
 
 
     /// <summary>
@@ -252,6 +253,78 @@ namespace ClarityMovement.FrameEdit
             return ans;
         }
 
+
+        /// <summary>
+        /// 対象フレームの横位置を算出する
+        /// </summary>
+        /// <param name="frame">フレームindex</param>
+        /// <returns>計算範囲</returns>
+        public HorizontalSize FrameToPosX(int frame)
+        {
+            var para = this.Parent.SizeParam;
+
+            int x = this.ColHeaderArea.Left + frame * para.FrameSize;
+
+            HorizontalSize ans = new HorizontalSize(x, x + para.FrameSize);
+            return ans;
+        }
+
+        /// <summary>
+        /// Tagindexから縦の範囲を割り出す
+        /// </summary>
+        /// <param name="tag">tag index</param>
+        /// <returns></returns>
+        public VerticalSize TagIndexToPosY(int tag)
+        {
+            var para = this.Parent.SizeParam;
+            int y = this.TagArea.Top + (para.TagSize * tag);
+
+            VerticalSize ans = new VerticalSize(y, y + para.TagSize);
+            return ans;
+        }
+
+        /// <summary>
+        /// 対象フレームのImageAreaの反映を作成する
+        /// </summary>
+        /// <param name="frame">フレーム位置</param>
+        /// <param name="span">フレーム幅</param>
+        /// <returns></returns>
+        public Rectangle FrameToImageArea(int frame, int span = 1)
+        {
+            var st = this.FrameToPosX(frame);
+            var ed = this.FrameToPosX(frame + span - 1);
+
+            int w = ed.Right - st.Left;
+
+            Rectangle ans = new Rectangle(st.Left, this.ImageArea.Top, w, this.ImageArea.Height);
+            return ans;
+        }
+        /// <summary>
+        /// 対象フレームのタグ番号から範囲を作成する
+        /// </summary>
+        /// <param name="frame"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public Rectangle FrameToTagArea(int frame, int tag)
+        {
+            //フレーム位置
+            var fsize = this.FrameToPosX(frame);
+            //タグ位置
+            var tagh = this.TagIndexToPosY(tag);
+
+            Rectangle ans = new Rectangle(fsize.Left, tagh.Top, fsize.Width, tagh.Height);
+            return ans;
+        }
+
+        /// <summary>
+        /// データの表示エリアの再計算
+        /// </summary>
+        public void RecalcuTagDataArea()
+        {
+            List<FrameModifierPaintData> datalist = this.Parent.EData.PaintDataList;
+            datalist.ForEach(x => x.CalcuArea(this));
+        }
+
         /// <summary>
         /// 描画処理本体
         /// </summary>
@@ -260,7 +333,6 @@ namespace ClarityMovement.FrameEdit
         public void Paint(Graphics gra, int maxframe, EditorData edata)
         {
             var param = this.Parent.SizeParam;
-
             gra.Clear(Color.White);
 
             #region 各領域の下塗り
@@ -297,21 +369,24 @@ namespace ClarityMovement.FrameEdit
                 }
             }
 
-            //データの描画
+            //データの領域再計算
+            this.RecalcuTagDataArea();
+            //描画
+            edata.PaintDataList.ForEach(x => x.Paint(gra));
         }
 
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
         /// <summary>
-        /// フレームの目盛りエリアの描画
+        /// 目盛りの描画
         /// </summary>
         /// <param name="gra"></param>
+        /// <param name="maxframe"></param>
         private void PaintMeasureArea(Graphics gra, int maxframe)
         {
             Rectangle area = this.ColHeaderArea;
-
-           
 
             //線の描画
             var param = this.Parent.SizeParam;
@@ -351,8 +426,8 @@ namespace ClarityMovement.FrameEdit
                     {
                         int left = i * param.FrameSize + area.X;
 
-                        
-                        #region 目盛り
+
+                        #region フレーム目盛り ColumnsHeader
                         cell = new Rectangle(left, area.Top, param.FrameSize, param.ColHeaderSize);
                         gra.DrawRectangle(pe, cell);
 
@@ -370,8 +445,8 @@ namespace ClarityMovement.FrameEdit
 
 
                         #region 画像
-                        {                            
-                            cell = new Rectangle(left, iarea.Top, param.FrameSize, param.ImageSize);
+                        {
+                            cell = this.FrameToImageArea(i);
                             gra.DrawRectangle(pe, cell);
                         }
                         #endregion
@@ -383,9 +458,7 @@ namespace ClarityMovement.FrameEdit
 
                             for (int tc = 0; tc < param.MaxTagCount; tc++)
                             {
-                                int top = tarea.Top + (param.TagSize * tc);
-
-                                cell = new Rectangle(left, top, param.FrameSize, param.TagSize);
+                                cell = this.FrameToTagArea(i, tc);
                                 gra.DrawRectangle(pe, cell);
 
                             }

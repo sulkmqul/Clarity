@@ -150,6 +150,12 @@ namespace Clarity.GUI
         /// <param name="image"></param>
         public void ReplaceImage(Image image)
         {
+            //非表示の場合は負荷をかけない
+            if (this.Visible == false)
+            {
+                return;
+            }
+
             this.SrcImage = image;
             this.pictureBoxMinimap.Image = this.SrcImage;            
         }

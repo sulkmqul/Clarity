@@ -127,8 +127,10 @@ namespace ClarityMovement.FrameEdit
             this.ResizeControl();
 
             //mouse moveをmouseodownからmouseupまで取り出すもの、この時ついでにmousedown時とmouseupそして後始末の処理をする
-            var dragtemp = this.MouseMoveObs.SkipUntil(this.MouseDownObs.Do(x => System.Diagnostics.Trace.WriteLine("mdown")))
-                .TakeUntil(this.MouseUpObs.Do(x => System.Diagnostics.Trace.WriteLine("mup")));
+            var dragtemp = this.MouseMoveObs.SkipUntil(this.MouseDownObs.Do(x => { 
+                this.MouseDownProc(x.Location); 
+            }))
+                .TakeUntil(this.MouseUpObs.Do(x => this.MouseUpProc(x.Location) ));
 
             //上記と同じだが処理がないver
             var dragtemp2 = this.MouseMoveObs.SkipUntil(this.MouseDownObs.Do(x => { } ))
@@ -137,6 +139,19 @@ namespace ClarityMovement.FrameEdit
             //二つを前後の値をマージしてドラッグ処理を作る(本来なら同じ処理で行けるが、doで処理があるので・・・)
             var drag  = dragtemp.Zip(dragtemp2.Skip(1), (x, y) => (x.Location, y.Location))
                 .Finally(() => System.Diagnostics.Trace.WriteLine("end")).Repeat();
+
+            //ドラッグ処理
+            drag.Subscribe(x =>
+            {
+                //ドラッグ処理を描く
+                this.MouseDragProc(x.Item1, x.Item2);
+            });
+
+            //マウス移動処理
+            this.MouseMoveObs.Subscribe(x =>
+            {
+                this.MouseMoveProc(x.Location);
+            });
 
         }
 
@@ -200,7 +215,25 @@ namespace ClarityMovement.FrameEdit
                 return;
             }
             //カーソル移動
+            this.Cursor = Cursors.Default;
             this.EData.MouseCursor = this.Painter.GetSelect(mpos);
+            var data = this.EData.PaintDataList.Where(x => x.UpdateMouse(mpos, false)).FirstOrDefault();
+            if (data != null)
+            {
+
+                switch (data.ChangeWork)
+                {
+                    case EChangeWork.Position:
+                        this.Cursor = Cursors.SizeAll;
+                        break;
+                    case EChangeWork.Left:
+                    case EChangeWork.Right:
+                        this.Cursor = Cursors.SizeWE;
+                        break;
+                }
+
+                
+            }
             this.Refresh();
         }
 
@@ -215,31 +248,105 @@ namespace ClarityMovement.FrameEdit
                 return;
             }
 
-            var seldata = this.EData.PaintDataList.Where(x => x.FixedArea.Contains(mpos)).FirstOrDefault();
-            if (seldata != null)
+            //選択対象データの割り出し
+            this.EData.TempSelect = this.EData.PaintDataList.Where(x => x.UpdateMouse(mpos, true)).FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// マウスドラッグ
+        /// </summary>
+        /// <param name="prev"></param>
+        /// <param name="next"></param>
+        private void MouseDragProc(Point prev, Point next)
+        {
+            //tempselectの状況に応じて
+        }
+
+        /// <summary>
+        /// マウスが離された時
+        /// </summary>
+        /// <param name="mpos"></param>
+        private void MouseUpProc(Point mpos)
+        {
+            //既存の選択があった
+            if (this.EData.TempSelect != null)
             {
-                //ここで対象の編集画面
+                //何もしない
                 return;
             }
 
-            //追加画面
-            var cursor = this.EData.MouseCursor;
-            if (cursor == null)
+            //何もない所でクリックだったら追加する
+            //データの追加
+            if (this.EData.MouseCursor != null)
+            {
+                this.AddTagData(this.EData.MouseCursor);
+            }
+        }
+
+
+        /// <summary>
+        /// タグデータの追加
+        /// </summary>
+        /// <param name="sec"></param>
+        private void AddTagData(FrameEditorSelection sec)
+        {
+            switch (sec.Area)
+            {
+                case ETagType.Image:
+                    {
+                        //Imageの追加
+                        this.AddImageTag(sec);
+                    }
+                    break;
+                case ETagType.Tag:
+                    {
+                    }
+                    break;
+            }
+        }
+
+
+        /// <summary>
+        /// 画像の追加
+        /// </summary>
+        /// <param name="sec">選択</param>
+        private void AddImageTag(FrameEditorSelection sec)
+        {
+            //画面を出すとスクロールがリセットされて紛らわしいので小細工する。
+            Panel fds = (Panel)this.Parent;
+            int scval = fds.HorizontalScroll.Value;
+
+
+            //画像の選択
+            SrcImageSelectForm f = new SrcImageSelectForm(false);            
+            var dret = f.ShowDialog();
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+            if (f.SelectedData == null)
             {
                 return;
             }
 
-            if (cursor.Area == ETagType.Image)
-            {
-                SrcImageSelectForm f = new SrcImageSelectForm(false);
-                var dret = f.ShowDialog(this);
-                if (dret != DialogResult.OK)
-                {
-                    return;
-                }
-                var ddd = f.SelectedData;
-            }
-            
+            CmImageData image = f.SelectedData;
+
+            //新しいデータの作成
+            FrameImageModifier data = new FrameImageModifier();
+            data.Frame = sec.FrameNo;
+            data.FrameSpan = 1;
+            data.ImageDataID = image.CmImageID;
+
+            //描画用データの作成
+            FrameModifierPaintData pdata = new FrameModifierPaintData(data);
+            pdata.Init(this, this.Painter);
+
+            //追加
+            this.EData.PaintDataList.Add(pdata);
+
+            //スクロールの復帰
+            fds.HorizontalScroll.Value = scval;
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

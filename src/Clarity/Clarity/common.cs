@@ -82,7 +82,7 @@ namespace Clarity
     {
         public VerticalSize(int t, int b)
         {
-            if (t < b)
+            if (b < t)
             {
                 throw new ArgumentException("top must be less than bottom.");
             }

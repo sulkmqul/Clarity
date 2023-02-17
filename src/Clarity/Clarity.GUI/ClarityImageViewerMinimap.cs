@@ -145,6 +145,16 @@ namespace Clarity.GUI
         }
 
         /// <summary>
+        /// 画像の変更
+        /// </summary>
+        /// <param name="image"></param>
+        public void ReplaceImage(Image image)
+        {
+            this.SrcImage = image;
+            this.pictureBoxMinimap.Image = this.SrcImage;            
+        }
+
+        /// <summary>
         /// 再配置
         /// </summary>
         /// <param name="pdisprect">元表示の基準矩形</param>

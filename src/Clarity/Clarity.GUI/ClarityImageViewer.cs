@@ -402,6 +402,7 @@ namespace Clarity.GUI
         public void ReplaceImage(Image idata)
         {
             this.SrcImage = idata;
+            this.clarityViewerMinimapView.ReplaceImage(idata);
             this.Refresh();
         }
 

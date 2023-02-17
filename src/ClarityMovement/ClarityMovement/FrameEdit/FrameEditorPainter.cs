@@ -5,6 +5,8 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reactive.Disposables;
+using System.Drawing;
 
 namespace ClarityMovement.FrameEdit
 {
@@ -19,26 +21,24 @@ namespace ClarityMovement.FrameEdit
         public int FrameSize { get; set; } = 10;
 
         /// <summary>
-        /// 描画開始位置
+        /// 計測目盛り表示領域(Col Header)
         /// </summary>
-        public Point LeftTop = new Point(50, 50);
-
+        public int ColHeaderSize { get; set; } = 20;
 
         /// <summary>
-        /// 計測目盛り縦サイズ(フレーム値の描画)
+        /// Rowのヘッダーサイズ
         /// </summary>
-        public int MeasureSize { get; set; } = 20;
-
+        public int RowHeaderSize { get; set; } = 25;
 
         /// <summary>
         /// フレーム画像表示エリア縦サイズ
         /// </summary>
-        public int ImageSize { get; set; } = 80;
+        public int ImageSize { get; set; } = 50;
 
         /// <summary>
         /// タグの高さ
         /// </summary>
-        public int TagSize { get; set; } = 30;
+        public int TagSize { get; set; } = 25;
 
         /// <summary>
         /// 最大タグ数 
@@ -50,19 +50,18 @@ namespace ClarityMovement.FrameEdit
         /// 線の色
         /// </summary>
         public Color BaseLineColor { get; set; } = Color.Gray;
+
+        /// <summary>
+        /// ヘッダー色
+        /// </summary>
+        public Color HeaderColor { get; set; } = Color.FromArgb(220, 220, 220);
     }
 
-    /// <summary>
-    /// エリア種別
-    /// </summary>
-    enum EEditorAreaType
-    {
-        Frame = 0,
-        Image,
-        Tag,
+    
 
-        None = 999,
-    }
+
+    
+
 
 
     /// <summary>
@@ -87,9 +86,14 @@ namespace ClarityMovement.FrameEdit
 
 
         /// <summary>
-        /// フレーム領域のの描画範囲
+        /// フレームの描画(colヘッダー領域)
         /// </summary>
-        public Rectangle MeasureArea { get; private set; } = new Rectangle();
+        public Rectangle ColHeaderArea { get; private set; } = new Rectangle();
+
+        /// <summary>
+        /// タグ番号などの説明(rowヘッダー領域)
+        /// </summary>
+        public Rectangle RowHeaderArea { get; private set; } = new Rectangle();
         /// <summary>
         /// 設定映像の描画範囲
         /// </summary>
@@ -100,6 +104,11 @@ namespace ClarityMovement.FrameEdit
         public Rectangle TagArea { get; private set; } = new Rectangle();
 
 
+        /// <summary>
+        /// Rx管理
+        /// </summary>
+        private CompositeDisposable dispComp = new CompositeDisposable();
+
         
 
         /// <summary>
@@ -107,6 +116,10 @@ namespace ClarityMovement.FrameEdit
         /// </summary>        
         public void Init()
         {
+            this.dispComp.Dispose();
+            this.dispComp = new CompositeDisposable();
+
+            
         }
 
 
@@ -122,59 +135,142 @@ namespace ClarityMovement.FrameEdit
             //全体横幅の計算
             int width = maxframe * fe.FrameSize;
 
-
-            //フレーム領域の計算
+            int right = fe.RowHeaderSize;
             int bottom = 0;
+            //フレーム領域の計算
             {
-                this.MeasureArea = new Rectangle(0, 0, width, fe.MeasureSize);
-                bottom = this.MeasureArea.Bottom;
+                this.ColHeaderArea = new Rectangle(right, 0, width, fe.ColHeaderSize);
+                bottom = this.ColHeaderArea.Bottom;
             }
             //フレーム画像領域の計算
             {
-                this.ImageArea = new Rectangle(0, bottom, width, fe.ImageSize);
+                this.ImageArea = new Rectangle(right, bottom, width, fe.ImageSize);
                 bottom = this.ImageArea.Bottom;
             }
             //タグサイズ
             {
                 //タグ領域の高さ計算
                 int th = fe.TagSize * fe.MaxTagCount;
-                this.TagArea = new Rectangle(0, bottom, width, th);
+                this.TagArea = new Rectangle(right, bottom, width, th);
             }
 
-            //とりあえず開始位置オフセット
-            this.MeasureArea.Offset(fe.LeftTop);
-            this.ImageArea.Offset(fe.LeftTop);
-            this.TagArea.Offset(fe.LeftTop);
+
+
+            //Rowのヘッダーの割り出し
+            this.RowHeaderArea = new Rectangle(0, this.ImageArea.Top, fe.RowHeaderSize, this.ImageArea.Height + this.TagArea.Height);
+
 
 
             //一番下の右下がサイズ
             Size ans = new Size(this.TagArea.Right, this.TagArea.Bottom);
+
+            
             return ans;
         }
 
+
+        /// <summary>
+        /// ピクセル位置から選択情報を割り出す
+        /// </summary>
+        /// <param name="pos">ピクセル位置</param>
+        /// <returns></returns>
+        public FrameEditorSelection? GetSelect(Point pos)
+        {
+            FrameEditorParam para = this.Parent.SizeParam;
+
+            //画像選択領域に入っているか？
+            bool icf = this.ImageArea.Contains(pos);
+            if (icf == true)
+            {
+                //位置の割り出し
+                FrameEditorSelection ans = new FrameEditorSelection();
+                ans.Area = ETagType.Image;
+                ans.FrameNo = this.PixelXToFrame(pos.X);
+
+                int l = ans.FrameNo * para.FrameSize + para.RowHeaderSize;
+                int t = this.ImageArea.Top;
+                ans.SelectionFrameRect = new Rectangle(l, t, para.FrameSize, this.ImageArea.Height);
+                return ans;
+            }
+
+            //tag領域に入っているか？
+            bool tcf = this.TagArea.Contains(pos);
+            if (tcf == true)
+            {
+                //割り出し
+                FrameEditorSelection ans = new FrameEditorSelection();
+                ans.Area = ETagType.Tag;
+                ans.FrameNo = this.PixelXToFrame(pos.X);
+
+                //タグ位置を出す
+                int ti = this.PixelYToTagIndex(pos.Y);
+
+                int l = ans.FrameNo * para.FrameSize + para.RowHeaderSize;
+                int t = this.TagArea.Top + ti * para.TagSize;
+                ans.SelectionFrameRect = new Rectangle(l, t, para.FrameSize, para.TagSize);
+                return ans;
+            }
+
+            //ここまで来たら選択なし
+            return null;
+        }
+
+        /// <summary>
+        /// ピクセルXからフレーム位置を算出する
+        /// </summary>
+        /// <param name="px"></param>
+        /// <returns></returns>
+        public int PixelXToFrame(int px)
+        {
+            //フレーム位置はどれも同じなので代表としてimageareaを使用する
+            int left = this.ImageArea.Left;
+            int width = this.ImageArea.Width;
+
+            //移動
+            int p = px - left;
+            int x = p / this.Parent.SizeParam.FrameSize;
+
+            return x;
+        }
+
+
+        /// <summary>
+        /// PixelYからTagindexを割り出す
+        /// </summary>
+        /// <param name="py">pixel y</param>
+        /// <returns>tagindexを割り出す マイナス値=範囲外</returns>
+        public int PixelYToTagIndex(int py)
+        {
+            //タグエリアに入っているか？
+            if (this.TagArea.Top > py && py >= this.TagArea.Bottom)
+            {
+                return -1;
+            }
+
+            int moast = py - this.TagArea.Top;
+            int ans = moast / this.Parent.SizeParam.TagSize;
+            return ans;
+        }
 
         /// <summary>
         /// 描画処理本体
         /// </summary>
         /// <param name="gra">描画物</param>        
         /// <param name="maxframe">最大フレーム数</param>
-        public void Paint(Graphics gra, int maxframe)
+        public void Paint(Graphics gra, int maxframe, EditorData edata)
         {
+            var param = this.Parent.SizeParam;
+
             gra.Clear(Color.White);
 
-            //フレーム目盛りの描画
-            
-
-            //設定フレーム画像の描画
-
-            //設定イベントの描画
-
+            #region 各領域の下塗り
             {
 
-                //背景クリア
-                using (SolidBrush bru = new SolidBrush(Color.FromArgb(255, 210, 210)))
+                //ヘッダーの描画
+                using (SolidBrush bru = new SolidBrush(param.HeaderColor))
                 {
-                    gra.FillRectangle(bru, this.MeasureArea);
+                    gra.FillRectangle(bru, this.ColHeaderArea);
+                    gra.FillRectangle(bru, this.RowHeaderArea);
                 }
 
                 using (SolidBrush bru = new SolidBrush(Color.FromArgb(210, 230, 255)))
@@ -187,8 +283,21 @@ namespace ClarityMovement.FrameEdit
                     gra.FillRectangle(bru, this.TagArea);
                 }
             }
+            #endregion
 
+            //目盛りの描画
             this.PaintMeasureArea(gra, maxframe);
+
+            //マスウの選択位置の描画
+            if (edata.MouseCursor != null)
+            {
+                using (Pen pe = new Pen(Color.Black, 1.0f))
+                {
+                    gra.DrawRectangle(pe, edata.MouseCursor.SelectionFrameRect);
+                }
+            }
+
+            //データの描画
         }
 
 
@@ -200,7 +309,7 @@ namespace ClarityMovement.FrameEdit
         /// <param name="gra"></param>
         private void PaintMeasureArea(Graphics gra, int maxframe)
         {
-            Rectangle area = this.MeasureArea;
+            Rectangle area = this.ColHeaderArea;
 
            
 
@@ -211,15 +320,40 @@ namespace ClarityMovement.FrameEdit
                 using (SolidBrush bru = new SolidBrush(Color.Black))
                 {
                     Font font = new Font("Tohoma", 10.0f);
+                    Rectangle cell = new Rectangle();
+
+
+                    #region RowHeaderの描画
+                    {
+                        //全体を囲む
+                        gra.DrawRectangle(pe, this.RowHeaderArea);
+
+                        //タグのヘッダー部
+                        for (int tc = 0; tc < param.MaxTagCount; tc++)
+                        {
+                            //一つをセル矩形
+                            int top = this.TagArea.Top + (param.TagSize * tc);
+                            cell = new Rectangle(0, top, param.RowHeaderSize, param.TagSize);
+                            gra.DrawRectangle(pe, cell);
+
+
+                            //tag番号
+                            string text = (tc + 1).ToString();
+                            SizeF fs = gra.MeasureString(text, font);
+                            gra.DrawString(text, font, bru, cell.Right - fs.Width, cell.Bottom - fs.Height);
+                        }
+                    }
+                    #endregion
+
 
                     //各フレーム枠の表示
                     for (int i = 0; i < maxframe; i++)
                     {
                         int left = i * param.FrameSize + area.X;
 
-                        Rectangle cell = new Rectangle();
+                        
                         #region 目盛り
-                        cell = new Rectangle(left, area.Top, param.FrameSize, param.MeasureSize);
+                        cell = new Rectangle(left, area.Top, param.FrameSize, param.ColHeaderSize);
                         gra.DrawRectangle(pe, cell);
 
 
@@ -235,7 +369,7 @@ namespace ClarityMovement.FrameEdit
                         #endregion
 
 
-                        #region 目盛り
+                        #region 画像
                         {                            
                             cell = new Rectangle(left, iarea.Top, param.FrameSize, param.ImageSize);
                             gra.DrawRectangle(pe, cell);
@@ -253,6 +387,7 @@ namespace ClarityMovement.FrameEdit
 
                                 cell = new Rectangle(left, top, param.FrameSize, param.TagSize);
                                 gra.DrawRectangle(pe, cell);
+
                             }
                         }
                         #endregion

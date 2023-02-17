@@ -42,15 +42,49 @@ namespace ClarityMovement
         /// 最大フレーム数
         /// </summary>
         public int Frame { get; set; } = 600;
-        
+
+
+        /// <summary>
+        /// タグ修飾一式
+        /// </summary>
+        public List<BaseFrameModifier> ModifierList { get; set; } = new List<BaseFrameModifier>();
 
     }
 
 
+    /// <summary>
+    /// エリア種別
+    /// </summary>
+    public enum ETagType
+    {   
+        Image,
+        Tag,
+
+        //--//--//--//--//--//--//--//--//--//--//
+        None = 999,
+    }
 
 
-    public class IFrameModifier
+
+    /// <summary>
+    /// フレーム修飾基底クラス
+    /// </summary>
+    public class BaseFrameModifier
     {
+        public BaseFrameModifier(ETagType tt)
+        {
+            this.TagType = tt;
+         
+        }
+
+        /// <summary>
+        /// タグ種別
+        /// </summary>
+        public ETagType TagType { get; init; } = ETagType.None;
+
+        /// <summary>
+        /// 設定フレーム
+        /// </summary>
         public int Frame { get; set; } = 0;
     }
 
@@ -58,8 +92,12 @@ namespace ClarityMovement
     /// <summary>
     /// 表示画像定義
     /// </summary>
-    public class FrameImageModifier : IFrameModifier
+    public class FrameImageModifier : BaseFrameModifier
     {
+        public FrameImageModifier() : base(ETagType.Image)
+        {
+        }
+
         /// <summary>
         /// 表示フレーム数
         /// </summary>
@@ -76,10 +114,20 @@ namespace ClarityMovement
     /// <summary>
     /// 修飾タグ
     /// </summary>
-    public class FrameTagModifier : IFrameModifier
+    public class FrameTagModifier : BaseFrameModifier
     {
+        public FrameTagModifier() : base(ETagType.Tag)
+        {
+        }
+
+        /// <summary>
+        /// タグID
+        /// </summary>
         public int TagId { get; set; } = 0;
 
+        /// <summary>
+        /// タグのコード
+        /// </summary>
         public string TagCode { get; set; } = "";
 
 

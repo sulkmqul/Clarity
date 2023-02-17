@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Security.Permissions;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ClarityMovement.FrameEdit
 {
@@ -22,13 +23,16 @@ namespace ClarityMovement.FrameEdit
         public FrameEditControl()
         {
             InitializeComponent();
+
+            
+
+
         }
 
         /// <summary>
         /// フレームサイズのパラメータ
         /// </summary>
         internal FrameEditorParam SizeParam = new FrameEditorParam();
-
 
         /// <summary>
         /// 拡縮処理は面倒なので1フレームの描画サイズを定義しておく
@@ -43,6 +47,10 @@ namespace ClarityMovement.FrameEdit
         /// </summary>
         private FrameEditorPainter? Painter = null;
 
+        /// <summary>
+        /// 編集描画データ一式
+        /// </summary>
+        internal EditorData EData { get; private set; } = new EditorData();
 
         #region イベントrx変換
         /// <summary>
@@ -88,6 +96,20 @@ namespace ClarityMovement.FrameEdit
                     );
             }
         }
+
+        /// <summary>
+        /// ドラッグドロップのrx
+        /// </summary>
+        internal IObservable<(Point, Point)> MouseDragObs
+        {
+            get
+            {
+                //ドラッグobsのの作成
+                var drag = this.MouseDownObs.SelectMany(x => this.MouseMoveObs).TakeUntil(this.MouseUpObs);                
+                return drag.Zip(drag.Skip(1), (x, y) => (x.Location, y.Location)).Repeat();
+
+            }
+        }
         #endregion
 
         //--//
@@ -103,6 +125,19 @@ namespace ClarityMovement.FrameEdit
             //フレームサイズのリセット
             this.FrameSizePos = 0;
             this.ResizeControl();
+
+            //mouse moveをmouseodownからmouseupまで取り出すもの、この時ついでにmousedown時とmouseupそして後始末の処理をする
+            var dragtemp = this.MouseMoveObs.SkipUntil(this.MouseDownObs.Do(x => System.Diagnostics.Trace.WriteLine("mdown")))
+                .TakeUntil(this.MouseUpObs.Do(x => System.Diagnostics.Trace.WriteLine("mup")));
+
+            //上記と同じだが処理がないver
+            var dragtemp2 = this.MouseMoveObs.SkipUntil(this.MouseDownObs.Do(x => { } ))
+                .TakeUntil(this.MouseUpObs.Do(x => { }));
+
+            //二つを前後の値をマージしてドラッグ処理を作る(本来なら同じ処理で行けるが、doで処理があるので・・・)
+            var drag  = dragtemp.Zip(dragtemp2.Skip(1), (x, y) => (x.Location, y.Location))
+                .Finally(() => System.Diagnostics.Trace.WriteLine("end")).Repeat();
+
         }
 
 
@@ -153,6 +188,60 @@ namespace ClarityMovement.FrameEdit
             this.Height = csize.Height + 1; 
         }
 
+
+        /// <summary>
+        /// マウス移動処理
+        /// </summary>
+        /// <param name="mpos"></param>
+        private void MouseMoveProc(Point mpos)
+        {
+            if (this.Painter == null)
+            {
+                return;
+            }
+            //カーソル移動
+            this.EData.MouseCursor = this.Painter.GetSelect(mpos);
+            this.Refresh();
+        }
+
+        /// <summary>
+        /// マウスが押された時
+        /// </summary>
+        /// <param name="mpos"></param>
+        private void MouseDownProc(Point mpos)
+        {
+            if (this.Painter == null)
+            {
+                return;
+            }
+
+            var seldata = this.EData.PaintDataList.Where(x => x.FixedArea.Contains(mpos)).FirstOrDefault();
+            if (seldata != null)
+            {
+                //ここで対象の編集画面
+                return;
+            }
+
+            //追加画面
+            var cursor = this.EData.MouseCursor;
+            if (cursor == null)
+            {
+                return;
+            }
+
+            if (cursor.Area == ETagType.Image)
+            {
+                SrcImageSelectForm f = new SrcImageSelectForm(false);
+                var dret = f.ShowDialog(this);
+                if (dret != DialogResult.OK)
+                {
+                    return;
+                }
+                var ddd = f.SelectedData;
+            }
+            
+        }
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -181,7 +270,7 @@ namespace ClarityMovement.FrameEdit
             var proj = CmGlobal.Project.Value;
             int maxframe = proj.Frame;
 
-            this.Painter?.Paint(e.Graphics, maxframe);
+            this.Painter?.Paint(e.Graphics, maxframe, this.EData);
         }
 
 

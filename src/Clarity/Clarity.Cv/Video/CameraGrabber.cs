@@ -25,12 +25,21 @@ namespace Clarity.Cv.Video
         /// </summary>
         public string? CameraHost = null;
 
+       
         /// <summary>
         /// 要求解像度
         /// </summary>
         public System.Drawing.Size? Resulution = null;
 
+        /// <summary>
+        /// 要求FPS
+        /// </summary>
+        public double? Fps = null;
 
+        /// <summary>
+        /// その他の要求パラメータ一式
+        /// </summary>
+        public Dictionary<VideoCaptureProperties, double> ParamDic = new Dictionary<VideoCaptureProperties, double>();
     }
 
     /// <summary>
@@ -253,7 +262,7 @@ namespace Clarity.Cv.Video
                 System.Diagnostics.Trace.WriteLine("grab task is already started");
                 return;
             }
-
+                        
             //デバイスの初期化
             if (this.DeviceList.Count <= 0)
             {
@@ -360,6 +369,12 @@ namespace Clarity.Cv.Video
         /// <param name="ilist">初期化リスト</param>
         private void Init(List<CameraGrabberInitParam> ilist)
         {
+            this.CloseDevice();
+
+            //subject再作成
+            this.CameraGrabSub = new Subject<CameraGrabInfo>();
+            this.CameraGrabFPSSub = new Subject<double>();
+
             //初期化物の保存
             this.InitParamList = ilist;
 
@@ -378,34 +393,53 @@ namespace Clarity.Cv.Video
             int id = 0;
             paramlist.ForEach(x =>
             {
-            //デバイスの初期化                
-            VideoCapture? vcap = null;
-            if (x.CameraIndex != null)
-            {
-                vcap = new VideoCapture(x.CameraIndex ?? 0);
-            }
-            else if (x.CameraHost != null)
-            {
-                vcap = new VideoCapture(x.CameraHost);
-            }
-            if (vcap == null)
-            {
-                throw new Exception("Video device initialize exception");
-            }
-
-                //パラメータの設定
-                if (x.Resulution != null)
-                {   
-                    vcap.Set(VideoCaptureProperties.FrameWidth, x.Resulution?.Width ?? 0);                 
-                    vcap.Set(VideoCaptureProperties.FrameHeight, x.Resulution?.Height ?? 0);
-
-                    //FPSが設定できない？手持ちのカメラでは解像度によって固定されてしまう。
-                    vcap.Fps = 30.0;
-
+                //デバイスの初期化                
+                VideoCapture? vcap = null;
+                if (x.CameraIndex != null)
+                {
+                    vcap = new VideoCapture(x.CameraIndex ?? 0);
+                }
+                else if (x.CameraHost != null)
+                {
+                    vcap = new VideoCapture(x.CameraHost);
+                }
+                if (vcap == null)
+                {
+                    throw new Exception("Video device initialize exception");
                 }
 
-                
 
+                #region パラメータの設定
+                {
+                    //よく使うパラメータ
+                    List<(VideoCaptureProperties, double?)> plist = new List<(VideoCaptureProperties, double?)>() {
+                        (VideoCaptureProperties.FrameWidth, x.Resulution?.Width),
+                        (VideoCaptureProperties.FrameHeight, x.Resulution?.Height),
+                        (VideoCaptureProperties.Fps, x.Fps),
+                    };
+
+                    //その他のパラメータ
+                    foreach (var k in x.ParamDic.Keys)
+                    {
+                        plist.Add((k, x.ParamDic[k]));
+                    }
+
+                    //全パラメータの設定
+                    foreach (var pa in plist)
+                    {
+                        if (pa.Item2 == null)
+                        {
+                            continue;
+                        }
+
+                        bool ret = vcap.Set(pa.Item1, pa.Item2 ?? 0);
+                        if (ret == false)
+                        {
+                            throw new Exception($"prameter {pa.Item1} is not set");
+                        }
+                    }
+                }
+                #endregion
 
 
                 //取得デバイスの作成

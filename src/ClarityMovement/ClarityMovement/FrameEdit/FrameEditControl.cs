@@ -52,6 +52,11 @@ namespace ClarityMovement.FrameEdit
         /// </summary>
         internal EditorData EData { get; private set; } = new EditorData();
 
+        /// <summary>
+        /// マウス情報
+        /// </summary>
+        internal MouseInfo MInfo = new MouseInfo();
+
         #region イベントrx変換
         /// <summary>
         /// マウスダウンイベントのrx
@@ -126,17 +131,18 @@ namespace ClarityMovement.FrameEdit
             this.FrameSizePos = 0;
             this.ResizeControl();
 
+
             //mouse moveをmouseodownからmouseupまで取り出すもの、この時ついでにmousedown時とmouseupそして後始末の処理をする
             var dragtemp = this.MouseMoveObs.SkipUntil(this.MouseDownObs.Do(x => { 
-                this.MouseDownProc(x.Location); 
+                this.MouseDownProc(x); 
             }))
-                .TakeUntil(this.MouseUpObs.Do(x => this.MouseUpProc(x.Location) ));
+                .TakeUntil(this.MouseUpObs.Do(x => this.MouseUpProc(x) ));
 
             //上記と同じだが処理がないver
-            var dragtemp2 = this.MouseMoveObs.SkipUntil(this.MouseDownObs.Do(x => { } ))
-                .TakeUntil(this.MouseUpObs.Do(x => { }));
+            var dragtemp2 = this.MouseMoveObs.SkipUntil(this.MouseDownObs)
+                .TakeUntil(this.MouseUpObs);
 
-            //二つを前後の値をマージしてドラッグ処理を作る(本来なら同じ処理で行けるが、doで処理があるので・・・)
+            //二つを前後の値をマージしてドラッグ処理を作る(本来なら同じ処理で行けるが、doで処理があるので分かり易くるために分ける)
             var drag  = dragtemp.Zip(dragtemp2.Skip(1), (x, y) => (x.Location, y.Location))
                 .Finally(() => System.Diagnostics.Trace.WriteLine("end")).Repeat();
 
@@ -147,11 +153,12 @@ namespace ClarityMovement.FrameEdit
                 this.MouseDragProc(x.Item1, x.Item2);
             });
 
-            //マウス移動処理
-            this.MouseMoveObs.Subscribe(x =>
+            //マウス移動処理・・・ドラッグ中はキャンセルする
+            this.MouseMoveObs.TakeWhile((x) => this.MInfo.DownFlag == false).Repeat().Subscribe(x =>
             {
                 this.MouseMoveProc(x.Location);
             });
+
 
         }
 
@@ -217,14 +224,15 @@ namespace ClarityMovement.FrameEdit
             //カーソル移動
             this.Cursor = Cursors.Default;
             this.EData.MouseCursor = this.Painter.GetSelect(mpos);
-            var data = this.EData.PaintDataList.Where(x => x.UpdateMouse(mpos, false)).FirstOrDefault();
+
+            var data = this.EData.PaintDataList.Where(x => x.DetectMouse(mpos)).FirstOrDefault();
             if (data != null)
             {
 
                 switch (data.ChangeWork)
                 {
                     case EChangeWork.Position:
-                        this.Cursor = Cursors.SizeAll;
+                        this.Cursor = Cursors.Default;
                         break;
                     case EChangeWork.Left:
                     case EChangeWork.Right:
@@ -240,16 +248,20 @@ namespace ClarityMovement.FrameEdit
         /// <summary>
         /// マウスが押された時
         /// </summary>
-        /// <param name="mpos"></param>
-        private void MouseDownProc(Point mpos)
+        /// <param name="marg"></param>
+        private void MouseDownProc(MouseEventArgs marg)
         {
+            this.MInfo.DownMouse(marg);
+
             if (this.Painter == null)
             {
                 return;
             }
 
-            //選択対象データの割り出し
-            this.EData.TempSelect = this.EData.PaintDataList.Where(x => x.UpdateMouse(mpos, true)).FirstOrDefault();
+            //選択対象データの割り出して対象を選択する
+            this.EData.PaintDataList.ForEach(x => x.SelectedFlag = false);
+            this.EData.TempSelect = this.EData.PaintDataList.Where(x => x.DetectMouse(marg.Location)).Select(d => { d.SelectedFlag = true; return d; }).FirstOrDefault();
+
         }
 
 
@@ -260,15 +272,34 @@ namespace ClarityMovement.FrameEdit
         /// <param name="next"></param>
         private void MouseDragProc(Point prev, Point next)
         {
-            //tempselectの状況に応じて
+            if (this.Painter == null)
+            {
+                return;
+            }
+
+            //ドラッグの選択をそれぞれ取得
+            var pselect = this.Painter.GetSelect(prev);
+            var nselect = this.Painter.GetSelect(next);
+            if (pselect == null || nselect == null)
+            {
+                return;
+            }
+
+            //ドラッグ処理
+            this.EData.TempSelect?.DragWork(pselect, nselect);
+
+            this.Refresh();
+
         }
 
         /// <summary>
         /// マウスが離された時
         /// </summary>
-        /// <param name="mpos"></param>
-        private void MouseUpProc(Point mpos)
+        /// <param name="marg"></param>
+        private void MouseUpProc(MouseEventArgs marg)
         {
+            this.MInfo.UpMouse(marg);
+
             //既存の選択があった
             if (this.EData.TempSelect != null)
             {
@@ -301,6 +332,7 @@ namespace ClarityMovement.FrameEdit
                     break;
                 case ETagType.Tag:
                     {
+                        this.AddTag(sec);
                     }
                     break;
             }
@@ -339,7 +371,7 @@ namespace ClarityMovement.FrameEdit
             data.ImageDataID = image.CmImageID;
 
             //描画用データの作成
-            FrameModifierPaintData pdata = new FrameModifierPaintData(data);
+            FrameModifierPaintDataImage pdata = new FrameModifierPaintDataImage(data);
             pdata.Init(this, this.Painter);
 
             //追加
@@ -347,6 +379,28 @@ namespace ClarityMovement.FrameEdit
 
             //スクロールの復帰
             fds.HorizontalScroll.Value = scval;
+        }
+
+        /// <summary>
+        /// Tagデータの追加
+        /// </summary>
+        /// <param name="sec"></param>
+        private void AddTag(FrameEditorSelection sec)
+        {
+            FrameTagModifier data = new FrameTagModifier();
+            data.Frame = sec.FrameNo;
+            data.FrameSpan = 1;
+            data.TagId = sec.TagIndex;
+            data.TagCode = "";
+
+            //描画用データ作成
+            FrameModifierPaintDataTag tag = new FrameModifierPaintDataTag(data);
+            tag.Init(this, this.Painter);
+
+            //追加
+            this.EData.PaintDataList.Add(tag);
+
+
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -380,6 +434,19 @@ namespace ClarityMovement.FrameEdit
             this.Painter?.Paint(e.Graphics, maxframe, this.EData);
         }
 
-
+        /// <summary>
+        /// キーが押された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrameEditControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                //選択対象を削除
+                this.EData.PaintDataList.RemoveAll(x => x.SelectedFlag == true);
+                this.Refresh();
+            }
+        }
     }
 }

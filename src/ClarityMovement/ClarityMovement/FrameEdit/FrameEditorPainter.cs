@@ -205,7 +205,10 @@ namespace ClarityMovement.FrameEdit
 
                 //タグ位置を出す
                 int ti = this.PixelYToTagIndex(pos.Y);
+                ans.TagIndex = ti;
 
+                
+                
                 int l = ans.FrameNo * para.FrameSize + para.RowHeaderSize;
                 int t = this.TagArea.Top + ti * para.TagSize;
                 ans.SelectionFrameRect = new Rectangle(l, t, para.FrameSize, para.TagSize);
@@ -321,7 +324,7 @@ namespace ClarityMovement.FrameEdit
         /// </summary>
         public void RecalcuTagDataArea()
         {
-            List<FrameModifierPaintData> datalist = this.Parent.EData.PaintDataList;
+            List<BaseFrameModifierPaintData> datalist = this.Parent.EData.PaintDataList;
             datalist.ForEach(x => x.CalcuArea(this));
         }
 

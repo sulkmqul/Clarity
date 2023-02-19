@@ -50,6 +50,7 @@
             this.Name = "FrameEditControl";
             this.Size = new System.Drawing.Size(643, 349);
             this.Load += new System.EventHandler(this.FrameEditControl_Load);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FrameEditControl_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCanvas)).EndInit();
             this.ResumeLayout(false);
 

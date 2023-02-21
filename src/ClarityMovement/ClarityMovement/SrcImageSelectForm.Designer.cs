@@ -48,6 +48,7 @@
             this.listViewSrcImage.TabIndex = 0;
             this.listViewSrcImage.UseCompatibleStateImageBehavior = false;
             this.listViewSrcImage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listViewSrcImage_KeyUp);
+            this.listViewSrcImage.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewSrcImage_MouseDoubleClick);
             // 
             // imageList1
             // 

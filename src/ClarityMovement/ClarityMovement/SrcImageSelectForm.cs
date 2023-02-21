@@ -522,5 +522,19 @@ namespace ClarityMovement
         {
             this.SubjectRemover.Dispose();
         }
+
+        /// <summary>
+        /// ダブルクリックされたとき
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listViewSrcImage_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            //選択モードでちゃんと選択されていなるなら確定closeする
+            if (this.SelectedData != null && this.WorkFlag == false)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
+        }
     }
 }

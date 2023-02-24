@@ -31,10 +31,11 @@ namespace ClarityMovement
         /// <summary>
         /// プロジェクトの作成
         /// </summary>
-        public void CreateProject()
+        /// <param name="proj">入力情報</param>
+        public void CreateProject(CmProject proj)
         {
             //プロジェクトの作成
-            CmGlobal.Project.Value = new CmProject();
+            CmGlobal.Project.Value = proj;
 
         }
     }

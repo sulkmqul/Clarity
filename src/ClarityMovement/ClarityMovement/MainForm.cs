@@ -1,3 +1,4 @@
+using System.DirectoryServices.ActiveDirectory;
 using System.Reactive.Disposables;
 
 namespace ClarityMovement
@@ -95,7 +96,29 @@ namespace ClarityMovement
         /// <param name="e"></param>
         private void 新規作成NToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Logic.CreateProject();
+            try
+            {
+                CreateProjectForm f = new CreateProjectForm();
+                DialogResult dret = f.ShowDialog(this);
+                if (dret != DialogResult.OK)
+                {
+                    return;
+                }
+
+                //プロジェクト情報の取得
+                var idata = f.GetInputData();
+                CmProject proj = new CmProject();
+
+                proj.RenderingSize = idata.Size;
+                proj.FrameRate = idata.FPS;
+                proj.Frame = idata.MaxFrame;
+
+                this.Logic.CreateProject(proj);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"失敗:{ex}");
+            }
         }
 
         /// <summary>

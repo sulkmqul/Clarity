@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listViewSrcImage = new System.Windows.Forms.ListView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
@@ -38,16 +37,8 @@
             // 
             // listViewSrcImage
             // 
-            this.listViewSrcImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewSrcImage.LargeImageList = this.imageList1;
             this.listViewSrcImage.Location = new System.Drawing.Point(12, 41);
-            this.listViewSrcImage.Name = "listViewSrcImage";
-            this.listViewSrcImage.Size = new System.Drawing.Size(466, 368);
-            this.listViewSrcImage.TabIndex = 0;
-            this.listViewSrcImage.UseCompatibleStateImageBehavior = false;
-            this.listViewSrcImage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listViewSrcImage_KeyUp);
+            this.listViewSrcImage.Size = new System.Drawing.Size(466, 363);
             this.listViewSrcImage.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewSrcImage_MouseDoubleClick);
             // 
             // imageList1
@@ -96,23 +87,21 @@
             this.Controls.Add(this.buttonAddImage);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.listViewSrcImage);
             this.Name = "SrcImageSelectForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "SrcImageSelectForm";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SrcImageSelectForm_FormClosed);
             this.Load += new System.EventHandler(this.SrcImageSelectForm_Load);
-            this.Shown += new System.EventHandler(this.SrcImageSelectForm_Shown);
+            this.Controls.SetChildIndex(this.listViewSrcImage, 0);
+            this.Controls.SetChildIndex(this.buttonCancel, 0);
+            this.Controls.SetChildIndex(this.buttonOK, 0);
+            this.Controls.SetChildIndex(this.buttonAddImage, 0);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private ListView listViewSrcImage;
         private Button buttonCancel;
         private Button buttonOK;
-        private Button buttonAddImage;
-        private ImageList imageList1;
+        private Button buttonAddImage;        
     }
 }

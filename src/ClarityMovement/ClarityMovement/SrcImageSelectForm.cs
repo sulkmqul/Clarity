@@ -23,7 +23,7 @@ namespace ClarityMovement
     /// <summary>
     /// 元画像の読み込みと選択
     /// </summary>
-    public partial class SrcImageSelectForm : Form
+    public partial class SrcImageSelectForm : BaseSrcImageForm
     {
 
         /// <summary>
@@ -40,28 +40,7 @@ namespace ClarityMovement
         
 
 
-        class ImageSet
-        {
-            /// <summary>
-            /// タグ名
-            /// </summary>
-            public string Name;
-
-            /// <summary>
-            /// 画像
-            /// </summary>
-            public Bitmap DataImage;
-
-            /// <summary>
-            /// 元ネタファイルパス
-            /// </summary>
-            public string FullPath;
-
-            /// <summary>
-            /// 元データ
-            /// </summary>
-            public CmImageData? SrcObject = null;
-        }
+        
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
@@ -97,30 +76,7 @@ namespace ClarityMovement
         /// </summary>
         private bool WorkFlag;
 
-        /// <summary>
-        /// 全体データ
-        /// </summary>
-        private List<ImageSet> DataList { get; set; } = new List<ImageSet>();
-        /// <summary>
-        /// 削除データ
-        /// </summary>
-        private List<ImageSet> RemoveList { get; set; } = new List<ImageSet>();
 
-
-        /// <summary>
-        /// 画像追加sub
-        /// </summary>
-        private Subject<ImageSet> ImageAddSub = new Subject<ImageSet>();
-
-        /// <summary>
-        /// 画像削除Sub
-        /// </summary>
-        private Subject<ListViewItem> ImageRemoveSub = new Subject<ListViewItem>();
-
-        /// <summary>
-        /// rx解放
-        /// </summary>
-        private CompositeDisposable SubjectRemover = new CompositeDisposable();
 
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -128,90 +84,19 @@ namespace ClarityMovement
         /// <summary>
         /// 初期化
         /// </summary>
-        private void InitForm()
+        protected override void InitForm()        
         {
-            //画像追加の表示            
-            var di = this.ImageAddSub.Subscribe(iset =>
-            {
-                //同じ名前のデータがないことを確認する
-                int ct = this.DataList.Where(x => x.Name == iset.Name).Count();
-                if (ct > 0)
-                {
-                    //MessageBox.Show(this, $"[{iset.Name}] already added.");
-                    Console.WriteLine($"[{iset.Name}] already added.");
-                    return;
-                }
-
-
-                //データ本体に追加
-                this.DataList.Add(iset);
-
-                //追加表示
-                this.imageList1.Images.Add(iset.DataImage);
-                ListViewItem item = new ListViewItem(iset.Name, this.imageList1.Images.Count - 1);
-                item.Tag = iset;
-                this.listViewSrcImage.Items.Add(item);                
-                
-            });
-
-            //画像の削除
-            var deldi = this.ImageRemoveSub.Subscribe(ritem =>
-            {
-                //削除
-                ImageSet idata = (ImageSet)ritem.Tag;
-                this.listViewSrcImage.Items.Remove(ritem);
-
-                //削除
-                this.DataList.Remove(idata);
-
-                //元ネタがある場合は削除リストに追加して置く
-                if (idata.SrcObject != null)
-                {
-                    this.RemoveList.Add(idata);
-                }
-            });
-
-            this.SubjectRemover.Add(di);
-            this.SubjectRemover.Add(deldi);
-
+            base.InitForm();
 
             //コントロール制御
-            this.buttonAddImage.Visible = this.WorkFlag;
-            
+            this.buttonAddImage.Visible = this.WorkFlag;            
 
-            //既存データの読み込み
-            this.LoadExistingImage();
+            
             
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        /// <summary>
-        /// 既存データの読み込み
-        /// </summary>
-        private void LoadExistingImage()
-        {
-            if (CmGlobal.Project.Value == null)
-            {
-                return;
-            }
-
-            //既存データの取得
-            var ilist = CmGlobal.Project.Value.ImageDataMana.GetImageList();
-
-            //全データの変換読み込み
-            ilist.ForEach(x =>
-            {
-                ImageSet data = new ImageSet();
-                data.Name = x.ImageDataName;
-                data.DataImage = x.Image;
-                data.FullPath = x.FilePath;
-                data.SrcObject = x;
-
-                this.ImageAddSub.OnNext(data);
-            });
-
-            
-        }
+        
 
 
 
@@ -481,15 +366,7 @@ namespace ClarityMovement
             this.DialogResult= DialogResult.Cancel;
         }
 
-        /// <summary>
-        /// 表示された時
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SrcImageSelectForm_Shown(object sender, EventArgs e)
-        {
-            this.InitForm();
-        }
+        
 
         /// <summary>
         /// キーが押された時
@@ -513,16 +390,7 @@ namespace ClarityMovement
             }
         }
 
-        /// <summary>
-        /// 閉じられた時
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SrcImageSelectForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            this.SubjectRemover.Dispose();
-        }
-
+        
         /// <summary>
         /// ダブルクリックされたとき
         /// </summary>

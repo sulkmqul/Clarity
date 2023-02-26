@@ -37,7 +37,7 @@ namespace ClarityMovement.FrameEdit
         /// <summary>
         /// 拡縮処理は面倒なので1フレームの描画サイズを定義しておく
         /// </summary>
-        private int[] FrameSizeList = { 20, 50, 100, 200, 400 };
+        private int[] FrameSizeList = { 10, 20, 50, 100, 200, 400 };
         /// <summary>
         /// FrameSizeListの選択index
         /// </summary>
@@ -183,7 +183,30 @@ namespace ClarityMovement.FrameEdit
 
             this.Refresh();
         }
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+        /// <summary>
+        /// タグ表示情報の再作成
+        /// </summary>
+        public void RecreateTagPaint()
+        {
+            var proj = CmGlobal.Project.Value;
+            if (proj == null)
+            {
+                return;
+            }
+            //削除
+            this.EData.PaintDataList.Clear();
+
+            proj.ModifierList.ForEach(x =>
+            {
+                BaseFrameModifierPaintData data = this.CreateModifierPaint(x);
+                data.Init(this, this.Painter);
+                this.EData.PaintDataList.Add(data);
+            });
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//        
+
         /// <summary>
         /// コントロールのリサイズ
         /// </summary>
@@ -199,7 +222,7 @@ namespace ClarityMovement.FrameEdit
             }
             //フレームの取得
             var proj = CmGlobal.Project.Value;
-            int maxframe = proj.Frame;
+            int maxframe = proj.MaxFrame;
 
             //サイズの計算            
             this.SizeParam.FrameSize = this.FrameSizeList[this.FrameSizePos];
@@ -399,10 +422,39 @@ namespace ClarityMovement.FrameEdit
 
             //追加
             this.EData.PaintDataList.Add(tag);
-
-
         }
 
+
+        /// <summary>
+        /// 正しい表示クラスを作成取得する。
+        /// 正しい表示クラスを作成取得する。
+        /// </summary>
+        /// <param name="mod"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private BaseFrameModifierPaintData CreateModifierPaint(BaseFrameModifier mod)
+        {
+            BaseFrameModifierPaintData? ans = null;
+            switch (mod.TagType)
+            {
+                case ETagType.Image:
+                    {
+                        ans = new FrameModifierPaintDataImage((FrameImageModifier)mod);
+                    }
+                    break;
+                case ETagType.Tag:
+                    {
+                        ans = new FrameModifierPaintDataTag((FrameTagModifier)mod);
+                    }
+                    break;
+            }
+            if (ans == null)
+            {
+                throw new Exception("未定義のpaint modifier変換");
+            }
+
+            return ans;
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -429,7 +481,7 @@ namespace ClarityMovement.FrameEdit
             }
             //フレームの取得
             var proj = CmGlobal.Project.Value;
-            int maxframe = proj.Frame;
+            int maxframe = proj.MaxFrame;
 
             this.Painter?.Paint(e.Graphics, maxframe, this.EData);
         }

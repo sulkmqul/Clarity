@@ -163,10 +163,50 @@ namespace ClarityMovement
 
                 this.ImageAddSub.OnNext(data);
             });
-
-
         }
-        //---//--//--//
+
+
+        /// <summary>
+        /// 選択画像の削除
+        /// </summary>
+        protected void RemoveSelectImage()
+        {
+            //selecteditemだと削除したときに選択が解除されてしまうので全体で回してチェックする
+
+            foreach (ListViewItem ritem in this.listViewSrcImage.Items)
+            {
+                if (ritem.Selected == false)
+                {
+                    continue;
+                }
+
+
+                //削除
+                this.ImageRemoveSub.OnNext(ritem);
+            }
+        }
+
+
+        /// <summary>
+        /// 選択データを取得する。
+        /// </summary>
+        /// <returns></returns>
+        protected List<ImageSet> GetSelectImageSet()
+        {
+            List<ImageSet> anslist = new List<ImageSet>();
+            foreach (ListViewItem li in this.listViewSrcImage.SelectedItems)
+            {
+                ImageSet? data = li.Tag as ImageSet;
+                if (data == null)
+                {
+                    continue;
+                }
+                anslist.Add(data);
+            }
+            return anslist;
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//        
         /// <summary>
         /// 読み込まれた時
         /// </summary>

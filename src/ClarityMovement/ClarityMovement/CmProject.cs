@@ -41,13 +41,24 @@ namespace ClarityMovement
         /// <summary>
         /// 最大フレーム数
         /// </summary>
-        public int Frame { get; set; } = 600;
+        public int MaxFrame { get; set; } = 600;
 
 
         /// <summary>
         /// タグ修飾一式
         /// </summary>
         public List<BaseFrameModifier> ModifierList { get; set; } = new List<BaseFrameModifier>();
+
+
+        /// <summary>
+        /// 対象のタグを一括削除する。
+        /// </summary>
+        /// <param name="type"></param>
+        public void ClearSelectTypeFrameModifier(ETagType type)
+        {
+            //画像設定のクリア            
+            this.ModifierList.RemoveAll(x => x.TagType == type);
+        }
 
     }
 

@@ -155,6 +155,8 @@ namespace ClarityMovement.FrameEdit
         /// </summary>
         public bool MouseOverFlag { get; set; } = false;
 
+
+        public Font ParentFont;
         #endregion
 
 
@@ -164,8 +166,8 @@ namespace ClarityMovement.FrameEdit
         /// <param name="con"></param>
         /// <param name="paint"></param>
         public virtual void Init(FrameEditControl con, FrameEditorPainter paint)
-        {   
-
+        {
+            this.ParentFont = con.Font;
         }
 
         /// <summary>
@@ -269,6 +271,24 @@ namespace ClarityMovement.FrameEdit
 
 
         /// <summary>
+        /// 真ん中のエリアの計算
+        /// </summary>
+        public Rectangle CenterArea
+        {
+            get
+            {
+                int x = this.LeftArea.Right;
+                int y = this.LeftArea.Top;
+                int w = this.FixedArea.Width - this.LeftArea.Width - this.RightArea.Width;
+                int h = this.FixedArea.Height;
+                
+
+                Rectangle ans = new Rectangle(x, y, w, h);
+                return ans;
+            }
+        }
+
+        /// <summary>
         /// データの取得
         /// </summary>
         public FrameImageModifier ImageTag
@@ -325,18 +345,69 @@ namespace ClarityMovement.FrameEdit
         /// <param name="gra"></param>
         public override void Paint(Graphics gra)
         {
+            //全体の領域描画
             using (SolidBrush sb = new SolidBrush(Color.LightPink))
             {
                 gra.FillRectangle(sb, this.FixedArea);
             }
 
+            //左右の端描画
             using (SolidBrush sb = new SolidBrush(Color.HotPink))
             {
                 gra.FillRectangle(sb, this.LeftArea);
                 gra.FillRectangle(sb, this.RightArea);
             }
 
+            //設定画像の描画
+            int id = this.ImageTag.ImageDataID;
+            var data = CmGlobal.Project.Value?.ImageDataMana.GetImage(id);
+            if (data != null)
+            {
+                //書き出し領域が大きいなら画像もつける
+                var carea = this.CenterArea;
+                if (carea.Width > 50)
+                {
+                    var imgrect = this.CalcuImageStretchArea(data.Image, carea);
+                    //gra.DrawImage(data.Image, carea);
+                    gra.DrawImage(data.Image, imgrect);
+                }
+
+
+                //識別名の書き出し
+                Font fo = this.ParentFont;
+                //gra.MeasureString(data.ImageDataName, fo);
+                using (Brush pe = new SolidBrush(Color.Black))
+                {
+                    gra.DrawString(data.ImageDataName, fo, pe, this.FixedArea);
+                }
+            }
+            
+
             base.Paint(gra);
+        }
+
+
+        /// <summary>
+        /// 対象画像が比を保ったままピッタリおさまるサイズを計算する
+        /// </summary>
+        /// <param name="bit">画像</param>
+        /// <param name="rect">この中に収める</param>
+        /// <returns></returns>
+        private Rectangle CalcuImageStretchArea(Bitmap bit, Rectangle rect)
+        {
+            //double wrate = (double)bit.Width / (double)rect.Width;
+            //double hrate = (double)bit.Height / (double)rect.Height;
+            double wrate = (double)rect.Width / (double)bit.Width;
+            double hrate = (double)rect.Height / (double)bit.Height;
+
+            double rate = Math.Min(wrate, hrate);
+
+            double nw = (double)bit.Width * rate;
+            double nh = (double)bit.Height * rate;
+
+            Rectangle ans = new Rectangle(rect.X, rect.Y, (int)nw, (int)nh);
+            return ans;
+
         }
     }
 

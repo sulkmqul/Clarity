@@ -50,6 +50,7 @@
             this.閉じるXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.編集EToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.フレーム画像追加ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.フレーム画像割り当てToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panelMainView.SuspendLayout();
             this.panelContoller.SuspendLayout();
             this.panelEditorScroll.SuspendLayout();
@@ -220,7 +221,8 @@
             // 編集EToolStripMenuItem
             // 
             this.編集EToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.フレーム画像追加ToolStripMenuItem});
+            this.フレーム画像追加ToolStripMenuItem,
+            this.フレーム画像割り当てToolStripMenuItem});
             this.編集EToolStripMenuItem.Name = "編集EToolStripMenuItem";
             this.編集EToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
             this.編集EToolStripMenuItem.Text = "編集(&E)";
@@ -228,9 +230,16 @@
             // フレーム画像追加ToolStripMenuItem
             // 
             this.フレーム画像追加ToolStripMenuItem.Name = "フレーム画像追加ToolStripMenuItem";
-            this.フレーム画像追加ToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.フレーム画像追加ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.フレーム画像追加ToolStripMenuItem.Text = "フレーム画像追加";
             this.フレーム画像追加ToolStripMenuItem.Click += new System.EventHandler(this.フレーム画像追加ToolStripMenuItem_Click);
+            // 
+            // フレーム画像割り当てToolStripMenuItem
+            // 
+            this.フレーム画像割り当てToolStripMenuItem.Name = "フレーム画像割り当てToolStripMenuItem";
+            this.フレーム画像割り当てToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.フレーム画像割り当てToolStripMenuItem.Text = "フレーム画像割り当て";
+            this.フレーム画像割り当てToolStripMenuItem.Click += new System.EventHandler(this.フレーム画像割り当てToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -284,5 +293,6 @@
         private ToolStripButton toolStripButtonEditZoomPlus;
         private ToolStripButton toolStripButtonEditZoomMinus;
         private Panel panelEditorScroll;
+        private ToolStripMenuItem フレーム画像割り当てToolStripMenuItem;
     }
 }

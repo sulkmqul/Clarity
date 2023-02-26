@@ -181,27 +181,7 @@ namespace ClarityMovement
         }
 
 
-        /// <summary>
-        /// 選択画像の削除
-        /// </summary>
-        private void RemoveSelectImage()
-        {
-            //selecteditemだと削除したときに選択が解除されてしまうので全体で回してチェックする
-
-            foreach (ListViewItem ritem in this.listViewSrcImage.Items)
-            {
-                if (ritem.Selected == false)
-                {
-                    continue;
-                }
-                                
-
-                //削除
-                this.ImageRemoveSub.OnNext(ritem);
-            }
-
-
-        }
+        
 
 
         /// <summary>

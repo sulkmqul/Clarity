@@ -6,25 +6,10 @@ using System.Threading.Tasks;
 using System.Numerics;
 using System.Xml.Linq;
 using System.IO;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace Clarity
 {
-    /// <summary>
-    /// データコード
-    /// </summary>
-    public enum EClaritySettingDataType
-    {
-        Bool,
-        Int,
-        Float,
-        Vec2,
-        Vec3,
-        String,
-        Array,
-
-        //------------------------------------
-        MAX,
-    }
 
     /// <summary>
     /// ノード情報種別
@@ -37,254 +22,10 @@ namespace Clarity
         None,
     }
 
-
-    /// <summary>
-    /// 解析クラス規定
-    /// </summary>
-    public class BaseClaritySetting
-    {
-        internal const string PathDev = ".";
-
-
-        /// <summary>
-        /// 解析関数
-        /// </summary>
-        /// <param name="ele"></param>
-        /// <param name="data"></param>
-        private delegate object AnalyzeDataDelegate(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype);
-
-        /// <summary>
-        /// ノード一行の解析　失敗=null
-        /// </summary>
-        /// <param name="epath">親のパス</param>
-        /// <param name="ele">解析対象</param>
-        /// <returns></returns>
-        protected ClaritySettingData? AnalyzeNode(ClaritySettingData? parent, XElement ele)
-        {
-            ClaritySettingData ans = new ClaritySettingData();
-            try
-            {
-                //Nodeタイプの設定
-                ans.NodeType = EClaritySettingNodeType.Data;
-
-                //Code
-                ans.Code = this.CreateElementCode(parent, ele);
-
-                //生のタグ名
-                ans.TagName = ele.Name.LocalName;
-
-                //データコード
-                {
-                    
-                    XAttribute? atype = ele.Attribute("type");
-                    if (atype == null)
-                    {
-                        return null;
-                    }
-                    ans.DataType = this.IdentityDataType(atype.Value);
-                    if (ans.DataType == EClaritySettingDataType.MAX)
-                    {
-                        return null;
-                    }
-                }
-
-                //サブコード
-                {
-                    if (ans.DataType == EClaritySettingDataType.Array)
-                    {
-                        XAttribute? asubtype = ele.Attribute("subtype");
-                        if (asubtype == null)
-                        {
-                            throw new FormatException($"tag={ans.Code} pelase set subtype");
-                        }
-                        ans.SubDataType = this.IdentityDataType(asubtype.Value);
-                        if (ans.SubDataType == EClaritySettingDataType.Array || ans.SubDataType == EClaritySettingDataType.MAX)
-                        {
-                            throw new FormatException($"tag={ans.Code} invalid subtype");
-                        }
-                    }
-                }
-
-
-                //解析関数の取得
-                AnalyzeDataDelegate aproc = this.GetAnalyzeProc(ans.DataType);
-                ans.Data = aproc(ele, ans.DataType, ans.SubDataType);
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"AnalyzeNode name={ele.Name}", ex);
-            }
-            return ans;
-        }
-
-
-
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        /// <summary>
-        /// Codeの作成
-        /// </summary>
-        /// <param name="epath">親名</param>
-        /// <param name="ele">名前</param>
-        /// <returns></returns>
-        private string CreateElementCode(ClaritySettingData? parent, XElement ele)
-        {
-            string ans = (parent != null) ? parent.Code + PathDev + ele.Name : ele.Name.LocalName;
-            return ans;
-        }
-
-        /// <summary>
-        /// データTypeの割り出し
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        private EClaritySettingDataType IdentityDataType(string s)
-        {
-            //有効なもの一式
-            (string ck, EClaritySettingDataType code)[] supportvec = {
-                ("bool", EClaritySettingDataType.Bool),
-                ("int", EClaritySettingDataType.Int),
-                ("float", EClaritySettingDataType.Float),
-                ("vec2", EClaritySettingDataType.Vec2),
-                ("vec3", EClaritySettingDataType.Vec3),
-                ("string", EClaritySettingDataType.String),
-                ("array", EClaritySettingDataType.Array),
-            };
-
-            foreach (var supp in supportvec)
-            {
-                string src = s.ToUpper();
-                string sp = supp.ck.ToUpper();
-
-                if (src.Equals(sp) == true)
-                {
-                    return supp.code;
-                }
-            }
-
-            return EClaritySettingDataType.MAX;
-        }
-
-
-        /// <summary>
-        /// 解析関数の取得
-        /// </summary>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        private AnalyzeDataDelegate GetAnalyzeProc(EClaritySettingDataType code)
-        {
-            Dictionary<EClaritySettingDataType, AnalyzeDataDelegate> adic = new Dictionary<EClaritySettingDataType, AnalyzeDataDelegate>();
-            adic.Add(EClaritySettingDataType.Bool, this.AnalyzeDataBool);
-            adic.Add(EClaritySettingDataType.Int, this.AnalyzeDataInt);
-            adic.Add(EClaritySettingDataType.Float, this.AnalyzeDataFloat);
-            adic.Add(EClaritySettingDataType.Vec2, this.AnalyzeDataVec2);
-            adic.Add(EClaritySettingDataType.Vec3, this.AnalyzeDataVec3);
-            adic.Add(EClaritySettingDataType.String, this.AnalyzeDataString);
-            adic.Add(EClaritySettingDataType.Array, this.AnalyzeDataArray);
-
-            AnalyzeDataDelegate ans = adic[code];
-            return ans;
-        }
-        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        /// <summary>
-        /// 単体Boolの解析
-        /// </summary>
-        /// <param name="ele"></param>
-        private object AnalyzeDataBool(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
-        {
-            return Convert.ToBoolean(ele.Value);
-        }
-        /// <summary>
-        /// 単体Intの解析
-        /// </summary>
-        /// <param name="ele"></param>
-        private object AnalyzeDataInt(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
-        {
-            return Convert.ToInt32(ele.Value);
-        }
-        /// <summary>
-        /// Floatの解析
-        /// </summary>
-        /// <param name="ele"></param>
-        private object AnalyzeDataFloat(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
-        {
-            return Convert.ToSingle(ele.Value);
-        }
-        /// <summary>
-        /// stringの解析
-        /// </summary>
-        /// <param name="ele"></param>
-        private object AnalyzeDataString(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
-        {
-            return ele.Value;
-        }
-        /// <summary>
-        /// vec2の解析
-        /// </summary>
-        /// <param name="ele"></param>
-        private object AnalyzeDataVec2(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
-        {
-            Vector2 v = new Vector2(0.0f);
-
-            string[] svec = ele.Value.Split(",");
-            v.X = Convert.ToSingle(svec[0]);
-            v.Y = Convert.ToSingle(svec[1]);
-            return v;
-        }
-        /// <summary>
-        /// vec2の解析
-        /// </summary>
-        /// <param name="ele"></param>
-        private object AnalyzeDataVec3(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
-        {
-            Vector3 v = new Vector3(0.0f);
-
-
-            string[] svec = ele.Value.Split(",");
-            v.X = Convert.ToSingle(svec[0]);
-            v.Y = Convert.ToSingle(svec[1]);
-            v.Z = Convert.ToSingle(svec[2]);
-
-            return v;
-        }
-
-
-        /// <summary>
-        /// 配列の解析
-        /// </summary>
-        /// <param name="ele"></param>
-        /// <param name="type"></param>
-        /// <param name="subtype"></param>
-        /// <returns></returns>
-        private object AnalyzeDataArray(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
-        {
-            //配列の場合子ノードを変換する
-            List<object> anslist = new List<object>();
-
-            var nodes = ele.Nodes();
-            foreach (XNode node in nodes)
-            {
-                XElement? em = node as XElement;
-                if (em == null)
-                {
-                    continue;
-                }
-
-                //サブタイプで解析を行う
-                AnalyzeDataDelegate aproc = this.GetAnalyzeProc(subtype);
-                object ans = aproc(em, subtype, subtype);
-                anslist.Add(ans);
-            }
-
-            return anslist.ToArray();
-        }
-    }
-
-
     /// <summary>
     /// Clarity設定情報管理
     /// </summary>
-    public class ClaritySettingData
+    public class ClaritySettingData : ClarityData
     {
         /// <summary>
         /// Nodeかデータか
@@ -294,28 +35,12 @@ namespace Clarity
         /// <summary>
         /// データID
         /// </summary>
-        internal int Id = 0;
+        public int Id { get; internal set; } = 0;
+
         /// <summary>
         /// データコード
         /// </summary>
-        internal string Code = "";
-        /// <summary>
-        /// これのタグ名
-        /// </summary>
-        internal string TagName = "";
-        /// <summary>
-        /// 格納データ
-        /// </summary>
-        internal object Data = null;
-
-        /// <summary>
-        /// データType
-        /// </summary>
-        internal EClaritySettingDataType DataType = EClaritySettingDataType.MAX;
-        /// <summary>
-        /// DataTypeがArrayの場合の格納タイプ
-        /// </summary>
-        internal EClaritySettingDataType SubDataType = EClaritySettingDataType.MAX;
+        public string Code { get; internal set; } = "";
 
         /// <summary>
         /// 親ノード
@@ -574,6 +299,63 @@ namespace Clarity
 
     }
 
+
+    /// <summary>
+    /// Clarity設定ファイル読み込み基底
+    /// </summary>
+    public class BaseClaritySetting : ClaritySettingCore
+    {
+        internal const string PathDev = ".";
+
+
+        /// <summary>
+        /// ノード一行の解析　失敗=null
+        /// </summary>
+        /// <param name="epath">親のパス</param>
+        /// <param name="ele">解析対象</param>
+        /// <returns></returns>
+        protected ClaritySettingData? AnalyzeNode(ClaritySettingData? parent, XElement ele)
+        {
+            ClaritySettingData? ans = null;
+
+            try
+            {
+                ans = this.AnalyzeNodeCore<ClaritySettingData>(ele);
+                if (ans == null)
+                {
+                    return null;
+                }
+
+                //Nodeタイプの設定
+                ans.NodeType = EClaritySettingNodeType.Data;
+
+                //Code
+                ans.Code = this.CreateElementCode(parent, ans.TagName);
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"AnalyzeNode name={ele.Name}", ex);
+            }
+            return ans;
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// Codeの作成
+        /// </summary>
+        /// <param name="epath">親名</param>
+        /// <param name="tagname">名前</param>
+        /// <returns></returns>
+        private string CreateElementCode(ClaritySettingData? parent, string tagname)
+        {
+            string ans = (parent != null) ? parent.Code + PathDev + tagname : tagname;
+            return ans;
+        }
+
+    }
+
     /// <summary>
     /// ユーザー設定の読み込み
     /// </summary>
@@ -612,6 +394,7 @@ namespace Clarity
                 rid = root_id;
                 name = rname;
 
+                //データIDの割り当て
                 anslist.ForEach(x =>
                 {
                     x.Id = root_id++;
@@ -733,5 +516,7 @@ namespace Clarity
         }
     }
 
+
+    
 }
 

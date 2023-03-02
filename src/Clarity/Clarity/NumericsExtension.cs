@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Clarity
 {
+    /// <summary>
+    /// Vectorのindex拡張・・・・
+    /// </summary>
     public static class NumericsExtension
     {
         public static float GetIndex(this System.Numerics.Vector2 v, int i)

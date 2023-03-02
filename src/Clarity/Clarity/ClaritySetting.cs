@@ -15,7 +15,7 @@ namespace Clarity
     /// <summary>
     /// 設定情報
     /// </summary>
-    public class ClaritySetting
+    public class ClaritySetting : ClaritySettingCore
     {
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -82,7 +82,7 @@ namespace Clarity
                     data.Data = x.data;
 
                     Type t = x.data.GetType();
-                    this.GetClaritySettingFileDataType(t, out data.DataType, out data.SubDataType);
+                    this.GetClaritySettingDataType(t, out data.DataType, out data.SubDataType);
                 }
 
                 //管理へ追加
@@ -523,7 +523,7 @@ namespace Clarity
 
             //データtypeの割り出し
             Type t = data.GetType();            
-            this.GetClaritySettingFileDataType(t, out cs.DataType, out cs.SubDataType);
+            this.GetClaritySettingDataType(t, out cs.DataType, out cs.SubDataType);
             cs.Data = data;
 
             //追加
@@ -557,7 +557,7 @@ namespace Clarity
 
             //データtypeの割り出し
             Type t = data.GetType();
-            this.GetClaritySettingFileDataType(t, out cs.DataType, out cs.SubDataType);
+            this.GetClaritySettingDataType(t, out cs.DataType, out cs.SubDataType);
             cs.Data = data;
 
             //追加
@@ -585,12 +585,9 @@ namespace Clarity
                 cs = this.DataDicKeyString[code];
             }
 
-            
-            
-
             //データtypeの割り出し
             Type t = data.GetType();
-            this.GetClaritySettingFileDataType(t, out cs.DataType, out cs.SubDataType);
+            this.GetClaritySettingDataType(t, out cs.DataType, out cs.SubDataType);
             cs.Data = data;
 
             //追加
@@ -636,9 +633,8 @@ namespace Clarity
         /// <returns></returns>
         private T GetSetting<T>(int id)
         {
-            ClaritySettingData data = this.DataDic[id];
-            T ans = (T)data.Data;
-            return ans;
+            ClaritySettingData data = this.DataDic[id];            
+            return data.GetValue<T>();
         }
 
         /// <summary>
@@ -729,52 +725,7 @@ namespace Clarity
 
         
 
-        /// <summary>
-        /// EClaritySettingFileDataTypeの割り出し
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="type"></param>
-        /// <param name="subtype"></param>
-        private void GetClaritySettingFileDataType(Type t, out EClaritySettingDataType type, out EClaritySettingDataType subtype)
-        {
-            type = EClaritySettingDataType.MAX;
-            subtype = EClaritySettingDataType.MAX;
-
-            //メインタイプ取得
-            type = this.GetClaritySettingFileDataType(t);
-
-            //配列の場合はsubtype
-            if (type == EClaritySettingDataType.Array)
-            {
-                Type subt = t.GetElementType();
-                subtype = this.GetClaritySettingFileDataType(subt);
-            }
-        }
-
-        /// <summary>
-        /// EClaritySettingFileDataTypeの割り出し
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        private EClaritySettingDataType GetClaritySettingFileDataType(Type t)
-        {
-            if (t.IsArray == true)
-            {
-                return EClaritySettingDataType.Array;
-            }
-
-            Dictionary<Type, EClaritySettingDataType> datadic = new Dictionary<Type, EClaritySettingDataType>();
-            {
-                datadic.Add(typeof(bool), EClaritySettingDataType.Bool);
-                datadic.Add(typeof(int), EClaritySettingDataType.Int);
-                datadic.Add(typeof(float), EClaritySettingDataType.Float);
-                datadic.Add(typeof(string), EClaritySettingDataType.String);
-                datadic.Add(typeof(Vector2), EClaritySettingDataType.Vec2);
-                datadic.Add(typeof(Vector3), EClaritySettingDataType.Vec3);
-            }
-
-            return datadic[t];
-        }
+        
     }
 
 

@@ -1,3 +1,9 @@
+using Clarity;
+using System.Numerics;
+using System.Reactive.Linq;
+using System.Security.Cryptography;
+using System.Xml.Linq;
+
 namespace ClarityMovement
 {
     internal static class Program
@@ -12,6 +18,7 @@ namespace ClarityMovement
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             Application.Run(new MainForm());
+
         }
     }
 }

@@ -367,9 +367,13 @@ namespace ClarityMovement.FrameEdit
                 var carea = this.CenterArea;
                 if (carea.Width > 50)
                 {
-                    var imgrect = this.CalcuImageStretchArea(data.Image, carea);
-                    //gra.DrawImage(data.Image, carea);
+                    var imgrect = this.CalcuImageStretchArea(data.Image, carea);                    
                     gra.DrawImage(data.Image, imgrect);
+
+                    using (Pen ipe = new Pen(Color.LightGray, 1.0f))
+                    {
+                        gra.DrawRectangle(ipe, imgrect);
+                    }
                 }
 
 

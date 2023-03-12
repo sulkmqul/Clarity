@@ -25,8 +25,7 @@ namespace Clarity.Engine.Texture
         /// <summary>
         /// これのリソース
         /// </summary>
-        public ID3D11ShaderResourceView Srv = null;
-        
+        public ID3D11ShaderResourceView Srv = null;        
 
         /// <summary>
         /// これの識別名・基本的にはファイル名となる。
@@ -297,7 +296,7 @@ namespace Clarity.Engine.Texture
 
                     //全データの読み込み
                     int code = rdata.RootID;
-                    foreach (TextureListFileData tdata in rdata.TextureList)
+                    foreach (TextureListData tdata in rdata.TextureList)
                     {
                         Vector2 tsize = new Vector2();
                         ID3D11ShaderResourceView srv = null;

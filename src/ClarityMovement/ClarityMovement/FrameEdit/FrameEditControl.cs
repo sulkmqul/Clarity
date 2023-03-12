@@ -325,8 +325,7 @@ namespace ClarityMovement.FrameEdit
 
             //既存の選択があった
             if (this.EData.TempSelect != null)
-            {
-                //何もしない
+            {   
                 return;
             }
 
@@ -410,11 +409,29 @@ namespace ClarityMovement.FrameEdit
         /// <param name="sec"></param>
         private void AddTag(FrameEditorSelection sec)
         {
-            FrameTagModifier data = new FrameTagModifier();
+            //FrameTagModifier data = new FrameTagModifier();
+            //data.Frame = sec.FrameNo;
+            //data.FrameSpan = 1;
+            //data.TagId = sec.TagIndex;
+            //data.TagCode = "";
+
+            //入力処理
+            TagInputForm f = new TagInputForm();
+            DialogResult dret = f.ShowDialog(this.ParentForm);
+            if(dret != DialogResult.OK)
+            {
+                return;
+            }
+            if(f.InputData == null)
+            {
+                return;
+            }
+
+            //入力の取得と必要情報の設定
+            FrameTagModifier data = f.InputData;
             data.Frame = sec.FrameNo;
             data.FrameSpan = 1;
             data.TagId = sec.TagIndex;
-            data.TagCode = "";
 
             //描画用データ作成
             FrameModifierPaintDataTag tag = new FrameModifierPaintDataTag(data);

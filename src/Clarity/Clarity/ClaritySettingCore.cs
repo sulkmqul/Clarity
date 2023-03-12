@@ -31,11 +31,11 @@ namespace Clarity
         /// <summary>
         /// データType
         /// </summary>
-        internal EClaritySettingDataType DataType = EClaritySettingDataType.MAX;
+        public EClaritySettingDataType DataType { get; internal set; }  = EClaritySettingDataType.MAX;
         /// <summary>
         /// DataTypeがArrayの場合の格納タイプ
         /// </summary>
-        internal EClaritySettingDataType SubDataType = EClaritySettingDataType.MAX;
+        public EClaritySettingDataType SubDataType { get; internal set; } = EClaritySettingDataType.MAX;
 
 
         /// <summary>
@@ -402,7 +402,7 @@ namespace Clarity
         /// <returns></returns>
         public ClarityData? Analyze(XElement ele)
         {
-            return this.AnalyzeNodeCore<ClarityData>(ele);
+            return this.Analyze<ClarityData>(ele);
         }
 
         /// <summary>
@@ -412,10 +412,59 @@ namespace Clarity
         /// <returns></returns>
         public ClarityData? Analyze(string estring)
         {
-            XElement ele = XElement.Parse(estring);
-            return this.AnalyzeNodeCore<ClarityData>(ele);
+            return this.Analyze<ClarityData>(estring);
         }
+
+        /// <summary>
+        /// 解析
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ele"></param>
+        /// <returns></returns>
+        public T? Analyze<T>(XElement ele) where T : ClarityData, new()
+        {
+            return this.AnalyzeNodeCore<T>(ele);
+        }
+
+        /// <summary>
+        /// xml形式の文字列から解析
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="estring"></param>
+        /// <returns></returns>
+        public T? Analyze<T>(string estring) where T : ClarityData, new()
+        {
+            XElement ele = XElement.Parse(estring);
+            return this.Analyze<T>(ele);
+        }
+
+        /// <summary>
+        /// データタイプの値の文字列からデータを取得する(array以外)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dt">データタイプ</param>
+        /// <param name="valuestring">値</param>
+        /// <param name="tagname">タグ名(optional)</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// dt=vec2
+        /// valuestring=12,15
+        /// ので渡すとvec2のデータ入りを作成する
+        /// </remarks>
+        public T? Analyze<T>(EClaritySettingDataType dt, string valuestring, string tagname="tag") where T : ClarityData, new()
+        {
+            //疑似的にxmlを作成する
+            XElement ele = new XElement(tagname);
+            string dname = this.IdentityDataType(dt);
+            ele.Add(new XAttribute("type", dname));
+            ele.Value = valuestring;            
+            
+            //解析させる、
+            return this.Analyze<T>(ele);
+        }
+
     }
+
 
     /// <summary>
     /// 一行の書き込みの作成
@@ -472,6 +521,8 @@ namespace Clarity
 
             return ans;
         }
+
+
     }
 
 }

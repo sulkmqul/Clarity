@@ -24,7 +24,7 @@ namespace Clarity.Engine.Texture
         /// <summary>
         /// ファイルのデータ一覧
         /// </summary>
-        public List<TextureListFileData> TextureList = new List<TextureListFileData>();
+        public List<TextureListData> TextureList = new List<TextureListData>();
     }
 
 
@@ -32,7 +32,7 @@ namespace Clarity.Engine.Texture
     /// <summary>
     /// テクスチャファイルデータ一覧名
     /// </summary>
-    internal class TextureListFileData
+    public class TextureListData
     {   
         /// <summary>
         /// テクスチャファイルパス
@@ -48,6 +48,7 @@ namespace Clarity.Engine.Texture
         /// 含まれる画像index数
         /// </summary>
         public Size IndexSize = new Size(1, 1);
+
 
         /// <summary>
         /// これのファイル名だけを取得する
@@ -141,9 +142,9 @@ namespace Clarity.Engine.Texture
         /// </summary>
         /// <param name="rxml"></param>
         /// <returns></returns>
-        private List<TextureListFileData> ReadData(XElement rxml)
+        private List<TextureListData> ReadData(XElement rxml)
         {
-            List<TextureListFileData> anslist = new List<TextureListFileData>();
+            List<TextureListData> anslist = new List<TextureListData>();
 
             //Blockの読み込み
             var tbem = rxml.Elements("TextureBlock");
@@ -161,9 +162,9 @@ namespace Clarity.Engine.Texture
         /// </summary>
         /// <param name="xml"></param>
         /// <returns></returns>
-        private List<TextureListFileData> ReadTextureBlock(XElement xml)
+        private List<TextureListData> ReadTextureBlock(XElement xml)
         {
-            List<TextureListFileData> anslist = new List<TextureListFileData>();
+            List<TextureListData> anslist = new List<TextureListData>();
 
             //読み込みパス
             string path = xml.Attribute("path").Value;
@@ -172,7 +173,7 @@ namespace Clarity.Engine.Texture
             var tem = xml.Elements("Texture");
             foreach (XElement tex in tem)
             {
-                TextureListFileData ans = new TextureListFileData();
+                TextureListData ans = new TextureListData();
 
                 //分割サイズ
                 string divx = tex.Attribute("divx")?.Value ?? "1";

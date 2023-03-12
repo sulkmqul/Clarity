@@ -150,7 +150,19 @@ namespace ClarityMovement
         /// <param name="e"></param>
         private void èoóÕEToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                if(CmGlobal.Project.Value == null)
+                {
+                    throw new Exception("Project not found");
+                }
+                CmProject proj = CmGlobal.Project.Value;
+                this.Logic.ExportMotionFile(@"F:\çÏã∆óÃàÊ\Game\Clarity\src\ClarityMovement\mdata.xml", proj);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"é∏îs:{ex}");
+            }
         }
 
         /// <summary>

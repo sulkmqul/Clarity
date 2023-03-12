@@ -19,6 +19,9 @@
     <Compile Update="SrcImageSelectForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="TagInputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Viewer\ClarityEngineViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>

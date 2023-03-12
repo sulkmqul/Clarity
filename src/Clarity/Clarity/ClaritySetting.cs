@@ -82,7 +82,10 @@ namespace Clarity
                     data.Data = x.data;
 
                     Type t = x.data.GetType();
-                    this.GetClaritySettingDataType(t, out data.DataType, out data.SubDataType);
+                    EClaritySettingDataType dt, sdt;
+                    this.GetClaritySettingDataType(t, out dt, out sdt);
+                    data.DataType = dt;
+                    data.SubDataType = sdt;
                 }
 
                 //管理へ追加
@@ -522,8 +525,11 @@ namespace Clarity
             cs.Code = code;
 
             //データtypeの割り出し
-            Type t = data.GetType();            
-            this.GetClaritySettingDataType(t, out cs.DataType, out cs.SubDataType);
+            Type t = data.GetType();
+            EClaritySettingDataType dt, sdt;
+            this.GetClaritySettingDataType(t, out dt, out sdt);
+            cs.DataType = dt;
+            cs.SubDataType = sdt;
             cs.Data = data;
 
             //追加
@@ -557,7 +563,10 @@ namespace Clarity
 
             //データtypeの割り出し
             Type t = data.GetType();
-            this.GetClaritySettingDataType(t, out cs.DataType, out cs.SubDataType);
+            EClaritySettingDataType dt, sdt;
+            this.GetClaritySettingDataType(t, out dt, out sdt);
+            cs.DataType = dt;
+            cs.SubDataType = sdt;
             cs.Data = data;
 
             //追加
@@ -587,7 +596,10 @@ namespace Clarity
 
             //データtypeの割り出し
             Type t = data.GetType();
-            this.GetClaritySettingDataType(t, out cs.DataType, out cs.SubDataType);
+            EClaritySettingDataType dt, sdt;
+            this.GetClaritySettingDataType(t, out dt, out sdt);
+            cs.DataType = dt;
+            cs.SubDataType = sdt;
             cs.Data = data;
 
             //追加

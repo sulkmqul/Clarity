@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ClarityMovement.FrameEdit;
+using ClarityMovement.MotionFile;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,5 +40,27 @@ namespace ClarityMovement
             CmGlobal.Project.Value = proj;
 
         }
+
+
+        /// <summary>
+        /// モーションファイルの出力
+        /// </summary>
+        /// <param name="filepath">書き出しファイルパス</param>
+        /// <param name="proj">書き出しデータ</param>
+        public void ExportMotionFile(string filepath, CmProject proj)
+        {
+            //書き出しデータ作成
+            MotionConverter cov = new MotionConverter();
+            var data = cov.ConvertFileData(proj);
+
+            //保存
+            ClarityMotionFile mf = new ClarityMotionFile();
+            mf.Write(filepath, data);
+
+        }
+
+
+
+        
     }
 }

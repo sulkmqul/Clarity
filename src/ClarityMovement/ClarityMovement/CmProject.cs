@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Clarity;
+using ClarityMovement.MotionFile;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -100,9 +102,27 @@ namespace ClarityMovement
 
 
         /// <summary>
-        /// 設定フレーム長b
+        /// 設定フレーム長
         /// </summary>
         public int FrameSpan { get; set; } = 1;
+
+        /// <summary>
+        /// 対象フレームに属しているかをチェックする
+        /// </summary>
+        /// <param name="f">フレーム番号</param>
+        /// <returns></returns>
+        public bool CheckFrame(int f)
+        {
+            int st = this.Frame;
+            int ed = this.Frame + this.FrameSpan;
+
+            if (st <= f && f < ed)
+            {
+                return true;
+            }
+            return false;
+
+        }
     }
 
 
@@ -135,12 +155,37 @@ namespace ClarityMovement
         /// <summary>
         /// タグID
         /// </summary>
-        public int TagId { get; set; } = 0;
+        public int TagId
+        {
+            get
+            {
+                return this.Data.Id;
+            }
+            set
+            {
+                this.Data.Id = value;
+            }
+        }
 
         /// <summary>
         /// タグのコード
         /// </summary>
-        public string TagCode { get; set; } = "";
+        public string TagCode
+        {
+            get
+            {
+                return this.Data.TagName;
+            }
+            set
+            {
+                this.Data.TagName = value;
+            }
+        }
+
+        /// <summary>
+        /// これのデータ
+        /// </summary>
+        public ClarityMotionTag Data = new ClarityMotionTag();
 
 
     }

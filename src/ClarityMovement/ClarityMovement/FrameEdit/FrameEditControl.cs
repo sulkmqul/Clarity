@@ -325,7 +325,8 @@ namespace ClarityMovement.FrameEdit
 
             //既存の選択があった
             if (this.EData.TempSelect != null)
-            {   
+            {
+                this.EditTagData(this.EData.TempSelect);
                 return;
             }
 
@@ -354,7 +355,7 @@ namespace ClarityMovement.FrameEdit
                     break;
                 case ETagType.Tag:
                     {
-                        this.AddTag(sec);
+                        this.AddTagModifier(sec);
                     }
                     break;
             }
@@ -407,7 +408,7 @@ namespace ClarityMovement.FrameEdit
         /// Tagデータの追加
         /// </summary>
         /// <param name="sec"></param>
-        private void AddTag(FrameEditorSelection sec)
+        private void AddTagModifier(FrameEditorSelection sec)
         {
             //FrameTagModifier data = new FrameTagModifier();
             //data.Frame = sec.FrameNo;
@@ -471,6 +472,57 @@ namespace ClarityMovement.FrameEdit
             }
 
             return ans;
+        }
+
+
+
+        /// <summary>
+        /// 選択タグの編集
+        /// </summary>
+        /// <param name="pdata"></param>
+        private void EditTagData(BaseFrameModifierPaintData pdata)
+        {
+            switch (pdata.TagType)
+            {
+                case ETagType.Image:
+                    {
+                        //Imageの編集
+                        
+                    }
+                    break;
+                case ETagType.Tag:
+                    {
+                        //tagの編集
+                        this.EditTagModifier((FrameModifierPaintDataTag)pdata);
+                    }
+                    break;
+            }
+
+            this.Refresh();
+        }
+
+        /// <summary>
+        /// タグの編集
+        /// </summary>
+        /// <param name="ptag">編集タグ</param>
+        private void EditTagModifier(FrameModifierPaintDataTag ptag)
+        {
+            TagInputForm f = new TagInputForm(ptag.TagData);
+            DialogResult dret = f.ShowDialog(this.ParentForm);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+            if (f.InputData == null)
+            {
+                return;
+            }
+
+            //入力の取得と必要情報の設定
+            ptag.SrcData = f.InputData;            
+
+            //初期化する。            
+            ptag.Init(this, this.Painter);
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//

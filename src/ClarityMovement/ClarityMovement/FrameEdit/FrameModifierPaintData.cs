@@ -91,7 +91,7 @@ namespace ClarityMovement.FrameEdit
         /// <summary>
         /// 元ネタ
         /// </summary>
-        public BaseFrameModifier SrcData { get; init; }
+        public BaseFrameModifier SrcData { get; set; }
 
         /// <summary>
         /// 自身のフレーム

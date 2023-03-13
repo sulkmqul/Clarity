@@ -70,7 +70,7 @@ namespace ClarityMovement
         {
             this.textBoxCode.Text = mdata.Data.TagName;
             this.comboBoxType.SelectedItem = mdata.Data.DataType;
-            this.textBoxValue.Text =  mdata.Data.ToString()?.Replace("<", "").Replace(">", "");
+            this.textBoxValue.Text =  mdata.Data.Data.ToString()?.Replace("<", "").Replace(">", "");
         }
 
 
@@ -134,7 +134,9 @@ namespace ClarityMovement
                     this.InputData = this.SrcData;
                 }
                 //値の設定
+                int id = this.InputData.Data.Id;    //基底にないものを保存
                 this.InputData.Data = data;
+                this.InputData.Data.Id = id;
 
                 this.DialogResult = DialogResult.OK;
             }

@@ -1,3 +1,4 @@
+using ClarityMovement.Export;
 using System.DirectoryServices.ActiveDirectory;
 using System.Reactive.Disposables;
 
@@ -36,7 +37,7 @@ namespace ClarityMovement
                 {
                     this.clarityDxViewer1.Clear();
                     this.clarityDxViewer1.Visible = false;
-                    this.frameEditControlEditor.Visible = false;                    
+                    this.frameEditControlEditor.Visible = false;
                     return;
                 }
 
@@ -152,14 +153,19 @@ namespace ClarityMovement
         {
             try
             {
-                if(CmGlobal.Project.Value == null)
+                if (CmGlobal.Project.Value == null)
                 {
                     throw new Exception("Project not found");
                 }
-                CmProject proj = CmGlobal.Project.Value;
-                this.Logic.ExportMotionFile(@"F:\çÏã∆óÃàÊ\Game\Clarity\src\ClarityMovement\mdata.xml", proj);
+                //CmProject proj = CmGlobal.Project.Value;
+                //this.Logic.ExportMotionFile(@"F:\çÏã∆óÃàÊ\Game\Clarity\src\ClarityMovement\mdata.xml", proj);
+
+                MotionExportForm f = new MotionExportForm();
+                f.Init(CmGlobal.Project.Value);
+                f.ShowDialog(this);
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"é∏îs:{ex}");
             }

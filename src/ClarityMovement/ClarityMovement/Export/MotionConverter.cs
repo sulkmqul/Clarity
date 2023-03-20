@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClarityMovement.FrameEdit
+namespace ClarityMovement.Export
 {
     /// <summary>
     /// 表示形式とファイル形式の橋渡しを行うもの
@@ -20,14 +20,14 @@ namespace ClarityMovement.FrameEdit
         /// <returns></returns>
         public ClarityMotion ConvertFileData(CmProject proj)
         {
-            ClarityMotion ans = new ClarityMotion();                
-            
+            ClarityMotion ans = new ClarityMotion();
+
             for (int i = 0; i < proj.MaxFrame; i++)
             {
                 //フレーム情報の作成
                 ClarityMotionFrame fdata = new ClarityMotionFrame(i);
 
-                
+
                 {
                     //このフレームの画像を取得
                     var imgsrc = proj.ModifierList.Where(x => x.TagType == ETagType.Image && x.CheckFrame(i) == true);
@@ -56,11 +56,11 @@ namespace ClarityMovement.FrameEdit
 
                 }
                 ans.FrameList.Add(fdata);
-                
+
             }
 
             return ans;
-            
+
         }
     }
 }

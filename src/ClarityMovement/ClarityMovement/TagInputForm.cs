@@ -46,17 +46,8 @@ namespace ClarityMovement
         /// </summary>
         private void InitForm()
         {
-            //タイプComboの初期化
-            EClaritySettingDataType[] typevec = (EClaritySettingDataType[])Enum.GetValues(typeof(EClaritySettingDataType));
-            this.comboBoxType.Items.Clear();
-            foreach(var tv in typevec)
-            {
-                this.comboBoxType.Items.Add(tv);
-            }
-            this.comboBoxType.SelectedIndex = 0;
-
             //元データの表示
-            if(this.SrcData != null)
+            if (this.SrcData != null)
             {
                 this.DispData(this.SrcData);
             }
@@ -68,9 +59,8 @@ namespace ClarityMovement
         /// <param name="mdata"></param>
         private void DispData(FrameTagModifier mdata)
         {
-            this.textBoxCode.Text = mdata.Data.TagName;
-            this.comboBoxType.SelectedItem = mdata.Data.DataType;
-            this.textBoxValue.Text =  mdata.Data.Data.ToString()?.Replace("<", "").Replace(">", "");
+            this.clarityDataInputControl1.DispData(mdata.Data);
+
         }
 
 
@@ -79,13 +69,7 @@ namespace ClarityMovement
         /// </summary>        
         private ClarityMotionTag? GetInputData()
         {
-            ClaritySettingCoreReader cr = new ClaritySettingCoreReader();
-
-            EClaritySettingDataType dt = (EClaritySettingDataType)this.comboBoxType.SelectedItem;
-            string tag = this.textBoxCode.Text.Trim();
-            string sval = this.textBoxValue.Text.Trim();
-
-            return cr.Analyze<ClarityMotionTag>(dt, sval, tag);
+            return this.clarityDataInputControl1.GetInputData<ClarityMotionTag>();
         }
 
 
@@ -126,6 +110,7 @@ namespace ClarityMovement
                 {
                     throw new Exception("入力情報を取得できません。");
                 }
+
                 
                 //入力情報の作成
                 this.InputData = new FrameTagModifier();

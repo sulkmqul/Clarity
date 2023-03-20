@@ -28,36 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            comboBoxType = new ComboBox();
-            textBoxValue = new TextBox();
             buttonOk = new Button();
             buttonCancel = new Button();
-            textBoxCode = new TextBox();
-            label1 = new Label();
-            label2 = new Label();
+            clarityDataInputControl1 = new Clarity.GUI.ClarityDataInputControl();
             SuspendLayout();
-            // 
-            // comboBoxType
-            // 
-            comboBoxType.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBoxType.FormattingEnabled = true;
-            comboBoxType.Location = new Point(64, 46);
-            comboBoxType.Name = "comboBoxType";
-            comboBoxType.Size = new Size(114, 23);
-            comboBoxType.TabIndex = 0;
-            // 
-            // textBoxValue
-            // 
-            textBoxValue.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxValue.Location = new Point(184, 46);
-            textBoxValue.Name = "textBoxValue";
-            textBoxValue.Size = new Size(344, 23);
-            textBoxValue.TabIndex = 1;
             // 
             // buttonOk
             // 
             buttonOk.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonOk.Location = new Point(372, 70);
+            buttonOk.Location = new Point(372, 291);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new Size(75, 23);
             buttonOk.TabIndex = 6;
@@ -68,7 +47,7 @@
             // buttonCancel
             // 
             buttonCancel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            buttonCancel.Location = new Point(453, 70);
+            buttonCancel.Location = new Point(453, 291);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(75, 23);
             buttonCancel.TabIndex = 7;
@@ -76,62 +55,33 @@
             buttonCancel.UseVisualStyleBackColor = true;
             buttonCancel.Click += buttonCancel_Click;
             // 
-            // textBoxCode
+            // clarityDataInputControl1
             // 
-            textBoxCode.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxCode.Location = new Point(64, 17);
-            textBoxCode.Name = "textBoxCode";
-            textBoxCode.Size = new Size(114, 23);
-            textBoxCode.TabIndex = 1;
-            textBoxCode.Text = "Tag";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 20);
-            label1.Name = "label1";
-            label1.Size = new Size(33, 15);
-            label1.TabIndex = 8;
-            label1.Text = "code";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(12, 49);
-            label2.Name = "label2";
-            label2.Size = new Size(35, 15);
-            label2.TabIndex = 9;
-            label2.Text = "value";
+            clarityDataInputControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            clarityDataInputControl1.Location = new Point(12, 12);
+            clarityDataInputControl1.Name = "clarityDataInputControl1";
+            clarityDataInputControl1.Size = new Size(516, 273);
+            clarityDataInputControl1.TabIndex = 10;
             // 
             // TagInputForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(540, 105);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            ClientSize = new Size(540, 326);
+            Controls.Add(clarityDataInputControl1);
             Controls.Add(buttonOk);
             Controls.Add(buttonCancel);
-            Controls.Add(textBoxCode);
-            Controls.Add(textBoxValue);
-            Controls.Add(comboBoxType);
             Name = "TagInputForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "TagInputForm";
             Load += TagInputForm_Load;
             Shown += TagInputForm_Shown;
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private ComboBox comboBoxType;
-        private TextBox textBoxValue;
         private Button buttonOk;
         private Button buttonCancel;
-        private TextBox textBoxCode;
-        private Label label1;
-        private Label label2;
+        private Clarity.GUI.ClarityDataInputControl clarityDataInputControl1;
     }
 }

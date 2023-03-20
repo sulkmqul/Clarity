@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using System.Data;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -48,6 +49,7 @@ namespace Clarity
             T ans = (T)this.Data;
             return ans;
         }
+
     }
 
     /// <summary>
@@ -182,7 +184,8 @@ namespace Clarity
             var a = from f in DataTypeMap where f.type == t select f.code;
             if (a.Count() <= 0)
             {
-                throw new Exception("no supported clarity types.");
+                //throw new Exception("no supported clarity types.");
+                return EClaritySettingDataType.MAX;
             }
 
             return a.First();
@@ -255,6 +258,30 @@ namespace Clarity
         {
             string a = data.ToString() ?? "";
             return a.Replace("<", "").Replace(">", "");
+        }
+
+
+        /// <summary>
+        /// DataTypeの組が有効かを確認する。
+        /// </summary>
+        /// <param name="ctype">data type</param>
+        /// <param name="subtype">sub data type</param>
+        /// <returns></returns>
+        protected bool CheckAvailableDataType(EClaritySettingDataType ctype, EClaritySettingDataType subtype)
+        {
+            if(ctype == EClaritySettingDataType.MAX)
+            {
+                return false;
+            }
+            if (ctype == EClaritySettingDataType.Array && subtype == EClaritySettingDataType.Array)
+            {
+                return false;
+            }
+            if (ctype == EClaritySettingDataType.Array && subtype == EClaritySettingDataType.MAX)
+            {
+                return false;
+            }
+            return true;
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -352,7 +379,7 @@ namespace Clarity
         {
             //配列の場合子ノードを変換する
             List<object> anslist = new List<object>();
-
+            
             var nodes = ele.Nodes();
             foreach (XNode node in nodes)
             {
@@ -369,6 +396,7 @@ namespace Clarity
             }
 
             return anslist.ToArray();
+
         }
     }
 
@@ -448,7 +476,7 @@ namespace Clarity
         /// <returns></returns>
         /// <remarks>
         /// dt=vec2
-        /// valuestring=12,15
+        /// valuestring="12,15"
         /// ので渡すとvec2のデータ入りを作成する
         /// </remarks>
         public T? Analyze<T>(EClaritySettingDataType dt, string valuestring, string tagname="tag") where T : ClarityData, new()
@@ -457,11 +485,56 @@ namespace Clarity
             XElement ele = new XElement(tagname);
             string dname = this.IdentityDataType(dt);
             ele.Add(new XAttribute("type", dname));
-            ele.Value = valuestring;            
+            ele.Value = valuestring;
             
             //解析させる、
             return this.Analyze<T>(ele);
         }
+
+        /// <summary>
+        /// array読み込み
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dt"></param>
+        /// <param name="slist"></param>
+        /// <param name="tagname"></param>
+        /// <returns></returns>
+        public T? Analyze<T>(EClaritySettingDataType dt, List<string> slist, string tagname = "tag") where T : ClarityData, new()
+        {
+            //データなし
+            if(slist.Count <= 0)
+            {
+                return null;
+            }
+            //一行だけ
+            if(slist.Count == 1) 
+            {
+                return this.Analyze<T>(dt, slist[0], tagname);
+            }
+            
+
+            //疑似的にxmlを作成する
+            XElement ele = new XElement(tagname);            
+            string dname = this.IdentityDataType(EClaritySettingDataType.Array);
+            string subdname = this.IdentityDataType(dt);
+
+            ele.Add(new XAttribute("type", dname));
+            ele.Add(new XAttribute("subtype", subdname));
+
+            //子要素の作成
+            slist.ForEach(x =>
+            {
+                XElement ce = new XElement("value");
+                ce.Value = x;
+                ele.Add(ce);
+            });
+
+            //タグ解析
+            return this.Analyze<T>(ele);
+
+        }
+
+
 
     }
 
@@ -485,6 +558,21 @@ namespace Clarity
             Type datattpe = data.Data.GetType();
             EClaritySettingDataType ctype, subtype;
             this.GetClaritySettingDataType(datattpe, out ctype, out subtype);
+
+            //データから割り出せないならそのまま使う
+            bool dtret = this.CheckAvailableDataType(ctype, subtype);
+            if(dtret == false)
+            {                
+                ctype = data.DataType;
+                subtype = data.SubDataType;
+            }
+            //元のtypeも確認
+            dtret = this.CheckAvailableDataType(ctype, subtype);
+            if (dtret == false)
+            {
+                throw new Exception("not supported clarity data");
+            }
+
 
             //typeから書き込みtype文字列の割り出し
             string wtype = this.IdentityDataType(ctype);

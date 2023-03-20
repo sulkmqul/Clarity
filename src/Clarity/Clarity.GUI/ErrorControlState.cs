@@ -5,15 +5,57 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace Clarity.GUI
 {
+    /// <summary>
+    /// 入力不正
+    /// </summary>
+    public class InvaildInputException : Exception
+    {
+        public InvaildInputException(string message, params Control[] convec) : base(message)
+        {
+            this.TargetList.AddRange(convec);
+        }
+        public InvaildInputException(string message, List<Control> clist) : base(message)
+        {
+            this.TargetList.AddRange(clist);
+        }
+        public InvaildInputException(string message, Exception innerException, params Control[] convec) : base(message, innerException)
+        {
+            this.TargetList.AddRange(convec);
+        }
+
+        public InvaildInputException(string message, Exception innerException, List<Control> clist) : base(message, innerException)
+        {
+            this.TargetList.AddRange(clist);
+        }
+        protected InvaildInputException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
+        /// <summary>
+        /// 例外対象
+        /// </summary>
+        public List<Control> TargetList { get; } = new List<Control>();
+        
+
+
+    }
+
+    
     /// <summary>
     /// エラーコントロール表示
     /// </summary>
 
     public class ErrorControlState : IDisposable
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="clist">不正コントロール</param>
+        /// <param name="f">即時変色可否</param>
         public ErrorControlState(List<Control> clist, bool f = true)
         {
             this.ControlList = new List<Control>();
@@ -25,8 +67,16 @@ namespace Clarity.GUI
             if (f == true)
             {
                 this.ChangeColor();
-
             }
+        }
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="ex">不正入力例外</param>
+        /// <param name="f">即時変色可否</param>
+        public ErrorControlState(InvaildInputException ex, bool f = true) : this(ex.TargetList, f)
+        {
+
         }
 
         /// <summary>

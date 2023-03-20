@@ -1,4 +1,4 @@
-﻿using ClarityMovement.FrameEdit;
+﻿using ClarityMovement.Export;
 using ClarityMovement.MotionFile;
 using System;
 using System.Collections.Generic;
@@ -49,6 +49,9 @@ namespace ClarityMovement
         /// <param name="proj">書き出しデータ</param>
         public void ExportMotionFile(string filepath, CmProject proj)
         {
+            //編集の反映
+            this.Form.frameEditControlEditor.ApplyTagModifier();
+
             //書き出しデータ作成
             MotionConverter cov = new MotionConverter();
             var data = cov.ConvertFileData(proj);

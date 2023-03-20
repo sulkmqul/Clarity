@@ -204,6 +204,29 @@ namespace ClarityMovement.FrameEdit
                 this.EData.PaintDataList.Add(data);
             });
         }
+        /// <summary>
+        /// タグ情報の確定
+        /// </summary>
+        /// <remarks>編集したタグ情報をプロジェクト情報へ書き出す</remarks>
+        public void ApplyTagModifier()
+        {
+            var proj = CmGlobal.Project.Value;
+            if (proj == null)
+            {
+                return;
+            }
+
+            //既存をクリア
+            proj.ModifierList.Clear();
+
+            //現在のデータを設定する
+            this.EData.PaintDataList.ForEach(x =>
+            {
+                proj.ModifierList.Add(x.SrcData);
+            });
+
+
+        }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//        
 

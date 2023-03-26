@@ -423,6 +423,7 @@ namespace ClarityMovement.FrameEdit
     {
         public FrameModifierPaintDataTag(FrameTagModifier data) : base(data)
         {
+            
         }
 
         /// <summary>

@@ -160,6 +160,8 @@ namespace ClarityMovement.FrameEdit
             });
 
 
+            //タグ情報の再作成
+            this.RecreateTagPaint();
         }
 
 

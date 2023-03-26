@@ -1,4 +1,5 @@
 ﻿using Clarity;
+using Clarity.Engine;
 using ClarityMovement.MotionFile;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace ClarityMovement
     /// <summary>
     /// ClarityMovementプロジェクトファイル
     /// </summary>
-    internal class CmProject
+    internal class CmProject :  IDisposable
     {
         public CmProject()
         {
@@ -23,23 +24,14 @@ namespace ClarityMovement
         /// フレームレート
         /// </summary>
         public double FrameRate { get; set; } = 1000.0 / 60.0;
-        
-        /// <summary>
-        /// 元画像ファイルパス一覧(zip or image file)
-        /// </summary>
-        //public List<string> SrcImageFilePath = new List<string>();
-        
         /// <summary>
         /// 画像データ管理
         /// </summary>
         public ImageDataManager ImageDataMana { get; set; } = new ImageDataManager();
-
         /// <summary>
         /// 描画サイズ
         /// </summary>
         public Vector2 RenderingSize { get; set; } = new Vector2(0, 0);
-
-
         /// <summary>
         /// 最大フレーム数
         /// </summary>
@@ -60,6 +52,42 @@ namespace ClarityMovement
         {
             //画像設定のクリア            
             this.ModifierList.RemoveAll(x => x.TagType == type);
+        }
+
+
+        /// <summary>
+        /// 解放処理
+        /// </summary>
+        public void Dispose()
+        {
+            this.ImageDataMana.Dispose();
+        }
+
+
+        /// <summary>
+        /// 含まれている画像タグの一覧を取得する
+        /// </summary>
+        /// <returns></returns>
+        public List<FrameImageModifier> ImageTagList
+        {
+            get
+            {
+                return this.ModifierList.Where(x => x.TagType == ETagType.Image).Select(z => (FrameImageModifier)z).ToList();
+            }
+        }
+
+
+
+        /// <summary>
+        /// 含まれているタグの一覧を取得する
+        /// </summary>
+        /// <returns></returns>
+        public List<FrameTagModifier> TagDataList
+        {
+            get
+            {
+                return this.ModifierList.Where(x => x.TagType == ETagType.Tag).Select(z => (FrameTagModifier)z).ToList();
+            }
         }
 
     }

@@ -28,7 +28,10 @@ namespace ClarityMovement.Viewer
         /// </summary>
         public void Init()
         {
-            ClarityEngine.Init(this);
+            if (ClarityEngine.IsEngineInit == false)
+            {
+                ClarityEngine.Init(this);
+            }
 
             //初期表示
             this.RenderView();

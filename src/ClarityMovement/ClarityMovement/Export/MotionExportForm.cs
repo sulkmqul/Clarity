@@ -41,6 +41,10 @@ namespace ClarityMovement.Export
 
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 入力エラー確認
+        /// </summary>
+        /// <exception cref="InvaildInputException"></exception>
         private void CheckError()
         {
             if (this.textBoxExportFilePath.Text.Length <= 0)
@@ -56,9 +60,14 @@ namespace ClarityMovement.Export
         /// <summary>
         /// 出力処理本体
         /// </summary>
-        private void Export()
+        private Task Export()
         {
+            if(this.MWriter == null)
+            {
+                throw new InvalidOperationException("Writer is null");
+            }
 
+            return this.MWriter.Export(this.textBoxExportFilePath.Text.Trim(), this.textBoxMotionCode.Text.Trim());
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -98,12 +107,18 @@ namespace ClarityMovement.Export
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void buttonOk_Click(object sender, EventArgs e)
+        private async void buttonOk_Click(object sender, EventArgs e)
         {
             try
             {
                 //入力チェック
                 this.CheckError();
+
+                using (AsyncControlState st = new AsyncControlState(this))
+                {
+                    //データの出力
+                    await this.Export();
+                }
 
                 this.DialogResult = DialogResult.OK;
             }

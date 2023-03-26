@@ -84,7 +84,20 @@ namespace Clarity.Engine
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-        
+        /// <summary>
+        /// エンジン初期化可否
+        /// </summary>
+        public static bool IsEngineInit
+        {
+            get
+            {
+                if (ClarityEngine.Engine == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
 
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -130,7 +143,6 @@ namespace Clarity.Engine
             //エンジンの実行
             ClarityEngine.Engine.RunEngine(cep);
 
-
             //ログの終了
             ClarityLog.Release();
         }
@@ -145,6 +157,7 @@ namespace Clarity.Engine
             ClarityEngine.Engine?.EngineData.SystemText.SetText(s, line);
         }
 
+        
 
 
 

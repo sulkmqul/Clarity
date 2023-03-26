@@ -36,7 +36,7 @@ namespace ClarityMovement
     /// <summary>
     /// 画像データを管理する
     /// </summary>
-    internal class ImageDataManager
+    internal class ImageDataManager : IDisposable
     {
         public ImageDataManager()
         {
@@ -137,6 +137,33 @@ namespace ClarityMovement
         public List<CmImageData> GetImageList()
         {
             return this.ImageDic.Values.ToList();
+        }
+
+        /// <summary>
+        /// 解放処理
+        /// </summary>
+        public void Dispose()
+        {
+            //テクスチャを解放する
+            ClarityEngine.Texture.ClearTexture();            
+        }
+
+
+        /// <summary>
+        /// ファイルパスから対象画像IDの特定
+        /// </summary>
+        /// <param name="filepath">特定したいファイルパス</param>
+        /// <returns>対象ID nul=ぞんざいなし</returns>
+        public int? identifiedImageByFilePath(string filepath)
+        {
+            if(filepath.Length <= 0)
+            {
+                return null;
+            }
+
+            //対象の取得
+            CmImageData? data = this.ImageDic.Values.Where(x => x.FilePath == filepath).FirstOrDefault();            
+            return data?.CmImageID;
         }
     }
 }

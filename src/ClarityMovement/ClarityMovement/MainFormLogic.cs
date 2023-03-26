@@ -36,8 +36,40 @@ namespace ClarityMovement
         /// <param name="proj">入力情報</param>
         public void CreateProject(CmProject proj)
         {
+            //既存の物体の解放
+            CmGlobal.Project.Value?.Dispose();
+            CmGlobal.Project.Value = null;
+
             //プロジェクトの作成
             CmGlobal.Project.Value = proj;
+        }
+
+
+        /// <summary>
+        /// プロジェクトファイルの保存
+        /// </summary>
+        /// <param name="proj">保存対象</param>
+        /// <param name="filepath">保存ファイルパス</param>
+        public Task SaveProject(CmProject proj, string filepath)
+        {
+            //編集の取得
+            this.Form.frameEditControlEditor.ApplyTagModifier();
+
+            CmProjectFile fp = new CmProjectFile();
+            return fp.SaveProject(proj, filepath);
+        }
+
+        /// <summary>
+        /// プロジェクトの読み込み
+        /// </summary>
+        /// <param name="filepath"></param>
+        public void LoadProject(string filepath)
+        {
+            CmProjectFile fp = new CmProjectFile();
+            var proj = fp.LoadProject(filepath);
+
+            //初期化と再読み込み
+            this.CreateProject(proj);
 
         }
 
@@ -49,6 +81,8 @@ namespace ClarityMovement
         /// <param name="proj">書き出しデータ</param>
         public void ExportMotionFile(string filepath, CmProject proj)
         {
+            //これはその打ちえkす
+
             //編集の反映
             this.Form.frameEditControlEditor.ApplyTagModifier();
 

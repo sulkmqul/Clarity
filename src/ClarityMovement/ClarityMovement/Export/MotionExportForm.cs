@@ -67,6 +67,7 @@ namespace ClarityMovement.Export
                 throw new InvalidOperationException("Writer is null");
             }
 
+            //出力処理
             return this.MWriter.Export(this.textBoxExportFilePath.Text.Trim(), this.textBoxMotionCode.Text.Trim());
         }
 

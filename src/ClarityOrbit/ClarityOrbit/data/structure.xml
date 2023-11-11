@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ClarityStructure>
-    <Node code="Manager" />
-	<Node code="Layer" />
-    <Node code="Grid" />
-    <Node code="Control"/>
-    <Node code="Infomation" />
-</ClarityStructure>

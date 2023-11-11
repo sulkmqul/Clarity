@@ -1,3 +1,0 @@
-﻿1
-data/VGrid.cpo
-data/Tile.cpo

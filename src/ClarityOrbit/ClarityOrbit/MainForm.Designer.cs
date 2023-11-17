@@ -60,6 +60,7 @@
             新規作成ToolStripMenuItem.Name = "新規作成ToolStripMenuItem";
             新規作成ToolStripMenuItem.Size = new Size(122, 22);
             新規作成ToolStripMenuItem.Text = "新規作成";
+            新規作成ToolStripMenuItem.Click += 新規作成ToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
@@ -71,6 +72,7 @@
             終了XToolStripMenuItem.Name = "終了XToolStripMenuItem";
             終了XToolStripMenuItem.Size = new Size(122, 22);
             終了XToolStripMenuItem.Text = "終了(&X)";
+            終了XToolStripMenuItem.Click += 終了XToolStripMenuItem_Click;
             // 
             // dockPanelToolWindow
             // 
@@ -109,7 +111,7 @@
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
-            Text = "Form1";
+            Text = "ClarityOrbit";
             FormClosed += MainForm_FormClosed;
             Load += MainForm_Load;
             Shown += MainForm_Shown;
@@ -125,8 +127,8 @@
         private ToolStripMenuItem 新規作成ToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem 終了XToolStripMenuItem;
-        private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanelToolWindow;
         private Splitter splitter1;
         private OrbitView.OrbitEditView orbitEditView1;
+        internal WeifenLuo.WinFormsUI.Docking.DockPanel dockPanelToolWindow;
     }
 }

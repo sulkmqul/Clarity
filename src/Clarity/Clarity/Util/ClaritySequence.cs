@@ -15,7 +15,7 @@ namespace Clarity.Util
         /// コンストラクタ
         /// </summary>
         /// <param name="startval">初期値</param>
-        public ClaritySequence(int startval = 1)
+        public ClaritySequence(int startval = 0)
         {
             this.Current = startval;
         }
@@ -23,7 +23,7 @@ namespace Clarity.Util
         /// <summary>
         /// 現在値
         /// </summary>
-        public int Current { get; private set; } = 1;
+        public int Current { get; private set; } = 0;
 
         /// <summary>
         /// 次の値を取得

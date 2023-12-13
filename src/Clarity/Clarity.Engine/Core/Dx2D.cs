@@ -13,8 +13,45 @@ namespace Clarity.Engine.Core
     /// </summary>
     public class Dx2D : IDisposable
     {
-        public Vortice.Direct2D1.ID2D1Factory1 Fact2D = null;
-        public Vortice.DirectWrite.IDWriteFactory1 FactDWrite = null;
+        /// <summary>
+        /// Dirext2D Factory
+        /// </summary>
+        private Vortice.Direct2D1.ID2D1Factory1? _Fact2D = null;
+
+        /// <summary>
+        /// Dirext2D Factory
+        /// </summary>
+        public Vortice.Direct2D1.ID2D1Factory1 Fact2D
+        {
+            get
+            {
+                if (_Fact2D == null)
+                {
+                    throw new Exception("Dx2D factory is not Initalized.");
+                }
+                return this._Fact2D;
+            }
+        }
+
+        /// <summary>
+        /// WriteFactory
+        /// </summary>
+        private  Vortice.DirectWrite.IDWriteFactory1? _FactDWrite = null;
+
+        /// <summary>
+        /// WriteFactory
+        /// </summary>
+        public Vortice.DirectWrite.IDWriteFactory1 FactDWrite
+        {
+            get
+            {
+                if(this._FactDWrite == null)
+                {
+                    throw new Exception("Dx2D write factory is not Initalized.");
+                }
+                return this._FactDWrite;
+            }
+        }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -23,8 +60,8 @@ namespace Clarity.Engine.Core
         /// <param name="swc"></param>
         public void InitDirect2D()
         {
-            this.Fact2D = D2D1.D2D1CreateFactory<Vortice.Direct2D1.ID2D1Factory1>(FactoryType.SingleThreaded);
-            this.FactDWrite = Vortice.DirectWrite.DWrite.DWriteCreateFactory<Vortice.DirectWrite.IDWriteFactory1>();
+            this._Fact2D = D2D1.D2D1CreateFactory<Vortice.Direct2D1.ID2D1Factory1>(FactoryType.SingleThreaded);
+            this._FactDWrite = Vortice.DirectWrite.DWrite.DWriteCreateFactory<Vortice.DirectWrite.IDWriteFactory1>();
         }
 
         /// <summary>
@@ -61,8 +98,8 @@ namespace Clarity.Engine.Core
         /// </summary>
         public void Dispose()
         {
-            this.FactDWrite?.Dispose();            
-            this.Fact2D?.Dispose();            
+            this._FactDWrite?.Dispose();            
+            this._Fact2D?.Dispose();            
         }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
     }

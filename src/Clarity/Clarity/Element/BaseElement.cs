@@ -165,7 +165,7 @@ namespace Clarity
         /// <summary>
         /// 描画所作
         /// </summary>
-        protected BaseBehavior RenderBehavior = null; 
+        protected BaseBehavior? RenderBehavior = null; 
 
         /// <summary>
         /// Elementのイベント
@@ -427,6 +427,9 @@ namespace Clarity
             //子供処理の後
             this.ProcCleanup();
         }
+
+
+
 
 
 

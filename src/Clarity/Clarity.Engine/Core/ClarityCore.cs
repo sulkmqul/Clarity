@@ -127,6 +127,8 @@ namespace Clarity.Engine.Core
 
             this.FData.SwapChainElement.AddChild(this.FData.SystemView);
 
+            //リサイズ処理の設定
+            this.FData.Con.Resize += Control_Resize;
 
             //その他初期情報の取得
             {
@@ -144,8 +146,7 @@ namespace Clarity.Engine.Core
         {
             this.FData.ExProc = cep;
 
-            //リサイズ処理の設定
-            this.FData.Con.Resize += Control_Resize;
+            
 
             //初期化
             ClarityEngineInitParam ceip = new ClarityEngineInitParam() { Con = this.FData.Con };

@@ -52,13 +52,16 @@ namespace Clarity
         /// <summary>
         /// 実態
         /// </summary>
-        private static ClarityLog Instance = null;
-
+        private static ClarityLog? Instance = null;
 
         public static ClarityLog Log
         {
             get
             {
+                if(ClarityLog.Instance == null)
+                {
+                    throw new InvalidOperationException("ClarityLog was not create!");
+                }
                 return ClarityLog.Instance;
             }
         }
@@ -83,7 +86,7 @@ namespace Clarity
         /// <summary>
         /// ログ画面
         /// </summary>
-        private ClarityLogForm LogForm = null;
+        private ClarityLogForm? LogForm = null;
         #endregion
 
         
@@ -124,7 +127,7 @@ namespace Clarity
         /// </summary>
         public static void ShowLogForm()
         {
-            ClarityLog.Instance.LogForm?.Show();
+            ClarityLog.Log.LogForm?.Show();
         }
 
 
@@ -186,7 +189,7 @@ namespace Clarity
         {
             ClarityLog.WriteLog(EClarityLogLevel.Error, true, "===============================");
             ClarityLog.WriteLog(EClarityLogLevel.Error, false, $"{ex.Message} {ex.ToString()}");
-            Exception ie = ex.InnerException;
+            Exception? ie = ex.InnerException;
             while (ie != null)
             {
                 ClarityLog.WriteLog(EClarityLogLevel.Error, false, $"{ex.ToString()} {ex.Message}");
@@ -210,7 +213,7 @@ namespace Clarity
         /// </summary>
         public static void Release()
         {
-            Instance.Dispose();
+            Instance?.Dispose();
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -250,7 +253,7 @@ namespace Clarity
                 (EClarityLogMode.Console, ()=>{ Console.WriteLine(a); System.Diagnostics.Trace.WriteLine(a); }),
                 (EClarityLogMode.File, ()=>{ this.WriteFile(a); }),
                 (EClarityLogMode.Window, ()=>{
-                    this.LogForm.AddLogSafe(a);
+                    this.LogForm?.AddLogSafe(a);
                 }),
             };
 
@@ -305,9 +308,9 @@ namespace Clarity
         /// <param name="obj"></param>
         private static void WriteLog(EClarityLogLevel lev, bool f, string mes)
         {
-            lock (ClarityLog.Instance)
+            lock (ClarityLog.Log)
             {
-                ClarityLog.Instance._WriteLog(lev, f, mes);
+                ClarityLog.Log._WriteLog(lev, f, mes);
             }
         }
 

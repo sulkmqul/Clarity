@@ -73,4 +73,31 @@ namespace Clarity
             System.IO.Directory.Delete(folpath, true);
         }
     }
+
+
+    /// <summary>
+    /// 開始と終了に規定処理を行うもの
+    /// </summary>
+    public class BlockProcedureState : IDisposable
+    {
+        public BlockProcedureState(Action st, Action ed)
+        {
+            this.StartProc = st;
+            this.EndProc = ed;
+
+            this.StartProc();
+        }
+
+        private Action StartProc;
+        private Action EndProc;
+
+        public void Dispose()
+        {
+            this.EndProc();
+        }
+    }
+
+
+
+
 }

@@ -23,11 +23,22 @@ namespace Clarity
         /// </summary>
         protected static T? Instance = null;
 
-
-        public static T? Mana
+        public static T? Manager
         {
             get
             {
+                return Instance;
+            }
+        }
+
+        public static T Mana
+        {
+            get
+            {
+                if(Instance == null)
+                {
+                    throw new Exception($"Manager {typeof(T)} is not created.");
+                }
                 return Instance;
             }
         }

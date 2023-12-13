@@ -38,18 +38,18 @@ namespace Clarity.Engine.Core
             /// <summary>
             /// Direct3D RenderTarget
             /// </summary>
-            public ID3D11RenderTargetView Target3D = null;
+            public ID3D11RenderTargetView? Target3D = null;
 
             /// <summary>
             /// Direct2D Write RenderTarget
             /// </summary>
             //public ID3D11RenderTargetView Target2D = null;
-            public Vortice.Direct2D1.ID2D1RenderTarget Target2D = null;
+            public Vortice.Direct2D1.ID2D1RenderTarget? Target2D = null;
 
             /// <summary>
             /// 使用するDepthStencilView
             /// </summary>
-            public ID3D11DepthStencilView DepthView = null;
+            public ID3D11DepthStencilView? DepthView = null;
 
             public void Dispose()
             {                
@@ -63,6 +63,8 @@ namespace Clarity.Engine.Core
                 this.DepthView = null;
             }
         }
+
+        
 
 
         #region メンバ変数
@@ -196,7 +198,7 @@ namespace Clarity.Engine.Core
         /// <summary>
         /// Direct3D11デバイス
         /// </summary>
-        private ID3D11Device _DxDevice = null;
+        private ID3D11Device? _DxDevice = null;
         /// <summary>
         /// Direct3D11デバイス
         /// </summary>
@@ -204,16 +206,25 @@ namespace Clarity.Engine.Core
         {
             get
             {   
+                if(this._DxDevice == null)
+                {
+                    throw new InvalidOperationException("Dx Device is not Initalized.");
+                }
+
                 return this._DxDevice;
             }
             
         }
 
-        private ID3D11DeviceContext _DxContext = null;
+        private ID3D11DeviceContext? _DxContext = null;
         public ID3D11DeviceContext DxContext
         {
             get
             {
+                if (this._DxContext == null)
+                {
+                    throw new InvalidOperationException("Dx Context is not Initalized.");
+                }
                 return this._DxContext;
             }
 
@@ -223,7 +234,7 @@ namespace Clarity.Engine.Core
         /// <summary>
         /// Direct2D1管理
         /// </summary>
-        private Dx2D D2DMana = null;
+        private Dx2D? D2DMana = null;
 
 
         public Vortice.DirectWrite.IDWriteFactory1 FactDWrite
@@ -322,7 +333,7 @@ namespace Clarity.Engine.Core
         /// </summary>
         public void EndRendering()
         {
-            RenderTargetSet cset = this.CurrentRenderTarget;
+            //RenderTargetSet cset = this.CurrentRenderTarget;
         }
 
 
@@ -400,8 +411,8 @@ namespace Clarity.Engine.Core
         /// </summary>
         public void Dispose()
         {
-            //2Dの初期化
-            //this.D2DMana?.Dispose();
+            //2Dの解放
+            this.D2DMana?.Dispose();
 
             //RenderTarget関連の解放
             this.ReleaseRenderTarget();
@@ -551,7 +562,7 @@ namespace Clarity.Engine.Core
         /// <returns></returns>
         private ID3D11DepthStencilView CreateDepthStencilView(Size dsize)
         {
-            ID3D11DepthStencilView ans = null;
+            ID3D11DepthStencilView ans;
             //////////////////////////////////////////////////////////////////////////////////////////
             //Ｚバッファ初期化
             //元はD3D11_TEXTURE2D_DESC
@@ -765,5 +776,16 @@ namespace Clarity.Engine.Core
     }
 
 
-    
+    internal class DxRenderingState : IDisposable
+    {
+        public DxRenderingState(Color4 col)
+        {
+            DxManager.Mana.BeginRendering(col);
+        }
+
+        public void Dispose()
+        {
+            DxManager.Mana.EndRendering();
+        }
+    }
 }

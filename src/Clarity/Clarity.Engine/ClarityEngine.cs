@@ -157,9 +157,6 @@ namespace Clarity.Engine
             ClarityEngine.Engine?.EngineData.SystemText.SetText(s, line);
         }
 
-        
-
-
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -194,7 +191,7 @@ namespace Clarity.Engine
                 ClarityLog.Init(lev, lmode, logpath, logname);
             }
 
-            //エンジンの初期化
+            //エンジン基礎の初期化
             DLL.Winmm.timeBeginPeriod(1);
             Util.RandomMaker.Init();
 

@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 using Clarity.Cv.Video;
 using System;
 using System.Reactive.Disposables;
-
+using System.Runtime.CompilerServices;
 
 namespace ClarityCameraViewer
 {
@@ -22,7 +22,8 @@ namespace ClarityCameraViewer
 
         class CameraParam
         {
-            public int DeviceID = -1;
+            public int? DeviceID = null;
+            public string? DevicePath = null;
             public int Width = -1;
             public int Height = -1;
             public int Fps = -1;
@@ -36,6 +37,7 @@ namespace ClarityCameraViewer
                 }
 
                 if (data.DeviceID != this.DeviceID ||
+                    data.DevicePath != this.DevicePath ||
                     data.Width != this.Width ||
                     data.Height != this.Height ||
                     data.Fps != this.Fps)
@@ -87,8 +89,10 @@ namespace ClarityCameraViewer
             this.RxDispo = new CompositeDisposable();
 
             //シングルカメラ初期化
-            this.Grab.InitSingle(new CameraGrabberInitParam() { 
-                CameraIndex = param.DeviceID, 
+            this.Grab.InitSingle(new CameraGrabberInitParam()
+            {
+                CameraIndex = param.DeviceID,
+                CameraHost = param.DevicePath,
                 Resulution = new System.Drawing.Size(param.Width, param.Height),
                 Fps = param.Fps
             });
@@ -101,7 +105,7 @@ namespace ClarityCameraViewer
                 this.clarityImageViewer1.Init(bit);
             });
             this.RxDispo.Add(idd);
-            
+
 
             //映像表示
             var igdd = this.Grab.CameraGrabSub.Subscribe(x =>
@@ -129,7 +133,14 @@ namespace ClarityCameraViewer
             //今回のパラメータ取得
             CameraParam para = new CameraParam();
             {
-                para.DeviceID = Convert.ToInt32(this.numericUpDownDeviceID.Value);
+                if (this.radioButtonCameraID.Checked == true)
+                {
+                    para.DeviceID = Convert.ToInt32(this.numericUpDownDeviceID.Value);
+                }
+                if (this.radioButtonCameraPath.Checked == true)
+                {
+                    para.DevicePath = this.textBoxCameraPath.Text.Trim();
+                }
                 para.Width = Convert.ToInt32(this.numericUpDownImageWidth.Value);
                 para.Height = Convert.ToInt32(this.numericUpDownImageHeight.Value);
                 para.Fps = Convert.ToInt32(this.numericUpDownFPS.Value);
@@ -146,7 +157,7 @@ namespace ClarityCameraViewer
             {
                 this.DeviceInit(para);
             }
-            
+
 
             //取得開始
             this.Grab.StartLoop();
@@ -161,7 +172,7 @@ namespace ClarityCameraViewer
         {
             //念のため、既存をクリア
             this.Writer?.Dispose();
-                        
+
             if (movieflag == true)
             {
                 //動画保存の時
@@ -172,7 +183,7 @@ namespace ClarityCameraViewer
             else
             {
                 //画像保存の時
-                var ifw = new ImageFileWriter();                
+                var ifw = new ImageFileWriter();
                 ifw.Init(savefolderpath);
                 this.Writer = ifw;
             }
@@ -184,6 +195,35 @@ namespace ClarityCameraViewer
             });
         }
 
+        /// <summary>
+        /// カメラソース選択コントロールの有効可否を設定する
+        /// </summary>
+        private void ChangeCameraSrcControlEnabled()
+        {
+            //関連一式
+            Control[] contvec =
+            {
+                this.numericUpDownDeviceID,
+                this.textBoxCameraPath,
+            };
+
+            //有効な方のタグを取得
+            object vtag = this.radioButtonCameraPath.Tag;
+            if (this.radioButtonCameraID.Checked == true)
+            {
+                vtag = this.radioButtonCameraID.Tag;
+            }
+
+            //一致するコントロールを有効化
+            foreach (Control cont in contvec)
+            {
+                cont.Enabled = false; ;
+                if (cont.Tag == vtag)
+                {
+                    cont.Enabled = true;
+                }
+            }
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -193,7 +233,7 @@ namespace ClarityCameraViewer
         /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         /// <summary>
@@ -203,7 +243,7 @@ namespace ClarityCameraViewer
         /// <param name="e"></param>
         private void MainForm_Shown(object sender, EventArgs e)
         {
-
+            this.ChangeCameraSrcControlEnabled();
         }
 
         /// <summary>
@@ -258,7 +298,7 @@ namespace ClarityCameraViewer
             this.RxDispo.Dispose();
             await this.Grab.DisposeAsync();
         }
-        
+
         /// <summary>
         /// /保存処理
         /// </summary>
@@ -304,13 +344,22 @@ namespace ClarityCameraViewer
 
                     this.labelRec.Visible = false;
                 }
-            } 
+            }
             catch (Exception ex)
             {
                 MessageBox.Show($"失敗：{ex}");
             }
         }
 
-        
+
+        /// <summary>
+        /// カメラソースのラジオボタンが変更された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void radioButtonCamera_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ChangeCameraSrcControlEnabled();
+        }
     }
 }

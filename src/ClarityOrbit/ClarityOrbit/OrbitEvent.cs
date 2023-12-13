@@ -11,9 +11,17 @@ namespace ClarityOrbit
     /// </summary>
     internal enum EOrbitEventID
     {
+        //プロジェクトの作成
         CreateProject,
-        
 
+
+        //タイル元画像選択エリアの変更
+        TileSrcImageSelectAreaChanged,
+
+        //タイル元画像追加
+        TileSrcImageAdd,
+        //タイル元画像削除
+        TileSrcImageRemove,
     }
 
 

@@ -12,7 +12,7 @@ namespace ClarityOrbit
         {
             InitializeComponent();
             this.Logic = new MainFormLogic(this);
-            
+
         }
 
         //ƒƒWƒbƒNˆ—

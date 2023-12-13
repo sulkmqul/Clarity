@@ -30,6 +30,12 @@ namespace ClarityOrbit.TileSrcSelectView
         {
             //既存のページの削除
             this.tabControlTileSrc.TabPages.Clear();
+
+            //初期表示を行う
+            OrbitGlobal.ProjectData.TileSrcImageList.ForEach(x =>
+            {
+                this.DisplayTileSrcImageInfo(x);
+            });
         }
 
 
@@ -40,47 +46,62 @@ namespace ClarityOrbit.TileSrcSelectView
         /// </summary>
         /// <param name="filepath"></param>
         private void AddTileSrcImage(string filepath)
+        {            
+
+            //元データ追加申請
+            TileSrcImageInfo tsinfo =  OrbitGlobal.ProjectData.AddTileSrcImage(filepath);
+            this.DisplayTileSrcImageInfo(tsinfo);
+
+            OrbitGlobal.SendEvent(EOrbitEventID.TileSrcImageAdd);
+        }
+
+        /// <summary>
+        /// 元画像情報のページを作成して描画する
+        /// </summary>
+        /// <param name="tsinfo"></param>
+        private void DisplayTileSrcImageInfo(TileSrcImageInfo tsinfo)
         {
             //新しいページの作成
-            var npage = this.CreateAddTileImageNewPage(filepath);
-            //ADD
+            TabPage npage = new TabPage();
+
+            //管理コントロールの作成
+            TileSrcSelectControl ct = new TileSrcSelectControl(tsinfo);
+            ct.Initialize();
+
+            ct.Dock = DockStyle.Fill;
+
+
+            //追加ページへADD
+            npage.Controls.Add(ct);
+            //タイトル設定
+            npage.Text = Path.GetFileName(tsinfo.FilePath);
+
+            //表示へ
             this.tabControlTileSrc.Controls.Add(npage);
+            this.tabControlTileSrc.SelectedTab = npage;
+
+            
         }
 
 
         /// <summary>
-        /// 新しい画像ページの作成
+        /// タイル映像の削除
         /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns></returns>
-        private TabPage CreateAddTileImageNewPage(string filepath)
+        private void RemoveTileSrcImage()
         {
-            /*
-            //ページの追加
-            TileImageSrcInfo data = OrbitGlobal.Project.AddNewTileImageSrc(filepath);
-            TabPage ans = new TabPage();
-            ans.Text = data.Name;
-            ans.Tag = data;
-            ans.AutoScroll = true;
-            Clarity.GUI.ClarityViewer iv = new ClarityViewer();            
-            ans.Controls.Add(iv);
-            {
-                //ImageViewerの初期化
-                iv.Dock = DockStyle.Fill;
-                //iv.Location = new Point(0, 0);
-                //iv.Size = new Size(1000, 1000);
-                iv.MinimapVisible = false;
-                iv.ZoomMode = EClarityViewerZoomMode.LimitFit;
-                iv.PosMode = EClarityViewerPositionMode.LeftTop;
+            //現在の選択ページを取得
+            TabPage stab = this.tabControlTileSrc.SelectedTab;
+            //格納管理の取得
+            TileSrcSelectControl scon = stab.Controls.Cast<TileSrcSelectControl>().First();
 
-                iv.ImageInterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                iv.Init(data.TipImage);
-                //ここで描画物を入れる
-                iv.AddDisplayer(new SrcTileImageGridDisplayer() { SrcInfo = data });
-            }
 
-            return ans;*/
-            return new TabPage();
+            //対象を削除する
+            OrbitGlobal.ProjectData.RemoveTileSrcImage(scon.SInfo);
+            //ページから削除
+            this.tabControlTileSrc.Controls.Remove(stab);
+
+
+            OrbitGlobal.SendEvent(EOrbitEventID.TileSrcImageRemove);
 
         }
 
@@ -96,26 +117,34 @@ namespace ClarityOrbit.TileSrcSelectView
         /// <param name="e"></param>
         private void toolStripButtonTipAdd_Click(object sender, EventArgs e)
         {
-            if (OrbitGlobal.Mana.Project == null)
+            try
             {
-                return;
-            }
 
-            //ファイルの選択
-            string filepath = "";
-            using (OpenFileDialog diag = new OpenFileDialog())
-            {
-                diag.Filter = OrbitGlobal.ImageFileFilter;
-                DialogResult dret = diag.ShowDialog(this);
-                if (dret != DialogResult.OK)
+                if (OrbitGlobal.Mana.Project == null)
                 {
                     return;
                 }
-                filepath = diag.FileName;
-            }
 
-            //Tabの追加
-            this.AddTileSrcImage(filepath);
+                //画像ファイルの選択
+                string filepath = "";
+                using (OpenFileDialog diag = new OpenFileDialog())
+                {
+                    diag.Filter = OrbitGlobal.ImageFileFilter;
+                    DialogResult dret = diag.ShowDialog(this);
+                    if (dret != DialogResult.OK)
+                    {
+                        return;
+                    }
+                    filepath = diag.FileName;
+                }
+
+                //Tabの追加
+                this.AddTileSrcImage(filepath);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}");
+            }
         }
 
         /// <summary>
@@ -125,7 +154,15 @@ namespace ClarityOrbit.TileSrcSelectView
         /// <param name="e"></param>
         private void toolStripButtonTipRemove_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                //削除処理
+                this.RemoveTileSrcImage();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}");
+            }
         }
     }
 }

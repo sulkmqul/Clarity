@@ -77,15 +77,15 @@
             // dockPanelToolWindow
             // 
             dockPanelToolWindow.Dock = DockStyle.Right;
-            dockPanelToolWindow.Location = new Point(600, 24);
+            dockPanelToolWindow.Location = new Point(400, 24);
             dockPanelToolWindow.Name = "dockPanelToolWindow";
-            dockPanelToolWindow.Size = new Size(200, 426);
+            dockPanelToolWindow.Size = new Size(400, 426);
             dockPanelToolWindow.TabIndex = 5;
             // 
             // splitter1
             // 
             splitter1.Dock = DockStyle.Right;
-            splitter1.Location = new Point(595, 24);
+            splitter1.Location = new Point(395, 24);
             splitter1.Name = "splitter1";
             splitter1.Size = new Size(5, 426);
             splitter1.TabIndex = 6;
@@ -93,11 +93,10 @@
             // 
             // orbitEditView1
             // 
-            orbitEditView1.BackColor = SystemColors.ActiveCaption;
             orbitEditView1.Dock = DockStyle.Fill;
             orbitEditView1.Location = new Point(0, 24);
             orbitEditView1.Name = "orbitEditView1";
-            orbitEditView1.Size = new Size(595, 426);
+            orbitEditView1.Size = new Size(395, 426);
             orbitEditView1.TabIndex = 7;
             // 
             // MainForm
@@ -128,7 +127,7 @@
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem 終了XToolStripMenuItem;
         private Splitter splitter1;
-        private OrbitView.OrbitEditView orbitEditView1;
         internal WeifenLuo.WinFormsUI.Docking.DockPanel dockPanelToolWindow;
+        internal OrbitView.OrbitEditView orbitEditView1;
     }
 }

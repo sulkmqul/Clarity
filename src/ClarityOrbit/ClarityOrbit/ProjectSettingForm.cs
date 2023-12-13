@@ -55,7 +55,7 @@ namespace ClarityOrbit
         /// </summary>        
         public void Init()
         {
-            this.SetInfo = new SettingData() { TileSize = new Size(16, 16), TileCount = new Size(10, 10) };
+            this.SetInfo = new SettingData() { TileSize = new Size(64, 64), TileCount = new Size(10, 10) };
             this.Display();
         }
         /// <summary>
@@ -73,21 +73,47 @@ namespace ClarityOrbit
         /// <param name="f">true=全体更新11 false=サイズだけ</param>
         private void Display(bool f = true)
         {
-            //全体
-            this.numericUpDownWidth.Value = this.SetInfo.TileSize.Width * this.SetInfo.TileCount.Width;
-            this.numericUpDownHeight.Value = this.SetInfo.TileSize.Height * this.SetInfo.TileCount.Height;
-            if (f == false)
+            //関連コントロール
+            NumericUpDown[] ncvec =
             {
-                return;
+                this.numericUpDownTipSizeW,
+                this.numericUpDownTipSizeH,
+                this.numericUpDownTipCountW,
+                this.numericUpDownTipCountH,
+            };
+
+            using (BlockProcedureState bs = new BlockProcedureState(() =>
+            {
+                foreach(var nc in ncvec)
+                {
+                    nc.ValueChanged -= numericUpDownTip_ValueChanged;
+                }
+            },
+            () =>
+            {
+                foreach (var nc in ncvec)
+                {
+                    nc.ValueChanged += numericUpDownTip_ValueChanged;
+                }
+            }))
+            {
+
+                //全体
+                this.numericUpDownWidth.Value = this.SetInfo.TileSize.Width * this.SetInfo.TileCount.Width;
+                this.numericUpDownHeight.Value = this.SetInfo.TileSize.Height * this.SetInfo.TileCount.Height;
+                if (f == false)
+                {
+                    return;
+                }
+
+                //タイルサイズ
+                this.numericUpDownTipSizeW.Value = this.SetInfo.TileSize.Width;
+                this.numericUpDownTipSizeH.Value = this.SetInfo.TileSize.Height;
+
+                //タイル数
+                this.numericUpDownTipCountW.Value = this.SetInfo.TileCount.Width;
+                this.numericUpDownTipCountH.Value = this.SetInfo.TileCount.Height;
             }
-
-            //タイルサイズ
-            this.numericUpDownTipSizeW.Value = this.SetInfo.TileSize.Width;
-            this.numericUpDownTipSizeH.Value = this.SetInfo.TileSize.Height;
-
-            //タイル数
-            this.numericUpDownTipCountW.Value = this.SetInfo.TileCount.Width;
-            this.numericUpDownTipCountH.Value = this.SetInfo.TileCount.Height;
 
 
         }
@@ -147,7 +173,7 @@ namespace ClarityOrbit
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void numericUpDownTip_ValueChanged(object sender, EventArgs e)
+        private void numericUpDownTip_ValueChanged(object? sender, EventArgs e)
         {
             this.GetInputValue();
             this.Display(false);

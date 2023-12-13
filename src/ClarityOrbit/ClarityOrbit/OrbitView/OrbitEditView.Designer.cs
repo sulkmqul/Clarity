@@ -49,6 +49,7 @@
             Controls.Add(panelDx);
             Name = "OrbitEditView";
             Load += OrbitEditView_Load;
+            Resize += OrbitEditView_Resize;
             ResumeLayout(false);
         }
 

@@ -21,6 +21,30 @@ namespace ClarityOrbit.OrbitView
             InitializeComponent();
         }
 
+        Clarity.Util.ClarityCycling DrawingCycle = new Clarity.Util.ClarityCycling();
+
+
+        /// <summary>
+        /// 初期化されるとき
+        /// </summary>
+        public void Init()
+        {
+            //初期化
+            Clarity.Engine.ClarityEngine.Init(this.panelDx);
+
+            //バックで規定処理を実行する
+            this.DrawingCycle.StartCycling((f) => {
+                Clarity.Engine.ClarityEngine.Native.ProcessRendering();
+                //System.Diagnostics.Debug.WriteLine($"{f}");
+            }, 1000 / 60);
+            
+            //Clarity.Engine.ClarityEngine.Native.ProcessRendering();
+            //Clarity.Engine.ClarityEngine.Native.Rendering();
+
+
+            
+        }
+
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -60,6 +84,17 @@ namespace ClarityOrbit.OrbitView
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void panelDx_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+
+        /// <summary>
+        /// 大きさが変更された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OrbitEditView_Resize(object sender, EventArgs e)
         {
 
         }

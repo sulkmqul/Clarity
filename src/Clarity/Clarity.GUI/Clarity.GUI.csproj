@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Clarity.Image\Clarity.Image.csproj" />
     <ProjectReference Include="..\Clarity\Clarity.csproj" />
   </ItemGroup>
 

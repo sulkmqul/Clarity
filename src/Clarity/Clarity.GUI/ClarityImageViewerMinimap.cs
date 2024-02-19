@@ -101,7 +101,7 @@ namespace Clarity.GUI
         /// <summary>
         /// 描画画像
         /// </summary>
-        private Image? SrcImage = null;
+        private System.Drawing.Image? SrcImage = null;
 
         /// <summary>
         /// 描画処理
@@ -129,7 +129,7 @@ namespace Clarity.GUI
         /// </summary>
         /// <param name="srcimage">表示画像</param>
         /// <param name="srcrect">表示画像範囲</param>
-        public void Init(Image? srcimage, RectangleF srcrect)
+        public void Init(System.Drawing.Image? srcimage, RectangleF srcrect)
         {
             this.SrcImage = null;
             if (srcimage != null)
@@ -138,7 +138,7 @@ namespace Clarity.GUI
                 this.pictureBoxMinimap.Image = this.SrcImage;
             }
             this.SrcRect = srcrect;
-
+            
             //描画設定
             this.pictureBoxMinimap.SizeMode = PictureBoxSizeMode.StretchImage;
 
@@ -148,7 +148,7 @@ namespace Clarity.GUI
         /// 画像の変更
         /// </summary>
         /// <param name="image"></param>
-        public void ReplaceImage(Image image)
+        public void ReplaceImage(System.Drawing.Image image)
         {
             //非表示の場合は負荷をかけない
             if (this.Visible == false)

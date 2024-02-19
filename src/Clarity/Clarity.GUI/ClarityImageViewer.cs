@@ -331,7 +331,7 @@ namespace Clarity.GUI
         /// <summary>b
         /// 読み込み画像
         /// </summary>
-        private Image? SrcImage = null;
+        private System.Drawing.Image? SrcImage = null;
 
         /// <summary>
         /// 座標管理・・・初期化後作成
@@ -390,7 +390,7 @@ namespace Clarity.GUI
         /// 画像の読み込み
         /// </summary>
         /// <param name="srcimage"></param>
-        public void Init(Image srcimage)
+        public void Init(System.Drawing.Image srcimage)
         {
             this.Init(srcimage, srcimage.Size);
         }
@@ -399,7 +399,7 @@ namespace Clarity.GUI
         /// 画像の差し替え
         /// </summary>
         /// <param name="idata">差し替え画像(初期化サイズと同じであること)</param>
-        public void ReplaceImage(Image idata)
+        public void ReplaceImage(System.Drawing.Image idata)
         {
             this.SrcImage = idata;
             this.clarityViewerMinimapView.ReplaceImage(idata);
@@ -513,7 +513,7 @@ namespace Clarity.GUI
         /// </summary>
         /// <param name="srcimage">元画像 nullで画像無初期化</param>
         /// <param name="size">元サイズ、元画像がある場合は元画像のサイズであること</param>
-        private void Init(Image? srcimage, SizeF size)
+        private void Init(System.Drawing.Image? srcimage, SizeF size)
         {
             //画像の読み込み
             this.SrcImage = null;

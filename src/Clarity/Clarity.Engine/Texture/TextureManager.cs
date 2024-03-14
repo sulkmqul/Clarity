@@ -30,7 +30,7 @@ namespace Clarity.Engine.Texture
         /// <summary>
         /// これの識別名・基本的にはファイル名となる。
         /// </summary>
-        public string Code;
+        public string Code = "";
 
         /// <summary>
         /// これの画像サイズ
@@ -77,9 +77,6 @@ namespace Clarity.Engine.Texture
         }
 
 
-
-
-
         /// <summary>
         /// テクスチャサンプラーの作製
         /// </summary>
@@ -115,8 +112,6 @@ namespace Clarity.Engine.Texture
 
             return ans;
         }
-
-
 
         /// <summary>
         /// テクスチャの読み込み
@@ -184,7 +179,7 @@ namespace Clarity.Engine.Texture
 
                         Texture2DDescription depdec = new Texture2DDescription();
                         #region TextureDescriptionの作製
-                        depdec.Format = Format.B8G8R8A8_UNorm;    //バッファフォーマット　8bitRGBA
+                        depdec.Format = Format.B8G8R8A8_UNorm;    //バッファフォーマット　8bitRGBA                        
                         depdec.ArraySize = 1;       //テクスチャの数
                         depdec.MipLevels = 1;       //ミップレベル 基本1
 
@@ -357,6 +352,94 @@ namespace Clarity.Engine.Texture
         }
 
 
+
+        /// <summary>
+        /// テクスチャの設定
+        /// </summary>
+        /// <param name="texid">テクスチャ番号</param>
+        /// <param name="tslot">テクスチャスロット</param>
+        /// <param name="sslot">サンプラースロット</param>
+        /// <returns></returns>
+        public static void SetTexture(int texid, int tslot = 0, int sslot = 0)
+        {
+            ID3D11DeviceContext cont = DxManager.Mana.DxContext;
+
+            //TextureManageData td = TextureManager.Mana.ManaDic[texid];
+            TextureManageData? td = TextureManager.Mana.GetTextureManageData(texid);
+            if (td == null)
+            {
+                return;
+            }
+
+            //今回の対象データ取得
+            ID3D11SamplerState texst = TextureManager.Mana.TexSampler;
+            ID3D11ShaderResourceView sr = td.Srv;
+
+            //テクスチャサンプラ設定            
+            cont.PSSetSampler(sslot, texst);
+
+            //テクスチャ設定            
+            cont.PSSetShaderResource(tslot, sr);
+
+        }
+
+
+
+        /// <summary>
+        /// テクスチャ設定(外部)
+        /// </summary>
+        /// <param name="sr"></param>
+        public static void SetTexture(ID3D11ShaderResourceView sr)
+        {
+            ID3D11DeviceContext cont = DxManager.Mana.DxContext;
+
+            //今回の対象データ取得
+            ID3D11SamplerState texst = TextureManager.Mana.TexSampler;
+
+            //テクスチャサンプラ設定            
+            cont.PSSetSampler(0, texst);
+
+            //テクスチャ設定            
+            cont.PSSetShaderResource(0, sr);
+        }
+
+        /// <summary>
+        /// 対象テクスチャのサイズを取得
+        /// </summary>
+        /// <param name="tid">テクスチャID</param>
+        /// <param name="f">trueの時は実サイズ、falseの時は実際に使用される分割サイズを返却</param>
+        /// <returns></returns>
+        public static Vector2 GetTextureSize(int tid, bool f = false)
+        {
+            TextureManageData? mdata = TextureManager.Mana.GetTextureManageData(tid);
+            if (mdata == null)
+            {
+                return new Vector2(0.0f);
+            }
+            if (f == true)
+            {
+                return mdata.ImageSize;
+            }
+
+
+            Vector2 ans = new Vector2(mdata.ImageSize.X * mdata.IndexDiv.X, mdata.ImageSize.Y * mdata.IndexDiv.Y);
+            return ans;
+        }
+
+
+        /// <summary>
+        /// テクスチャ分割サイズの取得
+        /// </summary>
+        /// <param name="tid"></param>
+        /// <returns></returns>
+        public static Vector2? GetTextureDivSize(int tid)
+        {
+            TextureManageData? mdata = TextureManager.Mana.GetTextureManageData(tid);
+            return mdata?.IndexDiv;
+
+        }
+
+        
         /// <summary>
         /// テクスチャの読み込み　Bitmap直版
         /// </summary>
@@ -415,11 +498,21 @@ namespace Clarity.Engine.Texture
         }
 
         /// <summary>
+        /// IDとcodeの一覧を作成する（Aid用）
+        /// </summary>
+        /// <returns></returns>
+        internal List<(int id, string code)> CreateIDList()
+        {
+            return this.ManaDic.Select(x => (x.Key, x.Value.Code)).ToList();
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
+        /// <summary>
         /// 対象テクスチャ情報の取得・・・代替案があるならそちらの方が良い。
         /// </summary>
         /// <param name="tid">texture id</param>
         /// <returns></returns>
-        private TextureManageData GetTextureManageData(int tid)
+        private TextureManageData? GetTextureManageData(int tid)
         {
             if (this.ManaDic.ContainsKey(tid) == false)
             {
@@ -429,99 +522,81 @@ namespace Clarity.Engine.Texture
             return this.ManaDic[tid];
         }
 
-        /// <summary>
-        /// IDとcodeの一覧を作成する（Aid用）
-        /// </summary>
-        /// <returns></returns>
-        internal List<(int id, string code)> CreateIDList()
-        {
-            return this.ManaDic.Select(x => (x.Key, x.Value.Code)).ToList();
-        }
-        //==============================================================================================================
-        /// <summary>
-        /// テクスチャの設定 設定テクスチャの分割サイズを返却
-        /// </summary>
-        /// <param name="texid">テクスチャ番号</param>
-        /// <param name="tslot">テクスチャスロット</param>
-        /// <param name="sslot">サンプラースロット</param>
-        /// <returns></returns>
-        public static void SetTexture(int texid, int tslot = 0, int sslot = 0)
-        {
-            ID3D11DeviceContext cont = DxManager.Mana.DxContext;
 
-            //TextureManageData td = TextureManager.Mana.ManaDic[texid];
-            TextureManageData td = TextureManager.Mana.GetTextureManageData(texid);
-            if (td == null)
+
+
+        /// <summary>
+        /// BitmapをRGBAバッファに変換する
+        /// </summary>
+        /// <param name="bit">作成元bitmap</param>
+        /// <param name="transcol">透過色</param>
+        /// <returns>作成したRGBAバッファ</returns>        
+        public byte[] CreateRGBABuffer(Bitmap bit, System.Drawing.Color transcol)
+        {
+            int w = bit.Width;
+            int h = bit.Height;
+            byte[] bgrabuf = new byte[w * h * 4];
+
+
+            Rectangle rect = new Rectangle(0, 0, w, h);
+            BitmapData bdata = bit.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            try
             {
-                return;
+                //一括コピー
+                Marshal.Copy(bdata.Scan0, bgrabuf, 0, bgrabuf.Length);
+            }
+            finally
+            {
+                bit.UnlockBits(bdata);
             }
 
-            //今回の対象データ取得
-            ID3D11SamplerState texst = TextureManager.Mana.TexSampler;
-            ID3D11ShaderResourceView sr = td.Srv;
 
-            //テクスチャサンプラ設定            
-            cont.PSSetSampler(sslot, texst);
+            //BGRAをRGBAに変換する
+            byte[] ans = ConvertBGRA_RGBA(w, h, bgrabuf, transcol);
 
-            //テクスチャ設定            
-            cont.PSSetShaderResource(tslot, sr);
-            
-        }
-
-        
-
-        /// <summary>
-        /// テクスチャ設定(外部)
-        /// </summary>
-        /// <param name="sr"></param>
-        public static void SetTexture(ID3D11ShaderResourceView sr)
-        {
-            ID3D11DeviceContext cont = DxManager.Mana.DxContext;
-
-            //今回の対象データ取得
-            ID3D11SamplerState texst = TextureManager.Mana.TexSampler;
-
-            //テクスチャサンプラ設定            
-            cont.PSSetSampler(0, texst);
-
-            //テクスチャ設定            
-            cont.PSSetShaderResource(0, sr);
-        }
-
-        /// <summary>
-        /// 対象テクスチャのサイズを取得
-        /// </summary>
-        /// <param name="tid">テクスチャID</param>
-        /// <param name="f">trueの時は実サイズ、falseの時は実際に使用される分割サイズを返却</param>
-        /// <returns></returns>
-        public static Vector2 GetTextureSize(int tid, bool f = false)
-        {
-            TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);
-            if (mdata == null)
-            {
-                return new Vector2(0.0f);
-            }
-            if (f == true)            
-            {
-                return mdata.ImageSize;
-            }
-            
-
-            Vector2 ans = new Vector2(mdata.ImageSize.X * mdata.IndexDiv.X, mdata.ImageSize.Y * mdata.IndexDiv.Y);
             return ans;
         }
 
 
-        /// <summary>
-        /// テクスチャ分割サイズの取得
-        /// </summary>
-        /// <param name="tid"></param>
-        /// <returns></returns>
-        public static Vector2? GetTextureDivSize(int tid)
-        {
-            TextureManageData mdata = TextureManager.Mana.GetTextureManageData(tid);
-            return mdata?.IndexDiv;
 
+        /// <summary>
+        /// RGBAのバッファをbitmapBGRA形式に変換する、逆もそのまま使えます
+        /// </summary>
+        /// <param name="width">画像横幅</param>
+        /// <param name="height">画像縦幅</param>
+        /// <param name="colbuf">RGBAバッファ</param>
+        /// <returns>BGRAバッファ</returns>
+        private static byte[] ConvertBGRA_RGBA(int width, int height, byte[] colbuf, System.Drawing.Color transcol)
+        {
+            int colset = 4;
+
+            byte[] ansbuf = new byte[width * height * colset];
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int bpos = (y * width * colset) + (x * colset);
+
+                    ansbuf[bpos] = colbuf[bpos + 2];
+                    ansbuf[bpos + 1] = colbuf[bpos + 1];
+                    ansbuf[bpos + 2] = colbuf[bpos];
+                    ansbuf[bpos + 3] = colbuf[bpos + 3];
+
+                    //透過させる
+                    if (ansbuf[bpos] == transcol.R && ansbuf[bpos + 1] == transcol.G && ansbuf[bpos + 2] == transcol.B)
+                    {
+                        ansbuf[bpos] = 0;
+                        ansbuf[bpos + 1] = 0;
+                        ansbuf[bpos + 2] = 0;
+                        ansbuf[bpos + 3] = 0;
+                    }
+                }
+            }
+
+            return ansbuf;
         }
+
+
     }
 }

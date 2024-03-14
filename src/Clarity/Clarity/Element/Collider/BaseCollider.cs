@@ -50,7 +50,7 @@ namespace Clarity.Collider
         public const int ALL = EColiderTransposeMode.Translation | EColiderTransposeMode.Rotation | EColiderTransposeMode.Scaling;
     }
 
-
+    /*
     /// <summary>
     /// 当たり判定情報描画所作
     /// </summary>
@@ -59,10 +59,10 @@ namespace Clarity.Collider
         protected override void ExecuteBehavior(BaseCollider obj)
         {
             //送られてきた物体が所作の場合は起動する
-            BaseBehavior beh = obj.RenderInfo as BaseBehavior;
+            BaseBehavior? beh = obj.RenderInfo as BaseBehavior;
             beh?.Execute(obj);
         }
-    }
+    }*/
 
     /// <summary>
     /// 当たり判定描画所作
@@ -82,8 +82,7 @@ namespace Clarity.Collider
         /// <param name="cmode">当たり判定種別</param>
         public BaseCollider(EColMode cmode) : base(-99)
         {
-            this.ColMode = cmode;
-            this.RenderBehavior = new RenderColliderBehavior();
+            this.ColMode = cmode;            
         }
 
         /// <summary>

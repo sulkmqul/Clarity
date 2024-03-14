@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Vortice.Mathematics;
 
 namespace Clarity.Engine
 {
@@ -22,7 +23,7 @@ namespace Clarity.Engine
             /// </summary>
             public static void Process()
             {
-                ClarityEngine.Engine?.Core.Process();
+                ClarityEngine.Engine.Core.Process();
             }
 
             /// <summary>
@@ -30,7 +31,7 @@ namespace Clarity.Engine
             /// </summary>
             public static void Rendering()
             {
-                ClarityEngine.Engine?.Core.Rendering();
+                ClarityEngine.Engine.Core.Rendering();
             }
 
 
@@ -48,10 +49,19 @@ namespace Clarity.Engine
             /// </summary>
             public static void Dispose()
             {
-                ClarityEngine.Engine?.Core.Dispose();
-                ClarityEngine.Engine = null;
+                ClarityEngine._Engine?.Core.Dispose();
+                ClarityEngine._Engine = null;
             }
 
+
+            /// <summary>
+            /// クリア色の設定
+            /// </summary>
+            /// <param name="col"></param>
+            public static void SetClearColor(Vector4 col)
+            {
+                ClarityEngine.Engine.Core.ClearColor = new Color4(col.X, col.Y, col.Z, col.W);
+            }
         }
     }
 }

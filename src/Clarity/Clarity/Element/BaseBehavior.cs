@@ -33,6 +33,10 @@ namespace Clarity
     }
 
 
+    /// <summary>
+    /// 対象actionを実行する所作
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class ActionBehavior<T> : BaseBehavior
     {
         public ActionBehavior(Action<T> ac, long oid = 0) : base(oid)
@@ -40,7 +44,7 @@ namespace Clarity
             this.Proc = ac;
         }
 
-        private Action<T> Proc = null;
+        private Action<T> Proc;
 
         public override void Execute(object beo)
         {
@@ -111,7 +115,7 @@ namespace Clarity
         }
 
         /// <summary>
-        /// 所作の削除
+        /// 対象ID所作の全削除
         /// </summary>
         /// <param name="oid">削除対象ID</param>
         public void RemoveProcBehavior(long oid)
@@ -121,8 +125,9 @@ namespace Clarity
 
         /// <summary>
         /// 所作の全削除
-        /// </summary>
-        public void ClearProcBehavior()
+        /// </summary>        
+        /// <remarks>基本的にはRemoveProcBehaviorを利用する、oid同一で削除させればよい。</remarks>
+        internal void ClearProcBehavior()
         {
             this.ExecBehaviorList.Clear();
         }
@@ -131,17 +136,17 @@ namespace Clarity
         /// 全所作に対して処理を実行する
         /// </summary>
         /// <param name="ac"></param>
-        public void  ProcActionExecList(Action<BaseBehavior> ac)
+        /*public void  ProcActionExecList(Action<BaseBehavior> ac)
         {
             this.ExecBehaviorList.ForEach(x =>
             {
                 ac.Invoke(x);
             });
-        }
+        }*/
     }
 
     /// <summary>
-    /// 基底所作
+    /// 引数castの基底所作
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class BaseModelBehavior<T> : BaseBehavior where T : BaseElement
@@ -162,7 +167,7 @@ namespace Clarity
         /// <param name="beo">所作対象</param>
         public override void Execute(object beo)
         {
-            T a = beo as T;
+            T? a = beo as T;
             if (a == null)
             {
                 return;

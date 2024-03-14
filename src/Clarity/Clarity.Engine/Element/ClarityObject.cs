@@ -44,6 +44,7 @@ namespace Clarity.Engine.Element
     {
         protected override void ExecuteBehavior(ClarityObject obj)
         {
+            /*
             if (obj.TexAnimeCont == null)
             {
                 return;
@@ -54,7 +55,7 @@ namespace Clarity.Engine.Element
 
             //適切なTextureの設定
             obj.RenderSet.TextureID = obj.TexAnimeCont.CurrentFrameInfo.TextureID;
-            obj.RenderSet.TextureOffset = obj.TexAnimeCont.CurrentFrameInfo.TextureOffset;
+            obj.RenderSet.TextureOffset = obj.TexAnimeCont.CurrentFrameInfo.TextureOffset;*/
 
         }
     }
@@ -63,6 +64,7 @@ namespace Clarity.Engine.Element
     /// <summary>
     /// ClarityEngine描画オブジェクト
     /// </summary>
+    /// <remarks>オブジェクトの描画をするだけの最もシンプルな描画を提供する</remarks>
     public class ClarityObject : BaseVariableElement
     {
         public ClarityObject() : this(0)
@@ -75,10 +77,11 @@ namespace Clarity.Engine.Element
             this.RenderBehavior = new RenderDefaultBehavior();
 
             //可変フレーム所作を追加
-            this.ProcBehavior.AddFixedProcess(new VariableFrameRateBehavior());
+            //this.ProcBehavior.AddFixedProcess(new VariableFrameRateBehavior());
 
             //テクスチャアニメ所作
-            this.ProcBehavior.AddFixedProcess(new TextureAnimeProcBehavior());
+            //this.ProcBehavior.AddFixedProcess(new TextureAnimeProcBehavior());
+
         }
 
         #region メンバ変数
@@ -87,52 +90,8 @@ namespace Clarity.Engine.Element
         /// </summary>
         internal RendererSet RenderSet = new RendererSet();
 
-
-        /// <summary>
-        /// テクスチャアニメ管理
-        /// </summary>
-        public TextureAnimeController TexAnimeCont { get; protected set; } = null;
         #endregion
 
-        /// <summary>
-        /// テクスチャアニメーション有効可否
-        /// </summary>
-        public bool TextureAnimeEnabled
-        {
-            get
-            {
-                if (this.TexAnimeCont == null)
-                {
-                    return false;
-                }
-                return true;
-            }
-            set
-            {
-                if (value == true && this.TexAnimeCont == null)
-                {
-                    this.TexAnimeCont = new TextureAnimeController();
-                    return;
-                }
-                this.TexAnimeCont = null;
-            }
-        }
-
-
-        /// <summary>
-        /// Textureアニメの番号を設定
-        /// </summary>
-        public int TextureAnimeID
-        {
-            get
-            {
-                return this.TexAnimeCont.CurrentAnimeID;
-            }
-            set
-            {
-                this.TexAnimeCont?.ChangeAnime(value);
-            }
-        }
 
         #region RendererSetアクセサ
         /// <summary>
@@ -271,14 +230,8 @@ namespace Clarity.Engine.Element
         /// </summary>
         public void FitTextureSize()
         {
-            if (this.TextureAnimeEnabled == false)
-            {
-                this.TransSet.Scale2D = ClarityEngine.Texture.GetTextureSize(this.TextureID);
-                return;
-            }
-            this.TransSet.Scale2D = ClarityEngine.Texture.GetTextureSize(this.TextureAnimeID, 0);
-            
-
+            this.TransSet.Scale2D = ClarityEngine.Texture.GetTextureSize(this.TextureID);
+            return;
         }
 
     }

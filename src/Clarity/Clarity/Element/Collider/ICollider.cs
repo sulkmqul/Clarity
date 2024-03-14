@@ -29,7 +29,7 @@ namespace Clarity.Collider
         /// <summary>
         /// 当たり判定情報
         /// </summary>
-        ColliderInfo ColInfo
+        ColliderInfo? ColInfo
         {
             get; set;
         }
@@ -37,7 +37,7 @@ namespace Clarity.Collider
         /// <summary>
         /// 当たり判定実行所作
         /// </summary>
-        ColliderBehavior ColliderBehavior { get; set; }
+        ColliderBehavior? ColliderBehavior { get; set; }
 
         /// <summary>
         /// 当たり判定コールバック

@@ -40,11 +40,11 @@ namespace Clarity.Engine.Core
         /// <summary>
         /// 描画物
         /// </summary>
-        private ClarityObject RenderObj = null;
+        private ClarityObject RenderObj;
         /// <summary>
         /// 表示対象切り替え辞書
         /// </summary>
-        private Dictionary<EColMode, Action<BaseCollider>> ProcDic = null;
+        private Dictionary<EColMode, Action<BaseCollider>> ProcDic;
 
         /// <summary>
         /// 通常色
@@ -77,7 +77,7 @@ namespace Clarity.Engine.Core
         /// <param name="col"></param>
         private void RenderCircle(BaseCollider bc)
         {
-            ColliderCircle col = bc as ColliderCircle;
+            ColliderCircle? col = bc as ColliderCircle;
             if (col == null)
             {
                 return;
@@ -105,7 +105,7 @@ namespace Clarity.Engine.Core
         /// <param name="bc"></param>
         private void RenderDot(BaseCollider bc)
         {
-            ColliderDot col = bc as ColliderDot;
+            ColliderDot? col = bc as ColliderDot;
             if (col == null)
             {
                 return;
@@ -132,7 +132,7 @@ namespace Clarity.Engine.Core
         /// <param name="bc"></param>
         private void RenderLine(BaseCollider bc)
         {
-            ColliderLine col = bc as ColliderLine;
+            ColliderLine? col = bc as ColliderLine;
             if (col == null)
             {
                 return;

@@ -177,7 +177,7 @@ namespace Clarity.Engine.Element
         {
             if (f == true)
             {
-                this.NodeDic.Add(data.ID, data);
+                this.NodeDic.Add(data.ElementID, data);
             }
 
             //子供まで含めてすべてを追加する

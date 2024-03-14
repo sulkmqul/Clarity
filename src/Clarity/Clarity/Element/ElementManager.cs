@@ -31,8 +31,13 @@ namespace Clarity
         /// </summary>
         class ReqData
         {
-            public BaseElement Parent = null;
-            public BaseElement Item = null;
+            public ReqData(BaseElement item)
+            {
+                this.Item = item;
+            }
+
+            public BaseElement? Parent = null;
+            public BaseElement Item;
         }
 
         #region メンバ変数
@@ -78,8 +83,8 @@ namespace Clarity
         /// <returns></returns>
         internal static int GetProcIndex()
         {
-            Instance.ProcIndex += 1;
-            return Instance.ProcIndex;
+            ElementManager.Mana.ProcIndex += 1;
+            return ElementManager.Mana.ProcIndex;
         }
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -91,11 +96,10 @@ namespace Clarity
         /// <param name="ele">追加element</param>
         public static void AddRequest(BaseElement parent, BaseElement ele)
         {
-            ReqData data = new ReqData();
+            ReqData data = new ReqData(ele);
             data.Parent = parent;
-            data.Item = ele;
-
-            Instance.AddReqQue.Enqueue(data);
+            
+            ElementManager.Mana.AddReqQue.Enqueue(data);
 
             //追加
             ele.Init();
@@ -107,7 +111,7 @@ namespace Clarity
         /// <param name="ele">追加対象</param>
         public static void AddRequest(BaseElement ele)
         {
-            ElementManager.AddRequest(ElementManager.Instance.RootElement, ele);
+            ElementManager.AddRequest(ElementManager.Mana.RootElement, ele);
         }
 
         /// <summary>
@@ -116,11 +120,11 @@ namespace Clarity
         /// <param name="ele"></param>
         public static void RemoveRequest(BaseElement ele)
         {
-            ReqData data = new ReqData();
+            ReqData data = new ReqData(ele);
             data.Parent = null;
             data.Item = ele;
             data.Item.Enabled = false;
-            Instance.RemoveReqQue.Enqueue(data);
+            ElementManager.Mana.RemoveReqQue.Enqueue(data);
         }
 
         /// <summary>
@@ -162,12 +166,12 @@ namespace Clarity
         /// <summary>
         /// 描画処理
         /// </summary>
-        public void Render(int id = 0, object rinfo = null)
+        public void Render(int id = 0)
         {
             this.ProcIndex = 0;
 
             //描画処理の実行
-            this.RootElement.Render(id, this.ProcIndex, rinfo);
+            this.RootElement.Render(id, this.ProcIndex);
         }
 
         /// <summary>
@@ -204,9 +208,9 @@ namespace Clarity
                 }
 
                 //ReqData req = this.AddReqQue.Dequeue();
-                ReqData req;
+                ReqData? req;
                 bool f = this.AddReqQue.TryDequeue(out req);
-                if (f == false)
+                if (f == false || req == null)
                 {
                     return;
                 }
@@ -214,7 +218,7 @@ namespace Clarity
                 //追加処理
                 //req.Item.SystemLink.ParentElement = req.Parent;
                 //req.Parent.SystemLink.ChildList.AddLast(req.Item);
-                req.Parent.AddChild(req.Item);
+                req.Parent?.AddChild(req.Item);
 
                 //衝突判定処理者への登録
                 this.AddColliderManager(req.Item);

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Clarity.Engine.Element;
+using System.Runtime.CompilerServices;
 
 namespace Clarity.Engine
 {
@@ -49,7 +50,20 @@ namespace Clarity.Engine
         /// <summary>
         /// ClarityEngine実体
         /// </summary>
-        private static ClarityEngine? Engine = null;
+        private static ClarityEngine? _Engine = null;
+
+        private static ClarityEngine Engine
+        {
+            get
+            {
+                if(ClarityEngine._Engine == null)
+                {
+                    throw new InvalidOperationException("ClarityEngine is not initialized");
+                }
+
+                return ClarityEngine._Engine;
+            }
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// ClarityEngineコア処理
@@ -64,10 +78,6 @@ namespace Clarity.Engine
         {
             get
             {
-                if (ClarityEngine.Engine == null)
-                {
-                    throw new InvalidOperationException("ClarityEngine is not Initialized.");
-                }
                 return ClarityEngine.Engine._EngineSetting;
             }
         }
@@ -91,7 +101,7 @@ namespace Clarity.Engine
         {
             get
             {
-                if (ClarityEngine.Engine == null)
+                if (ClarityEngine._Engine == null)
                 {
                     return false;
                 }
@@ -112,13 +122,13 @@ namespace Clarity.Engine
             try
             {
                 //ClarityEngineの複数存在を許さない
-                if (ClarityEngine.Engine != null)
+                if (ClarityEngine._Engine != null)
                 {
                     throw new Exception("ClarityEngine already exists!!");
                 }
 
                 //エンジンの初期化
-                ClarityEngine.Engine = new ClarityEngine();                
+                ClarityEngine._Engine = new ClarityEngine();                
                 ClarityEngine.Engine.InitEngine(con, cesfilepath);
 
             }
@@ -133,13 +143,8 @@ namespace Clarity.Engine
         /// Clarityエンジンの実行
         /// </summary>
         /// <param name="cep">追加動作</param>
-        public static void Run(ClarityEnginePlugin cep)
+        public static void Run(ClarityEnginePlugin? cep)
         {
-            if (ClarityEngine.Engine == null)
-            {
-                throw new Exception("ClarityEngine initialize");
-            }
-
             //エンジンの実行
             ClarityEngine.Engine.RunEngine(cep);
 
@@ -154,7 +159,7 @@ namespace Clarity.Engine
         /// <param name="line"></param>
         internal static void SetSystemTextForEngine(string s, int line = 0)
         {
-            ClarityEngine.Engine?.EngineData.SystemText.SetText(s, line);
+            ClarityEngine.Engine.EngineData.SystemText.SetText(s, line);
         }
 
 
@@ -247,6 +252,8 @@ namespace Clarity.Engine
                 ("PixelShaderVersion", "ps_5_0"),
                 ("RenderingThreadCount", 1),
 
+                ("FrameTimeLimit", 1000.0f),
+
                 ("Debug.Enabled", false),
                 ("Debug.SystemText.Enabled", false),
                 ("Debug.SystemText.Pos", new Vector2(10.0f)),
@@ -293,7 +300,7 @@ namespace Clarity.Engine
             {
                 bool rvf = false;
                 Vector2 rsize = this._EngineSetting.GetVec2("RenderingViewSize");
-                if (rsize.X < 0 || rsize.Y < 0)
+                if (rsize.X >= 0 || rsize.Y >= 0)
                 {
                     rsize = new Vector2(this.Con.Width, this.Con.Height);
                     rvf = true;
@@ -337,7 +344,7 @@ namespace Clarity.Engine
         /// エンジンの実行
         /// </summary>
         /// <param name="cep">追加動作</param>        
-        private void RunEngine(ClarityEnginePlugin cep)
+        private void RunEngine(ClarityEnginePlugin? cep)
         {
             this.Core.StartClarity(cep);
             this.Core.Dispose();

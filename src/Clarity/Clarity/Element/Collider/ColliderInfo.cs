@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clarity.Element;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,7 +38,7 @@ namespace Clarity.Collider
     /// </summary>
     public class ColliderInfo
     {
-        public ColliderInfo(BaseElement p)
+        public ColliderInfo(BaseObject p)
         {
             this.Parent = p;
             this.ColliderSerialCode = ColliderSerialCodeGenerator.GetNextSerial();
@@ -72,7 +73,7 @@ namespace Clarity.Collider
         /// <summary>
         /// これの親
         /// </summary>
-        public BaseElement Parent { get; private set; }
+        public BaseObject Parent { get; private set; }
         
         /// <summary>
         /// 当たり判定領域一式（元ネタ）

@@ -15,7 +15,7 @@ namespace Clarity
         /// <summary>
         /// 自分の処理上の親
         /// </summary>
-        public BaseElement ParentElement = null;
+        public BaseElement? ParentElement = null;
 
         /// <summary>
         /// 自分の処理する子供
@@ -129,38 +129,53 @@ namespace Clarity
     /// <summary>
     ///基底要素
     /// </summary>
-    public abstract class BaseElement : ICollider
+    public abstract class BaseElement
     {
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public BaseElement(long oid = 0)
+        public BaseElement(long eid = 0)
         {
-            this.ID = oid;
+            this.ElementID = eid;
         }
-
-        /// <summary>
-        /// ID
-        /// </summary>
-        public long ID { internal init; get; }        
 
 
         #region メンバ変数
 
-            /// <summary>
-            /// 自身の有効可否
-            /// </summary>
-        internal bool Enabled = true;
+        /// <summary>
+        /// ID
+        /// </summary>
+        public long ElementID { internal init; get; }        
 
+        /// <summary>
+        /// 自身の有効可否
+        /// </summary>
+        internal bool Enabled { get; set; } = true;
+
+        #region 親子関係        
         /// <summary>
         /// 親子関係
         /// </summary>
-        internal ElementSystemLink SystemLink = new ElementSystemLink();
+        internal ElementSystemLink SystemLink { get; init; } = new ElementSystemLink();
+
+        /// <summary>
+        /// 子供の処理の実行可否を制御 true:実行 false:子供はskip
+        /// </summary>
+        /// <returns></returns>
+        protected bool ControlChildProcEnabled { get; set; } = true;
+
+        /// <summary>
+        /// 子供の処理の描画可否を制御 true:実行 false:子供はskip
+        /// </summary>
+        /// <returns></returns>
+        protected bool ControlChildRenderEnabled { get; set; } = true;
+        #endregion
 
         /// <summary>
         /// 実行所作
         /// </summary>
-        protected ElementProcBehavior ProcBehavior = new ElementProcBehavior();
+        //protected ElementProcBehavior ProcBehavior = new ElementProcBehavior();
+        protected BehaviorController ProcBehavior = new BehaviorController();
 
         /// <summary>
         /// 描画所作
@@ -189,44 +204,28 @@ namespace Clarity
 
 
 
+        #region ここはフレーム処理ごとに更新される情報、まとめたclassを作った方が良いかもしれない
         /// <summary>
         /// 処理番号
         /// </summary>
-        protected int ProcIndex = 0;
+        protected int ProcIndex { get; private set; } = 0;
 
         /// <summary>
         /// 今回のフレーム情報
         /// </summary>
         public FrameInfo FrameInfo { get; private set; }
-        /// <summary>
-        /// 子供に渡す送信フレーム情報
-        /// </summary>
-        protected FrameInfo SendFrameInfo { get; set; }
-
-        /// <summary>
-        /// 描画追加情報
-        /// </summary>
-        public object RenderInfo { get; internal set; } = null;
+        
 
         /// <summary>
         /// 自身の基準時間
         /// </summary>
         public long ProcTime { get; internal set; } = 0;
+        #endregion
+
         
-        /// <summary>
-        /// 処理情報
-        /// </summary>
-        public TransposeSet TransSet = new TransposeSet();
 
 
-        /// <summary>
-        /// 当たり判定情報
-        /// </summary>
-        public ColliderInfo ColInfo { get; set; } = null;
-        /// <summary>
-        /// 当たり判定処理所作
-        /// </summary>
-        public ColliderBehavior ColliderBehavior { get; set; } = new ColliderBehavior();
+        
 
         /// <summary>
         /// Clarityシステム管理可否
@@ -303,6 +302,15 @@ namespace Clarity
         }
 
         /// <summary>
+        /// 描画所作の設定
+        /// </summary>
+        /// <param name="be"></param>
+        internal void SetRenderBehavior(BaseBehavior be)
+        {
+            this.RenderBehavior = be;
+        }
+
+        /// <summary>
         /// イベントの送付
         /// </summary>
         /// <param name="eid">送付イベントID</param>
@@ -325,14 +333,14 @@ namespace Clarity
         /// <summary>
         /// 前処理
         /// </summary>
-        protected virtual void ProcBefore()
+        protected virtual void PreProcess()
         {
         }
 
         /// <summary>
         /// 後処理
         /// </summary>
-        protected virtual void ProcAfter()
+        protected virtual void PostProcess()
         {
         }
 
@@ -342,24 +350,6 @@ namespace Clarity
         protected virtual void ProcCleanup()
         {
         }
-
-        /// <summary>
-        /// 子供の処理の実行可否を制御 true:実行 false:子供はskip
-        /// </summary>
-        /// <returns></returns>
-        protected virtual bool ControlChildProcEnabled()
-        {
-            return true;
-        }
-        /// <summary>
-        /// 子供の処理の描画可否を制御 true:実行 false:子供はskip
-        /// </summary>
-        /// <returns></returns>
-        protected virtual bool ControlChildRenderEnabled()
-        {
-            return true;
-        }
-
 
         /// <summary>
         /// 描画処理
@@ -396,32 +386,33 @@ namespace Clarity
             //フレーム情報の保存
             this.ProcIndex = pid;
             this.FrameInfo = new FrameInfo(finfo);
-            this.SendFrameInfo = new FrameInfo(finfo);
+            
 
             //自分の時間を経過させる
             this.ProcTime += this.FrameInfo.Span;
 
             //前処理
-            this.ProcBefore();
+            this.PreProcess();
 
             //所作の実行
             this.ProcBehavior.Execute(this);
 
             //後処理
-            this.ProcAfter();
+            this.PostProcess();
 
-            //子供の実行可否を確認
-            bool ckret = this.ControlChildProcEnabled();
-            if (ckret == false)
+            //子供の実行可否を確認            
+            if (this.ControlChildProcEnabled == false)
             {
                 return;
             }
 
+
             //子供の処理実行
+            var cfinfo = new FrameInfo(finfo);
             foreach (var c in this.SystemLink.ChildList)
             {   
                 int cp = ElementManager.GetProcIndex();
-                c.Proc(cp, this.SendFrameInfo);
+                c.Proc(cp, cfinfo);
             }
 
             //子供処理の後
@@ -437,23 +428,20 @@ namespace Clarity
         /// 描画
         /// </summary>
         /// <param name="id">描画情報番号</param>
-        /// <param name="rid">描画Index</param>
-        /// <param name="rinfo">追加情報(必要に応じて)</param>
-        internal void Render(int id, int rid, object rinfo = null)
+        /// <param name="rid">描画Index</param>        
+        internal void Render(int id, int rid)
         {
             if (this.Enabled == false)
             {
                 return;
             }
 
-            this.ProcIndex = rid;
-            this.RenderInfo = rinfo;
+            this.ProcIndex = rid;            
 
             this.RenderElemenet();
 
-            //子供の描画可否を確認
-            bool ckret = this.ControlChildRenderEnabled();
-            if (ckret == false)
+            //子供の描画可否を確認            
+            if (this.ControlChildRenderEnabled == false)
             {
                 return;
             }
@@ -462,7 +450,7 @@ namespace Clarity
             foreach (var c in this.SystemLink.ChildList)
             {
                 int cp = ElementManager.GetProcIndex();
-                c.Render(id, cp, rinfo);
+                c.Render(id, cp);
             }
 
         }
@@ -508,4 +496,9 @@ namespace Clarity
 
       
     }
+
+
+
+
+    
 }

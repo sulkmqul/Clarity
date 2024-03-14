@@ -62,6 +62,15 @@ namespace Clarity.Engine
         }
 
         /// <summary>
+        /// 基本に追加
+        /// </summary>
+        /// <param name="data"></param>
+        public static void AddManage(BaseElement data)
+        {
+            ElementManager.AddRequest(data);
+        }
+
+        /// <summary>
         /// 管理削除申請
         /// </summary>
         /// <param name="data"></param>

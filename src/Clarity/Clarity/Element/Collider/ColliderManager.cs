@@ -27,7 +27,121 @@ namespace Clarity.Collider
         /// </summary>
         private ColliderCore Core = new ColliderCore();
 
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// 衝突判定の実行
+        /// </summary>
+        public void ExecuteCollision()
+        {
 
+            //当たり判定情報の変形
+            this.UpdateCollisonInfomation();
+
+            //判定処理
+            this.ProcCollision();
+
+        }
+
+
+
+        /// <summary>
+        /// 当たり領域の描画(デバッグ用)
+        /// </summary>
+        /// <param name="vindex">描画ViewIndex</param>
+        /// <param name="renderbehavior">当たり判定情報描画所作</param>
+        public void RenderCollider(int vindex, BaseRenderColliderBehavior renderbehavior = null)
+        {
+            //登録判定をすべて描画する
+            foreach (List<ICollider> collist in this.ColliderDic.Values)
+            {
+                collist.ForEach(co =>
+                {
+                    if (co.ColInfo.Enabled == false)
+                    {
+                        return;
+                    }
+
+                    //ここのrenderbehaviorで描画がかかる。上手いこと改造せよ
+
+                    co.ColInfo.TempInfo.TempColliderList.ForEach(ele =>
+                    {
+                        ele.SetRenderBehavior(renderbehavior);
+                        ele.Render(0, 0);
+                    });
+                });
+            }
+        }
+
+
+
+        #region 登録削除関数       
+
+        /// <summary>
+        /// 当たり判定対象へ登録
+        /// </summary>
+        /// <param name="ic"></param>
+        public void AddCollider(ICollider ic)
+        {
+            ColliderInfo? info = ic.ColInfo;
+            //未登録判定は登録しない
+            if (info == null)
+            {
+                return;
+
+            }
+            //判定対象としての定義がない時、登録しない。
+            if (info.ColType == 0)
+            {
+                return;
+            }
+
+            //無い場合は新たに作成する・・・あらかじめ分かっている場合は事前追加の方が良いが・・・
+            if (this.ColliderDic.ContainsKey(info.ColType) == false)
+            {
+                this.ColliderDic.Add(info.ColType, new List<ICollider>());
+            }
+
+            this.ColliderDic[info.ColType].Add(ic);
+        }
+
+        /// <summary>
+        /// 当たり判定対象から削除
+        /// </summary>
+        /// <param name="ic"></param>
+        public void RemoveCollider(ICollider ic)
+        {
+            ColliderInfo? info = ic.ColInfo;
+            //未登録判定
+            if (info == null)
+            {
+                return;
+
+            }
+            //判定対象無し
+            if (info.ColType == 0)
+            {
+                return;
+            }
+
+            //削除
+            this.ColliderDic[info.ColType].Remove(ic);
+        }
+
+
+        /// <summary>
+        /// 当たり判定の全クリア
+        /// </summary>
+        public void ClearCollider()
+        {
+            this.ColliderDic.Clear();
+
+        }
+        #endregion
+
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// 当たり判定の情報を更新する
         /// </summary>
@@ -169,114 +283,7 @@ namespace Clarity.Collider
         }
 
 
-        /* ************************************************************************************ */
-        /* ************************************************************************************ */
-        /// <summary>
-        /// 衝突判定の実行
-        /// </summary>
-        public void ExecuteCollision()
-        {   
-
-            //当たり判定情報の変形
-            this.UpdateCollisonInfomation();
-
-            //判定処理
-            this.ProcCollision();
         
-        }
-
-
-
-        /// <summary>
-        /// 当たり領域の描画(デバッグ用)
-        /// </summary>
-        /// <param name="vindex">描画ViewIndex</param>
-        /// <param name="renderbehavior">当たり判定情報描画所作</param>
-        public void RenderCollider(int vindex, BaseRenderColliderBehavior renderbehavior = null)
-        {
-            //登録判定をすべて描画する
-            foreach (List<ICollider> collist in this.ColliderDic.Values)
-            {
-                collist.ForEach(co =>
-                {
-                    if (co.ColInfo.Enabled == false)
-                    {
-                        return;
-                    }
-
-                    co.ColInfo.TempInfo.TempColliderList.ForEach(ele =>
-                    {   
-                        ele.Render(0, 0, renderbehavior);
-                    });
-                });
-            }
-        }
-
-
-
-#region 登録削除関数       
-
-        /// <summary>
-        /// 当たり判定対象へ登録
-        /// </summary>
-        /// <param name="ic"></param>
-        public void AddCollider(ICollider ic)
-        {
-            ColliderInfo info = ic.ColInfo;
-            //未登録判定は登録しない
-            if (info == null)
-            {
-                return;
-
-            }
-            //判定対象としての定義がない時、登録しない。
-            if (info.ColType == 0)
-            {
-                return;
-            }
-
-            //無い場合は新たに作成する・・・あらかじめ分かっている場合は事前追加の方が良いが・・・
-            if (this.ColliderDic.ContainsKey(info.ColType) == false)
-            {
-                this.ColliderDic.Add(info.ColType, new List<ICollider>());
-            }
-
-            this.ColliderDic[info.ColType].Add(ic);
-        }
-
-        /// <summary>
-        /// 当たり判定対象から削除
-        /// </summary>
-        /// <param name="ic"></param>
-        public void RemoveCollider(ICollider ic)
-        {
-            ColliderInfo info = ic.ColInfo;
-            //未登録判定
-            if (info == null)
-            {
-                return;
-
-            }
-            //判定対象無し
-            if (info.ColType == 0)
-            {
-                return;
-            }
-
-            //削除
-            this.ColliderDic[info.ColType].Remove(ic);
-        }
-
-
-        /// <summary>
-        /// 当たり判定の全クリア
-        /// </summary>
-        public void ClearCollider()
-        {
-            this.ColliderDic.Clear();
-
-        }
-#endregion
 
 
     }

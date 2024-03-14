@@ -110,15 +110,23 @@ namespace Clarity.Engine
         }
         /// <summary>
         /// カメラの更新
-        /// </summary>
-        /// <param name="wid">WorldID</param>
+        /// </summary>        
         /// <param name="cmat">カメラマトリックス</param>        
-        public static void UpdateCamera(int wid, Matrix4x4 cmat)
+        /// <param name="wid">WorldID</param>
+        public static void UpdateCamera(Matrix4x4 cmat, int wid = 0)
         {
             WorldManager.Mana.SetCamera(wid, cmat);
         }
 
-
+        /// <summary>
+        /// プロジェクションの更新
+        /// </summary>
+        /// <param name="cmat"></param>
+        /// <param name="wid"></param>
+        public static void UpdateProjection(Matrix4x4 cmat, int wid = 0)
+        {
+            WorldManager.Mana.SetProjection(wid, cmat);
+        }
 
         /// <summary>
         /// 画面座標からWorld座標変換

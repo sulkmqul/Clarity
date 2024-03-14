@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Clarity;
+using Clarity.Element;
 
 namespace Clarity.Engine.Element
 {
@@ -48,7 +49,7 @@ namespace Clarity.Engine.Element
     /// <summary>
     /// 可変FPS対応Element基底
     /// </summary>
-    public abstract class BaseVariableElement : BaseElement
+    public abstract class BaseVariableElement : BaseObject
     {
         public BaseVariableElement(long oid = 0) : base(oid)
         {

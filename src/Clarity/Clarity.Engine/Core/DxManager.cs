@@ -93,7 +93,7 @@ namespace Clarity.Engine.Core
         /// <summary>
         /// ゲーム解像度の設定値
         /// </summary>
-        private Size? GameSizeParam;
+        private Size? GameSizeParam = null;
 
         /// <summary>
         /// 画面サイズ

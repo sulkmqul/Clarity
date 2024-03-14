@@ -79,6 +79,19 @@ namespace Clarity.Engine
                 TextureAnimeFactory.Mana.ReadTextureAnimeFile(filepathlist);
             }
 
+
+            /// <summary>
+            /// RGBAバッファからテクスチャを読み込む
+            /// </summary>
+            /// <param name="tid">設定テクスチャID</param>
+            /// <param name="width">横幅</param>
+            /// <param name="height">縦幅</param>
+            /// <param name="rgba">RGBAバッファ</param>
+            public static void LoadTexture(int tid, int width, int height, byte[] rgba)
+            {
+
+            }
+
             /// <summary>
             /// テクスチャサイズの取得
             /// </summary>
@@ -112,6 +125,9 @@ namespace Clarity.Engine
 
                 return ClarityEngine.Texture.GetTextureSize(tid);
             }
+
+
+            
 
             #endregion
 

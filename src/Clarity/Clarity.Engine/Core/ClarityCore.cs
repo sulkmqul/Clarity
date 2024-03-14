@@ -71,10 +71,14 @@ namespace Clarity.Engine.Core
             public Control Con;
 
             /// <summary>
+            /// クリア色
+            /// </summary>
+            public Color4 ViewClearColor = new Color4(1.0f, 0.0f, 0.0f, 0.0f);
+
+            /// <summary>
             /// 実行プラグイン
             /// </summary>
-            public ClarityEnginePlugin ExProc;
-
+            public ClarityEnginePlugin? ExProc = null;
 
             /// <summary>
             /// SwapChainに描画する物体一覧
@@ -100,6 +104,14 @@ namespace Clarity.Engine.Core
         /// </summary>
         private ClarityCoreData FData;
 
+
+        public Color4 ClearColor
+        {
+            set
+            {
+                this.FData.ViewClearColor = value;
+            }
+        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -142,7 +154,7 @@ namespace Clarity.Engine.Core
         /// ClarityEngineメイン処理開始
         /// </summary>
         /// <param name="cep">追加動作</param>
-        public void StartClarity(ClarityEnginePlugin cep)
+        public void StartClarity(ClarityEnginePlugin? cep)
         {
             this.FData.ExProc = cep;
 
@@ -346,7 +358,7 @@ namespace Clarity.Engine.Core
 
             //描画対象            
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
-            DxManager.Mana.BeginRendering(new Color4(0.0f, 0.0f, 0.0f, 1.0f));
+            DxManager.Mana.BeginRendering(this.FData.ViewClearColor);
 
             {
                 ////処理の設定

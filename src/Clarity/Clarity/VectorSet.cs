@@ -150,7 +150,7 @@ namespace Clarity
         {
             get
             {
-                return this._Pos3D.X;
+                return this._Pos.X;
             }
             set
             {
@@ -165,7 +165,7 @@ namespace Clarity
         {
             get
             {
-                return this._Pos3D.Y;
+                return this._Pos.Y;
             }
             set
             {
@@ -181,7 +181,7 @@ namespace Clarity
         {
             get
             {
-                return this._Pos3D.Z;
+                return this._Pos.Z;
             }
             set
             {
@@ -308,8 +308,6 @@ namespace Clarity
         /// <returns></returns>
         public Matrix4x4 CreateTransposeRotationMat()
         {
-
-
             Matrix4x4 rxm = Matrix4x4.CreateRotationX(this.Rot.X);
             Matrix4x4 rym = Matrix4x4.CreateRotationY(this.Rot.Y);
             Matrix4x4 rzm = Matrix4x4.CreateRotationZ(this.Rot.Z);

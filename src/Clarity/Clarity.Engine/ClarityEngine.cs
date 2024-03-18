@@ -140,9 +140,10 @@ namespace Clarity.Engine
 
 
         /// <summary>
-        /// Clarityエンジンの実行
+        /// Clarityエンジンの実行 
         /// </summary>
         /// <param name="cep">追加動作</param>
+        /// <remarks>Application.Runをした場合はこれは実行しないこと。</remarks>
         public static void Run(ClarityEnginePlugin? cep)
         {
             //エンジンの実行

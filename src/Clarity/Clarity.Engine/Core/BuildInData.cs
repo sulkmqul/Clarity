@@ -73,8 +73,8 @@ namespace Clarity.Engine.Core
         /// </summary>
         private static void LoadTexture()
         {
-            Texture.TextureManager.Mana.AddTexture(-100, Properties.Resources.T0000, "T0000", new System.Drawing.Size(1, 1));
-            Texture.TextureManager.Mana.AddTexture(-99, Properties.Resources.T0001, "T0001", new System.Drawing.Size(1, 1));
+            Texture.TextureManager.Mana.AddTexture(-100, "T0000", Properties.Resources.T0000, new System.Drawing.Size(1, 1));
+            Texture.TextureManager.Mana.AddTexture(-99, "T0001", Properties.Resources.T0001, new System.Drawing.Size(1, 1));
         }
     }
 }

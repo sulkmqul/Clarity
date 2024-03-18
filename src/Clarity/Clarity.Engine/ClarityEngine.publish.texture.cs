@@ -51,8 +51,21 @@ namespace Clarity.Engine
             /// <param name="bit">追加データ</param>
             public static void LoadTexture(int tid, System.Drawing.Bitmap bit)
             {
-                TextureManager.Mana.AddTexture(tid, bit, tid.ToString(), new System.Drawing.Size(1, 1));
+                TextureManager.Mana.AddTexture(tid, tid.ToString(), bit, new System.Drawing.Size(1, 1));
             }
+
+            /// <summary>
+            /// RGBAバッファからテクスチャを読み込む
+            /// </summary>
+            /// <param name="tid">設定テクスチャID</param>
+            /// <param name="width">横幅</param>
+            /// <param name="height">縦幅</param>
+            /// <param name="rgba">RGBAバッファ</param>
+            public static void LoadTexture(int tid, int width, int height, byte[] rgba)
+            {
+                TextureManager.Mana.AddTexture(tid, tid.ToString(), width, height, rgba, new System.Drawing.Size(1, 1));
+            }
+
 
             /// <summary>
             /// 対象テクスチャの削除
@@ -70,27 +83,8 @@ namespace Clarity.Engine
                 TextureManager.Mana.ClearUserData();
             }
 
-            /// <summary>
-            /// テクスチャアニメの読み込み
-            /// </summary>
-            /// <param name="filepathlist">テクスチャアニメファイル一式</param>
-            public static void LoadTextureAnimeFile(List<string> filepathlist)
-            {
-                TextureAnimeFactory.Mana.ReadTextureAnimeFile(filepathlist);
-            }
-
-
-            /// <summary>
-            /// RGBAバッファからテクスチャを読み込む
-            /// </summary>
-            /// <param name="tid">設定テクスチャID</param>
-            /// <param name="width">横幅</param>
-            /// <param name="height">縦幅</param>
-            /// <param name="rgba">RGBAバッファ</param>
-            public static void LoadTexture(int tid, int width, int height, byte[] rgba)
-            {
-
-            }
+     
+            
 
             /// <summary>
             /// テクスチャサイズの取得
@@ -112,21 +106,7 @@ namespace Clarity.Engine
                 return TextureManager.GetTextureSize(tid, true);
             }
 
-            /// <summary>
-            /// テクスチャサイズの取得 Anime版
-            /// </summary>
-            /// <param name="aid">アニメID</param>
-            /// <param name="aindex">アニメIndex</param>
-            /// <returns></returns>
-            public static Vector2 GetTextureSize(int aid, int aindex)
-            {
-                var adata = TextureAnimeFactory.GetAnime(aid);
-                int tid = adata.FrameList[aindex].TextureID;
-
-                return ClarityEngine.Texture.GetTextureSize(tid);
-            }
-
-
+        
             
 
             #endregion

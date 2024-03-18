@@ -99,5 +99,23 @@ namespace Clarity
 
 
 
+    /// <summary>
+    /// 終了に規定処理を行うもの
+    /// </summary>
+    public class EndProcedureState : IDisposable
+    {
+        public EndProcedureState(Action ed)
+        {
+            this.EndProc = ed;
+            
+        }
+        private Action EndProc;
+
+        public void Dispose()
+        {
+            this.EndProc();
+        }
+    }
+
 
 }

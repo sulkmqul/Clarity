@@ -7,12 +7,6 @@ using Vortice.Mathematics;
 
 namespace Clarity.Engine
 {
-    /// <summary>
-    /// アニメ終了Delegate
-    /// </summary>
-    /// <param name="aid">終了animeID</param>
-    public delegate void EndTextureAnimeDelegate(int aid, ref bool nextflag);
-
 
     /// <summary>
     /// 描画情報のまとめ

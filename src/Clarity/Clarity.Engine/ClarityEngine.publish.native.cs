@@ -1,10 +1,15 @@
-﻿using Clarity.Engine.Texture;
+﻿using Clarity.DLL;
+using Clarity.Engine.Texture;
+using Clarity.Util;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Vortice.Mathematics;
 
@@ -14,45 +19,77 @@ namespace Clarity.Engine
     {
         /// <summary>
         /// ClarityEngineの低レベルAPI群
-        /// </summary>
-        /// <remarks>更新や処理などを分けて呼ぶことができる 基本的に任意更新が行いたいGUI用</remarks>
+        /// </summary>        
         public static class Native
         {
             /// <summary>
-            /// 管理element処理を強制的に行う
+            /// 処理ループの呼び出し(GUI用) 
             /// </summary>
-            public static void Process()
+            /// <param name="fps">FPS(目安) 30fps程度でよいと思う</param>
+            /// <param name="ct">TaskLoopCancel</param>
+            /// <returns></returns>
+            /// <remarks>
+            /// ClarityEngine.Init後のみ呼び出し可能
+            /// ClarityEngine.Runとの併用は不可。
+            /// </remarks>
+            public static async Task ProcLoop(float fps, CancellationToken ct)
             {
-                ClarityEngine.Engine.Core.Process();
-            }
+                //エンジンの初期化されているか？
+                if (ClarityEngine.IsEngineInit == false)
+                {
+                    throw new Exception("ClarityEngine is not Initialized");
+                }
 
-            /// <summary>
-            /// 管理elementの描画を強制的に行う
-            /// </summary>
-            public static void Rendering()
-            {
-                ClarityEngine.Engine.Core.Rendering();
-            }
+                try
+                {
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
+                    int proc_count = 0;
 
+                    FpsRuler frule = new FpsRuler(fps);
+                    frule.Start();
+                    while (true)
+                    {
+                        //CancelCheck
+                        ct.ThrowIfCancellationRequested();
 
-            /// <summary>
-            /// 処理と描画を同時に呼び出す
-            /// </summary>
-            public static void ProcessRendering()
-            {
-                Native.Process();
-                Native.Rendering();
-            }
+                        //処理確認
+                        bool ck = frule.CheckNext();
+                        if (ck == false)
+                        {
+                            await Task.Delay(1);                                                     
+                            //Thread.Sleep(1);
+                            continue;
+                        }
 
-            /// <summary>
-            /// 解放
-            /// </summary>
-            public static void Dispose()
-            {
+                        await Task.Run(() =>
+                        {
+                            FrameInfo finfo = new FrameInfo((long)frule.TotalTime, frule.Span);
+                            ClarityEngine.Engine.Core.Process(finfo);
+                        });
+
+                        ClarityEngine.Engine.Core.Rendering();
+
+                        proc_count++;
+                        if(sw.ElapsedMilliseconds > 1000)
+                        {
+                            //FPS表示
+                            //System.Diagnostics.Trace.WriteLine($"TaskFPS={proc_count} {frule.Span}");
+                            //proc_count = 0;
+                            //sw.Restart();
+                        }
+                    }
+
+                }
+                catch (OperationCanceledException)
+                {
+                    //Cancelなので問題なし                 
+                }
+
                 ClarityEngine._Engine?.Core.Dispose();
                 ClarityEngine._Engine = null;
-            }
 
+            }
 
             /// <summary>
             /// クリア色の設定

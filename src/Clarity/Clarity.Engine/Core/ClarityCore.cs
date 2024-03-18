@@ -150,6 +150,8 @@ namespace Clarity.Engine.Core
             }
         }
 
+        
+
         /// <summary>
         /// ClarityEngineメイン処理開始
         /// </summary>
@@ -188,8 +190,6 @@ namespace Clarity.Engine.Core
             //入力管理
             //InputManager.Mana.Dispose();
 
-            //テクスチャアニメーション
-            Texture.TextureAnimeFactory.Mana?.Dispose();
             //テクスチャ
             Texture.TextureManager.Mana?.Dispose();
 
@@ -216,9 +216,8 @@ namespace Clarity.Engine.Core
         /// <summary>
         /// 公開用処理
         /// </summary>
-        internal void Process()
+        internal void Process(FrameInfo f)
         {
-            FrameInfo f = new FrameInfo(0, 1);
             this.ProcFrame(f);
         }
 
@@ -433,9 +432,6 @@ namespace Clarity.Engine.Core
             //テクスチャ管理
             Texture.TextureManager.Create();
 
-            //テクスチャアニメ管理
-            Texture.TextureAnimeFactory.Create();
-
             //入力管理
             InputManager.Create();
 
@@ -497,6 +493,12 @@ namespace Clarity.Engine.Core
         /// <exception cref="NotImplementedException"></exception>
         private void Control_Resize(object? sender, EventArgs e)
         {
+            //サイズ0=最小化なら次の変更を待つのでとりあえず無視
+            if(this.FData.Con.Width == 0 || this.FData.Con.Height == 0 )
+            {
+                return;
+            }
+
 
             //デバイスの初期化を行う            
             DxManager.Mana?.ResizeSwapChain();
@@ -507,6 +509,7 @@ namespace Clarity.Engine.Core
             //リサイズ処理
             this.FData.ExProc?.ResizeView(this.FData.Con.Size);
         }
+
 
     }
 }

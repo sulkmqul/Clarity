@@ -116,13 +116,17 @@ namespace Clarity
             }
             set
             {
-                this._Pos3D.X = this._Pos2D.X = value.X;
-                this._Pos3D.Y = this._Pos2D.Y = value.Y;
+                this.PosX = value.X;
+                this.PosY = value.Y;
             }
 
         }
         public float RotZ
         {
+            get
+            {
+                return this._Rot.Z;
+            }
             set
             {
                 this._Rot.Z = value;

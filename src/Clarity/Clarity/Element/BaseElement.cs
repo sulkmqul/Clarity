@@ -37,7 +37,7 @@ namespace Clarity
     /// </summary>
     public class FrameInfo
     {
-        public FrameInfo(long frametilme, long span)
+        public FrameInfo(long frametilme, float span)
         {
             this.FrameTime = frametilme;
             this.Span = span;            
@@ -49,12 +49,12 @@ namespace Clarity
             this.FrameTime = f.FrameTime;                        
         }
 
-        private long _Span = 0;
+        private float _Span = 0;
 
         /// <summary>
         /// 差分時間(ms)
         /// </summary>
-        public long Span
+        public float Span
         {
             init
             {
@@ -214,18 +214,19 @@ namespace Clarity
         /// 今回のフレーム情報
         /// </summary>
         public FrameInfo FrameInfo { get; private set; }
-        
+
 
         /// <summary>
         /// 自身の基準時間
         /// </summary>
-        public long ProcTime { get; internal set; } = 0;
+        //public long ProcTime { get; internal set; } = 0;
+        public float ProcTime { get; internal set; } = 0;
         #endregion
 
-        
 
 
-        
+
+
 
         /// <summary>
         /// Clarityシステム管理可否

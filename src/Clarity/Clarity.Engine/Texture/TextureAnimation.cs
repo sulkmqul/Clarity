@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClarityImageViewer.Viewer
+namespace Clarity.Engine.Texture
 {
 
     /// <summary>
@@ -70,6 +70,10 @@ namespace ClarityImageViewer.Viewer
     /// </summary>
     public class TextureAnimeController
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="ainfo"></param>
         public TextureAnimeController(TextureAnimationInfo ainfo)
         {
             this.AnimationInfo = ainfo;
@@ -105,38 +109,9 @@ namespace ClarityImageViewer.Viewer
         /// <summary>
         /// 現在アニメの開始時間(厳密にはFrame時間ではないことに注意) この時間がマイナスの場合、初期化される
         /// </summary>
-        private float CurrentAnimeStartTime = -1;
-        /// <summary>
-        /// 再生可否
-        /// </summary>
-        private bool PlayFlag = false;
+        protected float CurrentAnimeStartTime { get; set; } = -1;
         /**************************************************************************************/
-        /**************************************************************************************/
-        /// <summary>
-        /// アニメーションの開始
-        /// </summary>
-        public void StartAnimation()
-        {
-            this.PlayFlag = true;
-            this.CurrentAnimeStartTime = -1;
-        }
-
-        /// <summary>
-        /// アニメーションの終了
-        /// </summary>
-        public void StopAnimation()
-        {
-            this.PlayFlag = false;
-        }
-
-        /// <summary>
-        /// アニメーションの停止
-        /// </summary>
-        public void ResetAnimation()
-        {
-            this.CurrentAnimeStartTime = -1;
-        }
-
+        /**************************************************************************************/        
         /// <summary>
         /// 表示フレームの設定
         /// </summary>
@@ -155,14 +130,8 @@ namespace ClarityImageViewer.Viewer
         /// アニメ処理本体   
         /// </summary>
         /// <param name="frametime">実行時間ms</param>
-        public void ProcAnimation(float frametime)
+        public virtual void ProcAnimation(float frametime)
         {
-            //停止中は処理しない
-            if (this.PlayFlag == false)
-            {
-                return;
-            }
-
             //開始時間がマイナスなら初期化をする
             if (this.CurrentAnimeStartTime < 0)
             {
@@ -244,14 +213,14 @@ namespace ClarityImageViewer.Viewer
     {
         public TextureAnimeBehavior(TextureAnimationInfo ainfo)
         {
-            this.TexCont = new TextureAnimeController(ainfo);
-            this.TexCont.StartAnimation();
+            this.TexCont = new TextureAnimeController(ainfo);               
         }
 
         /// <summary>
         /// アニメーション管理
         /// </summary>
         private TextureAnimeController TexCont;
+
 
         /// <summary>
         /// アニメーションの処理

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Clarity;
 using Clarity.Engine;
+using Clarity.Engine.Texture;
 using Clarity.GUI;
 using Clarity.Image.PNG;
 

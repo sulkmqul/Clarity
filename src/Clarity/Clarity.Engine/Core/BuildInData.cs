@@ -57,14 +57,11 @@ namespace Clarity.Engine.Core
         /// </summary>
         private static void LoadShader()
         {
-            Shader.ShaderListFileDataRoot rdata = new Shader.ShaderListFileDataRoot();
-            rdata.RootID = -100;
-            rdata.ShaderList = new List<Shader.ShaderListData>();
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "Default",  Id= ClarityEngine.BuildInShaderIndex.Default,  SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsDefault" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "NoTexture", Id = ClarityEngine.BuildInShaderIndex.NoTexture, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsNoTex" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAnime", Id= ClarityEngine.BuildInShaderIndex.TextureAnime,  SrcCode = Properties.Resources.SDef, VsName = "VsTextureAnimation", PsName = "PsDefault" });
-            rdata.ShaderList.Add(new Shader.ShaderListData() { Code = "TextureAlpha", Id= ClarityEngine.BuildInShaderIndex.TextureUseAlpha, SrcCode = Properties.Resources.SDef, VsName = "VsDefault", PsName = "PsTextureAlphaOnlyBind" });
-            Shader.ShaderManager.Mana.CreateDefaultResource(rdata);
+            Shader.ShaderManager.Mana.AddResource(new Shader.ShaderSrcData("Default", ClarityEngine.BuildInShaderIndex.Default, "VsDefault", "PsDefault", Properties.Resources.SDef));
+            Shader.ShaderManager.Mana.AddResource(new Shader.ShaderSrcData("NoTexture", ClarityEngine.BuildInShaderIndex.NoTexture, "VsDefault", "PsNoTex", Properties.Resources.SDef));
+            Shader.ShaderManager.Mana.AddResource(new Shader.ShaderSrcData("TextureAnime", ClarityEngine.BuildInShaderIndex.TextureAnime, "VsTextureAnimation", "PsDefault", Properties.Resources.SDef));
+            Shader.ShaderManager.Mana.AddResource(new Shader.ShaderSrcData("TextureAlpha", ClarityEngine.BuildInShaderIndex.TextureUseAlpha, "VsDefault", "PsTextureAlphaOnlyBind", Properties.Resources.SDef));
+
         }
 
 

@@ -174,7 +174,7 @@ namespace ClarityImageViewer.Viewer
             //自身の最低限のデータを設定する
             this.TextureID = 1;
             this.VertexID = ClarityEngine.BuildInPolygonModelIndex.Rect;
-            this.ShaderID = ClarityEngine.BuildInShaderIndex.Default;
+            this.ShaderID = ClarityEngine.BuildInShaderIndex.Default;            
             this.TransSet.Pos = new Vector4(0.0f);
             this.TransSet.Scale3D = new Vector3(this.IData.ImageWidth, this.IData.ImageHeight, 1.0f);
                         

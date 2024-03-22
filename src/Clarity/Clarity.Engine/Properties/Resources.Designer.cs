@@ -19,7 +19,7 @@ namespace Clarity.Engine.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -73,6 +73,7 @@ namespace Clarity.Engine.Properties {
         ///{
         ///	float4 pos : SV_POSITION;
         ///	float4 col : COLOR;
+        ///	float4 addcol : COLOR2;
         ///	float2 tex : TEXCOORD;
         ///};
         ///
@@ -81,6 +82,7 @@ namespace Clarity.Engine.Properties {
         ///{
         ///	float4x4 WorldViewProj;
         ///	float4 Col;
+        ///	float4 AddCol;
         ///	float2 tex_div;
         ///	float2 tex_offset;
         ///
@@ -93,7 +95,7 @@ namespace Clarity.Engine.Properties {
         ///SamplerState picsamp : register(s1);
         ///
         ///
-        ////////////////////////////////////////////////////////////////////////////////////// [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        /////////////////////////////////////////// [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string SDef {
             get {

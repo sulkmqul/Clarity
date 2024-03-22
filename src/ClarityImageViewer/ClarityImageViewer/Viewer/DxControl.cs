@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Clarity;
 using Clarity.Engine;
+using Clarity.Engine.Shader;
 using Clarity.Engine.Texture;
 using Clarity.GUI;
 using Clarity.Image.PNG;
@@ -116,7 +117,6 @@ namespace ClarityImageViewer.Viewer
             this.ClarityEngineLoopTask = ClarityEngine.Native.ProcLoop(1000.0f / 60.0f, this.ClarityEngineLoopCanceller.Token);
 
 
-            this.EventSubject.OnNext((DxControlEventID.ScaleChanged, 45));
 
         }
 

@@ -9,6 +9,7 @@ using Clarity;
 using Clarity.Engine.Shader;
 using Clarity.Engine.Vertex;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace Clarity.Engine
 {
@@ -277,17 +278,26 @@ namespace Clarity.Engine
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         #region Shader
+        /// <summary>
+        /// Shaderを一覧ファイルから読み込み
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="slistfilepath">読込リストファイルパス</param>
+        /// <returns></returns>
+        public static async Task LoadShaderListFile<T>(string slistfilepath) where T : struct
+        {
+            await ShaderManager.Mana.AddResourceFromShaderList<T>(slistfilepath, null);
+        }
 
         /// <summary>
         /// Shaderの追加
         /// </summary>
-        /// <typeparam name="T">データ型</typeparam>
-        /// <param name="shlist"></param>
-        public static void AddShader<T>(List<string> shlist) where T : struct
+        /// <typeparam name="T"></typeparam>
+        /// <param name="srcdata"></param>
+        public static void AddShaderResource<T>(ShaderSrcData srcdata) where T : struct
         {
-            ShaderManager.Mana.AddResource<T>(shlist);
+            ShaderManager.Mana.AddResource<T>(srcdata);
         }
-
 
         /// <summary>
         /// Shaderデータの設定

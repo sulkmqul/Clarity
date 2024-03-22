@@ -21,30 +21,33 @@ namespace Clarity.Engine.Shader
         /// <summary>
         /// VertexShaer
         /// </summary>
-        public ID3D11VertexShader Vs = null;
+        public ID3D11VertexShader? Vs = null;
 
         /// <summary>
         /// PixelShader
         /// </summary>
-        public ID3D11PixelShader Ps = null;
+        public ID3D11PixelShader? Ps = null;
 
         /// <summary>
         /// 入力レイアウト設定
         /// </summary>
-        public ID3D11InputLayout Layout = null;
+        public ID3D11InputLayout? Layout = null;
 
         /// <summary>
         /// これシェーダーで使用するContantBuffer(VertexShaderに送るデータ領域)
         /// </summary>
-        public ID3D11Buffer ConstantBuffer = null;
+        public ID3D11Buffer? ConstantBuffer = null;
 
         public void Dispose()
         {
             this.Vs?.Dispose();
+            this.Vs = null;
             this.Ps?.Dispose();
+            this.Ps = null;
             this.Layout?.Dispose();
+            this.Layout = null;
             this.ConstantBuffer?.Dispose();
-
+            this.ConstantBuffer = null;
         }
     }
 
@@ -54,7 +57,6 @@ namespace Clarity.Engine.Shader
     /// Shader管理規定
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <remarks>これは継承先ではsingletonにすること</remarks>
     internal class ShaderManager : BaseClarityFactroy<ShaderManager, ShaderManageData>
     {
         private ShaderManager()
@@ -62,15 +64,26 @@ namespace Clarity.Engine.Shader
         }
 
         /// <summary>
-        /// 頂点Shader
+        /// 頂点ShaderVersion
         /// </summary>
-        private string VertexShaderProfile = "";
+        private string VertexShaderProfile
+        {
+            get
+            {
+                return ClarityEngine.EngineSetting.GetString("VertexShaderVersion");
+            }
+        }
 
         /// <summary>
-        /// PixelShader
+        /// PixelShaderVersion
         /// </summary>
-        private string PixelShaderProfile = "";
-        
+        private string PixelShaderProfile
+        {
+            get
+            {
+                return ClarityEngine.EngineSetting.GetString("PixelShaderVersion");
+            }
+        }
 
         /// <summary>
         /// 作成関数
@@ -78,447 +91,11 @@ namespace Clarity.Engine.Shader
         public static void Create()
         {
             Instance = new ShaderManager();
-
-            //必要な情報の取得
-            Instance.VertexShaderProfile = ClarityEngine.EngineSetting.GetString("VertexShaderVersion");
-            Instance.PixelShaderProfile = ClarityEngine.EngineSetting.GetString("PixelShaderVersion");
         }
-
-
-
-        //==========================================================================================
-        /// <summary>
-        /// 対象ソースファイルの全行を読み込む
-        /// </summary>
-        /// <param name="filepath">読み込みファイルパス</param>
-        /// <returns></returns>
-        private string LoadSrcFileAll(string filepath)
-        {
-            string srccode = "";
-            //ShaderFileの読み込み
-            using (FileStream fp = new FileStream(filepath, FileMode.Open, FileAccess.Read))
-            {
-                using (StreamReader sr = new StreamReader(fp))
-                {
-                    srccode = sr.ReadToEnd();
-                }
-            }
-            return srccode;
-        }
-
-
-        /// <summary>
-        /// VertexShaderのコンパイル(文字列から)
-        /// </summary>
-        /// <param name="srcode"></param>
-        /// <param name="funcname"></param>
-        /// <param name="ipevec"></param>
-        /// <param name="ipl"></param>
-        /// <returns></returns>
-        protected ID3D11VertexShader CompileVertexShader(string srcode, string funcname, InputElementDescription[] ipevec, out ID3D11InputLayout ipl)
-        {
-            ID3D11VertexShader ans = null;
-
-            ipl = null;
-            try
-            {
-
-                Vortice.Direct3D.Blob blob, erblob;
-                var cpret = Vortice.D3DCompiler.Compiler.Compile(srcode, funcname, "unknown", this.VertexShaderProfile, out blob, out erblob);
-
-                /*
-                //コンパイル                
-                var code = ShaderBytecode.Compile(srcode, funcname, this.VertexShaderProfile);
-                if (code == null)
-                {
-                    throw new Exception("CompileFromFile NULL");
-                }
-                if (code.Bytecode == null)
-                {
-                    throw new Exception(code.Message);
-                }*/
-
-                //頂点レイアウトを作製
-                /*
-                ShaderSignature sig = ShaderSignature.GetInputSignature(code);
-                ipl = new InputLayout(DxManager.Mana.DxDevice, sig, ipevec);
-                */
-                ipl = DxManager.Mana.DxDevice.CreateInputLayout(ipevec, blob);
-
-                //作製
-                //ans = new VertexShader(DxManager.Mana.DxDevice, code);
-                ans = DxManager.Mana.DxDevice.CreateVertexShader(blob);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Crate VertexShader", ex);
-            }
-
-            return ans;
-        }
-
-        /// <summary>
-        /// VertexShaderのコンパイル(ファイルから)
-        /// </summary>
-        /// <param name="filepath">シェーダーファイル名</param>
-        /// <param name="funcname">関数名</param>
-        /// <param name="ipl">頂点レイアウト</param>
-        /// <returns></returns>
-        protected ID3D11VertexShader CompileVertexShaderFile(string filepath, string funcname, InputElementDescription[] ipevec, out ID3D11InputLayout ipl)
-        {
-            ID3D11VertexShader ans = null;
-
-            try
-            {
-                //ソースファイルの読み込み
-                string srccode = this.LoadSrcFileAll(filepath);
-
-                ans = this.CompileVertexShader(srccode, funcname, ipevec, out ipl);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("CompileVertexShaderFile filepath=" + filepath, e);
-            }
-            
-            return ans;
-        }
-
-
-
-
-        /// <summary>
-        /// PixelShaderのコンパイル
-        /// </summary>
-        /// <param name="srccode"></param>
-        /// <param name="funcname"></param>
-        /// <returns></returns>
-        protected ID3D11PixelShader CompilePixelShader(string srccode, string funcname)
-        {
-            ID3D11PixelShader ans = null;
-            try
-            {
-                /*
-                //コンパイル                
-                var code = ShaderBytecode.Compile(srccode, funcname, this.PixelShaderProfile);
-                if (code == null)
-                {
-                    throw new Exception(code.Message);
-                }*/
-
-                Vortice.Direct3D.Blob blob, erblob;
-                var cpret = Vortice.D3DCompiler.Compiler.Compile(srccode, funcname, "unknown", this.PixelShaderProfile, out blob, out erblob);
-
-                //作製
-                //ans = new PixelShader(DxManager.Mana.DxDevice, code);
-                ans = DxManager.Mana.DxDevice.CreatePixelShader(blob);
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Pixel Shader Compile", ex);
-            }
-
-            return ans;
-        }
-
-        /// <summary>
-        /// PixelShaderのコンパイル
-        /// </summary>
-        /// <param name="filepath">シェーダーファイル名</param>
-        /// <param name="funcname">関数名</param>
-        /// <returns></returns>
-        protected ID3D11PixelShader CompilePixelShaderFile(string filepath, string funcname)
-        {
-            ID3D11PixelShader ans = null;
-            try
-            {
-                //Shaderソース読みおｋ美
-                string srccode = this.LoadSrcFileAll(filepath);
-
-                //読み込み
-                ans = this.CompilePixelShader(srccode, funcname);
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception("CompilePixelShaderFile path=" + filepath, e);
-            }
-
-            return ans;
-        }
-
-
-        
-
-        /// <summary>
-        /// Shaderデータ一つの作成
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sd"></param>
-        /// <param name="ipevec"></param>
-        /// <returns></returns>
-        private ShaderManageData CreateShaderManageData<T>(ShaderListData sd, InputElementDescription[] ipevec) where T : struct
-        {
-            ShaderManageData data = new ShaderManageData();
-
-            //VertexShader
-            data.Vs = this.CompileVertexShaderFile(sd.FilePath, sd.VsName, ipevec, out data.Layout);
-            if (data.Vs == null)
-            {
-                throw new Exception("CompileVertexShader Exception");
-            }
-
-            //PixelShader
-            data.Ps = this.CompilePixelShaderFile(sd.FilePath, sd.PsName);
-            if (data.Ps == null)
-            {
-                throw new Exception("CompilePixelShader Exception");
-            }
-
-
-            //コンスタントバッファ
-            //data.ConstantBuffer = new SharpDX.Direct3D11.Buffer(DxManager.Mana.DxDevice, Utilities.SizeOf<T>(), ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
-
-            BufferDescription desc = new BufferDescription();
-            {
-                desc.BindFlags = BindFlags.ConstantBuffer;
-                desc.CpuAccessFlags = CpuAccessFlags.None;
-                desc.OptionFlags = ResourceOptionFlags.None;
-                desc.SizeInBytes = System.Runtime.CompilerServices.Unsafe.SizeOf<T>();
-                desc.StructureByteStride = 0;
-            }
-            data.ConstantBuffer = DxManager.Mana.DxDevice.CreateBuffer(desc);
-            return data;
-        }
-
-
-
-        /// <summary>
-        /// Shaderデータ一つの作成
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sd"></param>
-        /// <param name="ipevec"></param>
-        /// <returns></returns>
-        private ShaderManageData CreateShaderManageData<T>(string srcode, string vs_name, string ps_name, InputElementDescription[] ipevec) where T : struct
-        {
-            ShaderManageData data = new ShaderManageData();
-
-            //VertexShader
-            data.Vs = this.CompileVertexShader(srcode, vs_name, ipevec, out data.Layout);
-            if (data.Vs == null)
-            {
-                throw new Exception("CompileVertexShader Exception");
-            }
-
-            //PixelShader
-            data.Ps = this.CompilePixelShader(srcode, ps_name);
-            if (data.Ps == null)
-            {
-                throw new Exception("CompilePixelShader Exception");
-            }
-
-            //コンスタントバッファ
-            BufferDescription desc = new BufferDescription();
-            {
-                desc.BindFlags = BindFlags.ConstantBuffer;
-                desc.CpuAccessFlags = CpuAccessFlags.None;
-                desc.OptionFlags = ResourceOptionFlags.None;
-                desc.SizeInBytes = System.Runtime.CompilerServices.Unsafe.SizeOf<T>();
-                desc.StructureByteStride = 0;
-            }
-            data.ConstantBuffer = DxManager.Mana.DxDevice.CreateBuffer(desc);
-
-            return data;
-        }
-
-        /// <summary>
-        /// 一つのShaderListFileデータの読み込み
-        /// </summary>
-        /// <param name="rdata">読み込みデータ</param>
-        private void LoadShaderListFileData<T>(ShaderListFileDataRoot rdata, InputElementDescription[] ipevec) where T : struct
-        {
-            //シェーダーのcompileと読み込み
-            foreach (ShaderListData sd in rdata.ShaderList)
-            {
-
-                //一つのデータの読みこみ
-                ShaderManageData data = null;
-
-                if (sd.EnabledSrcCode == false)
-                {
-                    data = this.CreateShaderManageData<T>(sd, ipevec);
-                }
-                else
-                {                    
-                    data = this.CreateShaderManageData<T>(sd.SrcCode, sd.VsName, sd.PsName, ipevec);
-                }
-
-                //--------------------------------------
-                //ADD
-                this.ManaDic.Add(sd.Id, data);
-
-            }
-        }
-
-
-        /// <summary>
-        /// 一つのデータ追加
-        /// </summary>
-        /// <typeparam name="T">Shader Data</typeparam>
-        /// <param name="index">追加shader id</param>
-        /// <param name="sd">読み込みShader情報</param>
-        /// <param name="ipevec">頂点情報 null=デフォルト</param>
-        private void AddShaderData<T>(int index, ShaderListData sd, InputElementDescription[] ipevec = null) where T : struct
-        {            
-
-            //一つのデータの読みこみ
-            ShaderManageData data = null;
-
-            data = this.CreateShaderManageData<T>(sd, ipevec);
-
-            //--------------------------------------
-            //ADD
-            this.ManaDic.Add(index, data);
-        }
-
-
-        /// <summary>
-        /// デフォルト頂点配置の作成
-        /// </summary>
-        /// <returns></returns>
-        private InputElementDescription[] CreateDefailtVertexElement()
-        {
-            InputElementDescription[] ipevec = {
-                                        new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                        new InputElementDescription("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
-                                        new InputElementDescription("TEXCOORD", 0, Format.R32G32_Float, 32, 0),
-                                    };
-            return ipevec;
-        }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// <summary>
-        /// 読み込みと初期化
-        /// </summary>
-        /// <param name="filepath">使用するShaderListのファイルパス</param>
-        public void CreateResource(string filepath)
-        {
-            //頂点レイアウト
-            //3Dではないので法線は不要。これは将来的に拡張が必要と思われるため、shaderlistfileのオプション化を検討する
-            /*InputElement[] ipevec = {
-                                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                                        new InputElement("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
-                                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 32, 0),
-                                    };*/
-
-            InputElementDescription[] ipevec = this.CreateDefailtVertexElement();
-            List<string> flist = new List<string>() { filepath };
-            this.CreateResource<ShaderDataDefault>(flist, ipevec);
-        }
-
-        /// <summary>
-        /// リソースの作成
-        /// </summary>
-        /// <param name="filepath">入力ShdaerListファイルパス一式</param>
-        /// <param name="ipevec">頂点定義</param>
-        /// <typeparam name="T">Shader Constant Data</typeparam>
-        public void CreateResource<T>(List<string> filepathlist, InputElementDescription[] ipevec) where T : struct
-        {
-            try
-            {
-                this.ClearData();
-
-
-                this.AddResource<T>(filepathlist, ipevec);
-
-                /*
-                //シェーダーリストの読み込み
-                List<ShaderListFileDataRoot> rdatalist = new List<ShaderListFileDataRoot>();
-
-                filepathlist.ForEach(fpath =>
-                {
-                    ShaderListFile sfp = new ShaderListFile();
-                    ShaderListFileDataRoot rdata = sfp.ReadFile(fpath);
-                    rdatalist.Add(rdata);
-                });
-
-
-                foreach (ShaderListFileDataRoot rdata in rdatalist)
-                {                    
-                    this.LoadShaderListFileData<T>(rdata, ipevec);
-                }*/
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ShaderManager CreateResource Exception", e);
-            }
-        }
-
-
-        /// <summary>
-        /// デフォルトShaderの読み込みと作成
-        /// </summary>
-        /// <param name="srcode"></param>
-        /// <param name="rdata"></param>
-        internal void CreateDefaultResource( ShaderListFileDataRoot rdata)
-        {
-            InputElementDescription[] ipevec = this.CreateDefailtVertexElement();
-            this.LoadShaderListFileData<ShaderDataDefault>(rdata, ipevec);
-        }
-
-
-        /// <summary>
-        /// データクリア
-        /// </summary>
-        public void ClearData()
-        {
-            this.ClearManageDic();
-        }
-
-
-
-        /// <summary>
-        /// 追加
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="filepathlist"></param>
-        /// <param name="ipevec"></param>
-        public void AddResource<T>(List<string> filepathlist, InputElementDescription[] ipevec = null) where T : struct
-        {
-            try
-            {
-                if (ipevec == null)
-                {
-                    ipevec = this.CreateDefailtVertexElement();
-                }
-
-                //シェーダーリストの読み込み
-                List<ShaderListFileDataRoot> rdatalist = new List<ShaderListFileDataRoot>();
-
-                filepathlist.ForEach(fpath =>
-                {
-                    ShaderListFile sfp = new ShaderListFile();
-                    ShaderListFileDataRoot rdata = sfp.ReadFile(fpath);
-                    rdatalist.Add(rdata);
-                });
-
-
-                foreach (ShaderListFileDataRoot rdata in rdatalist)
-                {
-                    this.LoadShaderListFileData<T>(rdata, ipevec);
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception("ShaderManager AddResource", e);
-            }
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// Shaderデータの設定
         /// </summary>
-        /// <typeparam name="T">Shaderへの設定データ</typeparam>
+        /// <typeparam name="T">Shaderへの設定データの型(constant bufferの型)</typeparam>
         /// <param name="data">設定データ</param>
         /// <param name="sid">Shader番号</param>
         public static void SetShaderData<T>(T data, int sid) where T : unmanaged
@@ -538,8 +115,6 @@ namespace Clarity.Engine.Shader
             //ConstantBufferへ値の設定
             //cont.UpdateSubresource(ref data, smana.ConstantBuffer);
             cont.UpdateSubresource<T>(ref data, smana.ConstantBuffer);
-
-
         }
 
         /// <summary>
@@ -550,6 +125,194 @@ namespace Clarity.Engine.Shader
         public static void SetShaderDataDefault(ShaderDataDefault data, int sid)
         {
             ShaderManager.SetShaderData<ShaderDataDefault>(data, sid);
+        }
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// Shaderの追加(デフォルト版)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="srcdata"></param>
+        internal void AddResource(ShaderSrcData srcdata)
+        {
+            //デフォルトの頂点配置を採用する
+            InputElementDescription[] ipvec = this.CreateDefaultVertexElement();
+            this.AddResource<ShaderDataDefault>(srcdata, ipvec);
+        }
+        /// <summary>
+        /// Shaderの追加
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="srcdata"></param>
+        public void AddResource<T>(ShaderSrcData srcdata) where T : struct
+        {
+            //デフォルトの頂点配置を採用する
+            InputElementDescription[] ipvec = this.CreateDefaultVertexElement();
+            this.AddResource<T>(srcdata, ipvec);
+        }
+
+        /// <summary>
+        /// Shaderの追加
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="srcdata"></param>
+        /// <param name="ipvec"></param>
+        public void AddResource<T>(ShaderSrcData srcdata, InputElementDescription[] ipvec) where T : struct
+        {
+            //読込
+            ShaderManageData mdata = this.CreateShaderManageData<T>(srcdata, ipvec);
+            //管理追加
+            this.ManaDic.Add(srcdata.Id, mdata);
+        }
+
+
+        /// <summary>
+        /// ShaderListファイルからリソースを作成する。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="filepath">読込ファイル「</param>
+        /// <param name="ipvec">頂点レイアウト null=デフォルト使用</param>
+        public async Task AddResourceFromShaderList<T>(string filepath, InputElementDescription[]? ipvec) where T : struct
+        {
+            if(ipvec == null)
+            {
+                ipvec = this.CreateDefaultVertexElement();
+            }
+
+            ShaderListFile fp = new ShaderListFile();
+            ShaderListFileDataRoot root = await fp.ReadFile(filepath);
+
+            root.ShaderList.ForEach(x =>
+            {
+                this.AddResource<T>(x, ipvec);
+            });
+        }
+
+        /// <summary>
+        /// データクリア
+        /// </summary>
+        public void ClearData()
+        {
+            this.ClearManageDic();
+        }
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+        /// <summary>
+        /// デフォルト頂点配置の作成
+        /// </summary>
+        /// <returns></returns>
+        private InputElementDescription[] CreateDefaultVertexElement()
+        {
+            InputElementDescription[] ipevec = {
+                                        new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                        new InputElementDescription("COLOR", 0, Format.R32G32B32A32_Float, 16, 0),
+                                        new InputElementDescription("TEXCOORD", 0, Format.R32G32_Float, 32, 0),
+                                    };
+            return ipevec;
+        }
+
+
+        /// <summary>
+        /// Shader管理データの作成
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sd">読込情報</param>
+        /// <param name="ipevec">頂点情報</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private ShaderManageData CreateShaderManageData<T>(ShaderSrcData sd, InputElementDescription[] ipevec) where T : struct
+        {
+            ShaderManageData data = new ShaderManageData();
+
+            //VertexShaderのコンパイル
+            var vs = this.CompileVertexShader(sd.SrcCode, sd.VsName, ipevec);
+            data.Vs = vs.vs;
+            data.Layout = vs.ivl;
+
+            //PixelShader
+            data.Ps = this.CompilePixelShader(sd.SrcCode, sd.PsName);
+            if (data.Ps == null)
+            {
+                throw new Exception("CompilePixelShader Exception");
+            }
+
+            //コンスタントバッファの作成
+            BufferDescription desc = new BufferDescription();
+            {
+                desc.BindFlags = BindFlags.ConstantBuffer;
+                desc.CpuAccessFlags = CpuAccessFlags.None;
+                desc.OptionFlags = ResourceOptionFlags.None;
+                desc.SizeInBytes = System.Runtime.CompilerServices.Unsafe.SizeOf<T>();
+                desc.StructureByteStride = 0;
+            }
+            data.ConstantBuffer = DxManager.Mana.DxDevice.CreateBuffer(desc);
+
+            return data;
+        }
+
+
+        /// <summary>
+        /// VertexShaderのコンパイル
+        /// </summary>
+        /// <param name="srcode">ソースコード</param>
+        /// <param name="funcname">使用関数名</param>
+        /// <param name="ipevec">頂点レイアウト</param>        
+        /// <returns></returns>
+        protected (ID3D11VertexShader vs, ID3D11InputLayout ivl) CompileVertexShader(string srcode, string funcname, InputElementDescription[] ipevec)
+        {
+            ID3D11VertexShader ans;
+            ID3D11InputLayout anslayout;
+            try
+            {
+                Vortice.Direct3D.Blob blob, erblob;
+                var cpret = Vortice.D3DCompiler.Compiler.Compile(srcode, funcname, "unknown", this.VertexShaderProfile, out blob, out erblob);
+                if (cpret != SharpGen.Runtime.Result.Ok)
+                {
+                    throw new Exception($"{erblob.ConvertToString()}");
+                }
+
+                //VSResourceの作成
+                ans = DxManager.Mana.DxDevice.CreateVertexShader(blob);
+
+                //頂点レイアウト作成
+                anslayout = DxManager.Mana.DxDevice.CreateInputLayout(ipevec, blob);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Crate VertexShader", ex);
+            }
+
+            return (ans, anslayout);
+        }
+
+        /// <summary>
+        /// PixelShaderのコンパイル
+        /// </summary>
+        /// <param name="srccode">コンパイルソースコード</param>
+        /// <param name="funcname">関数名</param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        protected ID3D11PixelShader CompilePixelShader(string srccode, string funcname)
+        {
+            ID3D11PixelShader ans;
+            try
+            {
+
+                Vortice.Direct3D.Blob blob, erblob;
+                var cpret = Vortice.D3DCompiler.Compiler.Compile(srccode, funcname, "unknown", this.PixelShaderProfile, out blob, out erblob);
+                if(cpret != SharpGen.Runtime.Result.Ok)
+                {
+                    throw new Exception($"{erblob.ConvertToString()}");
+                }
+
+                ans = DxManager.Mana.DxDevice.CreatePixelShader(blob);
+                
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Pixel Shader Compile", ex);
+            }
+
+            return ans;
         }
     }
 }

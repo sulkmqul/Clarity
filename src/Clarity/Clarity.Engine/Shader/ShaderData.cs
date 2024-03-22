@@ -20,7 +20,10 @@ namespace Clarity.Engine.Shader
 
     }
 
-    internal struct ShaderDataDefault
+    /// <summary>
+    /// デフォルトのShader設定データ
+    /// </summary>
+    public struct ShaderDataDefault
     {
         /// <summary>
         /// ワールド一覧

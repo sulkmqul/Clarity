@@ -145,7 +145,7 @@ namespace Clarity.Engine.Core
             //その他初期情報の取得
             {
                 //当たり判定描画可否
-                this.FData.RenderColliderFlag = ClarityEngine.EngineSetting.GetBool("Debug.Collider.Visible");
+                this.FData.RenderColliderFlag = ClarityEngine.EngineSetting.GetBool(EClarityEngineSettingKeys.Debug_Collider_Visible);
                 this.FData.RenderColBh = new RenderColliderBehavior();
             }
         }
@@ -244,11 +244,12 @@ namespace Clarity.Engine.Core
 
             long prev_time = 0;
 
-            float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit");
+            //float limittile = ClarityEngine.EngineSetting.GetFloat("FrameTimeLimit");
+            float limittile = 20.0f;
             double nexttime = limittile;
 
             //デバッグ可否
-            bool deflag = ClarityEngine.EngineSetting.GetBool("Debug.Enabled");
+            bool deflag = ClarityEngine.EngineSetting.GetBool(EClarityEngineSettingKeys.Debug_Enabled);
 
             //実行ループ
             ClarityLoop.Run(this.FData.Con, () =>
@@ -280,8 +281,6 @@ namespace Clarity.Engine.Core
                 //今回のフレーム時間を保存
                 prev_time = finfo.FrameTime;
 
-
-                
 
                 #region FPSの計算
                 if(deflag == true)
@@ -409,15 +408,19 @@ namespace Clarity.Engine.Core
         /// </summary>
         private void CreateEngineManagers()
         {
+            bool fixview = ClarityEngine.EngineSetting.GetBool(EClarityEngineSettingKeys.ViewDisplay_FixedDisplayFlag);
+            System.Drawing.Size? gsize = null;
+            Vector2 dvsize = new Vector2(this.FData.Con.Width, this.FData.Con.Height);
+            if (fixview == true)
+            {
+                Vector2 rvsize = ClarityEngine.EngineSetting.GetVec2(EClarityEngineSettingKeys.ViewDisplay_RenderingViewSize);
+                gsize = new System.Drawing.Size((int)rvsize.X, (int)rvsize.Y);
+                dvsize = ClarityEngine.EngineSetting.GetVec2(EClarityEngineSettingKeys.ViewDisplay_DisplayViewSize);
+            }
+
             #region エンジン管理クラスの作成
             //DirectXの初期化           
-            Vector2 rvsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize");
-            bool frvf = ClarityEngine.EngineSetting.GetBool("CE.FixedRenderingViewSize");
-            System.Drawing.Size? gsize = null;
-            if (frvf == true)
-            {
-                gsize = new System.Drawing.Size((int)rvsize.X, (int)rvsize.Y);
-            }
+
             DxManager.Init(this.FData.Con, gsize);
 
             //時間管理
@@ -447,9 +450,8 @@ namespace Clarity.Engine.Core
 
             #endregion
 
-            //全体デフォルト
-            Vector2 vsize = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize");
-            WorldManager.Mana.CreateSystemViewWorld((int)vsize.X, (int)vsize.Y);
+            //全体デフォルト            
+            WorldManager.Mana.CreateSystemViewWorld((int)dvsize.X, (int)dvsize.Y);
 
             //基本世界の作成
             this.CreateDefaultWorld();
@@ -461,13 +463,19 @@ namespace Clarity.Engine.Core
         /// </summary>
         private void CreateDefaultWorld()
         {
-            Vector2 vsize = ClarityEngine.EngineSetting.GetVec2("RenderingViewSize");            
+            bool fixview = ClarityEngine.EngineSetting.GetBool(EClarityEngineSettingKeys.ViewDisplay_FixedDisplayFlag);            
+            Vector2 rvsize = new Vector2(this.FData.Con.Width, this.FData.Con.Height);
+            if (fixview == true)
+            {
+                rvsize = ClarityEngine.EngineSetting.GetVec2(EClarityEngineSettingKeys.ViewDisplay_RenderingViewSize);
+            }
+            
             
             
             //デフォルト世界の登録
             WorldData wdata = new WorldData();
             wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(0.0f, 0.0f, -1000.0f), new Vector3(0.0f, 0.0f, 0.0f), -Vector3.UnitY);
-            wdata.ProjectionMat = Matrix4x4.CreateOrthographic(vsize.X, vsize.Y, 1.0f, 15000.0f);
+            wdata.ProjectionMat = Matrix4x4.CreateOrthographic(rvsize.X, rvsize.Y, 1.0f, 15000.0f);
 
             //wdata.DefaultCameraMat = Matrix4x4.CreateLookAt(new Vector3(1000.0f, 1000.0f, -2000.0f), new Vector3(0.0f, 0.0f, 0.0f), Vector3.UnitY);
             //wdata.ProjectionMat = Matrix4x4.CreatePerspectiveFieldOfView((float)(Math.PI / 4), vsize.Y / vsize.X, 0.01f, 10000.0f);
@@ -475,7 +483,7 @@ namespace Clarity.Engine.Core
             wdata.ReCalcu();
 
             //ViewPortの作成と登録
-            Viewport vp = new Viewport(0, 0, vsize.X, vsize.Y, 0.0f, 1.0f);
+            Viewport vp = new Viewport(0, 0, rvsize.X, rvsize.Y, 0.0f, 1.0f);
             wdata.VPort = new ViewPortData() { VPort = vp };
             
             WorldManager.Mana.Set(0, wdata);

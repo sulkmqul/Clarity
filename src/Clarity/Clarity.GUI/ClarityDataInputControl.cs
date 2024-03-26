@@ -133,7 +133,7 @@ namespace Clarity.GUI
         /// データの表示
         /// </summary>
         /// <param name="data">表示データ</param>
-        public void DispData(ClarityData data)
+        public void DispData(ClaritySettingCoreLine data)
         {
             //既存の削除
             this.ClearControl();
@@ -167,7 +167,7 @@ namespace Clarity.GUI
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T? GetInputData<T>() where T : ClarityData, new()
+        public T? GetInputData<T>() where T : ClaritySettingCoreLine, new()
         {
             //データ入力なし
             if(this.DataControlList.Count <= 0)

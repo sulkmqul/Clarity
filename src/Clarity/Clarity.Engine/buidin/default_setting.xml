@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--ClarityEngineデフォルト設定定義-->
+<!--全設定を網羅すること。変更したらEClarityEngineSettingKeysの辻褄を合わせること-->
+<ClaritySetting>
+	<FileVersion type="string">1.0.0.0</FileVersion>
+    
+	<!--ログ設定-->
+	<Log>
+		<!--EClarityLogLevelの値を設定する-->
+        <Level type="string">None</Level>
+		<!--EClarityLogModeの値を設定する-->
+        <Mode type="string">Console</Mode>		
+        <OutputPath></OutputPath>
+        <FileName></FileName>
+    </Log>
+	
+	
+	
+	<!--表示描画に関する設定-->
+	<ViewDisplay>		
+		<!--画面サイズを固定するか？ trueの場合管理コントロールサイズに合わせる falseの場合はDisplayViewSizeとRenderingViewSizeに従う-->
+		<!--game等全体描画の時はtrue、GUIや組み込みで使うときはfalse-->
+		<FixedDisplayFlag type="bool">false</FixedDisplayFlag>
+		<!--表示画面サイズ controlサイズおよびrendering textureを描画するポリゴンのサイズ-->
+		<DisplayViewSize type="vec2">1280,760</DisplayViewSize>
+		<!--内部画面サイズ rendering textureのサイズ-->
+		<RenderingViewSize type="vec2">1920,1080</RenderingViewSize>
+		<!--背景クリア色-->
+		<ClearColor type="vec3">0.0,0.0,0.0</ClearColor>
+	</ViewDisplay>
+    
+    <!--VertexShaderVersion-->
+    <VertexShaderVersion type="string">vs_4_0</VertexShaderVersion>
+	<!--PixelShaderVersion-->
+    <PixelShaderVersion type="string">ps_4_0</PixelShaderVersion>
+	<!--描画スレッド数(現在は無視)-->
+    <RenderingThreadCount type="int">1</RenderingThreadCount>
+
+	<!--デバッグ設定-->
+    <Debug>
+
+		<!--デバッグ可否-->
+		<Enabled type="bool">false</Enabled>
+		
+		<!--画面上に描くシステム情報設定-->
+        <SystemText>
+			<!--表示可否-->
+            <Enabled type="bool">false</Enabled>
+			<!--表示位置-->
+            <Pos type="vec2">10.0, 10.0</Pos>
+			<!--表示フォント名-->
+            <Font type="string">Arial</Font>
+			<!--フォントサイズ-->
+            <FontSize type="float">20.0</FontSize>
+        </SystemText>
+
+		<!--当たり判定-->
+		<Collider>
+			<!--表示可否-->
+			<Visible type="bool">false</Visible>
+			<!--通常色-->
+			<DefaultColor type="vec3">1.0,0.0,0.0</DefaultColor>
+			<!--判定中の色-->
+			<ContactColor type="vec3">1.0,1.0,0.0</ContactColor>
+		</Collider>
+    </Debug>
+</ClaritySetting>

@@ -8,6 +8,7 @@ using System.Drawing.Text;
 using System.Security.AccessControl;
 using System.Diagnostics.CodeAnalysis;
 using System.Configuration;
+using System.IO;
 
 namespace Clarity
 {
@@ -29,16 +30,26 @@ namespace Clarity
         private Dictionary<string, ClaritySettingData> DataDicKeyString = new Dictionary<string, ClaritySettingData>();
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
 
-
         /// <summary>
         /// 設定の読み込み
         /// </summary>
-        /// <param name="filepath">読み込みファイルパス</param>        
-        public void Read(string filepath)
+        /// <param name="filepath">読み込みファイルパス</param>       
+        /// <param name="overwrite">追記上書き可否 true=追記する</param>
+        public void Load(string filepath, bool overwrite = false)
+        {
+            using(FileStream fp = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            {
+                this.Load(fp, overwrite);
+            }            
+
+        }
+
+        public void Load(Stream st, bool overwrite = false)
         {
             //ファイルの読み込み
             ClaritySettingFile fp = new ClaritySettingFile();
-            List<ClaritySettingData> datalist = fp.ReadSetting(filepath);
+            List<ClaritySettingData> datalist = fp.ReadSetting(st);
+
 
             //コード重複チェック
             bool dcret = this.CheckCodeDuplicate(datalist);
@@ -56,11 +67,10 @@ namespace Clarity
             datalist.ForEach(x =>
             {
                 x.Id = id;
-                this.AddManage(x);
+                this.AddManage(x, overwrite);
                 id++;
 
             });
-
         }
 
         /// <summary>
@@ -74,7 +84,8 @@ namespace Clarity
             this.DataDicKeyString = new Dictionary<string, ClaritySettingData>();
 
             int id = 1;
-            datalist.ForEach(x => {
+            datalist.ForEach(x =>
+            {
                 ClaritySettingData data = new ClaritySettingData();
                 {
                     data.Id = id;
@@ -91,7 +102,7 @@ namespace Clarity
                 //管理へ追加
                 this.AddManage(data, true);
                 id++;
-            });            
+            });
         }
 
         /// <summary>

@@ -61,6 +61,16 @@ namespace Clarity.Engine.Properties {
         }
         
         /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] default_setting {
+            get {
+                object obj = ResourceManager.GetObject("default_setting", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   struct VS_IN
         ///{
         ///	float4 pos : POSITION;

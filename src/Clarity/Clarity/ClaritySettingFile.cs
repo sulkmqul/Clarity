@@ -25,7 +25,7 @@ namespace Clarity
     /// <summary>
     /// Clarity設定情報管理
     /// </summary>
-    public class ClaritySettingData : ClarityData
+    public class ClaritySettingData : ClaritySettingCoreLine
     {
         /// <summary>
         /// Nodeかデータか
@@ -357,53 +357,25 @@ namespace Clarity
     }
 
     /// <summary>
-    /// ユーザー設定の読み込み
+    /// Clarity独自設定ファイル管理
     /// </summary>
     internal class ClaritySettingFile : BaseClaritySetting
     {
-
         /// <summary>
-        /// ユーザー設定の読み込み
-        /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(string filepath)
-        {
-            int rid = 0;
-            string rname;
-            return this.ReadSetting(filepath, out rid, out rname);
-        }
-
-        /// <summary>
-        /// ユーザー設定の読み込み
+        /// 設定ファイルの読込
         /// </summary>
         /// <param name="filepath">読み込みパス</param>
-        /// <param name="rid">読み込みroot_id</param>
+        /// <param name="root_id">root_idの開始値</param>
         /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(string filepath, out int rid, out string name)
+        public List<ClaritySettingData> ReadSetting(string filepath, int root_id = 1)
         {
             List<ClaritySettingData> anslist = new List<ClaritySettingData>();
             try
             {
-                int root_id = 0;
-                string rname = "";
                 using (FileStream fp = new FileStream(filepath, FileMode.Open))
                 {
-                    anslist = this.ReadSetting(fp, out root_id, out rname);
-                }
-                rid = root_id;
-                name = rname;
-
-                //データIDの割り当て
-                anslist.ForEach(x =>
-                {
-                    x.Id = root_id++;
-                    if (rname.Length > 0)
-                    {
-                        x.Code = rname + "_" + x.Code;
-                    }
-                });
-                
+                    anslist = this.ReadSetting(fp, root_id);
+                }                
             }
             catch (Exception e)
             {
@@ -412,14 +384,15 @@ namespace Clarity
 
             return anslist;
         }
-                
 
         /// <summary>
         /// ユーザー設定の読み込み
         /// </summary>
         /// <param name="st"></param>
+        /// <param name="root_id"></param>
         /// <returns></returns>
-        public List<ClaritySettingData> ReadSetting(Stream st, out int rid, out string name)
+        /// <exception cref="Exception"></exception>
+        public List<ClaritySettingData> ReadSetting(Stream st, int root_id = 1)
         {
             List<ClaritySettingData> anslist = new List<ClaritySettingData>();
             try
@@ -427,11 +400,12 @@ namespace Clarity
                 XElement xml = XElement.Load(st);
                 anslist = this.ReadNodes(null, xml, false);
 
-                string s = xml.Attribute("root_id")?.Value ?? "0";
-                rid = Convert.ToInt32(s);
 
-                name = xml.Attribute("name")?.Value ?? "";
-                
+                //データIDの割り当て
+                anslist.ForEach(x =>
+                {
+                    x.Id = root_id++;
+                });
             }
             catch (Exception e)
             {
@@ -440,7 +414,9 @@ namespace Clarity
 
             return anslist;
         }
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
+
 
         /// <summary>
         /// XMLの読み込み
@@ -455,7 +431,7 @@ namespace Clarity
 
             //自身が解析できたか？
             {
-                ClaritySettingData ans = this.AnalyzeNode(parent, ele);                
+                ClaritySettingData? ans = this.AnalyzeNode(parent, ele);                
                 if (ans != null)
                 {
                     ans.Parent = parent;
@@ -466,7 +442,7 @@ namespace Clarity
             }
 
 
-            ClaritySettingData cp = null;
+            ClaritySettingData? cp = null;
             //親パス追加許可がある
             if (adp == true)
             {

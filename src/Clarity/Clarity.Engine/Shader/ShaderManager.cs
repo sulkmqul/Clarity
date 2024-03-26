@@ -70,7 +70,7 @@ namespace Clarity.Engine.Shader
         {
             get
             {
-                return ClarityEngine.EngineSetting.GetString("VertexShaderVersion");
+                return ClarityEngine.EngineSetting.GetString(EClarityEngineSettingKeys.VertexShaderVersion);
             }
         }
 
@@ -81,7 +81,7 @@ namespace Clarity.Engine.Shader
         {
             get
             {
-                return ClarityEngine.EngineSetting.GetString("PixelShaderVersion");
+                return ClarityEngine.EngineSetting.GetString(EClarityEngineSettingKeys.PixelShaderVersion);
             }
         }
 

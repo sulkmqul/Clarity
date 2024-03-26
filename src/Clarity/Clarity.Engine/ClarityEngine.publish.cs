@@ -55,9 +55,6 @@ namespace Clarity.Engine
             InputManager.Mana.ReadInputSetting(isfilepath);
         }
 
-
-        
-
         /// <summary>
         /// システムテキストの設定
         /// </summary>

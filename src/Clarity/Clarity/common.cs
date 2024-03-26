@@ -12,8 +12,53 @@ using System.Threading.Tasks;
 
 namespace Clarity
 {
-    class common
+    /// <summary>
+    /// Enumに文字列を付加するためのAttributeクラス
+    /// </summary>
+    public class StringAttribute : Attribute
     {
+        /// <summary>
+        /// データ
+        /// </summary>
+        public string Data { get; protected set; }
+
+        /// <summary>
+        /// 値の設定
+        /// </summary>
+        /// <param name="value"></param>
+        public StringAttribute(string value)
+        {
+            this.Data = value;
+        }
+    }
+
+    public static class common
+    {
+        public static string? GetAttributeString(this Enum value)
+        {
+            
+            //対象型の情報取得
+            Type type = value.GetType();
+            System.Reflection.FieldInfo? fieldInfo = type.GetField(value.ToString());            
+
+            //範囲外の値チェック
+            if (fieldInfo == null)
+            {
+                return null;
+            }
+            //対象のアトリビュート取得
+            StringAttribute[]? abvec = fieldInfo.GetCustomAttributes(typeof(StringAttribute), false) as StringAttribute[];
+            if(abvec == null)
+            {
+                return null;
+            }
+            if (abvec.Length <= 0)
+            {
+                return null;
+            }
+
+            return abvec[0].Data;
+        }
     }
 
     

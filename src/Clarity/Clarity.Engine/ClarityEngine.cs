@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Clarity.Engine.Element;
 using System.Runtime.CompilerServices;
+using System.IO;
+using System.Xml.Linq;
 
 namespace Clarity.Engine
 {
@@ -52,6 +54,9 @@ namespace Clarity.Engine
         /// </summary>
         private static ClarityEngine? _Engine = null;
 
+        /// <summary>
+        /// エンジンへのアクセス
+        /// </summary>
         private static ClarityEngine Engine
         {
             get
@@ -71,16 +76,9 @@ namespace Clarity.Engine
         internal Core.ClarityCore Core = new Clarity.Engine.Core.ClarityCore();
 
         /// <summary>
-        /// エンジン設定
+        /// エンジン設定(使用する時はEngineSettingを経由する。)
         /// </summary>
-        internal ClaritySetting _EngineSetting = new ClaritySetting();
-        internal static ClaritySetting EngineSetting
-        {
-            get
-            {
-                return ClarityEngine.Engine._EngineSetting;
-            }
-        }
+        private ClaritySetting _EngineSetting = new ClaritySetting();
 
         /// <summary>
         /// 全体で使用するEngineデータ
@@ -108,7 +106,6 @@ namespace Clarity.Engine
                 return true;
             }
         }
-
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -153,6 +150,8 @@ namespace Clarity.Engine
             ClarityLog.Release();
         }
 
+
+        //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// システムテキストの設定(内部用)
         /// </summary>
@@ -162,7 +161,6 @@ namespace Clarity.Engine
         {
             ClarityEngine.Engine.EngineData.SystemText.SetText(s, line);
         }
-
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -177,34 +175,25 @@ namespace Clarity.Engine
             this.Con = con;
 
             //エンジン設定の読み込み
-            this._EngineSetting = new ClaritySetting();
-            if (cesfilepath != null)
-            {
-                ClarityEngine.EngineSetting.Read(cesfilepath);
-            }
+            this.LoadEngineSetting(cesfilepath);
 
-            //エンジン基底設定
-            this.SetEngineDefault();
-            //追加設定
-            this.SetEngineExtraSetting();
 
             //ログの初期化
             {
-                EClarityLogLevel lev = ClarityEngine.EngineSetting.GetEnum<EClarityLogLevel>("Log.Level");
-                EClarityLogMode lmode = ClarityEngine.EngineSetting.GetEnum<EClarityLogMode>("Log.Mode");
-                string logpath = ClarityEngine.EngineSetting.GetString("Log.OutputPath");
-                string logname = ClarityEngine.EngineSetting.GetString("Log.FileName");
+                EClarityLogLevel lev = ClarityEngine.EngineSetting.GetEnum<EClarityLogLevel>(EClarityEngineSettingKeys.Log_Level);
+                EClarityLogMode lmode = ClarityEngine.EngineSetting.GetEnum<EClarityLogMode>(EClarityEngineSettingKeys.Log_Mode);
+                string logpath = ClarityEngine.EngineSetting.GetString(EClarityEngineSettingKeys.Log_OutputPath);
+                string logname = ClarityEngine.EngineSetting.GetString(EClarityEngineSettingKeys.Log_FileName);
                 ClarityLog.Init(lev, lmode, logpath, logname);
             }
 
-            //エンジン基礎の初期化
+            //
             DLL.Winmm.timeBeginPeriod(1);
             Util.RandomMaker.Init();
 
             //画面設定
-            Vector2 vec = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize");
-            con.ClientSize = new System.Drawing.Size((int)vec.X, (int)vec.Y);
-
+            //Vector2 vec = ClarityEngine.EngineSetting.GetVec2("DisplayViewSize");
+            //con.ClientSize = new System.Drawing.Size((int)vec.X, (int)vec.Y);
 
             //データの作成
             this.EngineData = new ClarityEngineData();
@@ -213,102 +202,62 @@ namespace Clarity.Engine
             this.Core = new Core.ClarityCore();
             this.Core.Init(con);
 
-            //システムテキストの作成
-            {
-                string fontname = ClarityEngine.EngineSetting.GetString("Debug.SystemText.Font");
-                float fontsize = ClarityEngine.EngineSetting.GetFloat("Debug.SystemText.FontSize");
 
-                TextObject stext = new Element.TextObject("", 0, fontname, fontsize);
-                stext.Enabled = ClarityEngine.EngineSetting.GetBool("Debug.SystemText.Enabled");
-                stext.TransSet.Pos2D = ClarityEngine.EngineSetting.GetVec2("Debug.SystemText.Pos");
-                this.EngineData.SystemText = stext;
-
-                //SwapChain描画命令
-                this.Core.AddSwapChainElement(this.EngineData.SystemText);
-            }
+            //システム表示textの作成
+            this.CreateSystemText();            
 
             //システムElement構造の作成
             this.CreateSystemStructure();
 
         }
 
-
         /// <summary>
-        /// デフォルト設定を適応する。
+        /// エンジン設定の読み込み
         /// </summary>
-        private void SetEngineDefault()
-        {
-            //必須のデフォルト設定
-            //随時追加すること
-            (string, object)[] setvec =  {
-                ("Log.Level", EClarityLogLevel.None.ToString()),
-                ("Log.Mode", EClarityLogMode.Console.ToString()),
-                ("Log.OutputPath", ""),
-                ("Log.FileName", ""),
+        /// <param name="cefilepath"></param>
+        private void LoadEngineSetting(string? cefilepath)
+        {   
+            this._EngineSetting = new ClaritySetting();
 
-                ("DisplayViewSize", new Vector2(-1)),
-                ("RenderingViewSize", new Vector2(-1)),
-
-                ("VertexShaderVersion", "vs_5_0"),
-                ("PixelShaderVersion", "ps_5_0"),
-                ("RenderingThreadCount", 1),
-
-                ("FrameTimeLimit", 1000.0f),
-
-                ("Debug.Enabled", false),
-                ("Debug.SystemText.Enabled", false),
-                ("Debug.SystemText.Pos", new Vector2(10.0f)),
-                ("Debug.SystemText.Font", "Arial"),
-                ("Debug.SystemText.FontSize", 20.0f),
-                ("Debug.Collider.Visible", false),
-                ("Debug.Collider.DefaultColor", new Vector3(1.0f, 0.0f, 0.0f)),
-                ("Debug.Collider.ContactColor", new Vector3(1.0f, 1.0f, 0.0f)),
-            };
-
-            foreach (var data in setvec)
+            //既存設定の取得
+            using (MemoryStream mst = new MemoryStream(Properties.Resources.default_setting))
             {
-                //登録済みかを確認
-                bool exf = this._EngineSetting.CheckExists(data.Item1);
-                if (exf == false)
-                {
-                    //登録してないならデフォルト値を設定
-                    this._EngineSetting.SetData(data.Item1, data.Item2);
-                }
+                this._EngineSetting.Load(mst);
+            }
+            //ユーザー設定の読み込み
+            if (cefilepath != null)
+            {
+                //defaultに上書きする形で追記する。
+                this._EngineSetting.Load(cefilepath, true);
             }
 
+            var list = this._EngineSetting.GetManagedKeyCode();
+            using (FileStream mmm = new FileStream("settingkey.txt", FileMode.Create))
+            {
+                using(StreamWriter sw = new StreamWriter(mmm))
+                {
+                    list.ForEach(x => sw.WriteLine(x.code));
+                }
+            }
+            
         }
 
 
         /// <summary>
-        /// 設定ファイルから必要なエンジン設定を生成、上書きする
+        /// システムテキストの作成
         /// </summary>
-        private void SetEngineExtraSetting()
+        private void CreateSystemText()
         {
-            string prefix = "CE";
-            //DisplayViewSizeの設定
-            {
-                bool dvf = false;
-                Vector2 dsize = this._EngineSetting.GetVec2("DisplayViewSize");
-                if (dsize.X < 0 || dsize.Y < 0)
-                {
-                    dsize = new Vector2(this.Con.Width, this.Con.Height);
-                    dvf = true;
-                }
-                this._EngineSetting.SetData("DisplayViewSize", dsize);
-                this._EngineSetting.SetData($"{prefix}.FixedDisplayViewSize", dvf);
-            }
-            //RenderingViewSizeの設定
-            {
-                bool rvf = false;
-                Vector2 rsize = this._EngineSetting.GetVec2("RenderingViewSize");
-                if (rsize.X >= 0 || rsize.Y >= 0)
-                {
-                    rsize = new Vector2(this.Con.Width, this.Con.Height);
-                    rvf = true;
-                }
-                this._EngineSetting.SetData("RenderingViewSize", rsize);
-                this._EngineSetting.SetData($"{prefix}.FixedRenderingViewSize", rvf);
-            }
+            string fontname = ClarityEngine.EngineSetting.GetString(EClarityEngineSettingKeys.Debug_SystemText_Font);
+            float fontsize = ClarityEngine.EngineSetting.GetFloat(EClarityEngineSettingKeys.Debug_SystemText_FontSize);
+
+            TextObject stext = new Element.TextObject("", 0, fontname, fontsize);
+            stext.Enabled = ClarityEngine.EngineSetting.GetBool(EClarityEngineSettingKeys.Debug_SystemText_Enabled);
+            stext.TransSet.Pos2D = ClarityEngine.EngineSetting.GetVec2(EClarityEngineSettingKeys.Debug_SystemText_Pos);
+            this.EngineData.SystemText = stext;
+
+            //SwapChain描画命令
+            this.Core.AddSwapChainElement(this.EngineData.SystemText);
         }
 
         /// <summary>

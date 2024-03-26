@@ -17,9 +17,8 @@ namespace Clarity
     /// <summary>
     /// clairty settingの一行だけを表すデータ
     /// </summary>
-    public class ClarityData
+    public class ClaritySettingCoreLine
     {
-
         /// <summary>
         /// これのタグ名
         /// </summary>
@@ -93,7 +92,7 @@ namespace Clarity
         /// <param name="ele"></param>
         /// <returns></returns>
         /// <exception cref="FormatException"></exception>
-        protected T? AnalyzeNodeCore<T>(XElement ele) where T : ClarityData, new()
+        protected T? AnalyzeNodeCore<T>(XElement ele) where T : ClaritySettingCoreLine, new()
         {
             T ans = new T();
 
@@ -428,9 +427,9 @@ namespace Clarity
         /// </summary>
         /// <param name="ele">解析行</param>
         /// <returns></returns>
-        public ClarityData? Analyze(XElement ele)
+        public ClaritySettingCoreLine? Analyze(XElement ele)
         {
-            return this.Analyze<ClarityData>(ele);
+            return this.Analyze<ClaritySettingCoreLine>(ele);
         }
 
         /// <summary>
@@ -438,9 +437,9 @@ namespace Clarity
         /// </summary>
         /// <param name="estring">読み込み対象xml形式文字列</param>
         /// <returns></returns>
-        public ClarityData? Analyze(string estring)
+        public ClaritySettingCoreLine? Analyze(string estring)
         {
-            return this.Analyze<ClarityData>(estring);
+            return this.Analyze<ClaritySettingCoreLine>(estring);
         }
 
         /// <summary>
@@ -449,7 +448,7 @@ namespace Clarity
         /// <typeparam name="T"></typeparam>
         /// <param name="ele"></param>
         /// <returns></returns>
-        public T? Analyze<T>(XElement ele) where T : ClarityData, new()
+        public T? Analyze<T>(XElement ele) where T : ClaritySettingCoreLine, new()
         {
             return this.AnalyzeNodeCore<T>(ele);
         }
@@ -460,7 +459,7 @@ namespace Clarity
         /// <typeparam name="T"></typeparam>
         /// <param name="estring"></param>
         /// <returns></returns>
-        public T? Analyze<T>(string estring) where T : ClarityData, new()
+        public T? Analyze<T>(string estring) where T : ClaritySettingCoreLine, new()
         {
             XElement ele = XElement.Parse(estring);
             return this.Analyze<T>(ele);
@@ -479,7 +478,7 @@ namespace Clarity
         /// valuestring="12,15"
         /// ので渡すとvec2のデータ入りを作成する
         /// </remarks>
-        public T? Analyze<T>(EClaritySettingDataType dt, string valuestring, string tagname="tag") where T : ClarityData, new()
+        public T? Analyze<T>(EClaritySettingDataType dt, string valuestring, string tagname="tag") where T : ClaritySettingCoreLine, new()
         {
             //疑似的にxmlを作成する
             XElement ele = new XElement(tagname);
@@ -499,7 +498,7 @@ namespace Clarity
         /// <param name="slist"></param>
         /// <param name="tagname"></param>
         /// <returns></returns>
-        public T? Analyze<T>(EClaritySettingDataType dt, List<string> slist, string tagname = "tag") where T : ClarityData, new()
+        public T? Analyze<T>(EClaritySettingDataType dt, List<string> slist, string tagname = "tag") where T : ClaritySettingCoreLine, new()
         {
             //データなし
             if(slist.Count <= 0)
@@ -549,7 +548,7 @@ namespace Clarity
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public XElement CreateElement(ClarityData data)
+        public XElement CreateElement(ClaritySettingCoreLine data)
         {
             //タグの書き込み
             XElement ans = new XElement(data.TagName);

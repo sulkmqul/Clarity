@@ -71,11 +71,6 @@ namespace Clarity.Engine.Core
             public Control Con;
 
             /// <summary>
-            /// クリア色
-            /// </summary>
-            public Color4 ViewClearColor = new Color4(1.0f, 0.0f, 0.0f, 0.0f);
-
-            /// <summary>
             /// 実行プラグイン
             /// </summary>
             public ClarityEnginePlugin? ExProc = null;
@@ -104,14 +99,6 @@ namespace Clarity.Engine.Core
         /// </summary>
         private ClarityCoreData FData;
 
-
-        public Color4 ClearColor
-        {
-            set
-            {
-                this.FData.ViewClearColor = value;
-            }
-        }
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -356,7 +343,8 @@ namespace Clarity.Engine.Core
 
             //描画対象            
             DxManager.Mana.ChangeRenderTarget(DxManager.ERenderTargetNo.RenderingTexture);
-            DxManager.Mana.BeginRendering(this.FData.ViewClearColor);
+            var cl = ClarityEngine.EngineSetting.GetVec4(EClarityEngineSettingKeys.ViewDisplay_ClearColor);
+            DxManager.Mana.BeginRendering(new Color4(cl.X, cl.Y, cl.Z, cl.W));
 
             {
                 ////処理の設定

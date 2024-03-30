@@ -65,6 +65,7 @@ namespace Clarity
                 ("float", EClaritySettingDataType.Float),
                 ("vec2", EClaritySettingDataType.Vec2),
                 ("vec3", EClaritySettingDataType.Vec3),
+                ("vec4", EClaritySettingDataType.Vec4),
                 ("string", EClaritySettingDataType.String),
                 ("array", EClaritySettingDataType.Array),
         };
@@ -78,6 +79,7 @@ namespace Clarity
                 (typeof(float), EClaritySettingDataType.Float),
                 (typeof(Vector2), EClaritySettingDataType.Vec2),
                 (typeof(Vector3), EClaritySettingDataType.Vec3),
+                (typeof(Vector4), EClaritySettingDataType.Vec4),
                 (typeof(string), EClaritySettingDataType.String),                
         };
 
@@ -297,6 +299,7 @@ namespace Clarity
             adic.Add(EClaritySettingDataType.Float, this.AnalyzeDataFloat);
             adic.Add(EClaritySettingDataType.Vec2, this.AnalyzeDataVec2);
             adic.Add(EClaritySettingDataType.Vec3, this.AnalyzeDataVec3);
+            adic.Add(EClaritySettingDataType.Vec4, this.AnalyzeDataVec4);
             adic.Add(EClaritySettingDataType.String, this.AnalyzeDataString);
             adic.Add(EClaritySettingDataType.Array, this.AnalyzeDataArray);
 
@@ -350,7 +353,7 @@ namespace Clarity
             return v;
         }
         /// <summary>
-        /// vec2の解析
+        /// vec3の解析
         /// </summary>
         /// <param name="ele"></param>
         private object AnalyzeDataVec3(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
@@ -362,6 +365,24 @@ namespace Clarity
             v.X = Convert.ToSingle(svec[0]);
             v.Y = Convert.ToSingle(svec[1]);
             v.Z = Convert.ToSingle(svec[2]);
+
+            return v;
+        }
+
+        /// <summary>
+        /// vec4の解析
+        /// </summary>
+        /// <param name="ele"></param>
+        private object AnalyzeDataVec4(XElement ele, EClaritySettingDataType type, EClaritySettingDataType subtype)
+        {
+            Vector4 v = new Vector4(0.0f);
+
+
+            string[] svec = ele.Value.Split(",");
+            v.X = Convert.ToSingle(svec[0]);
+            v.Y = Convert.ToSingle(svec[1]);
+            v.Z = Convert.ToSingle(svec[2]);
+            v.W = Convert.ToSingle(svec[3]);
 
             return v;
         }
@@ -409,6 +430,7 @@ namespace Clarity
         Float,
         Vec2,
         Vec3,
+        Vec4,
         String,
         Array,
 

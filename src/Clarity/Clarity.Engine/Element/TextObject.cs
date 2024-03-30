@@ -43,6 +43,7 @@ namespace Clarity.Engine.Element
             {
                 rtarget.DrawText(obj.Text, obj.TFormat, rc, bru);
             }
+            
         }
     }
 

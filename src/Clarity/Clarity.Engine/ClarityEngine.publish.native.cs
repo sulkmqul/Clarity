@@ -90,15 +90,7 @@ namespace Clarity.Engine
                 ClarityEngine._Engine = null;
 
             }
-
-            /// <summary>
-            /// クリア色の設定
-            /// </summary>
-            /// <param name="col"></param>
-            public static void SetClearColor(Vector4 col)
-            {
-                ClarityEngine.Engine.Core.ClearColor = new Color4(col.X, col.Y, col.Z, col.W);
-            }
+                        
         }
     }
 }

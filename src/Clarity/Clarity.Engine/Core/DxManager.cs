@@ -70,7 +70,7 @@ namespace Clarity.Engine.Core
         #region メンバ変数
 
         /// <summary>
-        /// 親コントロール(描画場所)
+        /// 親コントロール(描画場所、handleとサイズがあれば良いのでそのうちラップするかも)
         /// </summary>
         protected Control MCont = null;
 

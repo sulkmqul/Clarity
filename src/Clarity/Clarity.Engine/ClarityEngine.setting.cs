@@ -144,6 +144,16 @@ namespace Clarity.Engine
             }
 
             /// <summary>
+            /// Vector4設定の取得
+            /// </summary>
+            /// <param name="code"></param>
+            /// <returns></returns>
+            public static Vector4 GetVec4(EClarityEngineSettingKeys code)
+            {
+                return ClarityEngine.Engine._EngineSetting.GetVec4(code.GetAttributeString() ?? "");
+            }
+
+            /// <summary>
             /// Integer設定配列の取得
             /// </summary>
             /// <param name="code"></param>

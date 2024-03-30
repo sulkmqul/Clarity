@@ -27,7 +27,7 @@
 		<!--内部画面サイズ rendering textureのサイズ-->
 		<RenderingViewSize type="vec2">1920,1080</RenderingViewSize>
 		<!--背景クリア色-->
-		<ClearColor type="vec3">0.0,0.0,0.0</ClearColor>
+		<ClearColor type="vec4">1.0,0.0,0.0,1.0</ClearColor>		
 	</ViewDisplay>
     
     <!--VertexShaderVersion-->

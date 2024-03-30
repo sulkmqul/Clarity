@@ -414,6 +414,26 @@ namespace Clarity
         }
 
         /// <summary>
+        /// Vector4設定の取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public Vector4 GetVec4(string code)
+        {
+            return this.GetSetting<Vector4>(code);
+        }
+
+        /// <summary>
+        /// Vector4設定の取得
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public Vector4 GetVec4(string code, Vector4 def)
+        {
+            return this.GetSetting<Vector4>(code, def);
+        }
+
+        /// <summary>
         /// Integer設定配列の取得
         /// </summary>
         /// <param name="code"></param>

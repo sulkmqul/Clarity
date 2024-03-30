@@ -107,8 +107,9 @@ namespace ClarityImageViewer.Viewer
         {
             //エンジンの初期化
             ClarityEngine.Init(this);
-            //背景色の設定
-            ClarityEngine.Native.SetClearColor(new System.Numerics.Vector4(0.2f, 0.2f, 0.2f, 1.0f));
+            //背景色の設定            
+            ClarityEngine.EngineSetting.SetEngineParam(EClarityEngineSettingKeys.ViewDisplay_ClearColor, new System.Numerics.Vector4(0.2f, 0.2f, 0.2f, 1.0f));
+
 
             //世界設定
             this.SetWorld();

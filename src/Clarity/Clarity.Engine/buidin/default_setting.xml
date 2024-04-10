@@ -19,7 +19,7 @@
 	
 	<!--表示描画に関する設定-->
 	<ViewDisplay>		
-		<!--画面サイズを固定するか？ trueの場合管理コントロールサイズに合わせる falseの場合はDisplayViewSizeとRenderingViewSizeに従う-->
+		<!--画面サイズを固定するか？ falseの場合管理コントロールサイズに合わせる trueの場合はDisplayViewSizeとRenderingViewSizeに従う-->
 		<!--game等全体描画の時はtrue、GUIや組み込みで使うときはfalse-->
 		<FixedDisplayFlag type="bool">false</FixedDisplayFlag>
 		<!--表示画面サイズ controlサイズおよびrendering textureを描画するポリゴンのサイズ-->

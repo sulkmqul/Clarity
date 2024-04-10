@@ -67,9 +67,18 @@ namespace Clarity
                 if (Instance == null)
                 {
                     Instance = new T();
+                    Instance.Initialize();
                 }
                 return Instance;
             }
+        }
+
+        /// <summary>
+        /// 初期化
+        /// </summary>
+        protected virtual void Initialize()
+        {
+
         }
     }
 

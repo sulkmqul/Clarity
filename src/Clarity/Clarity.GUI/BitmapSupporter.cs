@@ -13,7 +13,7 @@ namespace Clarity.GUI
     /// <summary>
     /// Windows以外での使用を一応考慮し、System.Drawing.Bitmapに関する処理を分離する
     /// </summary>
-    internal static class BitmapSupporter
+    public static class BitmapSupporter
     {
 
         /// <summary>

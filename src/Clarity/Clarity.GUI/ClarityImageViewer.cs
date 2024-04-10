@@ -12,6 +12,9 @@ using System.Windows.Forms;
 namespace Clarity.GUI
 {
     public delegate void ClarityViewerMouseEventDelegate(MouseInfo minfo, ImageViewerTranslator ivt);
+
+
+    public delegate void ClarityViewerZoomChangedEventDelegate(double rate);
     //public delegate void ClarityImageViewerRenderEventDelegate(Graphics gra, ImageViewerTranslator ivt);
 
     /// <summary>
@@ -233,6 +236,9 @@ namespace Clarity.GUI
         [Category(CommonDescriptionCategory)]
         [Description("View上でマウスが離された時")]
         public event ClarityViewerMouseEventDelegate? ClarityViewerMouseUpEvent = null;
+        [Category(CommonDescriptionCategory)]
+        [Description("拡大率が変更された時")]
+        public event ClarityViewerZoomChangedEventDelegate? ClarityViewerZoomChangedEvent = null;
         #endregion
 
         /// <summary>
@@ -331,7 +337,7 @@ namespace Clarity.GUI
         /// <summary>b
         /// 読み込み画像
         /// </summary>
-        private System.Drawing.Image? SrcImage = null;
+        public System.Drawing.Image? SrcImage { get; private set; } = null;
 
         /// <summary>
         /// 座標管理・・・初期化後作成
@@ -339,9 +345,16 @@ namespace Clarity.GUI
         private ImageViewerTranslator? Ivt = null;
 
         /// <summary>
-        /// 拡大率テーブルテンプレ
+        /// 拡大率テーブル(1.0未満の拡大率を列挙する、大きい方は自動)
         /// </summary>
-        private readonly double[] ZoomTableTemplate = { 0.0625, 0.125, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0 };
+        //private readonly double[] ZoomTableTemplate = { 0.0625, 0.125, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0 };
+        //private readonly double[] ZoomTableTemplate = { 0.0625, 0.125, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 12.0, 16.0, 20.0, 24.0, 28.0, 32.0, 40.0, 48.0, 56.0, 64.0, 80.0, 96.0, 112.0, 128.0, 160.0, 192.0, 224.0, 256.0, 384.0, 512.0 };
+        private readonly double[] ZoomTableTemplateZoomOut = { 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95};
+        /// <summary>
+        /// 最大拡大率
+        /// </summary>
+        private readonly double MaxZoom = 20.0;
+
         /// <summary>
         /// 拡大率テーブル
         /// </summary>
@@ -431,13 +444,42 @@ namespace Clarity.GUI
         }
 
 
+        public void ChangeZoomCenter(double rate)
+        {
+            //拡縮中心位置を表示位置中心とする
+            float cx = this.DispRect.Width * 0.5f;
+            float cy = this.DispRect.Height * 0.5f;
+
+            this.ChangeZoom(rate, new PointF(cx, cy));
+        }
+
+
         /// <summary>
         /// Fitting処理
         /// </summary>
         public void FitImage()
         {
             this.ZoomRate = this.CalcuFitRate();
-            this.CalcuViewArea();
+
+            //拡縮中心位置を表示位置中心とする
+            this.ChangeZoomCenter(this.ZoomRate);
+            this.Refresh();
+        }
+
+        /// <summary>
+        /// 等倍表示
+        /// </summary>
+        public void SetSameSize()
+        {
+            if(this.SrcImage == null)
+            {
+                return;
+            }
+
+            this.ZoomRate = 1.0f;
+            
+            this.ChangeZoomCenter(this.ZoomRate);
+            this.Refresh();
         }
 
 
@@ -469,7 +511,10 @@ namespace Clarity.GUI
         public void RemoveDisplayer(BaseDisplayer dp)
         {
             this.DisplayerList.Remove(dp);
-            this.clarityViewerMinimapView.RemoveDisplayer(dp.ManageLink);
+            if (dp.ManageLink != null)
+            {
+                this.clarityViewerMinimapView.RemoveDisplayer(dp.ManageLink);
+            }
 
             this.Refresh();
 
@@ -515,7 +560,11 @@ namespace Clarity.GUI
         /// <param name="size">元サイズ、元画像がある場合は元画像のサイズであること</param>
         private void Init(System.Drawing.Image? srcimage, SizeF size)
         {
+            //これまでの描画者の登録解除
+            //this.ClearDisplayer();
+
             //画像の読み込み
+            this.SrcImage?.Dispose();
             this.SrcImage = null;
             if (srcimage != null)
             {
@@ -523,7 +572,9 @@ namespace Clarity.GUI
             }
 
             this.Ivt = new ImageViewerTranslator();
-            this.DispRect = new RectangleF(0, 0, this.Width, this.Height);            
+            this.DispRect = new RectangleF(0, 0, this.Width, this.Height);
+
+            
 
             //元画像の表示エリアを確定せる
             this.SrcRect = new RectangleF(0, 0, size.Width, size.Height);
@@ -531,9 +582,7 @@ namespace Clarity.GUI
             //minimapの初期化
             this.clarityViewerMinimapView.Init(this.SrcImage, this.SrcRect);
             this.clarityViewerMinimapView.Relocate(this.DispRect);
-
-            //これまでの描画者の登録解除b
-            this.ClearDisplayer();
+                       
 
             //描画サイズを設定
             this.ZoomRate = this.CalcuFitRate();
@@ -550,6 +599,12 @@ namespace Clarity.GUI
 
             this.Refresh();
         }
+
+        private void LoadImage(System.Drawing.Image? srcimage, SizeF size)
+        {
+
+        }
+
         /// <summary>
         /// Fitする拡大率を計算
         /// </summary>
@@ -622,6 +677,10 @@ namespace Clarity.GUI
 
             RectangleF rc = new RectangleF(-(nrx * nw)+ dcen.X, -(nry * nh) + dcen.Y, nw, nh);            
             this.SetViewPos(rc.X, rc.Y, rc.Width, rc.Height);
+
+
+            //イベント告知
+            this.ClarityViewerZoomChangedEvent?.Invoke(this.ZoomRate);
         }
 
         /// <summary>
@@ -706,7 +765,19 @@ namespace Clarity.GUI
         private void CreateZoomTable()
         {
             List<double> zrlist = new List<double>();
-            zrlist.AddRange(this.ZoomTableTemplate);
+
+            {
+                zrlist.AddRange(this.ZoomTableTemplateZoomOut);
+                
+                double zoom = 1.0;
+
+                while(zoom < this.MaxZoom)
+                {
+                    zrlist.Add(zoom);
+                    zoom *= 1.1;
+                }
+                zrlist.Add(this.MaxZoom);
+            }
 
             //Fit拡縮率の計算
             double fitrate = this.CalcuFitRate();

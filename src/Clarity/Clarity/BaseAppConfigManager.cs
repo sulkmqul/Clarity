@@ -11,7 +11,7 @@ namespace Clarity
     /// アプリケーション構成ファイル基底クラス
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class BaseAppConfigManager<T> : BaseClaritySingleton<T> where T : BaseAppConfigManager<T>
+    public abstract class BaseAppConfigManager<T> : BaseClarityConstSingleton<T> where T : BaseAppConfigManager<T>, new ()
     {
         #region 変換関数
         /// <summary>
@@ -26,8 +26,8 @@ namespace Clarity
 
             try
             {
-                //値を取得して変換
-                string s = ConfigurationManager.AppSettings[key];
+                //値を取得して変換                
+                string s = ConfigurationManager.AppSettings[key] ?? "";
                 int n = Convert.ToInt32(s);
                 if (n == 0)
                 {
@@ -56,7 +56,7 @@ namespace Clarity
             try
             {
                 //値を取得して変換
-                string s = ConfigurationManager.AppSettings[key];
+                string s = ConfigurationManager.AppSettings[key] ?? "";
                 ans = Convert.ToInt32(s);
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace Clarity
         /// <returns></returns>
         protected string GetString(string key, string def = "")
         {
-            string ans = def;
+            string? ans = def;
 
             try
             {
@@ -107,7 +107,7 @@ namespace Clarity
             try
             {
                 //値を取得して変換
-                string s = ConfigurationManager.AppSettings[key];
+                string s = ConfigurationManager.AppSettings[key] ?? "";
                 ans = Convert.ToDouble(s);
             }
             catch (Exception ex)
@@ -131,7 +131,7 @@ namespace Clarity
             try
             {
                 //値を取得して変換
-                string s = ConfigurationManager.AppSettings[key];
+                string s = ConfigurationManager.AppSettings[key] ?? "";
                 ans = Convert.ToSingle(s);
             }
             catch (Exception ex)

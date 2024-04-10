@@ -15,7 +15,7 @@ namespace Clarity.Util
         /// コンストラクタ
         /// </summary>
         /// <param name="startval">初期値</param>
-        public ClaritySequence(int startval = 0)
+        public ClaritySequence(ulong startval = 0)
         {
             this.Current = startval;
         }
@@ -23,12 +23,12 @@ namespace Clarity.Util
         /// <summary>
         /// 現在値
         /// </summary>
-        public int Current { get; private set; } = 0;
+        public ulong Current { get; private set; } = 0;
 
         /// <summary>
         /// 次の値を取得
         /// </summary>
-        public int NextValue
+        public ulong NextValue
         {
             get
             {
@@ -37,5 +37,13 @@ namespace Clarity.Util
             }
         }
 
+        /// <summary>
+        /// 値の初期化
+        /// </summary>
+        /// <param name="val">初期化値</param>
+        public void Reset(ulong val = 0)
+        {
+            this.Current = val;
+        }
     }
 }

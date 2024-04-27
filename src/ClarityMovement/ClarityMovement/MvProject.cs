@@ -21,7 +21,32 @@ namespace ClarityMovement
         /// </summary>
         public List<BaseEditTag> TagList { get; private set; } = new List<BaseEditTag>();
 
+        /// <summary>
+        /// タグの追加
+        /// </summary>
+        /// <param name="tag"></param>
+        public void AddTag(BaseEditTag tag)
+        {
+            this.TagList.Add(tag);
+            //indexの再割り当て
+            int index = 0;
+            this.TagList.ForEach(x => x.Index = index++);
 
+            MvGlobal.SendEventUI(EMovementUIEvent.TagAdd, tag);
+        }
+        /// <summary>
+        /// タグの削除
+        /// </summary>
+        /// <param name="tag"></param>
+        public void RemoveTag(BaseEditTag tag)
+        {
+            this.TagList.Remove(tag);
+            //indexの再割り当て
+            int index = 0;
+            this.TagList.ForEach(x => x.Index = index++);
+
+            MvGlobal.SendEventUI(EMovementUIEvent.TagRemove, tag);
+        }
     }
 
     /// <summary>
@@ -33,6 +58,7 @@ namespace ClarityMovement
         {
         }
 
+        public int Index { get; set; } = 0;
 
         /// <summary>
         /// 開始フレーム

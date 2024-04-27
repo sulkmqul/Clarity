@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ClarityMovement.Editor
 {
@@ -32,7 +33,7 @@ namespace ClarityMovement.Editor
         /// <summary>
         /// 描画者
         /// </summary>
-        private EditorRenderer Renderer = new EditorRenderer();
+        private EditorLogic Logic = new EditorLogic();
 
         /// <summary>
         /// マウス管理
@@ -47,7 +48,7 @@ namespace ClarityMovement.Editor
             var cd = MvGlobal.EventUI.Where(x => x.Event == EMovementUIEvent.NewProject).Subscribe(x =>
             {
                 //描画領域の作成                
-                this.Renderer.Init(MvGlobal.Project);
+                this.Logic.Init(MvGlobal.Project);
                 this.SetScrollH();
                 this.Refresh();
             });
@@ -60,6 +61,29 @@ namespace ClarityMovement.Editor
                 this.SetScrollH();
                 this.Refresh();
             });
+            this.SubErase.Add(cd);
+
+
+            //タグの追加
+            cd = MvGlobal.EventUI.Where(x => x.Event == EMovementUIEvent.TagAdd ).Subscribe(x =>
+            {                
+                var tag = x.Data as BaseEditTag;
+                if (tag != null)
+                {
+                    this.Logic.AddTagUiElement(tag);
+                }
+            });
+            this.SubErase.Add(cd);
+            //タグの削除
+            cd = MvGlobal.EventUI.Where(x => x.Event == EMovementUIEvent.TagRemove).Subscribe(x =>
+            {
+                var tag = x.Data as BaseEditTag;
+                if (tag != null)
+                {
+                    this.Logic.RemoveTagUiElement(tag);
+                }
+            });
+            this.SubErase.Add(cd);
         }
 
         /// <summary>
@@ -76,14 +100,17 @@ namespace ClarityMovement.Editor
         /// </summary>
         private void SetScrollH()
         {
-            this.hScrollBar1.Maximum = (int)((this.Renderer.FrameRenderSize.Width - this.Renderer.CurrentBaseAreaWidth) * 0.9f);
+            this.hScrollBar1.Maximum = (int)((this.Logic.FrameRenderSize.Width - this.Logic.CurrentBaseAreaWidth) * 0.9f);
         }
 
-
+        /// <summary>
+        /// 画面リサイズ処理
+        /// </summary>
         private void ResizeRendererArea()
         {
             //描画領域のリサイズ
         }
+
 
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
@@ -111,7 +138,7 @@ namespace ClarityMovement.Editor
             }
 
             int offsetx = -this.hScrollBar1.Value;
-            this.Renderer.Render(this.pictureBoxEditor, new PointF(offsetx, 0), e.Graphics, MvGlobal.Project);
+            this.Logic.Render(this.pictureBoxEditor, new PointF(offsetx, 0), e.Graphics, MvGlobal.Project);
         }
 
 
@@ -134,6 +161,17 @@ namespace ClarityMovement.Editor
         {
             this.MouseInfo.DownMouse(e);
 
+            //対象フレームを取得
+            FrameRenderingInfo? finfo = this.Logic.ColPointFrame(this.MouseInfo.NowPos);
+            if(finfo == null)
+            {
+                return;
+            }
+            this.MouseInfo.SetMemory(finfo, 99);
+            this.Logic.SelectedElement = this.Logic.ColSelectArea(new PointF(this.MouseInfo.NowPos.X, this.MouseInfo.NowPos.Y));
+            this.Logic.SelectedElement?.Grab(this.MouseInfo, finfo);
+
+
             this.Refresh();
         }
 
@@ -145,7 +183,25 @@ namespace ClarityMovement.Editor
         private void pictureBoxEditor_MouseMove(object sender, MouseEventArgs e)
         {
             this.MouseInfo.MoveMouse(e);
-            this.Renderer.ColSelectArea(new PointF(this.MouseInfo.NowPos.X, this.MouseInfo.NowPos.Y));
+            
+            //対象フレームを取得
+            FrameRenderingInfo? finfo = this.Logic.ColPointFrame(this.MouseInfo.NowPos);
+            if (finfo == null)
+            {
+                return;
+            }
+
+            this.Logic.MouseOverElement = this.Logic.ColSelectArea(new PointF(this.MouseInfo.NowPos.X, this.MouseInfo.NowPos.Y));
+
+
+            if (this.MouseInfo.DownFlag == true)
+            {
+                var sframe = this.MouseInfo.GetMemory<FrameRenderingInfo>(99);
+                if (sframe != null)
+                {
+                    this.Logic.SelectedElement?.GrabMove(this.MouseInfo, sframe, finfo);
+                }
+            }
 
             this.Refresh();
         }
@@ -159,15 +215,7 @@ namespace ClarityMovement.Editor
         {
             this.MouseInfo.UpMouse(e);
 
-            var f = this.Renderer.ColPointFrame(new PointF(this.MouseInfo.NowPos.X, this.MouseInfo.NowPos.Y));
-            if (f != null)
-            {
-                var bit = MvGlobal.Project.BaseImageList[f.FrameIndex];
-                FrameImageVieweForm viewer = new FrameImageVieweForm(bit);
-                viewer.ShowDialog(this);
-            }
-
-
+           
 
             this.Refresh();
         }
@@ -196,6 +244,15 @@ namespace ClarityMovement.Editor
 
             TagEditForm f = new TagEditForm();
             var dret = f.ShowDialog(this);
+            if (dret != DialogResult.OK)
+            {
+                return;
+            }
+
+            //入力の取得
+            var data = f.GetInput();
+            //タグの追加
+            MvGlobal.Project.AddTag(data);
         }
     }
 }

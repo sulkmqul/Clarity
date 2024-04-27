@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clarity.GUI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -118,7 +119,7 @@ namespace ClarityMovement.Editor
                 int tagindex = 0;
                 proj.TagList.ForEach(x =>
                 {
-                    float y = (tagindex * this.TagHeight) + taghelf;
+                    float y = (tagindex * this.TagHeight) + taghelf + startpos;
 
                     this.TagPointList.Add(new PointF(this.Center.X, y));
                     tagindex++;
@@ -167,19 +168,17 @@ namespace ClarityMovement.Editor
         /// </summary>
         /// <param name="cpos"></param>
         /// <returns></returns>
-        public RectangleF? ColPointAreaRect(PointF cpos)
+        public BaseUiElement? ColPointAreaRect(PointF cpos)
         {
-            RectangleF? ans = null;
-
-            RectangleF[] ckvec =
+            BaseUiElement? ans = null;
+            BaseUiElement[] ckvec =
             {
-                this.Area,
-                this.BaseImageArea,
+                new FrameImageUiElement(this),
             };
 
             foreach(var rc in ckvec)
             {
-                bool f = rc.Contains(cpos);
+                bool f = rc.Area.Contains(cpos);
                 if(f == true)
                 {
                     ans = rc;
@@ -223,4 +222,8 @@ namespace ClarityMovement.Editor
         }
 
     }
+
+
+
+    
 }

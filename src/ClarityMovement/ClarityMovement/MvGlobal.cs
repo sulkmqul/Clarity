@@ -16,6 +16,9 @@ namespace ClarityMovement
         EditorZoomUp,
         EditorZoomDown,
 
+        TagAdd,
+        TagRemove,
+
 
     }
     /// <summary>
@@ -46,9 +49,9 @@ namespace ClarityMovement
     /// </summary>
     internal class MvGlobal : BaseClarityConstSingleton<MvGlobal>
     {
-        /*
+        
         /// <summary>
-        /// タグ識別ID
+        /// UiElement識別ID
         /// </summary>
         private Clarity.Util.ClaritySequence TagSeq = new Clarity.Util.ClaritySequence();
 
@@ -57,10 +60,10 @@ namespace ClarityMovement
         /// タグのIDを取得
         /// </summary>
         /// <returns></returns>
-        public ulong GetTagID()
+        public static ulong GetUiElementID()
         {
-            return this.TagSeq.NextValue;
-        }*/
+            return MvGlobal.Mana.TagSeq.NextValue;
+        }
 
 
         /// <summary>

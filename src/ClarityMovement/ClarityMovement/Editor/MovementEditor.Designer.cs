@@ -53,7 +53,7 @@
             buttonAddTag.Name = "buttonAddTag";
             buttonAddTag.Size = new Size(75, 23);
             buttonAddTag.TabIndex = 0;
-            buttonAddTag.Text = "button1";
+            buttonAddTag.Text = "Tag追加";
             buttonAddTag.UseVisualStyleBackColor = true;
             buttonAddTag.Click += buttonAddTag_Click;
             // 

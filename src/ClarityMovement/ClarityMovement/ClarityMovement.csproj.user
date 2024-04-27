@@ -7,8 +7,14 @@
     <Compile Update="Editor\MovementEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Editor\TagEditCollisionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Editor\TagEditForm.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\TagEditInfoControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>

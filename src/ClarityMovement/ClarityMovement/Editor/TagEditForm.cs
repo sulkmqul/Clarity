@@ -10,6 +10,9 @@ using System.Windows.Forms;
 
 namespace ClarityMovement.Editor
 {
+    /// <summary>
+    /// タグ編集画面
+    /// </summary>
     public partial class TagEditForm : Form
     {
         public TagEditForm(BaseEditTag? tag = null)
@@ -24,10 +27,28 @@ namespace ClarityMovement.Editor
         /// </summary>
         private BaseEditTag? ETag = null;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
-
+        /// <summary>
+        /// タグ情報の取得
+        /// </summary>
+        /// <returns></returns>
         public BaseEditTag GetInput()
         {
+            //tagtypeに応じて取得項目を変える。
             BaseEditTag ans = new EditTagCollison();
+
+            //基礎を最後に設定する。
+
+            //開始終了フレーム
+            ans.StartFrame = (int)this.numericUpDownStartFrame.Value;
+            ans.EndFrame = (int)this.numericUpDownEndFrame.Value;
+
+            //相対位置
+            float rex = (float)this.numericUpDownRePosX.Value;
+            float rey = (float)this.numericUpDownRePosY.Value;
+            float rez = (float)this.numericUpDownRePosZ.Value;
+
+            ans.RelativePos = new System.Numerics.Vector4(rex, rey, rez, 1.0f);
+
 
             return ans;
         }

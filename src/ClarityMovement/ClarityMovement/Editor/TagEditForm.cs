@@ -26,6 +26,11 @@ namespace ClarityMovement.Editor
         /// 編集タグ nullで新規
         /// </summary>
         private BaseEditTag? ETag = null;
+
+        /// <summary>
+        /// タグ編集者
+        /// </summary>
+        private ITagEditControl? TagControl = null;
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
         /// タグ情報の取得
@@ -37,6 +42,8 @@ namespace ClarityMovement.Editor
             BaseEditTag ans = new EditTagCollison();
 
             //基礎を最後に設定する。
+
+            ans.Type = (EMovementTagType)this.comboBoxTagType.SelectedItem;
 
             //開始終了フレーム
             ans.StartFrame = (int)this.numericUpDownStartFrame.Value;
@@ -83,6 +90,25 @@ namespace ClarityMovement.Editor
             combo.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// タグタイプの変更
+        /// </summary>
+        /// <param name="mt"></param>
+        private void ChangeTagTypeControl(EMovementTagType mt)
+        {
+            this.panelTagTypeControl.Controls.Clear();
+
+            Dictionary<EMovementTagType, Control> dic = new Dictionary<EMovementTagType, Control>();
+            dic.Add(EMovementTagType.Collision, new TagEditCollisionControl());
+            dic.Add(EMovementTagType.Image, new TagEditImageControl());
+            dic.Add(EMovementTagType.Info, new TagEditInfoControl());
+
+            Control con = dic[mt];
+            con.Dock = DockStyle.Fill;
+            this.TagControl = con as ITagEditControl;
+            this.panelTagTypeControl.Controls.Add(con);
+        }
+
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         //--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//--//
         /// <summary>
@@ -126,6 +152,15 @@ namespace ClarityMovement.Editor
             this.DialogResult = DialogResult.Cancel;
         }
 
-        
+        /// <summary>
+        /// TagType選択が変更された時
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBoxTagType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            EMovementTagType mt = (EMovementTagType)this.comboBoxTagType.SelectedItem;
+            this.ChangeTagTypeControl(mt);
+        }
     }
 }

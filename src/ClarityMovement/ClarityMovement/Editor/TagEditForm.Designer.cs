@@ -36,6 +36,7 @@
             numericUpDownRePosZ = new NumericUpDown();
             numericUpDownStartFrame = new NumericUpDown();
             numericUpDownEndFrame = new NumericUpDown();
+            panelTagTypeControl = new Panel();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRePosX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRePosY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRePosZ).BeginInit();
@@ -46,7 +47,7 @@
             // buttonOK
             // 
             buttonOK.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonOK.Location = new Point(536, 289);
+            buttonOK.Location = new Point(536, 326);
             buttonOK.Name = "buttonOK";
             buttonOK.Size = new Size(75, 23);
             buttonOK.TabIndex = 0;
@@ -57,7 +58,7 @@
             // buttonCancel
             // 
             buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonCancel.Location = new Point(617, 289);
+            buttonCancel.Location = new Point(617, 326);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(75, 23);
             buttonCancel.TabIndex = 1;
@@ -73,6 +74,7 @@
             comboBoxTagType.Name = "comboBoxTagType";
             comboBoxTagType.Size = new Size(121, 23);
             comboBoxTagType.TabIndex = 2;
+            comboBoxTagType.SelectedIndexChanged += comboBoxTagType_SelectedIndexChanged;
             // 
             // numericUpDownRePosX
             // 
@@ -119,11 +121,20 @@
             numericUpDownEndFrame.TabIndex = 4;
             numericUpDownEndFrame.TextAlign = HorizontalAlignment.Right;
             // 
+            // panelTagTypeControl
+            // 
+            panelTagTypeControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelTagTypeControl.Location = new Point(12, 110);
+            panelTagTypeControl.Name = "panelTagTypeControl";
+            panelTagTypeControl.Size = new Size(680, 210);
+            panelTagTypeControl.TabIndex = 5;
+            // 
             // TagEditForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(704, 324);
+            ClientSize = new Size(704, 361);
+            Controls.Add(panelTagTypeControl);
             Controls.Add(numericUpDownEndFrame);
             Controls.Add(numericUpDownStartFrame);
             Controls.Add(numericUpDownRePosZ);
@@ -155,5 +166,6 @@
         private NumericUpDown numericUpDownRePosZ;
         private NumericUpDown numericUpDownStartFrame;
         private NumericUpDown numericUpDownEndFrame;
+        private Panel panelTagTypeControl;
     }
 }

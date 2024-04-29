@@ -22,7 +22,9 @@ namespace ClarityMovement
             public Color FontColor { get; set; } = Color.Black;
 
 
-            public Color TagColor { get; set; } = Color.DimGray;
+            public Color TagColorImage { get; set; } = Color.DarkOrange;
+            public Color TagColorCollision { get; set; } = Color.DarkRed;
+            public Color TagColorInfo { get; set; } = Color.DimGray;
             public Color TagSelectColor { get; set; } = Color.Crimson;
             
         }

@@ -48,7 +48,7 @@ namespace ClarityMovement
     /// </summary>
     public enum EMovementTagType
     {
-        Collision,
+        Collision,        
         Image,
         Info,
     }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Clarity.Collider;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -78,6 +80,21 @@ namespace ClarityMovement
         {
 
         }
+
+        /// <summary>
+        /// 当たり判定モード
+        /// </summary>
+        public EColMode ColMode { get; set; }
+
+        /// <summary>
+        /// 円の時の半径
+        /// </summary>
+        public float Radius { get; set; } = 0;
+
+        /// <summary>
+        /// 矩形の時のサイズ
+        /// </summary>
+        public Vector2 RectSize { get; set; } = new Vector2();
 
     }
 }

@@ -23,6 +23,27 @@ namespace ClarityMovement.Editor
         protected RectangleF TagArea = new RectangleF();
 
         public override RectangleF Area => this.TagArea;
+
+        /// <summary>
+        /// 自身のタグ色を取得
+        /// </summary>
+        /// <returns></returns>
+        public Color TagColor
+        {
+            get
+            {
+                switch (this.Data.Type)
+                {
+                    case EMovementTagType.Collision:
+                        return MvGlobal.Setting.Editor.TagColorCollision;
+                    case EMovementTagType.Info:
+                        return MvGlobal.Setting.Editor.TagColorInfo;
+                    case EMovementTagType.Image:
+                        return MvGlobal.Setting.Editor.TagColorImage;
+                }
+                return Color.Red;
+            }
+        }
     }
 
     /// <summary>
@@ -74,7 +95,7 @@ namespace ClarityMovement.Editor
         public override void Render(MvProject proj, Graphics gra)
         {
 
-            using (Pen pe = new Pen(MvGlobal.Setting.Editor.TagColor, 2.0f))
+            using (Pen pe = new Pen(this.TagColor, 2.0f))
             {
                 gra.DrawLine(pe, this.StartPoint, this.EndPoint);
             }
@@ -148,7 +169,7 @@ namespace ClarityMovement.Editor
         public override void Render(MvProject proj, Graphics gra)
         {
 
-            using (SolidBrush bru = new SolidBrush(MvGlobal.Setting.Editor.TagColor))
+            using (SolidBrush bru = new SolidBrush(this.TagColor))
             {
                 gra.FillEllipse(bru, this.TagArea);
             }
@@ -228,7 +249,7 @@ namespace ClarityMovement.Editor
         public override void Render(MvProject proj, Graphics gra)
         {
 
-            using (SolidBrush bru = new SolidBrush(MvGlobal.Setting.Editor.TagColor))
+            using (SolidBrush bru = new SolidBrush(this.TagColor))
             {
                 gra.FillEllipse(bru, this.TagArea);
             }

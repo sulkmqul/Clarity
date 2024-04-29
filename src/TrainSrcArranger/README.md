@@ -1,0 +1,2 @@
+# TrainSrcArranger
+StableDiffusion用LoRA学習用画像切り抜きツール

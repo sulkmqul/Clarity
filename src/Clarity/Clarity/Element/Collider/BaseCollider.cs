@@ -26,6 +26,10 @@ namespace Clarity.Collider
         /// </summary>
         Line,
         /// <summary>
+        /// 矩形
+        /// </summary>
+        Rect,
+        /// <summary>
         /// ポリゴン(三角形)
         /// </summary>
         Polygon,

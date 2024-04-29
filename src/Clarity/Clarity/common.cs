@@ -34,6 +34,11 @@ namespace Clarity
 
     public static class common
     {
+        /// <summary>
+        /// Enumの追記情報を取得する
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string? GetAttributeString(this Enum value)
         {
             

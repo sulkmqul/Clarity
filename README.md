@@ -1,23 +1,27 @@
-# Clarity
+# Clarity.Engine
 C#ライブラリと自作便利ツール群
 
-**一時的に公開します**
+技術アピールの必要が生じたため、恥ずかしくも未完成ですが一時的に公開します。  
+現状まともに動作しないものも多いです。
+
+ 
 
 ## 一覧
 ```
 Clarity						
 	Clarity					基本ライブラリ
 	Clarity.CV				OpenCVSharpを利用したUtility
-	Clarity.DB				DB接続用、未整備
+	Clarity.DB				DB接続用に作ろうと思ったが、未整備
 	Clarity.Engine			Vortice.Windowを利用した自作ゲームエンジン
 	Clarity.GUI				GUI関係のごった煮ライブラリ
-	Clarity.Image			画像ライブラリ(APNGライブラリ)
-	Clarty.Aid				Clarity.Engineの補助ツールとして生まれたが削除予定
+	Clarity.Image			画像ライブラリ(APNGライブラリ)、別途公開済み
+	Clarty.Aid				Clarity.Engineの補助ツールとして生まれたが設計変更につき削除予定
 	
-ClarityCameraViewer			OpenCVSharpを利用したカメラ映像表示Viewer
-ClarityImageViewer			Clarity.Engineを使用したapngおよび画像のViwer
-ClarityMovement 			ClarityEngine用モーションエディタ
-TrainSrcArranger			SD LoRA学習に便利な汎用画像用画像切り抜きツール
+ClarityCameraViewer			ClarityおよびOpenCVSharpを利用したカメラ映像表示Viewer(完成)
+ClarityImageViewer			Clarity.Engineを使用したapngおよび画像のViwer(完成)
+ClarityMovement 			Clarity.Engine用モーションエディタ
+ClarityOrbit				他のtoolを見つけたので制作放棄、削除予定
+TrainSrcArranger			SD LoRA学習に便利な汎用画像用画像切り抜きツール(完成)
 ```
 
 ## 環境
@@ -27,7 +31,7 @@ TrainSrcArranger			SD LoRA学習に便利な汎用画像用画像切り抜きツ
 * .net6.0 
 
 #### 外部ライブラリ
-* vortice.windows 1.9
+* Vortice.Windows
 * System.IO.Hashing 8.0
 * System.Reactive 6.0
 
@@ -36,8 +40,9 @@ TrainSrcArranger			SD LoRA学習に便利な汎用画像用画像切り抜きツ
 * npgsql 6.0
 
 
-## License
+## warning
 * 商用利用禁止
+  
 
 
 
